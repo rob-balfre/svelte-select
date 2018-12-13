@@ -1,6 +1,6 @@
-<div class="container">
+<div class="container" ref:container>
     {#each items as item}
-    <div class="listItem">{item.name}</div>
+    <div class="listItem {item.active ? 'active' : ''}">{item.name}</div>
     {:else}
     <div class="empty">So</div>
     {/each}
@@ -25,4 +25,30 @@
     .listItem:first-child {
         border-radius: 4px 4px 0 0;
     }
+
+    .listItem.active {
+        background: #007aff;
+        color: #fff;
+    }
 </style>
+
+<script>
+  export default {
+    onupdate({changed, current, previous}) {
+      if (changed.items && current.items.length > 0 && this.refs.container) {
+        this.scrollToActiveItem()
+      }
+    },
+    methods: {
+      scrollToActiveItem() {
+        const {container} = this.refs;
+        let offsetBounding;
+        const focusedElemBounding = container.querySelector('.listItem.active');
+        if (focusedElemBounding) {
+          offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
+        }
+        container.scrollTop -= offsetBounding;
+      }
+    }
+  }
+</script>

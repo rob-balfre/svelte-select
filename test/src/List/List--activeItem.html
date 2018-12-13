@@ -1,0 +1,36 @@
+<!-- DEV ONLY IMPORTS -->
+<link rel="stylesheet" href="../reset.css" />
+
+<div class="container">
+    <div class="listItem">Item #1</div>
+    <div class="listItem active">Item #2</div>
+    <div class="listItem">Item #3</div>
+    <div class="listItem">Item #4</div>
+    <div class="listItem">Item #5</div>
+</div>
+
+<style>
+    .container {
+        box-shadow: 0 2px 3px 0 rgba(44, 62, 80, 0.24);
+        border-radius: 4px;
+        height: 176px;
+        overflow-y: auto;
+    }
+
+    .listItem {
+        padding: 20px;
+    }
+
+    .listItem:hover {
+        background: #e7f2ff;
+    }
+
+    .listItem:first-child {
+        border-radius: 4px 4px 0 0;
+    }
+
+    .listItem.active {
+        background: #007aff;
+        color: #fff;
+    }
+</style>

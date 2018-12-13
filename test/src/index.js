@@ -4,6 +4,7 @@ import List from '../../src/List.html';
 import SelectDefault from './Select/Select--default.html'
 import SelectFocus from './Select/Select--focus.html'
 import ListDefault from './List/List--default.html'
+import ListActiveItem from './List/List--activeItem.html'
 import { assert, test, done } from 'tape-modern';
 
 // setup
@@ -147,6 +148,55 @@ test('default list with two items', async (t) => {
   t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
   testTemplate.destroy();
+  list.destroy();
+});
+
+test('should highlight active list item', async (t) => {
+  const testTemplate = new ListActiveItem({
+    target: testTarget
+  });
+
+  const list = new List({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2', active: true},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ]
+    }
+  });
+
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+
+  testTemplate.destroy();
+  list.destroy();
+});
+
+test('list scrolls to active item', async (t) => {
+  const list = new List({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4', active: true},
+        {name: 'Item #5'}
+      ]
+    }
+  });
+
+  const {container} = list.refs;
+  let offsetBounding;
+  const focusedElemBounding = container.querySelector('.listItem.active');
+  if (focusedElemBounding) {
+    offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
+  }
+
+  t.equal(offsetBounding, 0);
   list.destroy();
 });
 
