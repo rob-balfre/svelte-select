@@ -24382,31 +24382,45 @@
 	}
 	function add_css() {
 		var style = createElement("style");
-		style.id = 'svelte-6lye1b-style';
-		style.textContent = ".container.svelte-6lye1b{border:1px solid #D8DBDF;border-radius:3px;height:44px}.container.svelte-6lye1b input.svelte-6lye1b{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.container.svelte-6lye1b input.svelte-6lye1b::placeholder{color:#78848F}.container.svelte-6lye1b input.svelte-6lye1b:focus{outline:none}.container.svelte-6lye1b:hover{border-color:#b2b8bf}.container.focused.svelte-6lye1b{border-color:#006FE8}";
+		style.id = 'svelte-1rve5x9-style';
+		style.textContent = ".container.svelte-1rve5x9{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.container.svelte-1rve5x9 input.svelte-1rve5x9{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.container.svelte-1rve5x9 input.svelte-1rve5x9::placeholder{color:#78848F}.container.svelte-1rve5x9 input.svelte-1rve5x9:focus{outline:none}.container.svelte-1rve5x9:hover{border-color:#b2b8bf}.container.focused.svelte-1rve5x9{border-color:#006FE8}.selectedItem.svelte-1rve5x9{padding:0 16px;line-height:44px}.clearSelectedItem.svelte-1rve5x9{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-1rve5x9:hover{color:#2c3e50}";
 		append(document.head, style);
 	}
 
 	function create_main_fragment(component, ctx) {
-		var div, input, div_class_value;
+		var div, div_class_value;
+
+		function select_block_type(ctx) {
+			if (ctx.selectedItem) return create_if_block;
+			return create_else_block;
+		}
+
+		var current_block_type = select_block_type(ctx);
+		var if_block = current_block_type(component, ctx);
 
 		return {
 			c() {
 				div = createElement("div");
-				input = createElement("input");
-				input.placeholder = "Placeholder text";
-				input.className = "svelte-6lye1b";
-				div.className = div_class_value = "container " + (ctx.isFocused ? 'focused' : '') + " svelte-6lye1b";
+				if_block.c();
+				div.className = div_class_value = "container " + (ctx.isFocused ? 'focused' : '') + " svelte-1rve5x9";
 			},
 
 			m(target, anchor) {
 				insert(target, div, anchor);
-				append(div, input);
-				component.refs.input = input;
+				if_block.m(div, null);
 			},
 
 			p(changed, ctx) {
-				if ((changed.isFocused) && div_class_value !== (div_class_value = "container " + (ctx.isFocused ? 'focused' : '') + " svelte-6lye1b")) {
+				if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+					if_block.p(changed, ctx);
+				} else {
+					if_block.d(1);
+					if_block = current_block_type(component, ctx);
+					if_block.c();
+					if_block.m(div, null);
+				}
+
+				if ((changed.isFocused) && div_class_value !== (div_class_value = "container " + (ctx.isFocused ? 'focused' : '') + " svelte-1rve5x9")) {
 					div.className = div_class_value;
 				}
 			},
@@ -24416,7 +24430,73 @@
 					detachNode(div);
 				}
 
+				if_block.d();
+			}
+		};
+	}
+
+	// (9:4) {:else}
+	function create_else_block(component, ctx) {
+		var input;
+
+		return {
+			c() {
+				input = createElement("input");
+				input.placeholder = "Placeholder text";
+				input.className = "svelte-1rve5x9";
+			},
+
+			m(target, anchor) {
+				insert(target, input, anchor);
+				component.refs.input = input;
+			},
+
+			p: noop,
+
+			d(detach) {
+				if (detach) {
+					detachNode(input);
+				}
+
 				if (component.refs.input === input) component.refs.input = null;
+			}
+		};
+	}
+
+	// (2:4) {#if selectedItem}
+	function create_if_block(component, ctx) {
+		var div0, text0_value = ctx.selectedItem.name, text0, text1, div1;
+
+		return {
+			c() {
+				div0 = createElement("div");
+				text0 = createText(text0_value);
+				text1 = createText("\n    ");
+				div1 = createElement("div");
+				div1.innerHTML = `<svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+				div0.className = "selectedItem svelte-1rve5x9";
+				div1.className = "clearSelectedItem svelte-1rve5x9";
+			},
+
+			m(target, anchor) {
+				insert(target, div0, anchor);
+				append(div0, text0);
+				insert(target, text1, anchor);
+				insert(target, div1, anchor);
+			},
+
+			p(changed, ctx) {
+				if ((changed.selectedItem) && text0_value !== (text0_value = ctx.selectedItem.name)) {
+					setData(text0, text0_value);
+				}
+			},
+
+			d(detach) {
+				if (detach) {
+					detachNode(div0);
+					detachNode(text1);
+					detachNode(div1);
+				}
 			}
 		};
 	}
@@ -24429,7 +24509,7 @@
 
 		this._handlers.state = [onstate];
 
-		if (!document.getElementById("svelte-6lye1b-style")) add_css();
+		if (!document.getElementById("svelte-1rve5x9-style")) add_css();
 
 		onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 
@@ -24557,7 +24637,7 @@
 		var each_else = null;
 
 		if (!each_value.length) {
-			each_else = create_else_block(component, ctx);
+			each_else = create_else_block$1(component, ctx);
 			each_else.c();
 		}
 
@@ -24613,7 +24693,7 @@
 						each_else = null;
 					}
 				} else if (!each_else) {
-					each_else = create_else_block(component, ctx);
+					each_else = create_else_block$1(component, ctx);
 					each_else.c();
 					each_else.m(div, null);
 				}
@@ -24636,7 +24716,7 @@
 	}
 
 	// (6:4) {:else}
-	function create_else_block(component, ctx) {
+	function create_else_block$1(component, ctx) {
 		var div;
 
 		return {
@@ -24841,16 +24921,75 @@
 
 	assign(Select_focus.prototype, proto);
 
-	/* test/src/List/List--default.html generated by Svelte v2.15.3 */
+	/* test/src/Select/Select--itemSelected.html generated by Svelte v2.15.3 */
 
 	function add_css$4() {
+		var style = createElement("style");
+		style.id = 'svelte-1y4uebc-style';
+		style.textContent = ".container.svelte-1y4uebc{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.container.svelte-1y4uebc:hover{border-color:#b2b8bf}.selectedItem.svelte-1y4uebc{padding:0 16px;line-height:44px}.clearSelectedItem.svelte-1y4uebc{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-1y4uebc:hover{color:#2c3e50}";
+		append(document.head, style);
+	}
+
+	function create_main_fragment$4(component, ctx) {
+		var link, text, div_2;
+
+		return {
+			c() {
+				link = createElement("link");
+				text = createText("\n\n");
+				div_2 = createElement("div");
+				div_2.innerHTML = `<div class="selectedItem svelte-1y4uebc">Item #4</div>
+			    <div class="clearSelectedItem svelte-1y4uebc"><svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div>`;
+				link.rel = "stylesheet";
+				link.href = "../reset.css";
+				div_2.className = "container svelte-1y4uebc";
+			},
+
+			m(target, anchor) {
+				insert(target, link, anchor);
+				insert(target, text, anchor);
+				insert(target, div_2, anchor);
+			},
+
+			p: noop,
+
+			d(detach) {
+				if (detach) {
+					detachNode(link);
+					detachNode(text);
+					detachNode(div_2);
+				}
+			}
+		};
+	}
+
+	function Select_itemSelected(options) {
+		init(this, options);
+		this._state = assign({}, options.data);
+		this._intro = true;
+
+		if (!document.getElementById("svelte-1y4uebc-style")) add_css$4();
+
+		this._fragment = create_main_fragment$4(this, this._state);
+
+		if (options.target) {
+			this._fragment.c();
+			this._mount(options.target, options.anchor);
+		}
+	}
+
+	assign(Select_itemSelected.prototype, proto);
+
+	/* test/src/List/List--default.html generated by Svelte v2.15.3 */
+
+	function add_css$5() {
 		var style = createElement("style");
 		style.id = 'svelte-t38k8z-style';
 		style.textContent = ".container.svelte-t38k8z{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listItem.svelte-t38k8z{padding:20px}.listItem.svelte-t38k8z:hover{background:#e7f2ff}.listItem.svelte-t38k8z:first-child{border-radius:4px 4px 0 0}";
 		append(document.head, style);
 	}
 
-	function create_main_fragment$4(component, ctx) {
+	function create_main_fragment$5(component, ctx) {
 		var link, text, div_5;
 
 		return {
@@ -24891,9 +25030,9 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-t38k8z-style")) add_css$4();
+		if (!document.getElementById("svelte-t38k8z-style")) add_css$5();
 
-		this._fragment = create_main_fragment$4(this, this._state);
+		this._fragment = create_main_fragment$5(this, this._state);
 
 		if (options.target) {
 			this._fragment.c();
@@ -24905,14 +25044,14 @@
 
 	/* test/src/List/List--activeItem.html generated by Svelte v2.15.3 */
 
-	function add_css$5() {
+	function add_css$6() {
 		var style = createElement("style");
 		style.id = 'svelte-ocijb9-style';
 		style.textContent = ".container.svelte-ocijb9{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listItem.svelte-ocijb9{padding:20px}.listItem.svelte-ocijb9:hover{background:#e7f2ff}.listItem.svelte-ocijb9:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-ocijb9{background:#007aff;color:#fff}";
 		append(document.head, style);
 	}
 
-	function create_main_fragment$5(component, ctx) {
+	function create_main_fragment$6(component, ctx) {
 		var link, text, div_5;
 
 		return {
@@ -24953,9 +25092,9 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-ocijb9-style")) add_css$5();
+		if (!document.getElementById("svelte-ocijb9-style")) add_css$6();
 
-		this._fragment = create_main_fragment$5(this, this._state);
+		this._fragment = create_main_fragment$6(this, this._state);
 
 		if (options.target) {
 			this._fragment.c();
@@ -25488,29 +25627,22 @@
 	  list.destroy();
 	});
 
-	test('clicking an item fires a itemSelected event', async (t) => {
-	  const list = new List({
+	test('selected item\'s default view', async (t) => {
+	  const testTemplate = new Select_itemSelected({
+	    target: testTarget
+	  });
+
+	  const select = new Select({
 	    target,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ]
+	      selectedItem: {name: 'Item #4'}
 	    }
 	  });
 
-	  let selectedItem = undefined;
-	  list.on('itemSelected', event => {
-	    selectedItem = event;
-	  });
 
-	  const {container} = list.refs;
-	  container.querySelector('.listItem').click();
-	  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #1'}));
-	  // list.destroy();
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+	  select.destroy();
+	  testTemplate.destroy();
 	});
 
 

@@ -3,6 +3,7 @@ import Select from '../../src/Select.html';
 import List from '../../src/List.html';
 import SelectDefault from './Select/Select--default.html'
 import SelectFocus from './Select/Select--focus.html'
+import SelectItemSelected from './Select/Select--itemSelected.html'
 import ListDefault from './List/List--default.html'
 import ListActiveItem from './List/List--activeItem.html'
 import {assert, test, done} from 'tape-modern';
@@ -281,29 +282,22 @@ test('on tab active item fires a itemSelected event', async (t) => {
   list.destroy();
 });
 
-test('clicking an item fires a itemSelected event', async (t) => {
-  const list = new List({
+test('selected item\'s default view', async (t) => {
+  const testTemplate = new SelectItemSelected({
+    target: testTarget
+  });
+
+  const select = new Select({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ]
+      selectedItem: {name: 'Item #4'}
     }
   });
 
-  let selectedItem = undefined;
-  list.on('itemSelected', event => {
-    selectedItem = event;
-  });
 
-  const {container} = list.refs;
-  container.querySelector('.listItem').click();
-  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #1'}));
-  // list.destroy();
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+  select.destroy();
+  testTemplate.destroy();
 });
 
 

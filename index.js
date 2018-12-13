@@ -32,6 +32,14 @@
 		return document.createElement(name);
 	}
 
+	function createText(data) {
+		return document.createTextNode(data);
+	}
+
+	function setData(text, data) {
+		text.data = '' + data;
+	}
+
 	function blankObject() {
 		return Object.create(null);
 	}
@@ -179,31 +187,45 @@
 	}
 	function add_css() {
 		var style = createElement("style");
-		style.id = 'svelte-6lye1b-style';
-		style.textContent = ".container.svelte-6lye1b{border:1px solid #D8DBDF;border-radius:3px;height:44px}.container.svelte-6lye1b input.svelte-6lye1b{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.container.svelte-6lye1b input.svelte-6lye1b::placeholder{color:#78848F}.container.svelte-6lye1b input.svelte-6lye1b:focus{outline:none}.container.svelte-6lye1b:hover{border-color:#b2b8bf}.container.focused.svelte-6lye1b{border-color:#006FE8}";
+		style.id = 'svelte-1rve5x9-style';
+		style.textContent = ".container.svelte-1rve5x9{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.container.svelte-1rve5x9 input.svelte-1rve5x9{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.container.svelte-1rve5x9 input.svelte-1rve5x9::placeholder{color:#78848F}.container.svelte-1rve5x9 input.svelte-1rve5x9:focus{outline:none}.container.svelte-1rve5x9:hover{border-color:#b2b8bf}.container.focused.svelte-1rve5x9{border-color:#006FE8}.selectedItem.svelte-1rve5x9{padding:0 16px;line-height:44px}.clearSelectedItem.svelte-1rve5x9{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-1rve5x9:hover{color:#2c3e50}";
 		append(document.head, style);
 	}
 
 	function create_main_fragment(component, ctx) {
-		var div, input, div_class_value;
+		var div, div_class_value;
+
+		function select_block_type(ctx) {
+			if (ctx.selectedItem) return create_if_block;
+			return create_else_block;
+		}
+
+		var current_block_type = select_block_type(ctx);
+		var if_block = current_block_type(component, ctx);
 
 		return {
 			c() {
 				div = createElement("div");
-				input = createElement("input");
-				input.placeholder = "Placeholder text";
-				input.className = "svelte-6lye1b";
-				div.className = div_class_value = "container " + (ctx.isFocused ? 'focused' : '') + " svelte-6lye1b";
+				if_block.c();
+				div.className = div_class_value = "container " + (ctx.isFocused ? 'focused' : '') + " svelte-1rve5x9";
 			},
 
 			m(target, anchor) {
 				insert(target, div, anchor);
-				append(div, input);
-				component.refs.input = input;
+				if_block.m(div, null);
 			},
 
 			p(changed, ctx) {
-				if ((changed.isFocused) && div_class_value !== (div_class_value = "container " + (ctx.isFocused ? 'focused' : '') + " svelte-6lye1b")) {
+				if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+					if_block.p(changed, ctx);
+				} else {
+					if_block.d(1);
+					if_block = current_block_type(component, ctx);
+					if_block.c();
+					if_block.m(div, null);
+				}
+
+				if ((changed.isFocused) && div_class_value !== (div_class_value = "container " + (ctx.isFocused ? 'focused' : '') + " svelte-1rve5x9")) {
 					div.className = div_class_value;
 				}
 			},
@@ -213,7 +235,73 @@
 					detachNode(div);
 				}
 
+				if_block.d();
+			}
+		};
+	}
+
+	// (9:4) {:else}
+	function create_else_block(component, ctx) {
+		var input;
+
+		return {
+			c() {
+				input = createElement("input");
+				input.placeholder = "Placeholder text";
+				input.className = "svelte-1rve5x9";
+			},
+
+			m(target, anchor) {
+				insert(target, input, anchor);
+				component.refs.input = input;
+			},
+
+			p: noop,
+
+			d(detach) {
+				if (detach) {
+					detachNode(input);
+				}
+
 				if (component.refs.input === input) component.refs.input = null;
+			}
+		};
+	}
+
+	// (2:4) {#if selectedItem}
+	function create_if_block(component, ctx) {
+		var div0, text0_value = ctx.selectedItem.name, text0, text1, div1;
+
+		return {
+			c() {
+				div0 = createElement("div");
+				text0 = createText(text0_value);
+				text1 = createText("\n    ");
+				div1 = createElement("div");
+				div1.innerHTML = `<svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+				div0.className = "selectedItem svelte-1rve5x9";
+				div1.className = "clearSelectedItem svelte-1rve5x9";
+			},
+
+			m(target, anchor) {
+				insert(target, div0, anchor);
+				append(div0, text0);
+				insert(target, text1, anchor);
+				insert(target, div1, anchor);
+			},
+
+			p(changed, ctx) {
+				if ((changed.selectedItem) && text0_value !== (text0_value = ctx.selectedItem.name)) {
+					setData(text0, text0_value);
+				}
+			},
+
+			d(detach) {
+				if (detach) {
+					detachNode(div0);
+					detachNode(text1);
+					detachNode(div1);
+				}
 			}
 		};
 	}
@@ -226,7 +314,7 @@
 
 		this._handlers.state = [onstate];
 
-		if (!document.getElementById("svelte-6lye1b-style")) add_css();
+		if (!document.getElementById("svelte-1rve5x9-style")) add_css();
 
 		onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 
