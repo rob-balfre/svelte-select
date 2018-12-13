@@ -200,6 +200,23 @@ test('list scrolls to active item', async (t) => {
   list.destroy();
 });
 
+test('active item updates on keyUp or keyDown', async (t) => {
+  const list = new List({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1', active: true},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ]
+    }
+  });
+
+  // list.destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {

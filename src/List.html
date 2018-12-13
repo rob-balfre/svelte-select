@@ -1,3 +1,5 @@
+<svelte:window on:keydown="handleKeyDown(event)"/>
+
 <div class="container" ref:container>
     {#each items as item}
     <div class="listItem {item.active ? 'active' : ''}">{item.name}</div>
@@ -40,6 +42,18 @@
       }
     },
     methods: {
+      handleKeyDown(e) {
+        switch (e.key) {
+          case 'ArrowDown':
+            console.log('ArrowDown');
+            break;
+          case 'ArrowUp':
+            console.log('ArrowUp');
+            break;
+
+        }
+
+      },
       scrollToActiveItem() {
         const {container} = this.refs;
         let offsetBounding;
