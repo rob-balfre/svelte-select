@@ -300,6 +300,30 @@ test('selected item\'s default view', async (t) => {
   testTemplate.destroy();
 });
 
+test('select view updates with selectedItem updates', async (t) => {
+  let testTemplate = new SelectDefault({
+    target: testTarget
+  });
+
+  const select = new Select({
+    target,
+  });
+
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+  testTemplate.destroy();
+
+  testTemplate = new SelectItemSelected({
+    target: testTarget
+  });
+
+  select.set({selectedItem: {name: 'Item #4'}});
+
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+
+  testTemplate.destroy();
+  select.destroy();
+});
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
