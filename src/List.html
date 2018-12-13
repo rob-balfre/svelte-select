@@ -1,8 +1,8 @@
 <svelte:window on:keydown="handleKeyDown(event)"/>
 
 <div class="container" ref:container>
-    {#each items as item}
-    <div class="listItem {item.active ? 'active' : ''}">{item.name}</div>
+    {#each items as item, i}
+    <div on:click="handleClick(item)" class="listItem {activeItemIndex === i ? 'active' : ''}">{item.name}</div>
     {:else}
     <div class="empty">So</div>
     {/each}
@@ -37,7 +37,11 @@
 <script>
   export default {
     data() {
-      return {}
+      return {
+        activeItem: undefined,
+        activeItemIndex: undefined,
+        items: []
+      }
     },
     onupdate({changed, current, previous}) {
       if (changed.items && current.items.length > 0 && this.refs.container) {
@@ -45,31 +49,44 @@
       }
     },
     methods: {
-      updateActiveItem(increment) {
-        const {items} = this.get();
-        const activeItemIndex = items.findIndex(item => item.active);
-        if (activeItemIndex === -1) return;
-        items[activeItemIndex].active = false;
 
-        if (increment > 0 && activeItemIndex === (items.length - 1)) {
-          items[0].active = true;
+      handleClick(item) {
+
+      },
+      updateActiveItem(increment) {
+        let {items, activeItemIndex, activeItem} = this.get();
+
+        if (activeItemIndex ===  undefined) {
+          activeItemIndex = 0;
+        }
+        else if (increment > 0 && activeItemIndex === (items.length - 1)) {
+          activeItemIndex = 0;
         }
         else if (increment < 0 && activeItemIndex === 0) {
-          items[items.length - 1].active = true;
+          activeItemIndex = items.length - 1;
         }
         else {
-          items[activeItemIndex + increment].active = true;
+          activeItemIndex = activeItemIndex + increment;
         }
 
-        this.set({items})
+        activeItem = items[activeItemIndex];
+        this.set({items, activeItem, activeItemIndex})
       },
       handleKeyDown(e) {
         switch (e.key) {
           case 'ArrowDown':
+            e.preventDefault();
             this.updateActiveItem(1);
             break;
           case 'ArrowUp':
+            e.preventDefault();
             this.updateActiveItem(-1);
+            break;
+          case 'Enter':
+            e.preventDefault();
+            const {activeItem} = this.get();
+            console.log('activeItem: ', activeItem);
+            this.fire('itemSelected', activeItem);
             break;
         }
       },

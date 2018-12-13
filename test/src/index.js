@@ -165,7 +165,9 @@ test('should highlight active list item', async (t) => {
         {name: 'Item #3'},
         {name: 'Item #4'},
         {name: 'Item #5'}
-      ]
+      ],
+      activeItem: {name: 'Item #2'},
+      activeItemIndex: 1,
     }
   });
 
@@ -183,9 +185,11 @@ test('list scrolls to active item', async (t) => {
         {name: 'Item #1'},
         {name: 'Item #2'},
         {name: 'Item #3'},
-        {name: 'Item #4', active: true},
+        {name: 'Item #4'},
         {name: 'Item #5'}
-      ]
+      ],
+      activeItem: {name: 'Item #4'},
+      activeItemIndex: 3,
     }
   });
 
@@ -205,12 +209,14 @@ test('active item updates on keyUp or keyDown', async (t) => {
     target,
     data: {
       items: [
-        {name: 'Item #1', active: true},
+        {name: 'Item #1'},
         {name: 'Item #2'},
         {name: 'Item #3'},
         {name: 'Item #4'},
         {name: 'Item #5'}
-      ]
+      ],
+      activeItem: {name: 'Item #1'},
+      activeItemIndex: 0,
     }
   });
 
@@ -219,6 +225,33 @@ test('active item updates on keyUp or keyDown', async (t) => {
   const focusedElemBounding = container.querySelector('.listItem.active');
   t.equal(focusedElemBounding.innerHTML, `Item #2`);
   list.destroy();
+});
+
+test('on enter active item fires a itemSelected event', async (t) => {
+  const list = new List({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ]
+    }
+  });
+
+  let selectedItem = undefined;
+  list.on('itemSelected', event => {
+    selectedItem = event;
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 1st item
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 2nd item
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #2'}));
+  // list.destroy();
 });
 
 
