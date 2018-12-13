@@ -36,23 +36,42 @@
 
 <script>
   export default {
+    data() {
+      return {}
+    },
     onupdate({changed, current, previous}) {
       if (changed.items && current.items.length > 0 && this.refs.container) {
         this.scrollToActiveItem()
       }
     },
     methods: {
+      updateActiveItem(increment) {
+        const {items} = this.get();
+        const activeItemIndex = items.findIndex(item => item.active);
+        if (activeItemIndex === -1) return;
+        items[activeItemIndex].active = false;
+
+        if (increment > 0 && activeItemIndex === (items.length - 1)) {
+          items[0].active = true;
+        }
+        else if (increment < 0 && activeItemIndex === 0) {
+          items[items.length - 1].active = true;
+        }
+        else {
+          items[activeItemIndex + increment].active = true;
+        }
+
+        this.set({items})
+      },
       handleKeyDown(e) {
         switch (e.key) {
           case 'ArrowDown':
-            console.log('ArrowDown');
+            this.updateActiveItem(1);
             break;
           case 'ArrowUp':
-            console.log('ArrowUp');
+            this.updateActiveItem(-1);
             break;
-
         }
-
       },
       scrollToActiveItem() {
         const {container} = this.refs;

@@ -5,7 +5,7 @@ import SelectDefault from './Select/Select--default.html'
 import SelectFocus from './Select/Select--focus.html'
 import ListDefault from './List/List--default.html'
 import ListActiveItem from './List/List--activeItem.html'
-import { assert, test, done } from 'tape-modern';
+import {assert, test, done} from 'tape-modern';
 
 // setup
 const target = document.querySelector('main');
@@ -119,7 +119,7 @@ test('when isFocused changes to true input should focus', async (t) => {
   });
 
   const setFocus = () => {
-    select.set({ isFocused: true });
+    select.set({isFocused: true});
   };
 
   const hasFocused = await focus(select.refs.input, setFocus);
@@ -127,7 +127,7 @@ test('when isFocused changes to true input should focus', async (t) => {
   select.destroy();
 });
 
-test('default list with two items', async (t) => {
+test('default list with five items', async (t) => {
   const testTemplate = new ListDefault({
     target: testTarget
   });
@@ -214,8 +214,13 @@ test('active item updates on keyUp or keyDown', async (t) => {
     }
   });
 
-  // list.destroy();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  const {container} = list.refs;
+  const focusedElemBounding = container.querySelector('.listItem.active');
+  t.equal(focusedElemBounding.innerHTML, `Item #2`);
+  list.destroy();
 });
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
