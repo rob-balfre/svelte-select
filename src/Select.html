@@ -1,9 +1,54 @@
-<div class="container">
-    <input placeholder="Placeholder text">
+<div class="container {isFocused ? 'focused' : ''}">
+    <input ref:input placeholder="Placeholder text">
 </div>
 
 <style>
     .container {
-        background: red;
+        border: 1px solid #D8DBDF;
+        border-radius: 3px;
+        height: 44px;
+    }
+
+    .container input {
+        border: none;
+        color: #3F4F5F;
+        height: 44px;
+        line-height: 44px;
+        padding: 0 16px;
+        width: 100%;
+        background: transparent;
+        font-size: 14px;
+        letter-spacing: -0.08px;
+    }
+
+    .container input::placeholder {
+        color: #78848F;
+    }
+
+    .container input:focus {
+        outline: none;
+    }
+
+    .container:hover {
+        border-color: #b2b8bf;
+    }
+
+    .container.focused {
+        border-color: #006FE8;
     }
 </style>
+
+<script>
+  export default {
+    onstate({changed, current, previous}) {
+      if (!previous) return;
+
+      if (changed.isFocused) {
+        const {isFocused} = current;
+        if (isFocused) {
+          this.refs.input.focus();
+        }
+      }
+    }
+  }
+</script>

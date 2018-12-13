@@ -1,13 +1,14 @@
 import svelte from 'svelte';
-import Select from '../..';
+import Select from '../../src/Select.html';
+import List from '../../src/List.html';
 import SelectDefault from './Select/Select--default.html'
+import SelectFocus from './Select/Select--focus.html'
+import ListDefault from './List/List--default.html'
 import { assert, test, done } from 'tape-modern';
 
 // setup
 const target = document.querySelector('main');
 const testTarget = document.getElementById('testTemplate');
-
-console.log('testTarget: ', testTarget);
 
 function indent(node, spaces) {
   if (node.childNodes.length === 0) return;
@@ -51,6 +52,7 @@ function indent(node, spaces) {
 function normalize(html) {
   const div = document.createElement('div');
   div.innerHTML = html
+    .replace(/<link.+\/?>/g, '')
     .replace(/<!--.+?-->/g, '')
     .replace(/<object.+\/object>/g, '')
     .replace(/svelte-ref-\w+/g, '')
@@ -74,7 +76,7 @@ assert.htmlEqual = (a, b, msg) => {
 };
 
 // tests
-test('with no data, creates default elements', async (t) => {
+test('with no data creates default elements', async (t) => {
   const testTemplate = new SelectDefault({
     target: testTarget
   });
@@ -88,6 +90,76 @@ test('with no data, creates default elements', async (t) => {
   testTemplate.destroy();
   select.destroy();
 });
+
+test('when isFocused true container adds focused class', async (t) => {
+  const testTemplate = new SelectFocus({
+    target: testTarget
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      isFocused: true
+    }
+  });
+
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+
+  testTemplate.destroy();
+  select.destroy();
+});
+
+test('when isFocused changes to true input should focus', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isFocused: false
+    }
+  });
+
+  const setFocus = () => {
+    select.set({ isFocused: true });
+  };
+
+  const hasFocused = await focus(select.refs.input, setFocus);
+  t.ok(hasFocused);
+  select.destroy();
+});
+
+test('default list with two items', async (t) => {
+  const testTemplate = new ListDefault({
+    target: testTarget
+  });
+
+  const list = new List({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ]
+    }
+  });
+
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+
+  testTemplate.destroy();
+  list.destroy();
+});
+
+function focus(element, setFocus) {
+  return new Promise(fulfil => {
+    element.addEventListener('focus', function handler() {
+      element.removeEventListener('focus', handler);
+      fulfil(true);
+    });
+
+    setFocus();
+  });
+}
 
 // this allows us to close puppeteer once tests have completed
 window.done = done;

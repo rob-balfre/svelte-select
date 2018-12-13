@@ -1,12 +1,13 @@
 <!-- DEV ONLY IMPORTS -->
 <link rel="stylesheet" href="../reset.css" />
 
-<div class="container">
+<div class="container focused">
     <input placeholder="Placeholder text">
 </div>
 
 <style>
     .container {
+        width: 430px;
         border: 1px solid #D8DBDF;
         border-radius: 3px;
         height: 44px;
@@ -28,11 +29,11 @@
         color: #78848F;
     }
 
-    .container:hover {
-        border-color: #b2b8bf;
-    }
-
     .container input:focus {
         outline: none;
+    }
+
+    .container.focused {
+        border-color: #006FE8;
     }
 </style>
