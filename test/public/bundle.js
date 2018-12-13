@@ -24459,9 +24459,9 @@
 	  }
 	}
 	var methods = {
-
-	  handleClick(item) {
-
+	  handleClick(item, itemIndex) {
+	    this.set({activeItem: item, activeItemIndex: itemIndex});
+	    this.fire('itemSelected', item);
 	  },
 	  updateActiveItem(increment) {
 	    let {items, activeItemIndex, activeItem} = this.get();
@@ -24483,6 +24483,7 @@
 	    this.set({items, activeItem, activeItemIndex});
 	  },
 	  handleKeyDown(e) {
+	    const {activeItem} = this.get();
 	    switch (e.key) {
 	      case 'ArrowDown':
 	        e.preventDefault();
@@ -24494,8 +24495,10 @@
 	        break;
 	      case 'Enter':
 	        e.preventDefault();
-	        const {activeItem} = this.get();
-	        console.log('activeItem: ', activeItem);
+	        this.fire('itemSelected', activeItem);
+	        break;
+	      case 'Tab':
+	        e.preventDefault();
 	        this.fire('itemSelected', activeItem);
 	        break;
 	    }
@@ -24526,7 +24529,7 @@
 	function click_handler(event) {
 		const { component, ctx } = this._svelte;
 
-		component.handleClick(ctx.item);
+		component.handleClick(ctx.item, ctx.i);
 	}
 
 	function get_each_context(ctx, list, i) {
@@ -25455,6 +25458,58 @@
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
 	  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #2'}));
+	  list.destroy();
+	});
+
+	test('on tab active item fires a itemSelected event', async (t) => {
+	  const list = new List({
+	    target,
+	    data: {
+	      items: [
+	        {name: 'Item #1'},
+	        {name: 'Item #2'},
+	        {name: 'Item #3'},
+	        {name: 'Item #4'},
+	        {name: 'Item #5'}
+	      ]
+	    }
+	  });
+
+	  let selectedItem = undefined;
+	  list.on('itemSelected', event => {
+	    selectedItem = event;
+	  });
+
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 1st item
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 2nd item
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
+
+	  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #2'}));
+	  list.destroy();
+	});
+
+	test('clicking an item fires a itemSelected event', async (t) => {
+	  const list = new List({
+	    target,
+	    data: {
+	      items: [
+	        {name: 'Item #1'},
+	        {name: 'Item #2'},
+	        {name: 'Item #3'},
+	        {name: 'Item #4'},
+	        {name: 'Item #5'}
+	      ]
+	    }
+	  });
+
+	  let selectedItem = undefined;
+	  list.on('itemSelected', event => {
+	    selectedItem = event;
+	  });
+
+	  const {container} = list.refs;
+	  container.querySelector('.listItem').click();
+	  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #1'}));
 	  // list.destroy();
 	});
 

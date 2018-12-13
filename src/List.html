@@ -2,7 +2,7 @@
 
 <div class="container" ref:container>
     {#each items as item, i}
-    <div on:click="handleClick(item)" class="listItem {activeItemIndex === i ? 'active' : ''}">{item.name}</div>
+    <div on:click="handleClick(item, i)" class="listItem {activeItemIndex === i ? 'active' : ''}">{item.name}</div>
     {:else}
     <div class="empty">So</div>
     {/each}
@@ -49,9 +49,9 @@
       }
     },
     methods: {
-
-      handleClick(item) {
-
+      handleClick(item, itemIndex) {
+        this.set({activeItem: item, activeItemIndex: itemIndex});
+        this.fire('itemSelected', item);
       },
       updateActiveItem(increment) {
         let {items, activeItemIndex, activeItem} = this.get();
@@ -73,6 +73,7 @@
         this.set({items, activeItem, activeItemIndex})
       },
       handleKeyDown(e) {
+        const {activeItem} = this.get();
         switch (e.key) {
           case 'ArrowDown':
             e.preventDefault();
@@ -84,8 +85,10 @@
             break;
           case 'Enter':
             e.preventDefault();
-            const {activeItem} = this.get();
-            console.log('activeItem: ', activeItem);
+            this.fire('itemSelected', activeItem);
+            break;
+          case 'Tab':
+            e.preventDefault();
             this.fire('itemSelected', activeItem);
             break;
         }
