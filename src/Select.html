@@ -1,7 +1,9 @@
-<div class="selectContainer {isFocused ? 'focused' : ''}" on:click="handleClick()">
+<svelte:window on:click="handleWindowClick(event)"/>
+
+<div class="selectContainer {isFocused ? 'focused' : ''}" on:click="handleClick()" ref:container>
     {#if selectedItem}
     <div class="selectedItem">{selectedItem.name}</div>
-    <div class="clearSelectedItem" on:click="handleClear()">
+    <div class="clearSelectedItem" on:click="handleClear(event)">
         <svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
              role="presentation">
             <path fill="currentColor"
@@ -80,19 +82,35 @@
 
       if (changed.isFocused) {
         const {isFocused} = current;
-        if (isFocused) {
+        if (isFocused && this.refs.input) {
           this.refs.input.focus();
           this.loadList();
         }
       }
     },
     methods: {
+      removeList() {
+        if (!list) return;
+        list.destroy();
+        list = undefined;
+
+        if (!target) return;
+        target.remove();
+        target = undefined;
+      },
+      handleWindowClick(event) {
+        if (this.refs.container.contains(event.target)) return;
+        this.set({isFocused: false});
+        if (this.refs.input) this.refs.input.blur();
+        this.removeList();
+      },
       handleClick() {
         this.set({isFocused: true});
       },
-      handleClear() {
+      handleClear(e) {
+        e.stopPropagation();
         this.set({selectedItem: undefined});
-        this.refs.input.focus();
+        if (this.refs.input) this.refs.input.focus();
       },
       loadList() {
         if (target && list) return;
@@ -120,17 +138,12 @@
           this.set({
             selectedItem
           });
+          this.removeList();
         })
       }
     },
     ondestroy() {
-      if (!list) return;
-      list.destroy();
-      list = undefined;
-
-      if (!target) return;
-      target.remove();
-      target = undefined;
+      this.removeList()
     }
   }
 </script>

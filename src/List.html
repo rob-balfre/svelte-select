@@ -2,7 +2,7 @@
 
 <div class="listContainer" ref:container>
     {#each items as item, i}
-    <div on:click="handleClick(item, i)" class="listItem {itemClasses(activeItemIndex, hoverItemIndex, i)}">{item.name}</div>
+    <div on:click="handleClick(item, i, event)" class="listItem {itemClasses(activeItemIndex, hoverItemIndex, i)}">{item.name}</div>
     {:else}
     <div class="empty">No options</div>
     {/each}
@@ -52,7 +52,7 @@
       }
     },
     onupdate({changed, current, previous}) {
-      if (changed.items && current.items.length > 0 && this.refs.container) {
+      if (changed.items && current.items.length > 0) {
         this.scrollToActiveItem('hover');
       }
       if (changed.activeItemIndex && current.activeItemIndex > -1) {
@@ -70,11 +70,12 @@
       }
     },
     methods: {
-      handleClick(item, itemIndex) {
+      handleClick(item, itemIndex, event) {
+        event.stopPropagation();
         this.set({activeItem: item, activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
         this.fire('itemSelected', item);
       },
-      updateActiveItem(increment) {
+      updateHoverItem(increment) {
         let {items, hoverItemIndex, activeItem} = this.get();
 
         if (increment > 0 && hoverItemIndex === (items.length - 1)) {
@@ -95,11 +96,11 @@
         switch (e.key) {
           case 'ArrowDown':
             e.preventDefault();
-            this.updateActiveItem(1);
+            this.updateHoverItem(1);
             break;
           case 'ArrowUp':
             e.preventDefault();
-            this.updateActiveItem(-1);
+            this.updateHoverItem(-1);
             break;
           case 'Enter':
             e.preventDefault();

@@ -24382,11 +24382,12 @@
 	  return `${activeItemIndex === i ? 'active ' : ''}${hoverItemIndex === i ? 'hover' : ''}`;
 	}
 	var methods = {
-	  handleClick(item, itemIndex) {
+	  handleClick(item, itemIndex, event) {
+	    event.stopPropagation();
 	    this.set({activeItem: item, activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
 	    this.fire('itemSelected', item);
 	  },
-	  updateActiveItem(increment) {
+	  updateHoverItem(increment) {
 	    let {items, hoverItemIndex, activeItem} = this.get();
 
 	    if (increment > 0 && hoverItemIndex === (items.length - 1)) {
@@ -24407,11 +24408,11 @@
 	    switch (e.key) {
 	      case 'ArrowDown':
 	        e.preventDefault();
-	        this.updateActiveItem(1);
+	        this.updateHoverItem(1);
 	        break;
 	      case 'ArrowUp':
 	        e.preventDefault();
-	        this.updateActiveItem(-1);
+	        this.updateHoverItem(-1);
 	        break;
 	      case 'Enter':
 	        e.preventDefault();
@@ -24437,7 +24438,7 @@
 	};
 
 	function onupdate({changed, current, previous}) {
-	  if (changed.items && current.items.length > 0 && this.refs.container) {
+	  if (changed.items && current.items.length > 0) {
 	    this.scrollToActiveItem('hover');
 	  }
 	  if (changed.activeItemIndex && current.activeItemIndex > -1) {
@@ -24459,7 +24460,7 @@
 	function click_handler(event) {
 		const { component, ctx } = this._svelte;
 
-		component.handleClick(ctx.item, ctx.i);
+		component.handleClick(ctx.item, ctx.i, event);
 	}
 
 	function get_each_context(ctx, list, i) {
@@ -24661,12 +24662,28 @@
 	let target;
 
 	var methods$1 = {
+	  removeList() {
+	    if (!list) return;
+	    list.destroy();
+	    list = undefined;
+
+	    if (!target) return;
+	    target.remove();
+	    target = undefined;
+	  },
+	  handleWindowClick(event) {
+	    if (this.refs.container.contains(event.target)) return;
+	    this.set({isFocused: false});
+	    if (this.refs.input) this.refs.input.blur();
+	    this.removeList();
+	  },
 	  handleClick() {
 	    this.set({isFocused: true});
 	  },
-	  handleClear() {
+	  handleClear(e) {
+	    e.stopPropagation();
 	    this.set({selectedItem: undefined});
-	    this.refs.input.focus();
+	    if (this.refs.input) this.refs.input.focus();
 	  },
 	  loadList() {
 	    if (target && list) return;
@@ -24694,25 +24711,20 @@
 	      this.set({
 	        selectedItem
 	      });
+	      this.removeList();
 	    });
 	  }
 	};
 
 	function ondestroy() {
-	  if (!list) return;
-	  list.destroy();
-	  list = undefined;
-
-	  if (!target) return;
-	  target.remove();
-	  target = undefined;
+	  this.removeList();
 	}
 	function onstate({changed, current, previous}) {
 	  if (!previous) return;
 
 	  if (changed.isFocused) {
 	    const {isFocused} = current;
-	    if (isFocused) {
+	    if (isFocused && this.refs.input) {
 	      this.refs.input.focus();
 	      this.loadList();
 	    }
@@ -24727,6 +24739,10 @@
 
 	function create_main_fragment$1(component, ctx) {
 		var div, div_class_value;
+
+		function onwindowclick(event) {
+			component.handleWindowClick(event);	}
+		window.addEventListener("click", onwindowclick);
 
 		function select_block_type(ctx) {
 			if (ctx.selectedItem) return create_if_block;
@@ -24751,6 +24767,7 @@
 			m(target_1, anchor) {
 				insert(target_1, div, anchor);
 				if_block.m(div, null);
+				component.refs.container = div;
 			},
 
 			p(changed, ctx) {
@@ -24769,17 +24786,20 @@
 			},
 
 			d(detach) {
+				window.removeEventListener("click", onwindowclick);
+
 				if (detach) {
 					detachNode(div);
 				}
 
 				if_block.d();
 				removeListener(div, "click", click_handler);
+				if (component.refs.container === div) component.refs.container = null;
 			}
 		};
 	}
 
-	// (11:4) {:else}
+	// (13:4) {:else}
 	function create_else_block$1(component, ctx) {
 		var input;
 
@@ -24807,12 +24827,12 @@
 		};
 	}
 
-	// (2:4) {#if selectedItem}
+	// (4:4) {#if selectedItem}
 	function create_if_block(component, ctx) {
 		var div0, text0_value = ctx.selectedItem.name, text0, text1, div1;
 
 		function click_handler(event) {
-			component.handleClear();
+			component.handleClear(event);
 		}
 
 		return {
@@ -25960,6 +25980,53 @@
 	  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({name: 'Item #3'}));
 
 	  testTemplate.destroy();
+	  select.destroy();
+	});
+
+	test('blur should close list and remove focus from select', async (t) => {
+	  const div = document.createElement('div');
+	  document.body.appendChild(div);
+
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items: [
+	        {name: 'Item #1'},
+	        {name: 'Item #2'},
+	        {name: 'Item #3'},
+	        {name: 'Item #4'},
+	        {name: 'Item #5'}
+	      ],
+	    }
+	  });
+
+	  select.set({isFocused: true});
+	  div.click();
+	  div.remove();
+	  t.ok(!document.querySelector('.listContainer'));
+	  t.ok(document.querySelector('.selectContainer input') !== document.activeElement);
+	  select.destroy();
+	});
+
+	test.only('selecting item should close list but keep focus on select', async (t) => {
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items: [
+	        {name: 'Item #1'},
+	        {name: 'Item #2'},
+	        {name: 'Item #3'},
+	        {name: 'Item #4'},
+	        {name: 'Item #5'}
+	      ],
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+	  t.ok(!document.querySelector('.listContainer'));
+	  t.ok(select.get().isFocused);
+	  t.ok(document.querySelector('.selectContainer.focused'));
 	  select.destroy();
 	});
 

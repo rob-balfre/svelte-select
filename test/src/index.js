@@ -483,6 +483,53 @@ test('select item from list', async (t) => {
   select.destroy();
 });
 
+test('blur should close list and remove focus from select', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ],
+    }
+  });
+
+  select.set({isFocused: true});
+  div.click();
+  div.remove();
+  t.ok(!document.querySelector('.listContainer'));
+  t.ok(document.querySelector('.selectContainer input') !== document.activeElement);
+  select.destroy();
+});
+
+test.only('selecting item should close list but keep focus on select', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ],
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(!document.querySelector('.listContainer'));
+  t.ok(select.get().isFocused);
+  t.ok(document.querySelector('.selectContainer.focused'));
+  select.destroy();
+});
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
