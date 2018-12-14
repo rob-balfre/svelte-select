@@ -95,6 +95,8 @@
         this.refs.input.focus();
       },
       loadList() {
+        if (target && list) return;
+
         target = document.createElement('div');
 
         Object.assign(target.style, {
@@ -102,7 +104,6 @@
           width: '400px'
         });
 
-        if (list) return;
 
         document.body.appendChild(target);
         list = new List({
@@ -114,6 +115,12 @@
         if (items) {
           list.set({items});
         }
+        
+        list.on('itemSelected', (selectedItem) => {
+          this.set({
+            selectedItem
+          });
+        })
       }
     },
     ondestroy() {

@@ -196,7 +196,7 @@ function itemClasses(activeItemIndex, hoverItemIndex, i) {
 }
 var methods = {
   handleClick(item, itemIndex) {
-    this.set({activeItem: item, hoverItemIndex: itemIndex});
+    this.set({activeItem: item, activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
     this.fire('itemSelected', item);
   },
   updateActiveItem(increment) {
@@ -482,6 +482,8 @@ var methods$1 = {
     this.refs.input.focus();
   },
   loadList() {
+    if (target && list) return;
+
     target = document.createElement('div');
 
     Object.assign(target.style, {
@@ -489,7 +491,6 @@ var methods$1 = {
       width: '400px'
     });
 
-    if (list) return;
 
     document.body.appendChild(target);
     list = new List({
@@ -501,6 +502,12 @@ var methods$1 = {
     if (items) {
       list.set({items});
     }
+    
+    list.on('itemSelected', (selectedItem) => {
+      this.set({
+        selectedItem
+      });
+    });
   }
 };
 

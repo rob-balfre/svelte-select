@@ -451,10 +451,37 @@ test('List starts with first item in hover state', async (t) => {
   document.querySelector('.selectContainer').click();
 
   testTemplate.destroy();
-  // select.destroy();
+  select.destroy();
 });
 
+test('select item from list', async (t) => {
+  const testTemplate = new ListDefault({
+    target: testTarget
+  });
 
+  const select = new Select({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ],
+      activeItemIndex: 1,
+    }
+  });
+
+  select.set({isFocused: true});
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({name: 'Item #3'}));
+
+  testTemplate.destroy();
+  select.destroy();
+});
 
 
 function focus(element, setFocus) {

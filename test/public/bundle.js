@@ -24383,7 +24383,7 @@
 	}
 	var methods = {
 	  handleClick(item, itemIndex) {
-	    this.set({activeItem: item, hoverItemIndex: itemIndex});
+	    this.set({activeItem: item, activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
 	    this.fire('itemSelected', item);
 	  },
 	  updateActiveItem(increment) {
@@ -24669,6 +24669,8 @@
 	    this.refs.input.focus();
 	  },
 	  loadList() {
+	    if (target && list) return;
+
 	    target = document.createElement('div');
 
 	    Object.assign(target.style, {
@@ -24676,7 +24678,6 @@
 	      width: '400px'
 	    });
 
-	    if (list) return;
 
 	    document.body.appendChild(target);
 	    list = new List({
@@ -24688,6 +24689,12 @@
 	    if (items) {
 	      list.set({items});
 	    }
+	    
+	    list.on('itemSelected', (selectedItem) => {
+	      this.set({
+	        selectedItem
+	      });
+	    });
 	  }
 	};
 
@@ -25924,10 +25931,37 @@
 	  document.querySelector('.selectContainer').click();
 
 	  testTemplate.destroy();
-	  // select.destroy();
+	  select.destroy();
 	});
 
+	test('select item from list', async (t) => {
+	  const testTemplate = new List_default({
+	    target: testTarget
+	  });
 
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items: [
+	        {name: 'Item #1'},
+	        {name: 'Item #2'},
+	        {name: 'Item #3'},
+	        {name: 'Item #4'},
+	        {name: 'Item #5'}
+	      ],
+	      activeItemIndex: 1,
+	    }
+	  });
+
+	  select.set({isFocused: true});
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+	  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({name: 'Item #3'}));
+
+	  testTemplate.destroy();
+	  select.destroy();
+	});
 
 
 	function focus(element, setFocus) {

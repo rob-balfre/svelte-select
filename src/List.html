@@ -71,7 +71,7 @@
     },
     methods: {
       handleClick(item, itemIndex) {
-        this.set({activeItem: item, hoverItemIndex: itemIndex});
+        this.set({activeItem: item, activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
         this.fire('itemSelected', item);
       },
       updateActiveItem(increment) {
