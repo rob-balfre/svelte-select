@@ -1,9 +1,11 @@
-<div class="container {isFocused ? 'focused' : ''}">
+<div class="selectContainer {isFocused ? 'focused' : ''}" on:click="handleClick()">
     {#if selectedItem}
     <div class="selectedItem">{selectedItem.name}</div>
-    <div class="clearSelectedItem">
-        <svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation">
-            <path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path>
+    <div class="clearSelectedItem" on:click="handleClear()">
+        <svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
+             role="presentation">
+            <path fill="currentColor"
+                  d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path>
         </svg>
     </div>
     {:else}
@@ -12,14 +14,14 @@
 </div>
 
 <style>
-    .container {
+    .selectContainer {
         border: 1px solid #D8DBDF;
         border-radius: 3px;
         height: 44px;
         position: relative;
     }
 
-    .container input {
+    .selectContainer input {
         border: none;
         color: #3F4F5F;
         height: 44px;
@@ -31,19 +33,19 @@
         letter-spacing: -0.08px;
     }
 
-    .container input::placeholder {
+    .selectContainer input::placeholder {
         color: #78848F;
     }
 
-    .container input:focus {
+    .selectContainer input:focus {
         outline: none;
     }
 
-    .container:hover {
+    .selectContainer:hover {
         border-color: #b2b8bf;
     }
 
-    .container.focused {
+    .selectContainer.focused {
         border-color: #006FE8;
     }
 
@@ -63,11 +65,15 @@
 
     .clearSelectedItem:hover {
         color: #2c3e50;
-
     }
 </style>
 
 <script>
+  import List from './List.html';
+
+  let list;
+  let target;
+
   export default {
     onstate({changed, current, previous}) {
       if (!previous) return;
@@ -76,8 +82,48 @@
         const {isFocused} = current;
         if (isFocused) {
           this.refs.input.focus();
+          this.loadList();
         }
       }
+    },
+    methods: {
+      handleClick() {
+        this.set({isFocused: true});
+      },
+      handleClear() {
+        this.set({selectedItem: undefined});
+        this.refs.input.focus();
+      },
+      loadList() {
+        target = document.createElement('div');
+
+        Object.assign(target.style, {
+          position: 'absolute',
+          width: '400px'
+        });
+
+        if (list) return;
+
+        document.body.appendChild(target);
+        list = new List({
+          target
+        });
+
+        const {items} = this.get();
+
+        if (items) {
+          list.set({items});
+        }
+      }
+    },
+    ondestroy() {
+      if (!list) return;
+      list.destroy();
+      list = undefined;
+
+      if (!target) return;
+      target.remove();
+      target = undefined;
     }
   }
 </script>

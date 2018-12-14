@@ -5,6 +5,7 @@ import SelectDefault from './Select/Select--default.html'
 import SelectFocus from './Select/Select--focus.html'
 import SelectItemSelected from './Select/Select--itemSelected.html'
 import ListDefault from './List/List--default.html'
+import ListEmpty from './List/List--empty.html'
 import ListActiveItem from './List/List--activeItem.html'
 import {assert, test, done} from 'tape-modern';
 
@@ -126,6 +127,21 @@ test('when isFocused changes to true input should focus', async (t) => {
   const hasFocused = await focus(select.refs.input, setFocus);
   t.ok(hasFocused);
   select.destroy();
+});
+
+test('default empty list', async (t) => {
+  const testTemplate = new ListEmpty({
+    target: testTarget
+  });
+
+  const list = new List({
+    target,
+  });
+
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+
+  testTemplate.destroy();
+  list.destroy();
 });
 
 test('default list with five items', async (t) => {
@@ -323,6 +339,77 @@ test('select view updates with selectedItem updates', async (t) => {
   testTemplate.destroy();
   select.destroy();
 });
+
+test('clear wipes selectedItem and updates view', async (t) => {
+  let testTemplate = new SelectItemSelected({
+    target: testTarget
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      selectedItem: {name: 'Item #4'}
+    }
+  });
+
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+  testTemplate.destroy();
+
+  testTemplate = new SelectDefault({
+    target: testTarget
+  });
+
+  select.set({selectedItem: undefined});
+
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+
+  testTemplate.destroy();
+  select.destroy();
+});
+
+test('clicking on Select opens List', async (t) => {
+  const select = new Select({
+    target,
+  });
+
+  document.querySelector('.selectContainer').click();
+  const listContainer = document.querySelector('.listContainer');
+  t.ok(listContainer);
+
+  select.destroy();
+});
+
+test('Select opens List populated with items', async (t) => {
+  const testTemplate = new ListDefault({
+    target: testTarget
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ]
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  const listContainer = document.querySelector('.listContainer');
+
+
+  t.htmlEqual(listContainer.outerHTML, testTarget.innerHTML);
+
+  testTemplate.destroy();
+  // select.destroy();
+
+  // select.destroy();
+});
+
+
 
 
 function focus(element, setFocus) {
