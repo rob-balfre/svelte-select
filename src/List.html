@@ -2,7 +2,7 @@
 
 <div class="listContainer" ref:container>
     {#each items as item, i}
-    <div on:click="handleClick(item, i)" class="listItem {activeItemIndex === i ? 'active' : ''}">{item.name}</div>
+    <div on:click="handleClick(item, i)" class="listItem {itemClasses(activeItemIndex, hoverItemIndex, i)}">{item.name}</div>
     {:else}
     <div class="empty">No options</div>
     {/each}
@@ -20,7 +20,8 @@
         padding: 20px;
     }
 
-    .listItem:hover {
+    .listItem:hover,
+    .listItem.hover {
         background: #e7f2ff;
     }
 
@@ -44,6 +45,7 @@
   export default {
     data() {
       return {
+        hoverItemIndex: 0,
         activeItem: undefined,
         activeItemIndex: undefined,
         items: []
@@ -51,35 +53,45 @@
     },
     onupdate({changed, current, previous}) {
       if (changed.items && current.items.length > 0 && this.refs.container) {
-        this.scrollToActiveItem()
+        this.scrollToActiveItem('hover');
+      }
+      if (changed.activeItemIndex && current.activeItemIndex > -1) {
+        this.scrollToActiveItem('active');
+        this.set({
+          hoverItemIndex: current.activeItemIndex,
+          activeItem: current.items[current.activeItemIndex]
+        })
+      }
+
+    },
+    helpers: {
+      itemClasses(activeItemIndex, hoverItemIndex, i) {
+        return `${activeItemIndex === i ? 'active ' : ''}${hoverItemIndex === i ? 'hover' : ''}`;
       }
     },
     methods: {
       handleClick(item, itemIndex) {
-        this.set({activeItem: item, activeItemIndex: itemIndex});
+        this.set({activeItem: item, hoverItemIndex: itemIndex});
         this.fire('itemSelected', item);
       },
       updateActiveItem(increment) {
-        let {items, activeItemIndex, activeItem} = this.get();
+        let {items, hoverItemIndex, activeItem} = this.get();
 
-        if (activeItemIndex === undefined) {
-          activeItemIndex = 0;
+        if (increment > 0 && hoverItemIndex === (items.length - 1)) {
+          hoverItemIndex = 0;
         }
-        else if (increment > 0 && activeItemIndex === (items.length - 1)) {
-          activeItemIndex = 0;
-        }
-        else if (increment < 0 && activeItemIndex === 0) {
-          activeItemIndex = items.length - 1;
+        else if (increment < 0 && hoverItemIndex === 0) {
+          hoverItemIndex = items.length - 1;
         }
         else {
-          activeItemIndex = activeItemIndex + increment;
+          hoverItemIndex = hoverItemIndex + increment;
         }
 
-        activeItem = items[activeItemIndex];
-        this.set({items, activeItem, activeItemIndex})
+        activeItem = items[hoverItemIndex];
+        this.set({items, activeItem, hoverItemIndex})
       },
       handleKeyDown(e) {
-        const {activeItem} = this.get();
+        const {items, hoverItemIndex} = this.get();
         switch (e.key) {
           case 'ArrowDown':
             e.preventDefault();
@@ -91,18 +103,20 @@
             break;
           case 'Enter':
             e.preventDefault();
-            this.fire('itemSelected', activeItem);
+            this.set({activeItemIndex: hoverItemIndex});
+            this.fire('itemSelected', items[hoverItemIndex]);
             break;
           case 'Tab':
             e.preventDefault();
-            this.fire('itemSelected', activeItem);
+            this.set({activeItemIndex: hoverItemIndex});
+            this.fire('itemSelected', items[hoverItemIndex]);
             break;
         }
       },
-      scrollToActiveItem() {
+      scrollToActiveItem(className) {
         const {container} = this.refs;
         let offsetBounding;
-        const focusedElemBounding = container.querySelector('.listItem.active');
+        const focusedElemBounding = container.querySelector(`.listItem.${className}`);
         if (focusedElemBounding) {
           offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
         }

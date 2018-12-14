@@ -178,7 +178,7 @@ test('should highlight active list item', async (t) => {
     data: {
       items: [
         {name: 'Item #1'},
-        {name: 'Item #2', active: true},
+        {name: 'Item #2'},
         {name: 'Item #3'},
         {name: 'Item #4'},
         {name: 'Item #5'}
@@ -221,7 +221,7 @@ test('list scrolls to active item', async (t) => {
   list.destroy();
 });
 
-test('active item updates on keyUp or keyDown', async (t) => {
+test('hover item updates on keyUp or keyDown', async (t) => {
   const list = new List({
     target,
     data: {
@@ -239,7 +239,7 @@ test('active item updates on keyUp or keyDown', async (t) => {
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   const {container} = list.refs;
-  const focusedElemBounding = container.querySelector('.listItem.active');
+  const focusedElemBounding = container.querySelector('.listItem.hover');
   t.equal(focusedElemBounding.innerHTML, `Item #2`);
   list.destroy();
 });
@@ -263,11 +263,11 @@ test('on enter active item fires a itemSelected event', async (t) => {
     selectedItem = event;
   });
 
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 1st item
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 2nd item
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #2'}));
+  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #3'}));
   list.destroy();
 });
 
@@ -290,11 +290,11 @@ test('on tab active item fires a itemSelected event', async (t) => {
     selectedItem = event;
   });
 
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 1st item
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 2nd item
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
 
-  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #2'}));
+  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #3'}));
   list.destroy();
 });
 
@@ -399,13 +399,58 @@ test('Select opens List populated with items', async (t) => {
 
   document.querySelector('.selectContainer').click();
   const listContainer = document.querySelector('.listContainer');
-
-
   t.htmlEqual(listContainer.outerHTML, testTarget.innerHTML);
 
   testTemplate.destroy();
-  // select.destroy();
+  select.destroy();
+});
 
+test('List starts with first item in hover state', async (t) => {
+  const testTemplate = new ListDefault({
+    target: testTarget
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ]
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+
+  testTemplate.destroy();
+  select.destroy();
+});
+
+test('List starts with first item in hover state', async (t) => {
+  const testTemplate = new ListDefault({
+    target: testTarget
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ],
+      activeItemIndex: 1,
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+
+  testTemplate.destroy();
   // select.destroy();
 });
 

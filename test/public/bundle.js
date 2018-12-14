@@ -24372,37 +24372,38 @@
 
 	function data() {
 	  return {
+	    hoverItemIndex: 0,
 	    activeItem: undefined,
 	    activeItemIndex: undefined,
 	    items: []
 	  }
 	}
+	function itemClasses(activeItemIndex, hoverItemIndex, i) {
+	  return `${activeItemIndex === i ? 'active ' : ''}${hoverItemIndex === i ? 'hover' : ''}`;
+	}
 	var methods = {
 	  handleClick(item, itemIndex) {
-	    this.set({activeItem: item, activeItemIndex: itemIndex});
+	    this.set({activeItem: item, hoverItemIndex: itemIndex});
 	    this.fire('itemSelected', item);
 	  },
 	  updateActiveItem(increment) {
-	    let {items, activeItemIndex, activeItem} = this.get();
+	    let {items, hoverItemIndex, activeItem} = this.get();
 
-	    if (activeItemIndex === undefined) {
-	      activeItemIndex = 0;
+	    if (increment > 0 && hoverItemIndex === (items.length - 1)) {
+	      hoverItemIndex = 0;
 	    }
-	    else if (increment > 0 && activeItemIndex === (items.length - 1)) {
-	      activeItemIndex = 0;
-	    }
-	    else if (increment < 0 && activeItemIndex === 0) {
-	      activeItemIndex = items.length - 1;
+	    else if (increment < 0 && hoverItemIndex === 0) {
+	      hoverItemIndex = items.length - 1;
 	    }
 	    else {
-	      activeItemIndex = activeItemIndex + increment;
+	      hoverItemIndex = hoverItemIndex + increment;
 	    }
 
-	    activeItem = items[activeItemIndex];
-	    this.set({items, activeItem, activeItemIndex});
+	    activeItem = items[hoverItemIndex];
+	    this.set({items, activeItem, hoverItemIndex});
 	  },
 	  handleKeyDown(e) {
-	    const {activeItem} = this.get();
+	    const {items, hoverItemIndex} = this.get();
 	    switch (e.key) {
 	      case 'ArrowDown':
 	        e.preventDefault();
@@ -24414,18 +24415,20 @@
 	        break;
 	      case 'Enter':
 	        e.preventDefault();
-	        this.fire('itemSelected', activeItem);
+	        this.set({activeItemIndex: hoverItemIndex});
+	        this.fire('itemSelected', items[hoverItemIndex]);
 	        break;
 	      case 'Tab':
 	        e.preventDefault();
-	        this.fire('itemSelected', activeItem);
+	        this.set({activeItemIndex: hoverItemIndex});
+	        this.fire('itemSelected', items[hoverItemIndex]);
 	        break;
 	    }
 	  },
-	  scrollToActiveItem() {
+	  scrollToActiveItem(className) {
 	    const {container} = this.refs;
 	    let offsetBounding;
-	    const focusedElemBounding = container.querySelector('.listItem.active');
+	    const focusedElemBounding = container.querySelector(`.listItem.${className}`);
 	    if (focusedElemBounding) {
 	      offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
 	    }
@@ -24435,13 +24438,21 @@
 
 	function onupdate({changed, current, previous}) {
 	  if (changed.items && current.items.length > 0 && this.refs.container) {
-	    this.scrollToActiveItem();
+	    this.scrollToActiveItem('hover');
 	  }
+	  if (changed.activeItemIndex && current.activeItemIndex > -1) {
+	    this.scrollToActiveItem('active');
+	    this.set({
+	      hoverItemIndex: current.activeItemIndex,
+	      activeItem: current.items[current.activeItemIndex]
+	    });
+	  }
+
 	}
 	function add_css() {
 		var style = createElement("style");
-		style.id = 'svelte-1tc1xui-style';
-		style.textContent = ".listContainer.svelte-1tc1xui{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.listItem.svelte-1tc1xui{padding:20px}.listItem.svelte-1tc1xui:hover{background:#e7f2ff}.listItem.svelte-1tc1xui:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1tc1xui{background:#007aff;color:#fff}.empty.svelte-1tc1xui{text-align:center;padding:20px 0;color:#78848F}";
+		style.id = 'svelte-svknmn-style';
+		style.textContent = ".listContainer.svelte-svknmn{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.listItem.svelte-svknmn{padding:20px}.listItem.svelte-svknmn:hover,.listItem.hover.svelte-svknmn{background:#e7f2ff}.listItem.svelte-svknmn:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-svknmn{background:#007aff;color:#fff}.empty.svelte-svknmn{text-align:center;padding:20px 0;color:#78848F}";
 		append(document.head, style);
 	}
 
@@ -24487,7 +24498,7 @@
 				for (var i = 0; i < each_blocks.length; i += 1) {
 					each_blocks[i].c();
 				}
-				div.className = "listContainer svelte-1tc1xui";
+				div.className = "listContainer svelte-svknmn";
 			},
 
 			m(target, anchor) {
@@ -24505,7 +24516,7 @@
 			},
 
 			p(changed, ctx) {
-				if (changed.activeItemIndex || changed.items) {
+				if (changed.activeItemIndex || changed.hoverItemIndex || changed.items) {
 					each_value = ctx.items;
 
 					for (var i = 0; i < each_value.length; i += 1) {
@@ -24562,7 +24573,7 @@
 			c() {
 				div = createElement("div");
 				div.textContent = "No options";
-				div.className = "empty svelte-1tc1xui";
+				div.className = "empty svelte-svknmn";
 			},
 
 			m(target, anchor) {
@@ -24588,7 +24599,7 @@
 				div._svelte = { component, ctx };
 
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + (ctx.activeItemIndex === ctx.i ? 'active' : '') + " svelte-1tc1xui";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-svknmn";
 			},
 
 			m(target, anchor) {
@@ -24603,7 +24614,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.activeItemIndex) && div_class_value !== (div_class_value = "listItem " + (ctx.activeItemIndex === ctx.i ? 'active' : '') + " svelte-1tc1xui")) {
+				if ((changed.activeItemIndex || changed.hoverItemIndex) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-svknmn")) {
 					div.className = div_class_value;
 				}
 			},
@@ -24625,7 +24636,7 @@
 		this._intro = true;
 		this._handlers.update = [onupdate];
 
-		if (!document.getElementById("svelte-1tc1xui-style")) add_css();
+		if (!document.getElementById("svelte-svknmn-style")) add_css();
 
 		this._fragment = create_main_fragment(this, this._state);
 
@@ -25044,8 +25055,8 @@
 
 	function add_css$5() {
 		var style = createElement("style");
-		style.id = 'svelte-10zvfy7-style';
-		style.textContent = ".listContainer.svelte-10zvfy7{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listItem.svelte-10zvfy7{padding:20px}.listItem.svelte-10zvfy7:hover{background:#e7f2ff}.listItem.svelte-10zvfy7:first-child{border-radius:4px 4px 0 0}";
+		style.id = 'svelte-ufeflu-style';
+		style.textContent = ".listContainer.svelte-ufeflu{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listItem.svelte-ufeflu{padding:20px}.listItem.svelte-ufeflu:hover,.listItem.hover.svelte-ufeflu{background:#e7f2ff}.listItem.svelte-ufeflu:first-child{border-radius:4px 4px 0 0}";
 		append(document.head, style);
 	}
 
@@ -25057,14 +25068,14 @@
 				link = createElement("link");
 				text = createText("\n\n");
 				div_5 = createElement("div");
-				div_5.innerHTML = `<div class="listItem svelte-10zvfy7">Item #1</div>
-			    <div class="listItem svelte-10zvfy7">Item #2</div>
-			    <div class="listItem svelte-10zvfy7">Item #3</div>
-			    <div class="listItem svelte-10zvfy7">Item #4</div>
-			    <div class="listItem svelte-10zvfy7">Item #5</div>`;
+				div_5.innerHTML = `<div class="listItem hover svelte-ufeflu">Item #1</div>
+			    <div class="listItem svelte-ufeflu">Item #2</div>
+			    <div class="listItem svelte-ufeflu">Item #3</div>
+			    <div class="listItem svelte-ufeflu">Item #4</div>
+			    <div class="listItem svelte-ufeflu">Item #5</div>`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div_5.className = "listContainer svelte-10zvfy7";
+				div_5.className = "listContainer svelte-ufeflu";
 			},
 
 			m(target, anchor) {
@@ -25090,7 +25101,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-10zvfy7-style")) add_css$5();
+		if (!document.getElementById("svelte-ufeflu-style")) add_css$5();
 
 		this._fragment = create_main_fragment$5(this, this._state);
 
@@ -25178,7 +25189,7 @@
 				text = createText("\n\n");
 				div_5 = createElement("div");
 				div_5.innerHTML = `<div class="listItem svelte-1sky8p1">Item #1</div>
-			    <div class="listItem active svelte-1sky8p1">Item #2</div>
+			    <div class="listItem active hover svelte-1sky8p1">Item #2</div>
 			    <div class="listItem svelte-1sky8p1">Item #3</div>
 			    <div class="listItem svelte-1sky8p1">Item #4</div>
 			    <div class="listItem svelte-1sky8p1">Item #5</div>`;
@@ -25640,7 +25651,7 @@
 	    data: {
 	      items: [
 	        {name: 'Item #1'},
-	        {name: 'Item #2', active: true},
+	        {name: 'Item #2'},
 	        {name: 'Item #3'},
 	        {name: 'Item #4'},
 	        {name: 'Item #5'}
@@ -25683,7 +25694,7 @@
 	  list.destroy();
 	});
 
-	test('active item updates on keyUp or keyDown', async (t) => {
+	test('hover item updates on keyUp or keyDown', async (t) => {
 	  const list = new List({
 	    target: target$1,
 	    data: {
@@ -25701,7 +25712,7 @@
 
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  const {container} = list.refs;
-	  const focusedElemBounding = container.querySelector('.listItem.active');
+	  const focusedElemBounding = container.querySelector('.listItem.hover');
 	  t.equal(focusedElemBounding.innerHTML, `Item #2`);
 	  list.destroy();
 	});
@@ -25725,11 +25736,11 @@
 	    selectedItem = event;
 	  });
 
-	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 1st item
-	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 2nd item
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-	  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #2'}));
+	  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #3'}));
 	  list.destroy();
 	});
 
@@ -25752,11 +25763,11 @@
 	    selectedItem = event;
 	  });
 
-	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 1st item
-	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'})); // 2nd item
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
 
-	  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #2'}));
+	  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #3'}));
 	  list.destroy();
 	});
 
@@ -25861,13 +25872,58 @@
 
 	  document.querySelector('.selectContainer').click();
 	  const listContainer = document.querySelector('.listContainer');
-
-
 	  t.htmlEqual(listContainer.outerHTML, testTarget.innerHTML);
 
 	  testTemplate.destroy();
-	  // select.destroy();
+	  select.destroy();
+	});
 
+	test('List starts with first item in hover state', async (t) => {
+	  const testTemplate = new List_default({
+	    target: testTarget
+	  });
+
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items: [
+	        {name: 'Item #1'},
+	        {name: 'Item #2'},
+	        {name: 'Item #3'},
+	        {name: 'Item #4'},
+	        {name: 'Item #5'}
+	      ]
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+
+	  testTemplate.destroy();
+	  select.destroy();
+	});
+
+	test('List starts with first item in hover state', async (t) => {
+	  const testTemplate = new List_default({
+	    target: testTarget
+	  });
+
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items: [
+	        {name: 'Item #1'},
+	        {name: 'Item #2'},
+	        {name: 'Item #3'},
+	        {name: 'Item #4'},
+	        {name: 'Item #5'}
+	      ],
+	      activeItemIndex: 1,
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+
+	  testTemplate.destroy();
 	  // select.destroy();
 	});
 

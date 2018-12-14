@@ -185,37 +185,38 @@ var proto = {
 
 function data() {
   return {
+    hoverItemIndex: 0,
     activeItem: undefined,
     activeItemIndex: undefined,
     items: []
   }
 }
+function itemClasses(activeItemIndex, hoverItemIndex, i) {
+  return `${activeItemIndex === i ? 'active ' : ''}${hoverItemIndex === i ? 'hover' : ''}`;
+}
 var methods = {
   handleClick(item, itemIndex) {
-    this.set({activeItem: item, activeItemIndex: itemIndex});
+    this.set({activeItem: item, hoverItemIndex: itemIndex});
     this.fire('itemSelected', item);
   },
   updateActiveItem(increment) {
-    let {items, activeItemIndex, activeItem} = this.get();
+    let {items, hoverItemIndex, activeItem} = this.get();
 
-    if (activeItemIndex === undefined) {
-      activeItemIndex = 0;
+    if (increment > 0 && hoverItemIndex === (items.length - 1)) {
+      hoverItemIndex = 0;
     }
-    else if (increment > 0 && activeItemIndex === (items.length - 1)) {
-      activeItemIndex = 0;
-    }
-    else if (increment < 0 && activeItemIndex === 0) {
-      activeItemIndex = items.length - 1;
+    else if (increment < 0 && hoverItemIndex === 0) {
+      hoverItemIndex = items.length - 1;
     }
     else {
-      activeItemIndex = activeItemIndex + increment;
+      hoverItemIndex = hoverItemIndex + increment;
     }
 
-    activeItem = items[activeItemIndex];
-    this.set({items, activeItem, activeItemIndex});
+    activeItem = items[hoverItemIndex];
+    this.set({items, activeItem, hoverItemIndex});
   },
   handleKeyDown(e) {
-    const {activeItem} = this.get();
+    const {items, hoverItemIndex} = this.get();
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
@@ -227,18 +228,20 @@ var methods = {
         break;
       case 'Enter':
         e.preventDefault();
-        this.fire('itemSelected', activeItem);
+        this.set({activeItemIndex: hoverItemIndex});
+        this.fire('itemSelected', items[hoverItemIndex]);
         break;
       case 'Tab':
         e.preventDefault();
-        this.fire('itemSelected', activeItem);
+        this.set({activeItemIndex: hoverItemIndex});
+        this.fire('itemSelected', items[hoverItemIndex]);
         break;
     }
   },
-  scrollToActiveItem() {
+  scrollToActiveItem(className) {
     const {container} = this.refs;
     let offsetBounding;
-    const focusedElemBounding = container.querySelector('.listItem.active');
+    const focusedElemBounding = container.querySelector(`.listItem.${className}`);
     if (focusedElemBounding) {
       offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
     }
@@ -248,13 +251,21 @@ var methods = {
 
 function onupdate({changed, current, previous}) {
   if (changed.items && current.items.length > 0 && this.refs.container) {
-    this.scrollToActiveItem();
+    this.scrollToActiveItem('hover');
   }
+  if (changed.activeItemIndex && current.activeItemIndex > -1) {
+    this.scrollToActiveItem('active');
+    this.set({
+      hoverItemIndex: current.activeItemIndex,
+      activeItem: current.items[current.activeItemIndex]
+    });
+  }
+
 }
 function add_css() {
 	var style = createElement("style");
-	style.id = 'svelte-1tc1xui-style';
-	style.textContent = ".listContainer.svelte-1tc1xui{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.listItem.svelte-1tc1xui{padding:20px}.listItem.svelte-1tc1xui:hover{background:#e7f2ff}.listItem.svelte-1tc1xui:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1tc1xui{background:#007aff;color:#fff}.empty.svelte-1tc1xui{text-align:center;padding:20px 0;color:#78848F}";
+	style.id = 'svelte-svknmn-style';
+	style.textContent = ".listContainer.svelte-svknmn{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.listItem.svelte-svknmn{padding:20px}.listItem.svelte-svknmn:hover,.listItem.hover.svelte-svknmn{background:#e7f2ff}.listItem.svelte-svknmn:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-svknmn{background:#007aff;color:#fff}.empty.svelte-svknmn{text-align:center;padding:20px 0;color:#78848F}";
 	append(document.head, style);
 }
 
@@ -300,7 +311,7 @@ function create_main_fragment(component, ctx) {
 			for (var i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].c();
 			}
-			div.className = "listContainer svelte-1tc1xui";
+			div.className = "listContainer svelte-svknmn";
 		},
 
 		m(target, anchor) {
@@ -318,7 +329,7 @@ function create_main_fragment(component, ctx) {
 		},
 
 		p(changed, ctx) {
-			if (changed.activeItemIndex || changed.items) {
+			if (changed.activeItemIndex || changed.hoverItemIndex || changed.items) {
 				each_value = ctx.items;
 
 				for (var i = 0; i < each_value.length; i += 1) {
@@ -375,7 +386,7 @@ function create_else_block(component, ctx) {
 		c() {
 			div = createElement("div");
 			div.textContent = "No options";
-			div.className = "empty svelte-1tc1xui";
+			div.className = "empty svelte-svknmn";
 		},
 
 		m(target, anchor) {
@@ -401,7 +412,7 @@ function create_each_block(component, ctx) {
 			div._svelte = { component, ctx };
 
 			addListener(div, "click", click_handler);
-			div.className = div_class_value = "listItem " + (ctx.activeItemIndex === ctx.i ? 'active' : '') + " svelte-1tc1xui";
+			div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-svknmn";
 		},
 
 		m(target, anchor) {
@@ -416,7 +427,7 @@ function create_each_block(component, ctx) {
 			}
 
 			div._svelte.ctx = ctx;
-			if ((changed.activeItemIndex) && div_class_value !== (div_class_value = "listItem " + (ctx.activeItemIndex === ctx.i ? 'active' : '') + " svelte-1tc1xui")) {
+			if ((changed.activeItemIndex || changed.hoverItemIndex) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-svknmn")) {
 				div.className = div_class_value;
 			}
 		},
@@ -438,7 +449,7 @@ function List(options) {
 	this._intro = true;
 	this._handlers.update = [onupdate];
 
-	if (!document.getElementById("svelte-1tc1xui-style")) add_css();
+	if (!document.getElementById("svelte-svknmn-style")) add_css();
 
 	this._fragment = create_main_fragment(this, this._state);
 
