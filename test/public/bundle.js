@@ -24373,7 +24373,6 @@
 	function data() {
 	  return {
 	    hoverItemIndex: 0,
-	    activeItem: undefined,
 	    activeItemIndex: undefined,
 	    items: []
 	  }
@@ -24384,11 +24383,11 @@
 	var methods = {
 	  handleClick(item, itemIndex, event) {
 	    event.stopPropagation();
-	    this.set({activeItem: item, activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
+	    this.set({activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
 	    this.fire('itemSelected', item);
 	  },
 	  updateHoverItem(increment) {
-	    let {items, hoverItemIndex, activeItem} = this.get();
+	    let {items, hoverItemIndex} = this.get();
 
 	    if (increment > 0 && hoverItemIndex === (items.length - 1)) {
 	      hoverItemIndex = 0;
@@ -24400,8 +24399,7 @@
 	      hoverItemIndex = hoverItemIndex + increment;
 	    }
 
-	    activeItem = items[hoverItemIndex];
-	    this.set({items, activeItem, hoverItemIndex});
+	    this.set({items, hoverItemIndex});
 	  },
 	  handleKeyDown(e) {
 	    const {items, hoverItemIndex} = this.get();
@@ -24445,15 +24443,15 @@
 	    this.scrollToActiveItem('active');
 	    this.set({
 	      hoverItemIndex: current.activeItemIndex,
-	      activeItem: current.items[current.activeItemIndex]
+	      // activeItem: current.items[current.activeItemIndex]
 	    });
 	  }
 
 	}
 	function add_css() {
 		var style = createElement("style");
-		style.id = 'svelte-svknmn-style';
-		style.textContent = ".listContainer.svelte-svknmn{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.listItem.svelte-svknmn{padding:20px}.listItem.svelte-svknmn:hover,.listItem.hover.svelte-svknmn{background:#e7f2ff}.listItem.svelte-svknmn:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-svknmn{background:#007aff;color:#fff}.empty.svelte-svknmn{text-align:center;padding:20px 0;color:#78848F}";
+		style.id = 'svelte-ijll0e-style';
+		style.textContent = ".listContainer.svelte-ijll0e{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.listItem.svelte-ijll0e{padding:20px}.listItem.svelte-ijll0e:hover,.listItem.hover.svelte-ijll0e{background:#e7f2ff}.listItem.svelte-ijll0e:active{background:#b9daff}.listItem.svelte-ijll0e:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-ijll0e{background:#007aff;color:#fff}.empty.svelte-ijll0e{text-align:center;padding:20px 0;color:#78848F}";
 		append(document.head, style);
 	}
 
@@ -24499,7 +24497,7 @@
 				for (var i = 0; i < each_blocks.length; i += 1) {
 					each_blocks[i].c();
 				}
-				div.className = "listContainer svelte-svknmn";
+				div.className = "listContainer svelte-ijll0e";
 			},
 
 			m(target, anchor) {
@@ -24574,7 +24572,7 @@
 			c() {
 				div = createElement("div");
 				div.textContent = "No options";
-				div.className = "empty svelte-svknmn";
+				div.className = "empty svelte-ijll0e";
 			},
 
 			m(target, anchor) {
@@ -24600,7 +24598,7 @@
 				div._svelte = { component, ctx };
 
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-svknmn";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-ijll0e";
 			},
 
 			m(target, anchor) {
@@ -24615,7 +24613,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.activeItemIndex || changed.hoverItemIndex) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-svknmn")) {
+				if ((changed.activeItemIndex || changed.hoverItemIndex) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-ijll0e")) {
 					div.className = div_class_value;
 				}
 			},
@@ -24637,7 +24635,7 @@
 		this._intro = true;
 		this._handlers.update = [onupdate];
 
-		if (!document.getElementById("svelte-svknmn-style")) add_css();
+		if (!document.getElementById("svelte-ijll0e-style")) add_css();
 
 		this._fragment = create_main_fragment(this, this._state);
 
@@ -24662,6 +24660,10 @@
 	let target;
 
 	var methods$1 = {
+	  handleFocus() {
+	    this.set({isFocused: true});
+	    // this.handleClick();
+	  },
 	  removeList() {
 	    if (!list) return;
 	    list.destroy();
@@ -24679,6 +24681,7 @@
 	  },
 	  handleClick() {
 	    this.set({isFocused: true});
+	    this.loadList();
 	  },
 	  handleClear(e) {
 	    e.stopPropagation();
@@ -24701,12 +24704,14 @@
 	      target
 	    });
 
-	    const {items} = this.get();
+	    const {items, selectedItem} = this.get();
 
 	    if (items) {
-	      list.set({items});
+	      const match = JSON.stringify(selectedItem);
+	      const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
+	      list.set({items, activeItemIndex});
 	    }
-	    
+
 	    list.on('itemSelected', (selectedItem) => {
 	      this.set({
 	        selectedItem
@@ -24726,14 +24731,14 @@
 	    const {isFocused} = current;
 	    if (isFocused && this.refs.input) {
 	      this.refs.input.focus();
-	      this.loadList();
+	      // this.loadList();
 	    }
 	  }
 	}
 	function add_css$1() {
 		var style = createElement("style");
-		style.id = 'svelte-1ihrjyj-style';
-		style.textContent = ".selectContainer.svelte-1ihrjyj{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-1ihrjyj input.svelte-1ihrjyj{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-1ihrjyj input.svelte-1ihrjyj::placeholder{color:#78848F}.selectContainer.svelte-1ihrjyj input.svelte-1ihrjyj:focus{outline:none}.selectContainer.svelte-1ihrjyj:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-1ihrjyj{border-color:#006FE8}.selectedItem.svelte-1ihrjyj{padding:0 16px;line-height:44px}.clearSelectedItem.svelte-1ihrjyj{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-1ihrjyj:hover{color:#2c3e50}";
+		style.id = 'svelte-1a180ub-style';
+		style.textContent = ".selectContainer.svelte-1a180ub{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-1a180ub input.svelte-1a180ub{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-1a180ub input.svelte-1a180ub::placeholder{color:#78848F}.selectContainer.svelte-1a180ub input.svelte-1a180ub:focus{outline:none}.selectContainer.svelte-1a180ub:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-1a180ub{border-color:#006FE8}.selectedItem.svelte-1a180ub{padding:0 16px;line-height:44px}.clearSelectedItem.svelte-1a180ub{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-1a180ub:hover{color:#2c3e50}.selectContainer.focused.svelte-1a180ub .clearSelectedItem.svelte-1a180ub{color:#3F4F5F}";
 		append(document.head, style);
 	}
 
@@ -24761,7 +24766,7 @@
 				div = createElement("div");
 				if_block.c();
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-1ihrjyj";
+				div.className = div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-1a180ub";
 			},
 
 			m(target_1, anchor) {
@@ -24780,7 +24785,7 @@
 					if_block.m(div, null);
 				}
 
-				if ((changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-1ihrjyj")) {
+				if ((changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-1a180ub")) {
 					div.className = div_class_value;
 				}
 			},
@@ -24803,11 +24808,16 @@
 	function create_else_block$1(component, ctx) {
 		var input;
 
+		function focus_handler(event) {
+			component.handleFocus();
+		}
+
 		return {
 			c() {
 				input = createElement("input");
+				addListener(input, "focus", focus_handler);
 				input.placeholder = "Placeholder text";
-				input.className = "svelte-1ihrjyj";
+				input.className = "svelte-1a180ub";
 			},
 
 			m(target_1, anchor) {
@@ -24822,6 +24832,7 @@
 					detachNode(input);
 				}
 
+				removeListener(input, "focus", focus_handler);
 				if (component.refs.input === input) component.refs.input = null;
 			}
 		};
@@ -24842,9 +24853,9 @@
 				text1 = createText("\n    ");
 				div1 = createElement("div");
 				div1.innerHTML = `<svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
-				div0.className = "selectedItem svelte-1ihrjyj";
+				div0.className = "selectedItem svelte-1a180ub";
 				addListener(div1, "click", click_handler);
-				div1.className = "clearSelectedItem svelte-1ihrjyj";
+				div1.className = "clearSelectedItem svelte-1a180ub";
 			},
 
 			m(target_1, anchor) {
@@ -24882,7 +24893,7 @@
 
 		this._handlers.destroy = [ondestroy];
 
-		if (!document.getElementById("svelte-1ihrjyj-style")) add_css$1();
+		if (!document.getElementById("svelte-1a180ub-style")) add_css$1();
 
 		onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 
@@ -25973,7 +25984,7 @@
 	    }
 	  });
 
-	  select.set({isFocused: true});
+	  document.querySelector('.selectContainer').click();
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
@@ -26008,7 +26019,7 @@
 	  select.destroy();
 	});
 
-	test.only('selecting item should close list but keep focus on select', async (t) => {
+	test('selecting item should close list but keep focus on select', async (t) => {
 	  const select = new Select({
 	    target: target$1,
 	    data: {
@@ -26030,6 +26041,48 @@
 	  select.destroy();
 	});
 
+	test('clicking Select with selected item should open list with item listed as active', async (t) => {
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items: [
+	        {name: 'Item #1'},
+	        {name: 'Item #2'},
+	        {name: 'Item #3'},
+	        {name: 'Item #4'},
+	        {name: 'Item #5'}
+	      ],
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+	  document.querySelector('.selectContainer').click();
+	  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({name: 'Item #3'}));
+	  select.destroy();
+	});
+
+	test('focus on Select input updates focus state', async (t) => {
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items: [
+	        {name: 'Item #1'},
+	        {name: 'Item #2'},
+	        {name: 'Item #3'},
+	        {name: 'Item #4'},
+	        {name: 'Item #5'}
+	      ],
+	    }
+	  });
+
+	  document.querySelector('.selectContainer input').focus();
+	  t.ok(select.get().isFocused);
+
+	  // select.destroy();
+	});
 
 	function focus(element, setFocus) {
 	  return new Promise(fulfil => {

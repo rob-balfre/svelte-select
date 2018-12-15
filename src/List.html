@@ -25,6 +25,10 @@
         background: #e7f2ff;
     }
 
+    .listItem:active {
+        background: #b9daff;
+    }
+
     .listItem:first-child {
         border-radius: 4px 4px 0 0;
     }
@@ -46,7 +50,6 @@
     data() {
       return {
         hoverItemIndex: 0,
-        activeItem: undefined,
         activeItemIndex: undefined,
         items: []
       }
@@ -59,7 +62,7 @@
         this.scrollToActiveItem('active');
         this.set({
           hoverItemIndex: current.activeItemIndex,
-          activeItem: current.items[current.activeItemIndex]
+          // activeItem: current.items[current.activeItemIndex]
         })
       }
 
@@ -72,11 +75,11 @@
     methods: {
       handleClick(item, itemIndex, event) {
         event.stopPropagation();
-        this.set({activeItem: item, activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
+        this.set({activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
         this.fire('itemSelected', item);
       },
       updateHoverItem(increment) {
-        let {items, hoverItemIndex, activeItem} = this.get();
+        let {items, hoverItemIndex} = this.get();
 
         if (increment > 0 && hoverItemIndex === (items.length - 1)) {
           hoverItemIndex = 0;
@@ -88,8 +91,7 @@
           hoverItemIndex = hoverItemIndex + increment;
         }
 
-        activeItem = items[hoverItemIndex];
-        this.set({items, activeItem, hoverItemIndex})
+        this.set({items, hoverItemIndex})
       },
       handleKeyDown(e) {
         const {items, hoverItemIndex} = this.get();

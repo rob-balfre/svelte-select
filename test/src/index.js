@@ -473,7 +473,7 @@ test('select item from list', async (t) => {
     }
   });
 
-  select.set({isFocused: true});
+  document.querySelector('.selectContainer').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
@@ -508,7 +508,7 @@ test('blur should close list and remove focus from select', async (t) => {
   select.destroy();
 });
 
-test.only('selecting item should close list but keep focus on select', async (t) => {
+test('selecting item should close list but keep focus on select', async (t) => {
   const select = new Select({
     target,
     data: {
@@ -530,6 +530,48 @@ test.only('selecting item should close list but keep focus on select', async (t)
   select.destroy();
 });
 
+test('clicking Select with selected item should open list with item listed as active', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ],
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  document.querySelector('.selectContainer').click();
+  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({name: 'Item #3'}));
+  select.destroy();
+});
+
+test('focus on Select input updates focus state', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ],
+    }
+  });
+
+  document.querySelector('.selectContainer input').focus();
+  t.ok(select.get().isFocused)
+
+  // select.destroy();
+});
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

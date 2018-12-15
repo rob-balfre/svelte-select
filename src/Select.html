@@ -11,7 +11,7 @@
         </svg>
     </div>
     {:else}
-    <input ref:input placeholder="Placeholder text">
+    <input on:focus="handleFocus()" ref:input placeholder="Placeholder text">
     {/if}
 </div>
 
@@ -68,6 +68,10 @@
     .clearSelectedItem:hover {
         color: #2c3e50;
     }
+
+    .selectContainer.focused .clearSelectedItem {
+        color: #3F4F5F;
+    }
 </style>
 
 <script>
@@ -84,11 +88,15 @@
         const {isFocused} = current;
         if (isFocused && this.refs.input) {
           this.refs.input.focus();
-          this.loadList();
+          // this.loadList();
         }
       }
     },
     methods: {
+      handleFocus() {
+        this.set({isFocused: true});
+        // this.handleClick();
+      },
       removeList() {
         if (!list) return;
         list.destroy();
@@ -106,6 +114,7 @@
       },
       handleClick() {
         this.set({isFocused: true});
+        this.loadList();
       },
       handleClear(e) {
         e.stopPropagation();
@@ -128,12 +137,14 @@
           target
         });
 
-        const {items} = this.get();
+        const {items, selectedItem} = this.get();
 
         if (items) {
-          list.set({items});
+          const match = JSON.stringify(selectedItem);
+          const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
+          list.set({items, activeItemIndex});
         }
-        
+
         list.on('itemSelected', (selectedItem) => {
           this.set({
             selectedItem
