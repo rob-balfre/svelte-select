@@ -568,7 +568,29 @@ test('focus on Select input updates focus state', async (t) => {
   });
 
   document.querySelector('.selectContainer input').focus();
-  t.ok(select.get().isFocused)
+  t.ok(select.get().isFocused);
+
+  select.destroy();
+});
+
+test.only('key up and down when Select focused opens list', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items: [
+        {name: 'Item #1'},
+        {name: 'Item #2'},
+        {name: 'Item #3'},
+        {name: 'Item #4'},
+        {name: 'Item #5'}
+      ],
+    }
+  });
+
+  document.querySelector('.selectContainer input').focus();
+  t.ok(select.get().isFocused);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.listContainer'));
 
   // select.destroy();
 });

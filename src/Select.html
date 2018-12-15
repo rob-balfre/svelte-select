@@ -1,8 +1,8 @@
-<svelte:window on:click="handleWindowClick(event)"/>
+<svelte:window on:click="handleWindowClick(event)" on:keydown="handleKeyDown(event)" />
 
 <div class="selectContainer {isFocused ? 'focused' : ''}" on:click="handleClick()" ref:container>
     {#if selectedItem}
-    <div class="selectedItem">{selectedItem.name}</div>
+    <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>{selectedItem.name}</div>
     <div class="clearSelectedItem" on:click="handleClear(event)">
         <svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
              role="presentation">
@@ -10,6 +10,7 @@
                   d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path>
         </svg>
     </div>
+
     {:else}
     <input on:focus="handleFocus()" ref:input placeholder="Placeholder text">
     {/if}
@@ -56,6 +57,10 @@
         line-height: 44px;
     }
 
+    .selectedItem:focus {
+        outline: none;
+    }
+
     .clearSelectedItem {
         position: absolute;
         right: 10px;
@@ -93,6 +98,25 @@
       }
     },
     methods: {
+      handleKeyDown(e) {
+        const {isFocused} = this.get();
+        if (!isFocused) return;
+
+        switch (e.key) {
+          case 'ArrowDown':
+            e.preventDefault();
+            this.loadList();
+            break;
+          case 'ArrowUp':
+            e.preventDefault();
+            this.loadList();
+            break;
+          case 'Tab':
+            e.preventDefault();
+            this.loadList();
+            break;
+        }
+      },
       handleFocus() {
         this.set({isFocused: true});
         // this.handleClick();
@@ -124,6 +148,7 @@
       loadList() {
         if (target && list) return;
 
+        if (this.refs.selectedItem) this.refs.selectedItem.removeAttribute('tabindex');
         target = document.createElement('div');
 
         Object.assign(target.style, {
@@ -150,6 +175,7 @@
             selectedItem
           });
           this.removeList();
+          this.refs.selectedItem.setAttribute('tabindex', '0');
         })
       }
     },

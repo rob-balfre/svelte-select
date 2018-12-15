@@ -2,7 +2,7 @@
 
 <div class="listContainer" ref:container>
     {#each items as item, i}
-    <div on:click="handleClick(item, i, event)" class="listItem {itemClasses(activeItemIndex, hoverItemIndex, i)}">{item.name}</div>
+    <div on:mouseover="handleHover(item, i)" on:click="handleClick(item, i, event)" class="listItem {itemClasses(activeItemIndex, hoverItemIndex, i)}">{item.name}</div>
     {:else}
     <div class="empty">No options</div>
     {/each}
@@ -20,7 +20,6 @@
         padding: 20px;
     }
 
-    .listItem:hover,
     .listItem.hover {
         background: #e7f2ff;
     }
@@ -73,6 +72,9 @@
       }
     },
     methods: {
+      handleHover(item, itemIndex) {
+        this.set({hoverItemIndex: itemIndex});
+      },
       handleClick(item, itemIndex, event) {
         event.stopPropagation();
         this.set({activeItemIndex: itemIndex, hoverItemIndex: itemIndex});

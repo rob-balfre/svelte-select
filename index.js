@@ -200,6 +200,9 @@
 	  return `${activeItemIndex === i ? 'active ' : ''}${hoverItemIndex === i ? 'hover' : ''}`;
 	}
 	var methods = {
+	  handleHover(item, itemIndex) {
+	    this.set({hoverItemIndex: itemIndex});
+	  },
 	  handleClick(item, itemIndex, event) {
 	    event.stopPropagation();
 	    this.set({activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
@@ -269,8 +272,8 @@
 	}
 	function add_css() {
 		var style = createElement("style");
-		style.id = 'svelte-ijll0e-style';
-		style.textContent = ".listContainer.svelte-ijll0e{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.listItem.svelte-ijll0e{padding:20px}.listItem.svelte-ijll0e:hover,.listItem.hover.svelte-ijll0e{background:#e7f2ff}.listItem.svelte-ijll0e:active{background:#b9daff}.listItem.svelte-ijll0e:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-ijll0e{background:#007aff;color:#fff}.empty.svelte-ijll0e{text-align:center;padding:20px 0;color:#78848F}";
+		style.id = 'svelte-1eb3hsd-style';
+		style.textContent = ".listContainer.svelte-1eb3hsd{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.listItem.svelte-1eb3hsd{padding:20px}.listItem.hover.svelte-1eb3hsd{background:#e7f2ff}.listItem.svelte-1eb3hsd:active{background:#b9daff}.listItem.svelte-1eb3hsd:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1eb3hsd{background:#007aff;color:#fff}.empty.svelte-1eb3hsd{text-align:center;padding:20px 0;color:#78848F}";
 		append(document.head, style);
 	}
 
@@ -278,6 +281,12 @@
 		const { component, ctx } = this._svelte;
 
 		component.handleClick(ctx.item, ctx.i, event);
+	}
+
+	function mouseover_handler(event) {
+		const { component, ctx } = this._svelte;
+
+		component.handleHover(ctx.item, ctx.i);
 	}
 
 	function get_each_context(ctx, list, i) {
@@ -316,7 +325,7 @@
 				for (var i = 0; i < each_blocks.length; i += 1) {
 					each_blocks[i].c();
 				}
-				div.className = "listContainer svelte-ijll0e";
+				div.className = "listContainer svelte-1eb3hsd";
 			},
 
 			m(target, anchor) {
@@ -391,7 +400,7 @@
 			c() {
 				div = createElement("div");
 				div.textContent = "No options";
-				div.className = "empty svelte-ijll0e";
+				div.className = "empty svelte-1eb3hsd";
 			},
 
 			m(target, anchor) {
@@ -416,8 +425,9 @@
 				text = createText(text_value);
 				div._svelte = { component, ctx };
 
+				addListener(div, "mouseover", mouseover_handler);
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-ijll0e";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-1eb3hsd";
 			},
 
 			m(target, anchor) {
@@ -432,7 +442,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.activeItemIndex || changed.hoverItemIndex) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-ijll0e")) {
+				if ((changed.activeItemIndex || changed.hoverItemIndex) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-1eb3hsd")) {
 					div.className = div_class_value;
 				}
 			},
@@ -442,6 +452,7 @@
 					detachNode(div);
 				}
 
+				removeListener(div, "mouseover", mouseover_handler);
 				removeListener(div, "click", click_handler);
 			}
 		};
@@ -454,7 +465,7 @@
 		this._intro = true;
 		this._handlers.update = [onupdate];
 
-		if (!document.getElementById("svelte-ijll0e-style")) add_css();
+		if (!document.getElementById("svelte-1eb3hsd-style")) add_css();
 
 		this._fragment = create_main_fragment(this, this._state);
 
@@ -479,6 +490,25 @@
 	let target;
 
 	var methods$1 = {
+	  handleKeyDown(e) {
+	    const {isFocused} = this.get();
+	    if (!isFocused) return;
+
+	    switch (e.key) {
+	      case 'ArrowDown':
+	        e.preventDefault();
+	        this.loadList();
+	        break;
+	      case 'ArrowUp':
+	        e.preventDefault();
+	        this.loadList();
+	        break;
+	      case 'Tab':
+	        e.preventDefault();
+	        this.loadList();
+	        break;
+	    }
+	  },
 	  handleFocus() {
 	    this.set({isFocused: true});
 	    // this.handleClick();
@@ -510,6 +540,7 @@
 	  loadList() {
 	    if (target && list) return;
 
+	    if (this.refs.selectedItem) this.refs.selectedItem.removeAttribute('tabindex');
 	    target = document.createElement('div');
 
 	    Object.assign(target.style, {
@@ -536,6 +567,7 @@
 	        selectedItem
 	      });
 	      this.removeList();
+	      this.refs.selectedItem.setAttribute('tabindex', '0');
 	    });
 	  }
 	};
@@ -556,8 +588,8 @@
 	}
 	function add_css$1() {
 		var style = createElement("style");
-		style.id = 'svelte-1a180ub-style';
-		style.textContent = ".selectContainer.svelte-1a180ub{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-1a180ub input.svelte-1a180ub{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-1a180ub input.svelte-1a180ub::placeholder{color:#78848F}.selectContainer.svelte-1a180ub input.svelte-1a180ub:focus{outline:none}.selectContainer.svelte-1a180ub:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-1a180ub{border-color:#006FE8}.selectedItem.svelte-1a180ub{padding:0 16px;line-height:44px}.clearSelectedItem.svelte-1a180ub{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-1a180ub:hover{color:#2c3e50}.selectContainer.focused.svelte-1a180ub .clearSelectedItem.svelte-1a180ub{color:#3F4F5F}";
+		style.id = 'svelte-16wph68-style';
+		style.textContent = ".selectContainer.svelte-16wph68{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-16wph68 input.svelte-16wph68{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-16wph68 input.svelte-16wph68::placeholder{color:#78848F}.selectContainer.svelte-16wph68 input.svelte-16wph68:focus{outline:none}.selectContainer.svelte-16wph68:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-16wph68{border-color:#006FE8}.selectedItem.svelte-16wph68{padding:0 16px;line-height:44px}.selectedItem.svelte-16wph68:focus{outline:none}.clearSelectedItem.svelte-16wph68{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-16wph68:hover{color:#2c3e50}.selectContainer.focused.svelte-16wph68 .clearSelectedItem.svelte-16wph68{color:#3F4F5F}";
 		append(document.head, style);
 	}
 
@@ -567,6 +599,10 @@
 		function onwindowclick(event) {
 			component.handleWindowClick(event);	}
 		window.addEventListener("click", onwindowclick);
+
+		function onwindowkeydown(event) {
+			component.handleKeyDown(event);	}
+		window.addEventListener("keydown", onwindowkeydown);
 
 		function select_block_type(ctx) {
 			if (ctx.selectedItem) return create_if_block;
@@ -585,7 +621,7 @@
 				div = createElement("div");
 				if_block.c();
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-1a180ub";
+				div.className = div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-16wph68";
 			},
 
 			m(target_1, anchor) {
@@ -604,13 +640,15 @@
 					if_block.m(div, null);
 				}
 
-				if ((changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-1a180ub")) {
+				if ((changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-16wph68")) {
 					div.className = div_class_value;
 				}
 			},
 
 			d(detach) {
 				window.removeEventListener("click", onwindowclick);
+
+				window.removeEventListener("keydown", onwindowkeydown);
 
 				if (detach) {
 					detachNode(div);
@@ -623,7 +661,7 @@
 		};
 	}
 
-	// (13:4) {:else}
+	// (14:4) {:else}
 	function create_else_block$1(component, ctx) {
 		var input;
 
@@ -636,7 +674,7 @@
 				input = createElement("input");
 				addListener(input, "focus", focus_handler);
 				input.placeholder = "Placeholder text";
-				input.className = "svelte-1a180ub";
+				input.className = "svelte-16wph68";
 			},
 
 			m(target_1, anchor) {
@@ -661,6 +699,10 @@
 	function create_if_block(component, ctx) {
 		var div0, text0_value = ctx.selectedItem.name, text0, text1, div1;
 
+		function focus_handler(event) {
+			component.handleFocus();
+		}
+
 		function click_handler(event) {
 			component.handleClear(event);
 		}
@@ -672,14 +714,16 @@
 				text1 = createText("\n    ");
 				div1 = createElement("div");
 				div1.innerHTML = `<svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
-				div0.className = "selectedItem svelte-1a180ub";
+				addListener(div0, "focus", focus_handler);
+				div0.className = "selectedItem svelte-16wph68";
 				addListener(div1, "click", click_handler);
-				div1.className = "clearSelectedItem svelte-1a180ub";
+				div1.className = "clearSelectedItem svelte-16wph68";
 			},
 
 			m(target_1, anchor) {
 				insert(target_1, div0, anchor);
 				append(div0, text0);
+				component.refs.selectedItem = div0;
 				insert(target_1, text1, anchor);
 				insert(target_1, div1, anchor);
 			},
@@ -693,6 +737,11 @@
 			d(detach) {
 				if (detach) {
 					detachNode(div0);
+				}
+
+				removeListener(div0, "focus", focus_handler);
+				if (component.refs.selectedItem === div0) component.refs.selectedItem = null;
+				if (detach) {
 					detachNode(text1);
 					detachNode(div1);
 				}
@@ -712,7 +761,7 @@
 
 		this._handlers.destroy = [ondestroy];
 
-		if (!document.getElementById("svelte-1a180ub-style")) add_css$1();
+		if (!document.getElementById("svelte-16wph68-style")) add_css$1();
 
 		onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 
