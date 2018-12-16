@@ -578,7 +578,7 @@ test('typing in Select filter will hide selected Item', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  select.set({filterText:'potato'});
+  select.set({filterText: 'potato'});
   t.ok(!document.querySelector('.selectContainer .selectedItem'));
 
   select.destroy();
@@ -615,7 +615,7 @@ test('closing List clears Select filter text', async (t) => {
 
   document.querySelector('.selectContainer').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  select.set({filterText:'potato'});
+  select.set({filterText: 'potato'});
   div.click();
   div.remove();
   const selectInput = document.querySelector('.selectContainer input');
@@ -623,6 +623,86 @@ test('closing List clears Select filter text', async (t) => {
 
   select.destroy();
 });
+
+test('closing List clears Select filter text', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  select.set({filterText: 'potato'});
+  div.click();
+  div.remove();
+  const selectInput = document.querySelector('.selectContainer input');
+  t.equal(selectInput.attributes.placeholder.value, 'Select...');
+
+  select.destroy();
+});
+
+test('closing List item clears Select filter text', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  select.set({filterText: 'potato'});
+  div.click();
+  div.remove();
+  const selectInput = document.querySelector('.selectContainer input');
+  t.equal(selectInput.attributes.placeholder.value, 'Select...');
+
+  select.destroy();
+});
+
+test('typing while Select is focused populates Select filter text', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
+
+  select.set({isFocused: true});
+  document.querySelector('.selectContainer input').blur();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 't'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'e'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 's'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 't'}));
+  // KeyboardEvent not firing in svelte - not sure why, manual test seems to work
+
+  select.destroy();
+});
+
+test('Select input placeholder wipes while item is selected', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      selectedItem: {name: 'Item #2'},
+      activeItemIndex: 1,
+    }
+  });
+
+  const selectInput = document.querySelector('.selectContainer input');
+  t.equal(selectInput.attributes.placeholder.value, '');
+
+  select.destroy();
+});
+
 
 
 function focus(element, setFocus) {

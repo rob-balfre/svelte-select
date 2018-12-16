@@ -86,15 +86,18 @@
   let target;
 
   export default {
-    computed: {
-      showSelectedItem({selectedItem, filterText}) {
-        return selectedItem && filterText.length === 0;
-      }
-    },
     data() {
       return {
         filterText: '',
-        placeholderText: 'Select...'
+        listOpen: false
+      }
+    },
+    computed: {
+      showSelectedItem({selectedItem, filterText}) {
+        return selectedItem && filterText.length === 0;
+      },
+      placeholderText({selectedItem}) {
+        return selectedItem ? '' : 'Select...'
       }
     },
     onstate({changed, current, previous}) {
@@ -118,8 +121,10 @@
         target.style.minWidth = `${width}px`;
       },
       handleKeyDown(e) {
-        const {isFocused} = this.get();
+        const {isFocused, filterText} = this.get();
         if (!isFocused) return;
+        
+        console.log('e.key: ', e.key);
 
         switch (e.key) {
           case 'ArrowDown':
@@ -134,12 +139,18 @@
             e.preventDefault();
             this.loadList();
             break;
+          default:
+            if (this.refs.input && filterText.length === 0 && e.key.length === 1) {
+                this.refs.input.focus();
+            }
         }
       },
       handleFocus() {
         this.set({isFocused: true});
       },
       removeList() {
+        this.set({filterText: ''});
+
         if (!list) return;
         list.destroy();
         list = undefined;
@@ -147,10 +158,6 @@
         if (!target) return;
         target.remove();
         target = undefined;
-
-        if (!this.get().selectedItem) {
-          this.set({placeholderText: 'Select...', filterText: ''});
-        }
       },
       handleWindowClick(event) {
         if (this.refs.container.contains(event.target)) return;
@@ -164,7 +171,7 @@
       },
       handleClear(e) {
         e.stopPropagation();
-        this.set({selectedItem: undefined, placeholderText: 'Select...'});
+        this.set({selectedItem: undefined});
         if (this.refs.input) this.refs.input.focus();
         this.removeList();
       },
@@ -195,17 +202,12 @@
 
         list.on('itemSelected', (selectedItem) => {
           this.set({
-            selectedItem,
-            placeholderText: ''
+            selectedItem
           });
           this.removeList();
           if (this.get().showSelectedItem)
             this.refs.selectedItem.setAttribute('tabindex', '0');
         });
-
-        if (this.get().selectedItem) {
-          this.set({placeholderText: ''});
-        }
       }
     },
     ondestroy() {

@@ -492,10 +492,13 @@
 	function showSelectedItem({selectedItem, filterText}) {
 	  return selectedItem && filterText.length === 0;
 	}
+	function placeholderText({selectedItem}) {
+	  return selectedItem ? '' : 'Select...'
+	}
 	function data$1() {
 	  return {
 	    filterText: '',
-	    placeholderText: 'Select...'
+	    listOpen: false
 	  }
 	}
 	var methods$1 = {
@@ -507,8 +510,10 @@
 	    target.style.minWidth = `${width}px`;
 	  },
 	  handleKeyDown(e) {
-	    const {isFocused} = this.get();
+	    const {isFocused, filterText} = this.get();
 	    if (!isFocused) return;
+	    
+	    console.log('e.key: ', e.key);
 
 	    switch (e.key) {
 	      case 'ArrowDown':
@@ -523,12 +528,18 @@
 	        e.preventDefault();
 	        this.loadList();
 	        break;
+	      default:
+	        if (this.refs.input && filterText.length === 0 && e.key.length === 1) {
+	            this.refs.input.focus();
+	        }
 	    }
 	  },
 	  handleFocus() {
 	    this.set({isFocused: true});
 	  },
 	  removeList() {
+	    this.set({filterText: ''});
+
 	    if (!list) return;
 	    list.destroy();
 	    list = undefined;
@@ -536,10 +547,6 @@
 	    if (!target) return;
 	    target.remove();
 	    target = undefined;
-
-	    if (!this.get().selectedItem) {
-	      this.set({placeholderText: 'Select...', filterText: ''});
-	    }
 	  },
 	  handleWindowClick(event) {
 	    if (this.refs.container.contains(event.target)) return;
@@ -553,7 +560,7 @@
 	  },
 	  handleClear(e) {
 	    e.stopPropagation();
-	    this.set({selectedItem: undefined, placeholderText: 'Select...'});
+	    this.set({selectedItem: undefined});
 	    if (this.refs.input) this.refs.input.focus();
 	    this.removeList();
 	  },
@@ -584,17 +591,12 @@
 
 	    list.on('itemSelected', (selectedItem) => {
 	      this.set({
-	        selectedItem,
-	        placeholderText: ''
+	        selectedItem
 	      });
 	      this.removeList();
 	      if (this.get().showSelectedItem)
 	        this.refs.selectedItem.setAttribute('tabindex', '0');
 	    });
-
-	    if (this.get().selectedItem) {
-	      this.set({placeholderText: ''});
-	    }
 	  }
 	};
 
@@ -814,6 +816,10 @@
 	Select.prototype._recompute = function _recompute(changed, state) {
 		if (changed.selectedItem || changed.filterText) {
 			if (this._differs(state.showSelectedItem, (state.showSelectedItem = showSelectedItem(state)))) changed.showSelectedItem = true;
+		}
+
+		if (changed.selectedItem) {
+			if (this._differs(state.placeholderText, (state.placeholderText = placeholderText(state)))) changed.placeholderText = true;
 		}
 	};
 
