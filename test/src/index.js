@@ -703,6 +703,35 @@ test('Select input placeholder wipes while item is selected', async (t) => {
   select.destroy();
 });
 
+test('Select listOpen state controls List', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      listOpen: true
+    }
+  });
+
+  t.ok(document.querySelector('.listContainer'));
+  select.set({
+    listOpen: false
+  });
+  t.ok(!document.querySelector('.listContainer'));
+
+  select.destroy();
+});
+
+test('clicking Select toggles List open state', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      listOpen: true
+    }
+  });
+
+  // select.destroy();
+});
 
 
 function focus(element, setFocus) {

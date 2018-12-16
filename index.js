@@ -512,21 +512,19 @@
 	  handleKeyDown(e) {
 	    const {isFocused, filterText} = this.get();
 	    if (!isFocused) return;
-	    
-	    console.log('e.key: ', e.key);
 
 	    switch (e.key) {
 	      case 'ArrowDown':
 	        e.preventDefault();
-	        this.loadList();
+	        this.set({listOpen: true});
 	        break;
 	      case 'ArrowUp':
 	        e.preventDefault();
-	        this.loadList();
+	        this.set({listOpen: true});
 	        break;
 	      case 'Tab':
 	        e.preventDefault();
-	        this.loadList();
+	        this.set({listOpen: true});
 	        break;
 	      default:
 	        if (this.refs.input && filterText.length === 0 && e.key.length === 1) {
@@ -550,19 +548,16 @@
 	  },
 	  handleWindowClick(event) {
 	    if (this.refs.container.contains(event.target)) return;
-	    this.set({isFocused: false});
+	    this.set({isFocused: false, listOpen: false});
 	    if (this.refs.input) this.refs.input.blur();
-	    this.removeList();
 	  },
 	  handleClick() {
-	    this.set({isFocused: true});
-	    this.loadList();
+	    this.set({isFocused: true, listOpen: true});
 	  },
 	  handleClear(e) {
 	    e.stopPropagation();
-	    this.set({selectedItem: undefined});
+	    this.set({selectedItem: undefined, listOpen: false});
 	    if (this.refs.input) this.refs.input.focus();
-	    this.removeList();
 	  },
 	  loadList() {
 	    if (target && list) return;
@@ -600,18 +595,24 @@
 	  }
 	};
 
+	function oncreate() {
+	  const {listOpen } = this.get();
+	  if (listOpen) this.loadList();
+	}
 	function ondestroy() {
-	  this.removeList();
+	  this.set({listOpen: false});
 	}
 	function onstate({changed, current, previous}) {
 	  if (!previous) return;
 
+	  if (changed.listOpen) {
+	    current.listOpen ? this.loadList() : this.removeList();
+	  }
 
 	  if (changed.isFocused) {
 	    const {isFocused} = current;
 	    if (isFocused && this.refs.input) {
 	      this.refs.input.focus();
-	      // this.loadList();
 	    }
 	  }
 	}
@@ -799,6 +800,7 @@
 		this._fragment = create_main_fragment$1(this, this._state);
 
 		this.root._oncreate.push(() => {
+			oncreate.call(this);
 			this.fire("update", { changed: assignTrue({}, this._state), current: this._state });
 		});
 
