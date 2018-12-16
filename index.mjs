@@ -532,7 +532,7 @@ var methods$1 = {
     target = undefined;
 
     if (!this.get().selectedItem) {
-      this.set({placeholderText: 'Select...'});
+      this.set({placeholderText: 'Select...', filterText: ''});
     }
   },
   handleWindowClick(event) {

@@ -602,7 +602,10 @@ test('clearing selected item closes List if open', async (t) => {
   select.destroy();
 });
 
-test.only('closing List clears Select filter text', async (t) => {
+test('closing List clears Select filter text', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
   const select = new Select({
     target,
     data: {
@@ -613,6 +616,10 @@ test.only('closing List clears Select filter text', async (t) => {
   document.querySelector('.selectContainer').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   select.set({filterText:'potato'});
+  div.click();
+  div.remove();
+  const selectInput = document.querySelector('.selectContainer input');
+  t.equal(selectInput.attributes.placeholder.value, 'Select...');
 
   select.destroy();
 });

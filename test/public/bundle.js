@@ -24719,7 +24719,7 @@
 	    target = undefined;
 
 	    if (!this.get().selectedItem) {
-	      this.set({placeholderText: 'Select...'});
+	      this.set({placeholderText: 'Select...', filterText: ''});
 	    }
 	  },
 	  handleWindowClick(event) {
@@ -26198,7 +26198,10 @@
 	  select.destroy();
 	});
 
-	test.only('closing List clears Select filter text', async (t) => {
+	test('closing List clears Select filter text', async (t) => {
+	  const div = document.createElement('div');
+	  document.body.appendChild(div);
+
 	  const select = new Select({
 	    target: target$1,
 	    data: {
@@ -26209,6 +26212,10 @@
 	  document.querySelector('.selectContainer').click();
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  select.set({filterText:'potato'});
+	  div.click();
+	  div.remove();
+	  const selectInput = document.querySelector('.selectContainer input');
+	  t.equal(selectInput.attributes.placeholder.value, 'Select...');
 
 	  select.destroy();
 	});
