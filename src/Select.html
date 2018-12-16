@@ -1,6 +1,8 @@
-<svelte:window on:click="handleWindowClick(event)" on:keydown="handleKeyDown(event)" />
+<svelte:window on:click="handleWindowClick(event)" on:keydown="handleKeyDown(event)" on:resize="getPosition()"/>
 
 <div class="selectContainer {isFocused ? 'focused' : ''}" on:click="handleClick()" ref:container>
+    <input on:focus="handleFocus()" ref:input placeholder="{placeholderText}" bind:value="filterText">
+
     {#if selectedItem}
     <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>{selectedItem.name}</div>
     <div class="clearSelectedItem" on:click="handleClear(event)">
@@ -10,9 +12,6 @@
                   d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path>
         </svg>
     </div>
-
-    {:else}
-    <input on:focus="handleFocus()" ref:input placeholder="Placeholder text">
     {/if}
 </div>
 
@@ -34,6 +33,7 @@
         background: transparent;
         font-size: 14px;
         letter-spacing: -0.08px;
+        position: absolute;
     }
 
     .selectContainer input::placeholder {
@@ -86,8 +86,15 @@
   let target;
 
   export default {
+    data() {
+      return {
+        filterText: '',
+        placeholderText: 'Select...'
+      }
+    },
     onstate({changed, current, previous}) {
       if (!previous) return;
+
 
       if (changed.isFocused) {
         const {isFocused} = current;
@@ -98,6 +105,13 @@
       }
     },
     methods: {
+      getPosition() {
+        if (!target) return;
+        const { top, left, bottom, width } = this.refs.container.getBoundingClientRect();
+        target.style.top = `${bottom + 5}px`;
+        target.style.left = `${left}px`;
+        target.style.minWidth = `${width}px`;
+      },
       handleKeyDown(e) {
         const {isFocused} = this.get();
         if (!isFocused) return;
@@ -119,7 +133,6 @@
       },
       handleFocus() {
         this.set({isFocused: true});
-        // this.handleClick();
       },
       removeList() {
         if (!list) return;
@@ -129,6 +142,10 @@
         if (!target) return;
         target.remove();
         target = undefined;
+
+        if (!this.get().selectedItem) {
+          this.set({placeholderText: 'Select...'});
+        }
       },
       handleWindowClick(event) {
         if (this.refs.container.contains(event.target)) return;
@@ -142,7 +159,7 @@
       },
       handleClear(e) {
         e.stopPropagation();
-        this.set({selectedItem: undefined});
+        this.set({selectedItem: undefined, placeholderText: 'Select...'});
         if (this.refs.input) this.refs.input.focus();
       },
       loadList() {
@@ -153,9 +170,9 @@
 
         Object.assign(target.style, {
           position: 'absolute',
-          width: '400px'
         });
 
+        this.getPosition();
 
         document.body.appendChild(target);
         list = new List({
@@ -172,11 +189,16 @@
 
         list.on('itemSelected', (selectedItem) => {
           this.set({
-            selectedItem
+            selectedItem,
+            placeholderText: ''
           });
           this.removeList();
           this.refs.selectedItem.setAttribute('tabindex', '0');
-        })
+        });
+
+        if (this.get().selectedItem) {
+          this.set({placeholderText: ''});
+        }
       }
     },
     ondestroy() {

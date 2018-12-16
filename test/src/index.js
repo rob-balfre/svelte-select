@@ -12,6 +12,18 @@ import {assert, test, done} from 'tape-modern';
 // setup
 const target = document.querySelector('main');
 const testTarget = document.getElementById('testTemplate');
+const items = [
+  {name: 'Item #1'},
+  {name: 'Item #2'},
+  {name: 'Item #3'},
+  {name: 'Item #4'},
+  {name: 'Item #5'},
+  {name: 'Item #6'},
+  {name: 'Item #7'},
+  {name: 'Item #8'},
+  {name: 'Item #9'},
+  {name: 'Item #10'}
+];
 
 function indent(node, spaces) {
   if (node.childNodes.length === 0) return;
@@ -198,15 +210,8 @@ test('list scrolls to active item', async (t) => {
   const list = new List({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ],
-      activeItem: {name: 'Item #4'},
-      activeItemIndex: 3,
+      items,
+      activeItemIndex: 8,
     }
   });
 
@@ -225,13 +230,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   const list = new List({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ],
+      items,
       activeItem: {name: 'Item #1'},
       activeItemIndex: 0,
     }
@@ -248,13 +247,7 @@ test('on enter active item fires a itemSelected event', async (t) => {
   const list = new List({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ]
+      items
     }
   });
 
@@ -275,13 +268,7 @@ test('on tab active item fires a itemSelected event', async (t) => {
   const list = new List({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ]
+      items
     }
   });
 
@@ -387,13 +374,7 @@ test('Select opens List populated with items', async (t) => {
   const select = new Select({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ]
+      items
     }
   });
 
@@ -413,13 +394,7 @@ test('List starts with first item in hover state', async (t) => {
   const select = new Select({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ]
+      items
     }
   });
 
@@ -437,13 +412,7 @@ test('List starts with first item in hover state', async (t) => {
   const select = new Select({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ],
+      items,
       activeItemIndex: 1,
     }
   });
@@ -462,13 +431,7 @@ test('select item from list', async (t) => {
   const select = new Select({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ],
+      items,
       activeItemIndex: 1,
     }
   });
@@ -490,13 +453,7 @@ test('blur should close list and remove focus from select', async (t) => {
   const select = new Select({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ],
+      items
     }
   });
 
@@ -512,13 +469,7 @@ test('selecting item should close list but keep focus on select', async (t) => {
   const select = new Select({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ],
+      items
     }
   });
 
@@ -534,13 +485,7 @@ test('clicking Select with selected item should open list with item listed as ac
   const select = new Select({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ],
+      items
     }
   });
 
@@ -557,13 +502,7 @@ test('focus on Select input updates focus state', async (t) => {
   const select = new Select({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ],
+      items
     }
   });
 
@@ -573,17 +512,11 @@ test('focus on Select input updates focus state', async (t) => {
   select.destroy();
 });
 
-test.only('key up and down when Select focused opens list', async (t) => {
+test('key up and down when Select focused opens list', async (t) => {
   const select = new Select({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ],
+      items
     }
   });
 
@@ -591,6 +524,62 @@ test.only('key up and down when Select focused opens list', async (t) => {
   t.ok(select.get().isFocused);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   t.ok(document.querySelector('.listContainer'));
+
+  select.destroy();
+});
+
+test.only('List should keep width of parent Select', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isFocused: true
+    }
+  });
+
+  document.querySelector('.selectContainer input').focus();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  const selectContainer = document.querySelector('.selectContainer');
+  const listContainer = document.querySelector('.listContainer');
+  t.equal(selectContainer.offsetWidth, listContainer.offsetWidth);
+
+  select.destroy();
+});
+
+test('Placeholder text should vanish when List is open', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isFocused: true
+    }
+  });
+
+  const selectInput = document.querySelector('.selectContainer input');
+  t.equal(selectInput.attributes.placeholder.value, 'Select...');
+  document.querySelector('.selectContainer input').focus();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.equal(selectInput.attributes.placeholder.value, '');
+
+  select.destroy();
+});
+
+test.only('Placeholder text should reappear when List is closed', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  div.click();
+  div.remove();
+  const selectInput = document.querySelector('.selectContainer input');
+  t.equal(selectInput.attributes.placeholder.value, 'Select...');
 
   // select.destroy();
 });

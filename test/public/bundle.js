@@ -24453,8 +24453,8 @@
 	}
 	function add_css() {
 		var style = createElement("style");
-		style.id = 'svelte-1eb3hsd-style';
-		style.textContent = ".listContainer.svelte-1eb3hsd{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.listItem.svelte-1eb3hsd{padding:20px}.listItem.hover.svelte-1eb3hsd{background:#e7f2ff}.listItem.svelte-1eb3hsd:active{background:#b9daff}.listItem.svelte-1eb3hsd:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1eb3hsd{background:#007aff;color:#fff}.empty.svelte-1eb3hsd{text-align:center;padding:20px 0;color:#78848F}";
+		style.id = 'svelte-f1hhit-style';
+		style.textContent = ".listContainer.svelte-f1hhit{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto}.listItem.svelte-f1hhit{height:40px;line-height:40px;padding:0 20px}.listItem.hover.svelte-f1hhit{background:#e7f2ff}.listItem.svelte-f1hhit:active{background:#b9daff}.listItem.svelte-f1hhit:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-f1hhit{background:#007aff;color:#fff}.empty.svelte-f1hhit{text-align:center;padding:20px 0;color:#78848F}";
 		append(document.head, style);
 	}
 
@@ -24506,7 +24506,7 @@
 				for (var i = 0; i < each_blocks.length; i += 1) {
 					each_blocks[i].c();
 				}
-				div.className = "listContainer svelte-1eb3hsd";
+				div.className = "listContainer svelte-f1hhit";
 			},
 
 			m(target, anchor) {
@@ -24581,7 +24581,7 @@
 			c() {
 				div = createElement("div");
 				div.textContent = "No options";
-				div.className = "empty svelte-1eb3hsd";
+				div.className = "empty svelte-f1hhit";
 			},
 
 			m(target, anchor) {
@@ -24608,7 +24608,7 @@
 
 				addListener(div, "mouseover", mouseover_handler);
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-1eb3hsd";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-f1hhit";
 			},
 
 			m(target, anchor) {
@@ -24623,7 +24623,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.activeItemIndex || changed.hoverItemIndex) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-1eb3hsd")) {
+				if ((changed.activeItemIndex || changed.hoverItemIndex) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-f1hhit")) {
 					div.className = div_class_value;
 				}
 			},
@@ -24646,7 +24646,7 @@
 		this._intro = true;
 		this._handlers.update = [onupdate];
 
-		if (!document.getElementById("svelte-1eb3hsd-style")) add_css();
+		if (!document.getElementById("svelte-f1hhit-style")) add_css();
 
 		this._fragment = create_main_fragment(this, this._state);
 
@@ -24670,7 +24670,20 @@
 	let list;
 	let target;
 
+	function data$1() {
+	  return {
+	    filterText: '',
+	    placeholderText: 'Select...'
+	  }
+	}
 	var methods$1 = {
+	  getPosition() {
+	    if (!target) return;
+	    const { top, left, bottom, width } = this.refs.container.getBoundingClientRect();
+	    target.style.top = `${bottom + 5}px`;
+	    target.style.left = `${left}px`;
+	    target.style.minWidth = `${width}px`;
+	  },
 	  handleKeyDown(e) {
 	    const {isFocused} = this.get();
 	    if (!isFocused) return;
@@ -24692,7 +24705,6 @@
 	  },
 	  handleFocus() {
 	    this.set({isFocused: true});
-	    // this.handleClick();
 	  },
 	  removeList() {
 	    if (!list) return;
@@ -24702,6 +24714,10 @@
 	    if (!target) return;
 	    target.remove();
 	    target = undefined;
+
+	    if (!this.get().selectedItem) {
+	      this.set({placeholderText: 'Select...'});
+	    }
 	  },
 	  handleWindowClick(event) {
 	    if (this.refs.container.contains(event.target)) return;
@@ -24715,7 +24731,7 @@
 	  },
 	  handleClear(e) {
 	    e.stopPropagation();
-	    this.set({selectedItem: undefined});
+	    this.set({selectedItem: undefined, placeholderText: 'Select...'});
 	    if (this.refs.input) this.refs.input.focus();
 	  },
 	  loadList() {
@@ -24726,9 +24742,9 @@
 
 	    Object.assign(target.style, {
 	      position: 'absolute',
-	      width: '400px'
 	    });
 
+	    this.getPosition();
 
 	    document.body.appendChild(target);
 	    list = new List({
@@ -24745,11 +24761,16 @@
 
 	    list.on('itemSelected', (selectedItem) => {
 	      this.set({
-	        selectedItem
+	        selectedItem,
+	        placeholderText: ''
 	      });
 	      this.removeList();
 	      this.refs.selectedItem.setAttribute('tabindex', '0');
 	    });
+
+	    if (this.get().selectedItem) {
+	      this.set({placeholderText: ''});
+	    }
 	  }
 	};
 
@@ -24758,6 +24779,7 @@
 	}
 	function onstate({changed, current, previous}) {
 	  if (!previous) return;
+
 
 	  if (changed.isFocused) {
 	    const {isFocused} = current;
@@ -24769,13 +24791,13 @@
 	}
 	function add_css$1() {
 		var style = createElement("style");
-		style.id = 'svelte-16wph68-style';
-		style.textContent = ".selectContainer.svelte-16wph68{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-16wph68 input.svelte-16wph68{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-16wph68 input.svelte-16wph68::placeholder{color:#78848F}.selectContainer.svelte-16wph68 input.svelte-16wph68:focus{outline:none}.selectContainer.svelte-16wph68:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-16wph68{border-color:#006FE8}.selectedItem.svelte-16wph68{padding:0 16px;line-height:44px}.selectedItem.svelte-16wph68:focus{outline:none}.clearSelectedItem.svelte-16wph68{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-16wph68:hover{color:#2c3e50}.selectContainer.focused.svelte-16wph68 .clearSelectedItem.svelte-16wph68{color:#3F4F5F}";
+		style.id = 'svelte-sbu1xz-style';
+		style.textContent = ".selectContainer.svelte-sbu1xz{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-sbu1xz input.svelte-sbu1xz{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute}.selectContainer.svelte-sbu1xz input.svelte-sbu1xz::placeholder{color:#78848F}.selectContainer.svelte-sbu1xz input.svelte-sbu1xz:focus{outline:none}.selectContainer.svelte-sbu1xz:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-sbu1xz{border-color:#006FE8}.selectedItem.svelte-sbu1xz{padding:0 16px;line-height:44px}.selectedItem.svelte-sbu1xz:focus{outline:none}.clearSelectedItem.svelte-sbu1xz{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-sbu1xz:hover{color:#2c3e50}.selectContainer.focused.svelte-sbu1xz .clearSelectedItem.svelte-sbu1xz{color:#3F4F5F}";
 		append(document.head, style);
 	}
 
 	function create_main_fragment$1(component, ctx) {
-		var div, div_class_value;
+		var div, input, input_updating = false, text, div_class_value;
 
 		function onwindowclick(event) {
 			component.handleWindowClick(event);	}
@@ -24785,13 +24807,21 @@
 			component.handleKeyDown(event);	}
 		window.addEventListener("keydown", onwindowkeydown);
 
-		function select_block_type(ctx) {
-			if (ctx.selectedItem) return create_if_block;
-			return create_else_block$1;
+		function onwindowresize(event) {
+			component.getPosition();	}
+		window.addEventListener("resize", onwindowresize);
+
+		function input_input_handler() {
+			input_updating = true;
+			component.set({ filterText: input.value });
+			input_updating = false;
 		}
 
-		var current_block_type = select_block_type(ctx);
-		var if_block = current_block_type(component, ctx);
+		function focus_handler(event) {
+			component.handleFocus();
+		}
+
+		var if_block = (ctx.selectedItem) && create_if_block(component, ctx);
 
 		function click_handler(event) {
 			component.handleClick();
@@ -24800,28 +24830,49 @@
 		return {
 			c() {
 				div = createElement("div");
-				if_block.c();
+				input = createElement("input");
+				text = createText("\n\n    ");
+				if (if_block) if_block.c();
+				addListener(input, "input", input_input_handler);
+				addListener(input, "focus", focus_handler);
+				input.placeholder = ctx.placeholderText;
+				input.className = "svelte-sbu1xz";
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-16wph68";
+				div.className = div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-sbu1xz";
 			},
 
 			m(target_1, anchor) {
 				insert(target_1, div, anchor);
-				if_block.m(div, null);
+				append(div, input);
+				component.refs.input = input;
+
+				input.value = ctx.filterText;
+
+				append(div, text);
+				if (if_block) if_block.m(div, null);
 				component.refs.container = div;
 			},
 
 			p(changed, ctx) {
-				if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
-					if_block.p(changed, ctx);
-				} else {
-					if_block.d(1);
-					if_block = current_block_type(component, ctx);
-					if_block.c();
-					if_block.m(div, null);
+				if (!input_updating && changed.filterText) input.value = ctx.filterText;
+				if (changed.placeholderText) {
+					input.placeholder = ctx.placeholderText;
 				}
 
-				if ((changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-16wph68")) {
+				if (ctx.selectedItem) {
+					if (if_block) {
+						if_block.p(changed, ctx);
+					} else {
+						if_block = create_if_block(component, ctx);
+						if_block.c();
+						if_block.m(div, null);
+					}
+				} else if (if_block) {
+					if_block.d(1);
+					if_block = null;
+				}
+
+				if ((changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isFocused ? 'focused' : '') + " svelte-sbu1xz")) {
 					div.className = div_class_value;
 				}
 			},
@@ -24831,52 +24882,23 @@
 
 				window.removeEventListener("keydown", onwindowkeydown);
 
+				window.removeEventListener("resize", onwindowresize);
+
 				if (detach) {
 					detachNode(div);
 				}
 
-				if_block.d();
+				removeListener(input, "input", input_input_handler);
+				removeListener(input, "focus", focus_handler);
+				if (component.refs.input === input) component.refs.input = null;
+				if (if_block) if_block.d();
 				removeListener(div, "click", click_handler);
 				if (component.refs.container === div) component.refs.container = null;
 			}
 		};
 	}
 
-	// (14:4) {:else}
-	function create_else_block$1(component, ctx) {
-		var input;
-
-		function focus_handler(event) {
-			component.handleFocus();
-		}
-
-		return {
-			c() {
-				input = createElement("input");
-				addListener(input, "focus", focus_handler);
-				input.placeholder = "Placeholder text";
-				input.className = "svelte-16wph68";
-			},
-
-			m(target_1, anchor) {
-				insert(target_1, input, anchor);
-				component.refs.input = input;
-			},
-
-			p: noop,
-
-			d(detach) {
-				if (detach) {
-					detachNode(input);
-				}
-
-				removeListener(input, "focus", focus_handler);
-				if (component.refs.input === input) component.refs.input = null;
-			}
-		};
-	}
-
-	// (4:4) {#if selectedItem}
+	// (6:4) {#if selectedItem}
 	function create_if_block(component, ctx) {
 		var div0, text0_value = ctx.selectedItem.name, text0, text1, div1;
 
@@ -24896,9 +24918,9 @@
 				div1 = createElement("div");
 				div1.innerHTML = `<svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 				addListener(div0, "focus", focus_handler);
-				div0.className = "selectedItem svelte-16wph68";
+				div0.className = "selectedItem svelte-sbu1xz";
 				addListener(div1, "click", click_handler);
-				div1.className = "clearSelectedItem svelte-16wph68";
+				div1.className = "clearSelectedItem svelte-sbu1xz";
 			},
 
 			m(target_1, anchor) {
@@ -24935,14 +24957,14 @@
 	function Select(options) {
 		init(this, options);
 		this.refs = {};
-		this._state = assign({}, options.data);
+		this._state = assign(data$1(), options.data);
 		this._intro = true;
 
 		this._handlers.state = [onstate];
 
 		this._handlers.destroy = [ondestroy];
 
-		if (!document.getElementById("svelte-16wph68-style")) add_css$1();
+		if (!document.getElementById("svelte-sbu1xz-style")) add_css$1();
 
 		onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 
@@ -25576,6 +25598,18 @@
 	// setup
 	const target$1 = document.querySelector('main');
 	const testTarget = document.getElementById('testTemplate');
+	const items = [
+	  {name: 'Item #1'},
+	  {name: 'Item #2'},
+	  {name: 'Item #3'},
+	  {name: 'Item #4'},
+	  {name: 'Item #5'},
+	  {name: 'Item #6'},
+	  {name: 'Item #7'},
+	  {name: 'Item #8'},
+	  {name: 'Item #9'},
+	  {name: 'Item #10'}
+	];
 
 	function indent(node, spaces) {
 	  if (node.childNodes.length === 0) return;
@@ -25758,15 +25792,8 @@
 	  const list = new List({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ],
-	      activeItem: {name: 'Item #4'},
-	      activeItemIndex: 3,
+	      items,
+	      activeItemIndex: 8,
 	    }
 	  });
 
@@ -25785,13 +25812,7 @@
 	  const list = new List({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ],
+	      items,
 	      activeItem: {name: 'Item #1'},
 	      activeItemIndex: 0,
 	    }
@@ -25808,13 +25829,7 @@
 	  const list = new List({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ]
+	      items
 	    }
 	  });
 
@@ -25835,13 +25850,7 @@
 	  const list = new List({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ]
+	      items
 	    }
 	  });
 
@@ -25947,13 +25956,7 @@
 	  const select = new Select({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ]
+	      items
 	    }
 	  });
 
@@ -25973,13 +25976,7 @@
 	  const select = new Select({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ]
+	      items
 	    }
 	  });
 
@@ -25997,13 +25994,7 @@
 	  const select = new Select({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ],
+	      items,
 	      activeItemIndex: 1,
 	    }
 	  });
@@ -26022,13 +26013,7 @@
 	  const select = new Select({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ],
+	      items,
 	      activeItemIndex: 1,
 	    }
 	  });
@@ -26050,13 +26035,7 @@
 	  const select = new Select({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ],
+	      items
 	    }
 	  });
 
@@ -26072,13 +26051,7 @@
 	  const select = new Select({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ],
+	      items
 	    }
 	  });
 
@@ -26094,13 +26067,7 @@
 	  const select = new Select({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ],
+	      items
 	    }
 	  });
 
@@ -26117,13 +26084,7 @@
 	  const select = new Select({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ],
+	      items
 	    }
 	  });
 
@@ -26133,17 +26094,11 @@
 	  select.destroy();
 	});
 
-	test.only('key up and down when Select focused opens list', async (t) => {
+	test('key up and down when Select focused opens list', async (t) => {
 	  const select = new Select({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ],
+	      items
 	    }
 	  });
 
@@ -26151,6 +26106,62 @@
 	  t.ok(select.get().isFocused);
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  t.ok(document.querySelector('.listContainer'));
+
+	  select.destroy();
+	});
+
+	test.only('List should keep width of parent Select', async (t) => {
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items,
+	      isFocused: true
+	    }
+	  });
+
+	  document.querySelector('.selectContainer input').focus();
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  const selectContainer = document.querySelector('.selectContainer');
+	  const listContainer = document.querySelector('.listContainer');
+	  t.equal(selectContainer.offsetWidth, listContainer.offsetWidth);
+
+	  select.destroy();
+	});
+
+	test('Placeholder text should vanish when List is open', async (t) => {
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items,
+	      isFocused: true
+	    }
+	  });
+
+	  const selectInput = document.querySelector('.selectContainer input');
+	  t.equal(selectInput.attributes.placeholder.value, 'Select...');
+	  document.querySelector('.selectContainer input').focus();
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  t.equal(selectInput.attributes.placeholder.value, '');
+
+	  select.destroy();
+	});
+
+	test.only('Placeholder text should reappear when List is closed', async (t) => {
+	  const div = document.createElement('div');
+	  document.body.appendChild(div);
+
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+	  div.click();
+	  div.remove();
+	  const selectInput = document.querySelector('.selectContainer input');
+	  t.equal(selectInput.attributes.placeholder.value, 'Select...');
 
 	  // select.destroy();
 	});
