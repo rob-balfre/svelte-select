@@ -738,6 +738,21 @@ test('clicking Select toggles List open state', async (t) => {
   select.destroy();
 });
 
+test.only('Select filter text filters list', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
+
+  t.ok(select.get().filteredItems.length === 10);
+  select.set({filterText: '5'});
+  t.ok(select.get().filteredItems.length === 1);
+
+  select.destroy();
+});
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

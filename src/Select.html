@@ -88,6 +88,7 @@
   export default {
     data() {
       return {
+        items: [],
         filterText: '',
         listOpen: false
       }
@@ -98,6 +99,12 @@
       },
       placeholderText({selectedItem}) {
         return selectedItem ? '' : 'Select...'
+      },
+      filteredItems({items, filterText}) {
+        return items.filter(item => {
+          if (filterText.length < 1) return true;
+          return item.name.toLowerCase().includes(filterText.toLowerCase())
+        })
       }
     },
     onstate({changed, current, previous}) {
@@ -112,6 +119,11 @@
         if (isFocused && this.refs.input) {
           this.refs.input.focus();
         }
+      }
+
+      if (changed.filteredItems) {
+        if (!list) return;
+        list.set({ items: current.filteredItems})
       }
     },
     methods: {
@@ -190,12 +202,12 @@
           target
         });
 
-        const {items, selectedItem} = this.get();
+        const {items, selectedItem, filteredItems} = this.get();
 
         if (items) {
           const match = JSON.stringify(selectedItem);
           const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
-          list.set({items, activeItemIndex});
+          list.set({items:filteredItems, activeItemIndex});
         }
 
         list.on('itemSelected', (selectedItem) => {

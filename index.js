@@ -495,8 +495,15 @@
 	function placeholderText({selectedItem}) {
 	  return selectedItem ? '' : 'Select...'
 	}
+	function filteredItems({items, filterText}) {
+	  return items.filter(item => {
+	    if (filterText.length < 1) return true;
+	    return item.name.toLowerCase().includes(filterText.toLowerCase())
+	  })
+	}
 	function data$1() {
 	  return {
+	    items: [],
 	    filterText: '',
 	    listOpen: false
 	  }
@@ -577,12 +584,12 @@
 	      target
 	    });
 
-	    const {items, selectedItem} = this.get();
+	    const {items, selectedItem, filteredItems} = this.get();
 
 	    if (items) {
 	      const match = JSON.stringify(selectedItem);
 	      const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
-	      list.set({items, activeItemIndex});
+	      list.set({items:filteredItems, activeItemIndex});
 	    }
 
 	    list.on('itemSelected', (selectedItem) => {
@@ -615,6 +622,11 @@
 	    if (isFocused && this.refs.input) {
 	      this.refs.input.focus();
 	    }
+	  }
+
+	  if (changed.filteredItems) {
+	    if (!list) return;
+	    list.set({ items: current.filteredItems});
 	  }
 	}
 	function add_css$1() {
@@ -787,7 +799,7 @@
 		this.refs = {};
 		this._state = assign(data$1(), options.data);
 
-		this._recompute({ selectedItem: 1, filterText: 1 }, this._state);
+		this._recompute({ selectedItem: 1, filterText: 1, items: 1 }, this._state);
 		this._intro = true;
 
 		this._handlers.state = [onstate];
@@ -823,6 +835,10 @@
 
 		if (changed.selectedItem) {
 			if (this._differs(state.placeholderText, (state.placeholderText = placeholderText(state)))) changed.placeholderText = true;
+		}
+
+		if (changed.items || changed.filterText) {
+			if (this._differs(state.filteredItems, (state.filteredItems = filteredItems(state)))) changed.filteredItems = true;
 		}
 	};
 
