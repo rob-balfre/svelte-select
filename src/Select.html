@@ -3,7 +3,7 @@
 <div class="selectContainer {isFocused ? 'focused' : ''}" on:click="handleClick()" ref:container>
     <input on:focus="handleFocus()" ref:input placeholder="{placeholderText}" bind:value="filterText">
 
-    {#if selectedItem}
+    {#if showSelectedItem }
     <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>{selectedItem.name}</div>
     <div class="clearSelectedItem" on:click="handleClear(event)">
         <svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
@@ -86,6 +86,11 @@
   let target;
 
   export default {
+    computed: {
+      showSelectedItem({selectedItem, filterText}) {
+        return selectedItem && filterText.length === 0;
+      }
+    },
     data() {
       return {
         filterText: '',
@@ -161,6 +166,7 @@
         e.stopPropagation();
         this.set({selectedItem: undefined, placeholderText: 'Select...'});
         if (this.refs.input) this.refs.input.focus();
+        this.removeList();
       },
       loadList() {
         if (target && list) return;
@@ -193,7 +199,8 @@
             placeholderText: ''
           });
           this.removeList();
-          this.refs.selectedItem.setAttribute('tabindex', '0');
+          if (this.get().showSelectedItem)
+            this.refs.selectedItem.setAttribute('tabindex', '0');
         });
 
         if (this.get().selectedItem) {

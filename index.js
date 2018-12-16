@@ -489,6 +489,9 @@
 	let list;
 	let target;
 
+	function showSelectedItem({selectedItem, filterText}) {
+	  return selectedItem && filterText.length === 0;
+	}
 	function data$1() {
 	  return {
 	    filterText: '',
@@ -552,6 +555,7 @@
 	    e.stopPropagation();
 	    this.set({selectedItem: undefined, placeholderText: 'Select...'});
 	    if (this.refs.input) this.refs.input.focus();
+	    this.removeList();
 	  },
 	  loadList() {
 	    if (target && list) return;
@@ -584,7 +588,8 @@
 	        placeholderText: ''
 	      });
 	      this.removeList();
-	      this.refs.selectedItem.setAttribute('tabindex', '0');
+	      if (this.get().showSelectedItem)
+	        this.refs.selectedItem.setAttribute('tabindex', '0');
 	    });
 
 	    if (this.get().selectedItem) {
@@ -640,7 +645,7 @@
 			component.handleFocus();
 		}
 
-		var if_block = (ctx.selectedItem) && create_if_block(component, ctx);
+		var if_block = (ctx.showSelectedItem) && create_if_block(component, ctx);
 
 		function click_handler(event) {
 			component.handleClick();
@@ -678,7 +683,7 @@
 					input.placeholder = ctx.placeholderText;
 				}
 
-				if (ctx.selectedItem) {
+				if (ctx.showSelectedItem) {
 					if (if_block) {
 						if_block.p(changed, ctx);
 					} else {
@@ -717,7 +722,7 @@
 		};
 	}
 
-	// (6:4) {#if selectedItem}
+	// (6:4) {#if showSelectedItem }
 	function create_if_block(component, ctx) {
 		var div0, text0_value = ctx.selectedItem.name, text0, text1, div1;
 
@@ -777,6 +782,8 @@
 		init(this, options);
 		this.refs = {};
 		this._state = assign(data$1(), options.data);
+
+		this._recompute({ selectedItem: 1, filterText: 1 }, this._state);
 		this._intro = true;
 
 		this._handlers.state = [onstate];
@@ -803,6 +810,12 @@
 
 	assign(Select.prototype, proto);
 	assign(Select.prototype, methods$1);
+
+	Select.prototype._recompute = function _recompute(changed, state) {
+		if (changed.selectedItem || changed.filterText) {
+			if (this._differs(state.showSelectedItem, (state.showSelectedItem = showSelectedItem(state)))) changed.showSelectedItem = true;
+		}
+	};
 
 	return Select;
 

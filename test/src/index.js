@@ -528,7 +528,7 @@ test('key up and down when Select focused opens list', async (t) => {
   select.destroy();
 });
 
-test.only('List should keep width of parent Select', async (t) => {
+test('List should keep width of parent Select', async (t) => {
   const select = new Select({
     target,
     data: {
@@ -546,25 +546,7 @@ test.only('List should keep width of parent Select', async (t) => {
   select.destroy();
 });
 
-test('Placeholder text should vanish when List is open', async (t) => {
-  const select = new Select({
-    target,
-    data: {
-      items,
-      isFocused: true
-    }
-  });
-
-  const selectInput = document.querySelector('.selectContainer input');
-  t.equal(selectInput.attributes.placeholder.value, 'Select...');
-  document.querySelector('.selectContainer input').focus();
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  t.equal(selectInput.attributes.placeholder.value, '');
-
-  select.destroy();
-});
-
-test.only('Placeholder text should reappear when List is closed', async (t) => {
+test('Placeholder text should reappear when List is closed', async (t) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
 
@@ -581,8 +563,60 @@ test.only('Placeholder text should reappear when List is closed', async (t) => {
   const selectInput = document.querySelector('.selectContainer input');
   t.equal(selectInput.attributes.placeholder.value, 'Select...');
 
-  // select.destroy();
+  select.destroy();
 });
+
+test('typing in Select filter will hide selected Item', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  select.set({filterText:'potato'});
+  t.ok(!document.querySelector('.selectContainer .selectedItem'));
+
+  select.destroy();
+});
+
+test('clearing selected item closes List if open', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  document.querySelector('.clearSelectedItem').click();
+  t.ok(!document.querySelector('.listContainer'));
+
+  select.destroy();
+});
+
+test.only('closing List clears Select filter text', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  select.set({filterText:'potato'});
+
+  select.destroy();
+});
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
