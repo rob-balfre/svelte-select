@@ -24733,7 +24733,8 @@
 	    if (this.refs.input) this.refs.input.blur();
 	  },
 	  handleClick() {
-	    this.set({isFocused: true, listOpen: true});
+	    const {listOpen} = this.get();
+	    this.set({isFocused: true, listOpen: !listOpen});
 	  },
 	  handleClear(e) {
 	    e.stopPropagation();
@@ -24767,9 +24768,9 @@
 
 	    list.on('itemSelected', (selectedItem) => {
 	      this.set({
-	        selectedItem
+	        selectedItem,
+	        listOpen: false
 	      });
-	      this.removeList();
 	      if (this.get().showSelectedItem)
 	        this.refs.selectedItem.setAttribute('tabindex', '0');
 	    });
@@ -26329,12 +26330,17 @@
 	  const select = new Select({
 	    target: target$1,
 	    data: {
-	      items,
-	      listOpen: true
+	      items
 	    }
 	  });
 
-	  // select.destroy();
+	  t.ok(!document.querySelector('.listContainer'));
+	  document.querySelector('.selectContainer').click();
+	  t.ok(document.querySelector('.listContainer'));
+	  document.querySelector('.selectContainer').click();
+	  t.ok(!document.querySelector('.listContainer'));
+
+	  select.destroy();
 	});
 
 

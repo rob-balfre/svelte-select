@@ -552,7 +552,8 @@
 	    if (this.refs.input) this.refs.input.blur();
 	  },
 	  handleClick() {
-	    this.set({isFocused: true, listOpen: true});
+	    const {listOpen} = this.get();
+	    this.set({isFocused: true, listOpen: !listOpen});
 	  },
 	  handleClear(e) {
 	    e.stopPropagation();
@@ -586,9 +587,9 @@
 
 	    list.on('itemSelected', (selectedItem) => {
 	      this.set({
-	        selectedItem
+	        selectedItem,
+	        listOpen: false
 	      });
-	      this.removeList();
 	      if (this.get().showSelectedItem)
 	        this.refs.selectedItem.setAttribute('tabindex', '0');
 	    });

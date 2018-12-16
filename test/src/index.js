@@ -725,12 +725,17 @@ test('clicking Select toggles List open state', async (t) => {
   const select = new Select({
     target,
     data: {
-      items,
-      listOpen: true
+      items
     }
   });
 
-  // select.destroy();
+  t.ok(!document.querySelector('.listContainer'));
+  document.querySelector('.selectContainer').click();
+  t.ok(document.querySelector('.listContainer'));
+  document.querySelector('.selectContainer').click();
+  t.ok(!document.querySelector('.listContainer'));
+
+  select.destroy();
 });
 
 
