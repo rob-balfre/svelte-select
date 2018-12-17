@@ -1,10 +1,12 @@
 <svelte:window on:click="handleWindowClick(event)" on:keydown="handleKeyDown(event)" on:resize="getPosition()"/>
 
-<div class="selectContainer {isFocused ? 'focused' : ''}" on:click="handleClick()" ref:container>
+<div class="selectContainer {isFocused ? 'focused' : ''}" on:click="handleClick()" ref:container style="{containerStyles}">
     <input on:focus="handleFocus()" ref:input placeholder="{placeholderText}" bind:value="filterText">
 
     {#if showSelectedItem }
-    <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>{selectedItem.name}</div>
+    <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>
+        <svelte:component this="{Selection}" {selectedItem} />
+    </div>
     <div class="clearSelectedItem" on:click="handleClear(event)">
         <svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
              role="presentation">
@@ -81,6 +83,8 @@
 
 <script>
   import List from './List.html';
+  import Item from './Item.html'
+  import Selection from './Selection.html'
 
   let list;
   let target;
@@ -90,7 +94,10 @@
       return {
         items: [],
         filterText: '',
-        listOpen: false
+        listOpen: false,
+        Item,
+        Selection,
+        paddingLeft: 0
       }
     },
     computed: {
@@ -212,7 +219,10 @@
 
         document.body.appendChild(target);
         list = new List({
-          target
+          target,
+          data: {
+            Item: this.get().Item
+          }
         });
 
         const {items, selectedItem, filteredItems} = this.get();

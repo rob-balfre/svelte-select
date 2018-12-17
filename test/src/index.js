@@ -85,6 +85,7 @@ function normalize(html) {
     .replace(/svelte-ref-\w+/g, '')
     .replace(/\s*svelte-\w+\s*/g, '')
     .replace(/class=""/g, '')
+    .replace(/style=""/g, '')
     .replace(/>\s+/g, '>')
     .replace(/\s+</g, '<');
 
@@ -241,7 +242,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   const {container} = list.refs;
   const focusedElemBounding = container.querySelector('.listItem.hover');
-  t.equal(focusedElemBounding.innerHTML, `Item #2`);
+  t.equal(focusedElemBounding.innerHTML.trim(), `Item #2`);
   list.destroy();
 });
 
@@ -783,6 +784,20 @@ test('While filtering, the first item in List should receive hover class', async
   select.destroy();
 });
 
+test('Select container styles can be overridden', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      selectedItem: {name: 'Item #2'},
+      activeItemIndex: 1,
+      containerStyles: `padding-left: 40px;`
+    }
+  });
+
+  t.equal(document.querySelector('.selectContainer').style.cssText, `padding-left: 40px;`);
+  select.destroy();
+});
 
 
 function focus(element, setFocus) {

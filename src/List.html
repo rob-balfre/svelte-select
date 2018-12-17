@@ -2,7 +2,10 @@
 
 <div class="listContainer" ref:container>
     {#each items as item, i}
-    <div on:mouseover="handleHover(item)" on:click="handleClick(item, event)" class="listItem {itemClasses(activeItemIndex, hoverItemIndex, item, i)}">{item.name}</div>
+    <div on:mouseover="handleHover(item)" on:click="handleClick(item, event)"
+         class="listItem {itemClasses(activeItemIndex, hoverItemIndex, item, i)}">
+        <svelte:component this="{Item}" {item}/>
+    </div>
     {:else}
     <div class="empty">No options</div>
     {/each}
@@ -47,12 +50,15 @@
 </style>
 
 <script>
+  import Item from './Item.html';
+
   export default {
     data() {
       return {
         hoverItemIndex: 0,
         activeItemIndex: undefined,
-        items: []
+        items: [],
+        Item
       }
     },
     onupdate({changed, current, previous}) {
