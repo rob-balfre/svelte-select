@@ -222,8 +222,6 @@ test('list scrolls to active item', async (t) => {
   if (focusedElemBounding) {
     offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
   }
-  
-  console.log('offsetBounding: ', offsetBounding);
 
   t.equal(offsetBounding, 0);
   list.destroy();
@@ -797,6 +795,23 @@ test('Select container styles can be overridden', async (t) => {
 
   t.equal(document.querySelector('.selectContainer').style.cssText, `padding-left: 40px;`);
   select.destroy();
+});
+
+test('List mouseover events should be ignored when using arrow keys', async (t) => {
+  const list = new List({
+    target,
+    data: {
+      items: itemsWithIndex
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  t.ok(list.get().disableMouseHover);
+
+  list.destroy();
 });
 
 

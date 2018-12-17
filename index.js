@@ -237,7 +237,8 @@
 	    hoverItemIndex: 0,
 	    activeItemIndex: undefined,
 	    items: [],
-	    Item
+	    Item,
+	    disableMouseHover: false
 	  }
 	}
 	function itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex) {
@@ -248,7 +249,12 @@
 	    this.fire('itemSelected', {name: item.name});
 	  },
 	  handleHover(item) {
-	    this.set({hoverItemIndex: item.index});
+	    const {disableMouseHover} = this.get();
+	    if (!disableMouseHover) {
+	      this.set({hoverItemIndex: item.index});
+	    } else {
+	      this.set({disableMouseHover: false});
+	    }
 	  },
 	  handleClick(item, event) {
 	    event.stopPropagation();
@@ -294,6 +300,7 @@
 	    }
 	  },
 	  scrollToActiveItem(className) {
+	    this.set({disableMouseHover: true});
 	    const {container} = this.refs;
 	    let offsetBounding;
 	    const focusedElemBounding = container.querySelector(`.listItem.${className}`);

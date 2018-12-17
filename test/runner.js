@@ -2,8 +2,10 @@ const http = require('http');
 const ports = require('port-authority');
 const sirv = require('sirv');
 const puppeteer = require('puppeteer');
+let page;
 
 async function go() {
+  console.log('go');
   const port = await ports.find(1234);
   console.log(`found available port: ${port}`);
 
@@ -13,7 +15,7 @@ async function go() {
   await ports.wait(port).catch(() => {}); // workaround windows gremlins
 
   const browser = await puppeteer.launch({args: ['--no-sandbox']});
-  const page = await browser.newPage();
+  page = await browser.newPage();
 
   page.on('console', msg => {
     console[msg.type()](msg.text());
