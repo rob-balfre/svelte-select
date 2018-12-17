@@ -814,6 +814,19 @@ test('List mouseover events should be ignored when using arrow keys', async (t) 
   list.destroy();
 });
 
+test('Select can be disabled', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isDisabled: true,
+    }
+  });
+
+  t.ok(document.querySelector('.selectContainer.disabled'));
+
+  select.destroy();
+});
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

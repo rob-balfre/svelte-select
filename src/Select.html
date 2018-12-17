@@ -1,11 +1,13 @@
 <svelte:window on:click="handleWindowClick(event)" on:keydown="handleKeyDown(event)" on:resize="getPosition()"/>
 
-<div class="selectContainer {isFocused ? 'focused' : ''}" on:click="handleClick()" ref:container style="{containerStyles}">
-    <input on:focus="handleFocus()" ref:input placeholder="{placeholderText}" bind:value="filterText">
+<div class="selectContainer {isDisabled ? 'disabled' : ''}{isFocused ? 'focused' : ''}" on:click="handleClick()"
+     ref:container style="{containerStyles}">
+    <input on:focus="handleFocus()" ref:input placeholder="{placeholderText}" bind:value="filterText"
+           disabled="{isDisabled}">
 
     {#if showSelectedItem }
     <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>
-        <svelte:component this="{Selection}" {selectedItem} />
+        <svelte:component this="{Selection}" {selectedItem}/>
     </div>
     <div class="clearSelectedItem" on:click="handleClear(event)">
         <svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
@@ -52,6 +54,16 @@
 
     .selectContainer.focused {
         border-color: #006FE8;
+    }
+
+    .selectContainer.disabled {
+        background: #F6F7F8;
+        border-color: #F6F7F8;
+        color: #C1C6CC;
+    }
+
+    .selectContainer.disabled input::placeholder {
+        color: #C1C6CC;
     }
 
     .selectedItem {
@@ -197,7 +209,8 @@
         if (this.refs.input) this.refs.input.blur();
       },
       handleClick() {
-        const {listOpen} = this.get();
+        const {listOpen, isDisabled} = this.get();
+        if (isDisabled) return;
         this.set({isFocused: true, listOpen: !listOpen});
       },
       handleClear(e) {
