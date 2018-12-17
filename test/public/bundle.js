@@ -24377,17 +24377,20 @@
 	    items: []
 	  }
 	}
-	function itemClasses(activeItemIndex, hoverItemIndex, i) {
-	  return `${activeItemIndex === i ? 'active ' : ''}${hoverItemIndex === i ? 'hover' : ''}`;
+	function itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex) {
+	  return `${activeItemIndex === item.index ? 'active ' : ''}${hoverItemIndex === itemIndex ? 'hover' : ''}`;
 	}
 	var methods = {
-	  handleHover(item, itemIndex) {
-	    this.set({hoverItemIndex: itemIndex});
+	  handleSelect(item) {
+	    this.fire('itemSelected', {name: item.name});
 	  },
-	  handleClick(item, itemIndex, event) {
+	  handleHover(item) {
+	    this.set({hoverItemIndex: item.index});
+	  },
+	  handleClick(item, event) {
 	    event.stopPropagation();
-	    this.set({activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
-	    this.fire('itemSelected', item);
+	    this.set({activeItemIndex: item.index, hoverItemIndex: item.index});
+	    this.handleSelect(item);
 	  },
 	  updateHoverItem(increment) {
 	    let {items, hoverItemIndex} = this.get();
@@ -24418,12 +24421,12 @@
 	      case 'Enter':
 	        e.preventDefault();
 	        this.set({activeItemIndex: hoverItemIndex});
-	        this.fire('itemSelected', items[hoverItemIndex]);
+	        this.handleSelect(items[hoverItemIndex]);
 	        break;
 	      case 'Tab':
 	        e.preventDefault();
 	        this.set({activeItemIndex: hoverItemIndex});
-	        this.fire('itemSelected', items[hoverItemIndex]);
+	        this.handleSelect(items[hoverItemIndex]);
 	        break;
 	    }
 	  },
@@ -24446,7 +24449,6 @@
 	    this.scrollToActiveItem('active');
 	    this.set({
 	      hoverItemIndex: current.activeItemIndex,
-	      // activeItem: current.items[current.activeItemIndex]
 	    });
 	  }
 
@@ -24461,13 +24463,13 @@
 	function click_handler(event) {
 		const { component, ctx } = this._svelte;
 
-		component.handleClick(ctx.item, ctx.i, event);
+		component.handleClick(ctx.item, event);
 	}
 
 	function mouseover_handler(event) {
 		const { component, ctx } = this._svelte;
 
-		component.handleHover(ctx.item, ctx.i);
+		component.handleHover(ctx.item);
 	}
 
 	function get_each_context(ctx, list, i) {
@@ -24608,7 +24610,7 @@
 
 				addListener(div, "mouseover", mouseover_handler);
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-f1hhit";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-f1hhit";
 			},
 
 			m(target, anchor) {
@@ -24623,7 +24625,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.activeItemIndex || changed.hoverItemIndex) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.i) + " svelte-f1hhit")) {
+				if ((changed.activeItemIndex || changed.hoverItemIndex || changed.items) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-f1hhit")) {
 					div.className = div_class_value;
 				}
 			},
@@ -24677,7 +24679,13 @@
 	  return selectedItem ? '' : 'Select...'
 	}
 	function filteredItems({items, filterText}) {
-	  return items.filter(item => {
+	  const itemsWithIndex = items.map((item, i) => {
+	    return {
+	      name: item.name,
+	      index: i
+	    }
+	  });
+	  return itemsWithIndex.filter(item => {
 	    if (filterText.length < 1) return true;
 	    return item.name.toLowerCase().includes(filterText.toLowerCase())
 	  })
@@ -24692,13 +24700,13 @@
 	var methods$1 = {
 	  getPosition() {
 	    if (!target) return;
-	    const { top, left, bottom, width } = this.refs.container.getBoundingClientRect();
+	    const {top, left, bottom, width} = this.refs.container.getBoundingClientRect();
 	    target.style.top = `${bottom + 5}px`;
 	    target.style.left = `${left}px`;
 	    target.style.minWidth = `${width}px`;
 	  },
 	  handleKeyDown(e) {
-	    const {isFocused, filterText} = this.get();
+	    const {isFocused} = this.get();
 	    if (!isFocused) return;
 
 	    switch (e.key) {
@@ -24714,14 +24722,11 @@
 	        e.preventDefault();
 	        this.set({listOpen: true});
 	        break;
-	      default:
-	        if (this.refs.input && filterText.length === 0 && e.key.length === 1) {
-	            this.refs.input.focus();
-	        }
 	    }
 	  },
 	  handleFocus() {
 	    this.set({isFocused: true});
+	    if (this.refs.input) this.refs.input.focus();
 	  },
 	  removeList() {
 	    this.set({filterText: ''});
@@ -24746,7 +24751,7 @@
 	  handleClear(e) {
 	    e.stopPropagation();
 	    this.set({selectedItem: undefined, listOpen: false});
-	    if (this.refs.input) this.refs.input.focus();
+	    this.handleFocus();
 	  },
 	  loadList() {
 	    if (target && list) return;
@@ -24770,7 +24775,7 @@
 	    if (items) {
 	      const match = JSON.stringify(selectedItem);
 	      const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
-	      list.set({items:filteredItems, activeItemIndex});
+	      list.set({items: filteredItems, activeItemIndex});
 	    }
 
 	    list.on('itemSelected', (selectedItem) => {
@@ -24785,29 +24790,39 @@
 	};
 
 	function oncreate() {
-	  const {listOpen } = this.get();
+	  const {listOpen} = this.get();
 	  if (listOpen) this.loadList();
 	}
 	function ondestroy() {
-	  this.set({listOpen: false});
+	  this.removeList();
 	}
 	function onstate({changed, current, previous}) {
 	  if (!previous) return;
 
 	  if (changed.listOpen) {
-	    current.listOpen ? this.loadList() : this.removeList();
+	    if (current.listOpen) {
+	      this.loadList();
+	    } else {
+	      this.removeList();
+	    }
+	  }
+
+	  if (changed.filterText && current.filterText.length === 1) {
+	    this.loadList();
+	    this.set({listOpen: true});
 	  }
 
 	  if (changed.isFocused) {
 	    const {isFocused} = current;
-	    if (isFocused && this.refs.input) {
-	      this.refs.input.focus();
+	    if (isFocused) {
+	      this.handleFocus();
+	    } else {
+	      this.set({filterText: ''});
 	    }
 	  }
 
-	  if (changed.filteredItems) {
-	    if (!list) return;
-	    list.set({ items: current.filteredItems});
+	  if (changed.filteredItems && list) {
+	    list.set({items: current.filteredItems});
 	  }
 	}
 	function add_css$1() {
@@ -25209,27 +25224,32 @@
 	}
 
 	function create_main_fragment$5(component, ctx) {
-		var link, text, div_5;
+		var link, text, div_10;
 
 		return {
 			c() {
 				link = createElement("link");
 				text = createText("\n\n");
-				div_5 = createElement("div");
-				div_5.innerHTML = `<div class="listItem hover svelte-ufeflu">Item #1</div>
+				div_10 = createElement("div");
+				div_10.innerHTML = `<div class="listItem hover svelte-ufeflu">Item #1</div>
 			    <div class="listItem svelte-ufeflu">Item #2</div>
 			    <div class="listItem svelte-ufeflu">Item #3</div>
 			    <div class="listItem svelte-ufeflu">Item #4</div>
-			    <div class="listItem svelte-ufeflu">Item #5</div>`;
+			    <div class="listItem svelte-ufeflu">Item #5</div>
+			    <div class="listItem svelte-ufeflu">Item #6</div>
+			    <div class="listItem svelte-ufeflu">Item #7</div>
+			    <div class="listItem svelte-ufeflu">Item #8</div>
+			    <div class="listItem svelte-ufeflu">Item #9</div>
+			    <div class="listItem svelte-ufeflu">Item #10</div>`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div_5.className = "listContainer svelte-ufeflu";
+				div_10.className = "listContainer svelte-ufeflu";
 			},
 
 			m(target, anchor) {
 				insert(target, link, anchor);
 				insert(target, text, anchor);
-				insert(target, div_5, anchor);
+				insert(target, div_10, anchor);
 			},
 
 			p: noop,
@@ -25238,7 +25258,7 @@
 				if (detach) {
 					detachNode(link);
 					detachNode(text);
-					detachNode(div_5);
+					detachNode(div_10);
 				}
 			}
 		};
@@ -25329,27 +25349,32 @@
 	}
 
 	function create_main_fragment$7(component, ctx) {
-		var link, text, div_5;
+		var link, text, div_10;
 
 		return {
 			c() {
 				link = createElement("link");
 				text = createText("\n\n");
-				div_5 = createElement("div");
-				div_5.innerHTML = `<div class="listItem svelte-1sky8p1">Item #1</div>
+				div_10 = createElement("div");
+				div_10.innerHTML = `<div class="listItem svelte-1sky8p1">Item #1</div>
 			    <div class="listItem active hover svelte-1sky8p1">Item #2</div>
 			    <div class="listItem svelte-1sky8p1">Item #3</div>
 			    <div class="listItem svelte-1sky8p1">Item #4</div>
-			    <div class="listItem svelte-1sky8p1">Item #5</div>`;
+			    <div class="listItem svelte-1sky8p1">Item #5</div>
+			    <div class="listItem svelte-1sky8p1">Item #6</div>
+			    <div class="listItem svelte-1sky8p1">Item #7</div>
+			    <div class="listItem svelte-1sky8p1">Item #8</div>
+			    <div class="listItem svelte-1sky8p1">Item #9</div>
+			    <div class="listItem svelte-1sky8p1">Item #10</div>`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div_5.className = "listContainer svelte-1sky8p1";
+				div_10.className = "listContainer svelte-1sky8p1";
 			},
 
 			m(target, anchor) {
 				insert(target, link, anchor);
 				insert(target, text, anchor);
-				insert(target, div_5, anchor);
+				insert(target, div_10, anchor);
 			},
 
 			p: noop,
@@ -25358,7 +25383,7 @@
 				if (detach) {
 					detachNode(link);
 					detachNode(text);
-					detachNode(div_5);
+					detachNode(div_10);
 				}
 			}
 		};
@@ -25649,6 +25674,18 @@
 	  {name: 'Item #9'},
 	  {name: 'Item #10'}
 	];
+	const itemsWithIndex = [
+	  {name: 'Item #1', index: 0},
+	  {name: 'Item #2', index: 1},
+	  {name: 'Item #3', index: 2},
+	  {name: 'Item #4', index: 3},
+	  {name: 'Item #5', index: 4},
+	  {name: 'Item #6', index: 5},
+	  {name: 'Item #7', index: 6},
+	  {name: 'Item #8', index: 7},
+	  {name: 'Item #9', index: 8},
+	  {name: 'Item #10', index: 9}
+	];
 
 	function indent(node, spaces) {
 	  if (node.childNodes.length === 0) return;
@@ -25785,13 +25822,7 @@
 	  const list = new List({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ]
+	      items: itemsWithIndex
 	    }
 	  });
 
@@ -25809,13 +25840,7 @@
 	  const list = new List({
 	    target: target$1,
 	    data: {
-	      items: [
-	        {name: 'Item #1'},
-	        {name: 'Item #2'},
-	        {name: 'Item #3'},
-	        {name: 'Item #4'},
-	        {name: 'Item #5'}
-	      ],
+	      items: itemsWithIndex,
 	      activeItem: {name: 'Item #2'},
 	      activeItemIndex: 1,
 	    }
@@ -25831,7 +25856,7 @@
 	  const list = new List({
 	    target: target$1,
 	    data: {
-	      items,
+	      items: itemsWithIndex,
 	      activeItemIndex: 8,
 	    }
 	  });
@@ -25842,6 +25867,8 @@
 	  if (focusedElemBounding) {
 	    offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
 	  }
+	  
+	  console.log('offsetBounding: ', offsetBounding);
 
 	  t.equal(offsetBounding, 0);
 	  list.destroy();
@@ -25851,7 +25878,7 @@
 	  const list = new List({
 	    target: target$1,
 	    data: {
-	      items,
+	      items: itemsWithIndex,
 	      activeItem: {name: 'Item #1'},
 	      activeItemIndex: 0,
 	    }
@@ -25868,7 +25895,7 @@
 	  const list = new List({
 	    target: target$1,
 	    data: {
-	      items
+	      items: itemsWithIndex
 	    }
 	  });
 
@@ -25889,7 +25916,7 @@
 	  const list = new List({
 	    target: target$1,
 	    data: {
-	      items
+	      items: itemsWithIndex
 	    }
 	  });
 
@@ -26359,7 +26386,7 @@
 	  select.destroy();
 	});
 
-	test.only('Select filter text filters list', async (t) => {
+	test('Select filter text filters list', async (t) => {
 	  const select = new Select({
 	    target: target$1,
 	    data: {
@@ -26373,6 +26400,35 @@
 
 	  select.destroy();
 	});
+
+	test('Typing in the Select filter opens List', async (t) => {
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items,
+	      isFocused: true
+	    }
+	  });
+
+	  select.set({filterText: '5'});
+	  t.ok(document.querySelector('.listContainer'));
+	  select.destroy();
+	});
+
+	test('While filtering, the first item in List should receive hover class', async (t) => {
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items,
+	      isFocused: true
+	    }
+	  });
+
+	  select.set({filterText: '2'});
+	  t.ok(document.querySelector('.listItem.hover'));
+	  select.destroy();
+	});
+
 
 
 	function focus(element, setFocus) {

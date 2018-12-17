@@ -2,7 +2,7 @@
 
 <div class="listContainer" ref:container>
     {#each items as item, i}
-    <div on:mouseover="handleHover(item, i)" on:click="handleClick(item, i, event)" class="listItem {itemClasses(activeItemIndex, hoverItemIndex, i)}">{item.name}</div>
+    <div on:mouseover="handleHover(item)" on:click="handleClick(item, event)" class="listItem {itemClasses(activeItemIndex, hoverItemIndex, item, i)}">{item.name}</div>
     {:else}
     <div class="empty">No options</div>
     {/each}
@@ -63,24 +63,26 @@
         this.scrollToActiveItem('active');
         this.set({
           hoverItemIndex: current.activeItemIndex,
-          // activeItem: current.items[current.activeItemIndex]
         })
       }
 
     },
     helpers: {
-      itemClasses(activeItemIndex, hoverItemIndex, i) {
-        return `${activeItemIndex === i ? 'active ' : ''}${hoverItemIndex === i ? 'hover' : ''}`;
+      itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex) {
+        return `${activeItemIndex === item.index ? 'active ' : ''}${hoverItemIndex === itemIndex ? 'hover' : ''}`;
       }
     },
     methods: {
-      handleHover(item, itemIndex) {
-        this.set({hoverItemIndex: itemIndex});
+      handleSelect(item) {
+        this.fire('itemSelected', {name: item.name});
       },
-      handleClick(item, itemIndex, event) {
+      handleHover(item) {
+        this.set({hoverItemIndex: item.index});
+      },
+      handleClick(item, event) {
         event.stopPropagation();
-        this.set({activeItemIndex: itemIndex, hoverItemIndex: itemIndex});
-        this.fire('itemSelected', item);
+        this.set({activeItemIndex: item.index, hoverItemIndex: item.index});
+        this.handleSelect(item);
       },
       updateHoverItem(increment) {
         let {items, hoverItemIndex} = this.get();
@@ -111,12 +113,12 @@
           case 'Enter':
             e.preventDefault();
             this.set({activeItemIndex: hoverItemIndex});
-            this.fire('itemSelected', items[hoverItemIndex]);
+            this.handleSelect(items[hoverItemIndex]);
             break;
           case 'Tab':
             e.preventDefault();
             this.set({activeItemIndex: hoverItemIndex});
-            this.fire('itemSelected', items[hoverItemIndex]);
+            this.handleSelect(items[hoverItemIndex]);
             break;
         }
       },

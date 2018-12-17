@@ -24,6 +24,18 @@ const items = [
   {name: 'Item #9'},
   {name: 'Item #10'}
 ];
+const itemsWithIndex = [
+  {name: 'Item #1', index: 0},
+  {name: 'Item #2', index: 1},
+  {name: 'Item #3', index: 2},
+  {name: 'Item #4', index: 3},
+  {name: 'Item #5', index: 4},
+  {name: 'Item #6', index: 5},
+  {name: 'Item #7', index: 6},
+  {name: 'Item #8', index: 7},
+  {name: 'Item #9', index: 8},
+  {name: 'Item #10', index: 9}
+];
 
 function indent(node, spaces) {
   if (node.childNodes.length === 0) return;
@@ -164,13 +176,7 @@ test('default list with five items', async (t) => {
   const list = new List({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ]
+      items: itemsWithIndex
     }
   });
 
@@ -188,13 +194,7 @@ test('should highlight active list item', async (t) => {
   const list = new List({
     target,
     data: {
-      items: [
-        {name: 'Item #1'},
-        {name: 'Item #2'},
-        {name: 'Item #3'},
-        {name: 'Item #4'},
-        {name: 'Item #5'}
-      ],
+      items: itemsWithIndex,
       activeItem: {name: 'Item #2'},
       activeItemIndex: 1,
     }
@@ -210,7 +210,7 @@ test('list scrolls to active item', async (t) => {
   const list = new List({
     target,
     data: {
-      items,
+      items: itemsWithIndex,
       activeItemIndex: 8,
     }
   });
@@ -221,6 +221,8 @@ test('list scrolls to active item', async (t) => {
   if (focusedElemBounding) {
     offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
   }
+  
+  console.log('offsetBounding: ', offsetBounding);
 
   t.equal(offsetBounding, 0);
   list.destroy();
@@ -230,7 +232,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   const list = new List({
     target,
     data: {
-      items,
+      items: itemsWithIndex,
       activeItem: {name: 'Item #1'},
       activeItemIndex: 0,
     }
@@ -247,7 +249,7 @@ test('on enter active item fires a itemSelected event', async (t) => {
   const list = new List({
     target,
     data: {
-      items
+      items: itemsWithIndex
     }
   });
 
@@ -268,7 +270,7 @@ test('on tab active item fires a itemSelected event', async (t) => {
   const list = new List({
     target,
     data: {
-      items
+      items: itemsWithIndex
     }
   });
 
@@ -738,7 +740,7 @@ test('clicking Select toggles List open state', async (t) => {
   select.destroy();
 });
 
-test.only('Select filter text filters list', async (t) => {
+test('Select filter text filters list', async (t) => {
   const select = new Select({
     target,
     data: {
@@ -752,6 +754,35 @@ test.only('Select filter text filters list', async (t) => {
 
   select.destroy();
 });
+
+test('Typing in the Select filter opens List', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isFocused: true
+    }
+  });
+
+  select.set({filterText: '5'});
+  t.ok(document.querySelector('.listContainer'));
+  select.destroy();
+});
+
+test('While filtering, the first item in List should receive hover class', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isFocused: true
+    }
+  });
+
+  select.set({filterText: '2'});
+  t.ok(document.querySelector('.listItem.hover'));
+  select.destroy();
+});
+
 
 
 function focus(element, setFocus) {
