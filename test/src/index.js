@@ -828,6 +828,33 @@ test('Select can be disabled', async (t) => {
   select.destroy();
 });
 
+test('Select List closes when you click enter', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isFocused: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+
+  // select.destroy();
+});
+
+// tab should move between tabIndexes and others Selects
+// shouldn't be able to clear a disabled Select
+// 2-way bind for selection: Select <--> parent
+// text ellipsis for overflowing List item
+// clicking on 2nd Select should close and blur 1st Select
+// if only one item in list it should have hover state at all times
+// filtered list items and hovering doesn't work
+// data shouldn't be stripped from item - currently only saves name
+// clearing doesn't work when data is bound by parent bind:selectedItem...
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {

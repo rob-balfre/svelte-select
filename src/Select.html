@@ -1,9 +1,9 @@
 <svelte:window on:click="handleWindowClick(event)" on:keydown="handleKeyDown(event)" on:resize="getPosition()"/>
 
-<div class="selectContainer {isDisabled ? 'disabled' : ''}{isFocused ? 'focused' : ''}" on:click="handleClick()"
+<div class="selectContainer {isDisabled ? 'disabled' : ''}{isFocused ? 'focused' : ''}" on:click="handleClick(event)"
      ref:container style="{containerStyles}">
     <input on:focus="handleFocus()" ref:input placeholder="{placeholderText}" bind:value="filterText"
-           disabled="{isDisabled}">
+           disabled="{isDisabled}" style="{inputStyles}">
 
     {#if showSelectedItem }
     <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>
@@ -25,6 +25,7 @@
         border-radius: 3px;
         height: 44px;
         position: relative;
+        padding: 0 16px;
     }
 
     .selectContainer input {
@@ -38,6 +39,7 @@
         font-size: 14px;
         letter-spacing: -0.08px;
         position: absolute;
+        left: 0;
     }
 
     .selectContainer input::placeholder {
@@ -67,7 +69,7 @@
     }
 
     .selectedItem {
-        padding: 0 16px;
+        /*padding: 0 16px;*/
         line-height: 44px;
     }
 
@@ -121,10 +123,9 @@
       },
       filteredItems({items, filterText}) {
         const itemsWithIndex = items.map((item, i) => {
-          return {
-            name: item.name,
+          return Object.assign(item, {
             index: i
-          }
+          })
         });
         return itemsWithIndex.filter(item => {
           if (filterText.length < 1) return true;
@@ -164,10 +165,10 @@
     methods: {
       getPosition() {
         if (!target) return;
-        const {top, left, bottom, width} = this.refs.container.getBoundingClientRect();
-        target.style.top = `${bottom + 5}px`;
-        target.style.left = `${left}px`;
+        const {top, height, width} = this.refs.container.getBoundingClientRect();
+        target.style.top = `${height + 5}px`;
         target.style.minWidth = `${width}px`;
+        target.style.left = '0';
       },
       handleKeyDown(e) {
         const {isFocused} = this.get();
@@ -208,8 +209,9 @@
         this.set({isFocused: false, listOpen: false});
         if (this.refs.input) this.refs.input.blur();
       },
-      handleClick() {
-        const {listOpen, isDisabled} = this.get();
+      handleClick(event) {
+        event.stopPropagation();
+        const {isDisabled, listOpen} = this.get();
         if (isDisabled) return;
         this.set({isFocused: true, listOpen: !listOpen});
       },
@@ -226,11 +228,11 @@
 
         Object.assign(target.style, {
           position: 'absolute',
+          'z-index': 2
         });
 
         this.getPosition();
-
-        document.body.appendChild(target);
+        this.refs.container.appendChild(target);
         list = new List({
           target,
           data: {
@@ -246,13 +248,15 @@
           list.set({items: filteredItems, activeItemIndex});
         }
 
-        list.on('itemSelected', (selectedItem) => {
-          this.set({
-            selectedItem,
-            listOpen: false
-          });
-          if (this.get().showSelectedItem)
-            this.refs.selectedItem.setAttribute('tabindex', '0');
+        list.on('itemSelected', (newSelection) => {
+          if (newSelection) {
+            this.set({
+              selectedItem: Object.assign({}, selectedItem, newSelection),
+              listOpen: false
+            });
+            if (this.get().showSelectedItem)
+              this.refs.selectedItem.setAttribute('tabindex', '0');
+          }
         });
       }
     },

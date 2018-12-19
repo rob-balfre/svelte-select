@@ -17,6 +17,7 @@
         border-radius: 4px;
         max-height: 250px;
         overflow-y: auto;
+        background: #fff;
     }
 
     .listItem {
@@ -81,7 +82,8 @@
     },
     methods: {
       handleSelect(item) {
-        this.fire('itemSelected', {name: item.name});
+        delete item.index;
+        this.fire('itemSelected', item);
       },
       handleHover(item) {
         const {disableMouseHover} = this.get();

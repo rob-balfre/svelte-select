@@ -240,7 +240,8 @@ function itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex) {
 }
 var methods = {
   handleSelect(item) {
-    this.fire('itemSelected', {name: item.name});
+    delete item.index;
+    this.fire('itemSelected', item);
   },
   handleHover(item) {
     const {disableMouseHover} = this.get();
@@ -319,8 +320,8 @@ function onupdate({changed, current, previous}) {
 }
 function add_css() {
 	var style = createElement("style");
-	style.id = 'svelte-f1hhit-style';
-	style.textContent = ".listContainer.svelte-f1hhit{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto}.listItem.svelte-f1hhit{height:40px;line-height:40px;padding:0 20px}.listItem.hover.svelte-f1hhit{background:#e7f2ff}.listItem.svelte-f1hhit:active{background:#b9daff}.listItem.svelte-f1hhit:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-f1hhit{background:#007aff;color:#fff}.empty.svelte-f1hhit{text-align:center;padding:20px 0;color:#78848F}";
+	style.id = 'svelte-1y5hj7n-style';
+	style.textContent = ".listContainer.svelte-1y5hj7n{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto;background:#fff}.listItem.svelte-1y5hj7n{height:40px;line-height:40px;padding:0 20px}.listItem.hover.svelte-1y5hj7n{background:#e7f2ff}.listItem.svelte-1y5hj7n:active{background:#b9daff}.listItem.svelte-1y5hj7n:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1y5hj7n{background:#007aff;color:#fff}.empty.svelte-1y5hj7n{text-align:center;padding:20px 0;color:#78848F}";
 	append(document.head, style);
 }
 
@@ -372,7 +373,7 @@ function create_main_fragment$1(component, ctx) {
 			for (var i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].c();
 			}
-			div.className = "listContainer svelte-f1hhit";
+			div.className = "listContainer svelte-1y5hj7n";
 		},
 
 		m(target, anchor) {
@@ -447,7 +448,7 @@ function create_else_block(component, ctx) {
 		c() {
 			div = createElement("div");
 			div.textContent = "No options";
-			div.className = "empty svelte-f1hhit";
+			div.className = "empty svelte-1y5hj7n";
 		},
 
 		m(target, anchor) {
@@ -490,7 +491,7 @@ function create_each_block(component, ctx) {
 
 			addListener(div, "mouseover", mouseover_handler);
 			addListener(div, "click", click_handler);
-			div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-f1hhit";
+			div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-1y5hj7n";
 		},
 
 		m(target, anchor) {
@@ -527,7 +528,7 @@ function create_each_block(component, ctx) {
 			}
 
 			div._svelte.ctx = ctx;
-			if ((changed.activeItemIndex || changed.hoverItemIndex || changed.items) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-f1hhit")) {
+			if ((changed.activeItemIndex || changed.hoverItemIndex || changed.items) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-1y5hj7n")) {
 				div.className = div_class_value;
 			}
 		},
@@ -551,7 +552,7 @@ function List(options) {
 	this._intro = true;
 	this._handlers.update = [onupdate];
 
-	if (!document.getElementById("svelte-f1hhit-style")) add_css();
+	if (!document.getElementById("svelte-1y5hj7n-style")) add_css();
 
 	this._fragment = create_main_fragment$1(this, this._state);
 
@@ -628,10 +629,9 @@ function placeholderText({selectedItem}) {
 }
 function filteredItems({items, filterText}) {
   const itemsWithIndex = items.map((item, i) => {
-    return {
-      name: item.name,
+    return Object.assign(item, {
       index: i
-    }
+    })
   });
   return itemsWithIndex.filter(item => {
     if (filterText.length < 1) return true;
@@ -651,10 +651,10 @@ function data$1() {
 var methods$1 = {
   getPosition() {
     if (!target) return;
-    const {top, left, bottom, width} = this.refs.container.getBoundingClientRect();
-    target.style.top = `${bottom + 5}px`;
-    target.style.left = `${left}px`;
+    const {top, height, width} = this.refs.container.getBoundingClientRect();
+    target.style.top = `${height + 5}px`;
     target.style.minWidth = `${width}px`;
+    target.style.left = '0';
   },
   handleKeyDown(e) {
     const {isFocused} = this.get();
@@ -695,8 +695,9 @@ var methods$1 = {
     this.set({isFocused: false, listOpen: false});
     if (this.refs.input) this.refs.input.blur();
   },
-  handleClick() {
-    const {listOpen, isDisabled} = this.get();
+  handleClick(event) {
+    event.stopPropagation();
+    const {isDisabled, listOpen} = this.get();
     if (isDisabled) return;
     this.set({isFocused: true, listOpen: !listOpen});
   },
@@ -713,11 +714,11 @@ var methods$1 = {
 
     Object.assign(target.style, {
       position: 'absolute',
+      'z-index': 2
     });
 
     this.getPosition();
-
-    document.body.appendChild(target);
+    this.refs.container.appendChild(target);
     list = new List({
       target,
       data: {
@@ -733,13 +734,15 @@ var methods$1 = {
       list.set({items: filteredItems, activeItemIndex});
     }
 
-    list.on('itemSelected', (selectedItem) => {
-      this.set({
-        selectedItem,
-        listOpen: false
-      });
-      if (this.get().showSelectedItem)
-        this.refs.selectedItem.setAttribute('tabindex', '0');
+    list.on('itemSelected', (newSelection) => {
+      if (newSelection) {
+        this.set({
+          selectedItem: Object.assign({}, selectedItem, newSelection),
+          listOpen: false
+        });
+        if (this.get().showSelectedItem)
+          this.refs.selectedItem.setAttribute('tabindex', '0');
+      }
     });
   }
 };
@@ -782,8 +785,8 @@ function onstate({changed, current, previous}) {
 }
 function add_css$1() {
 	var style = createElement("style");
-	style.id = 'svelte-8qw1no-style';
-	style.textContent = ".selectContainer.svelte-8qw1no{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-8qw1no input.svelte-8qw1no{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute}.selectContainer.svelte-8qw1no input.svelte-8qw1no::placeholder{color:#78848F}.selectContainer.svelte-8qw1no input.svelte-8qw1no:focus{outline:none}.selectContainer.svelte-8qw1no:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-8qw1no{border-color:#006FE8}.selectContainer.disabled.svelte-8qw1no{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-8qw1no input.svelte-8qw1no::placeholder{color:#C1C6CC}.selectedItem.svelte-8qw1no{padding:0 16px;line-height:44px}.selectedItem.svelte-8qw1no:focus{outline:none}.clearSelectedItem.svelte-8qw1no{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-8qw1no:hover{color:#2c3e50}.selectContainer.focused.svelte-8qw1no .clearSelectedItem.svelte-8qw1no{color:#3F4F5F}";
+	style.id = 'svelte-xv2d79-style';
+	style.textContent = ".selectContainer.svelte-xv2d79{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;padding:0 16px}.selectContainer.svelte-xv2d79 input.svelte-xv2d79{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-xv2d79 input.svelte-xv2d79::placeholder{color:#78848F}.selectContainer.svelte-xv2d79 input.svelte-xv2d79:focus{outline:none}.selectContainer.svelte-xv2d79:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-xv2d79{border-color:#006FE8}.selectContainer.disabled.svelte-xv2d79{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-xv2d79 input.svelte-xv2d79::placeholder{color:#C1C6CC}.selectedItem.svelte-xv2d79{line-height:44px}.selectedItem.svelte-xv2d79:focus{outline:none}.clearSelectedItem.svelte-xv2d79{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-xv2d79:hover{color:#2c3e50}.selectContainer.focused.svelte-xv2d79 .clearSelectedItem.svelte-xv2d79{color:#3F4F5F}";
 	append(document.head, style);
 }
 
@@ -815,7 +818,7 @@ function create_main_fragment$3(component, ctx) {
 	var if_block = (ctx.showSelectedItem) && create_if_block(component, ctx);
 
 	function click_handler(event) {
-		component.handleClick();
+		component.handleClick(event);
 	}
 
 	return {
@@ -828,9 +831,10 @@ function create_main_fragment$3(component, ctx) {
 			addListener(input, "focus", focus_handler);
 			input.placeholder = ctx.placeholderText;
 			input.disabled = ctx.isDisabled;
-			input.className = "svelte-8qw1no";
+			input.style.cssText = ctx.inputStyles;
+			input.className = "svelte-xv2d79";
 			addListener(div, "click", click_handler);
-			div.className = div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-8qw1no";
+			div.className = div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-xv2d79";
 			div.style.cssText = ctx.containerStyles;
 		},
 
@@ -856,6 +860,10 @@ function create_main_fragment$3(component, ctx) {
 				input.disabled = ctx.isDisabled;
 			}
 
+			if (changed.inputStyles) {
+				input.style.cssText = ctx.inputStyles;
+			}
+
 			if (ctx.showSelectedItem) {
 				if (if_block) {
 					if_block.p(changed, ctx);
@@ -869,7 +877,7 @@ function create_main_fragment$3(component, ctx) {
 				if_block = null;
 			}
 
-			if ((changed.isDisabled || changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-8qw1no")) {
+			if ((changed.isDisabled || changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-xv2d79")) {
 				div.className = div_class_value;
 			}
 
@@ -934,9 +942,9 @@ function create_if_block(component, ctx) {
 			div1 = createElement("div");
 			div1.innerHTML = `<svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 			addListener(div0, "focus", focus_handler);
-			div0.className = "selectedItem svelte-8qw1no";
+			div0.className = "selectedItem svelte-xv2d79";
 			addListener(div1, "click", click_handler);
-			div1.className = "clearSelectedItem svelte-8qw1no";
+			div1.className = "clearSelectedItem svelte-xv2d79";
 		},
 
 		m(target_1, anchor) {
@@ -1004,7 +1012,7 @@ function Select(options) {
 
 	this._handlers.destroy = [ondestroy];
 
-	if (!document.getElementById("svelte-8qw1no-style")) add_css$1();
+	if (!document.getElementById("svelte-xv2d79-style")) add_css$1();
 
 	onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 
