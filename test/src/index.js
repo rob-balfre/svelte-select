@@ -1,4 +1,5 @@
 import svelte from 'svelte';
+import { Store } from 'svelte/store.js';
 import Select from '../../src/Select.html';
 import List from '../../src/List.html';
 import SelectDefault from './Select/Select--default.html'
@@ -7,6 +8,7 @@ import SelectItemSelected from './Select/Select--itemSelected.html'
 import ListDefault from './List/List--default.html'
 import ListEmpty from './List/List--empty.html'
 import ListActiveItem from './List/List--activeItem.html'
+import ParentContainer from './Select/ParentContainer.html'
 import {assert, test, done} from 'tape-modern';
 
 // setup
@@ -883,15 +885,35 @@ test(`shouldn't be able to clear a disabled Select`, async (t) => {
 
   t.ok(!document.querySelector('.clearSelectedItem'));
 
-  // window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
-  // TAB not working from Puppeteer - not sure why.
+  select.destroy();
+});
 
-  //select.destroy();
+test(`two way binding between Select and it's parent component`, async (t) => {
+  const parent = new ParentContainer({
+    target,
+    data: {
+      items,
+      selectedItem: {name: 'Item #4'}
+    }
+  });
 
+  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+  parent.set({
+    selectedItem: {name: 'Item #1'}
+  });
+  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+  document.querySelector('.selectContainer').click();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+
+  parent.destroy();
 });
 
 
-// shouldn't be able to clear a disabled Select
+
+
 // 2-way bind for selection: Select <--> parent
 // text ellipsis for overflowing List item
 // clicking on 2nd Select should close and blur 1st Select

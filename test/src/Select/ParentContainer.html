@@ -1,0 +1,15 @@
+<div class="container">
+    <Select bind:selectedItem {items}></Select>
+
+    <p class="result">{selectedItem.name}</p>
+</div>
+
+<script>
+    import Select from '../../../src/Select.html';
+
+    export default {
+      components: {
+        Select
+      }
+    }
+</script>
