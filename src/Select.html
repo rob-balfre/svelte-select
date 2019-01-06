@@ -9,6 +9,7 @@
     <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>
         <svelte:component this="{Selection}" {selectedItem}/>
     </div>
+    {#if !isDisabled}
     <div class="clearSelectedItem" on:click="handleClear(event)">
         <svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
              role="presentation">
@@ -16,6 +17,7 @@
                   d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path>
         </svg>
     </div>
+    {/if}
     {/if}
 </div>
 
@@ -123,9 +125,8 @@
       },
       filteredItems({items, filterText}) {
         const itemsWithIndex = items.map((item, i) => {
-          return Object.assign(item, {
-            index: i
-          })
+          item.index = i;
+          return item;
         });
         return itemsWithIndex.filter(item => {
           if (filterText.length < 1) return true;
@@ -171,7 +172,7 @@
         target.style.left = '0';
       },
       handleKeyDown(e) {
-        const {isFocused} = this.get();
+        const {isFocused, listOpen} = this.get();
         if (!isFocused) return;
 
         switch (e.key) {
@@ -184,8 +185,7 @@
             this.set({listOpen: true});
             break;
           case 'Tab':
-            e.preventDefault();
-            this.set({listOpen: true});
+            if (!listOpen) this.set({isFocused: false});
             break;
         }
       },
@@ -205,6 +205,7 @@
         target = undefined;
       },
       handleWindowClick(event) {
+        if (!this.refs.container) return;
         if (this.refs.container.contains(event.target)) return;
         this.set({isFocused: false, listOpen: false});
         if (this.refs.input) this.refs.input.blur();
@@ -222,8 +223,6 @@
       },
       loadList() {
         if (target && list) return;
-
-        if (this.refs.selectedItem) this.refs.selectedItem.removeAttribute('tabindex');
         target = document.createElement('div');
 
         Object.assign(target.style, {
@@ -251,11 +250,9 @@
         list.on('itemSelected', (newSelection) => {
           if (newSelection) {
             this.set({
-              selectedItem: Object.assign({}, selectedItem, newSelection),
+              selectedItem: {...selectedItem, ...newSelection},
               listOpen: false
             });
-            if (this.get().showSelectedItem)
-              this.refs.selectedItem.setAttribute('tabindex', '0');
           }
         });
       }

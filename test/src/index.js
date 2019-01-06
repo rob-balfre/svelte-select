@@ -12,6 +12,7 @@ import {assert, test, done} from 'tape-modern';
 // setup
 const target = document.querySelector('main');
 const testTarget = document.getElementById('testTemplate');
+const extraTarget = document.getElementById('extra');
 const items = [
   {name: 'Item #1'},
   {name: 'Item #2'},
@@ -81,6 +82,7 @@ function normalize(html) {
   div.innerHTML = html
     .replace(/<link.+\/?>/g, '')
     .replace(/<!--.+?-->/g, '')
+    .replace(/<!---->/g, '')
     .replace(/<object.+\/object>/g, '')
     .replace(/svelte-ref-\w+/g, '')
     .replace(/\s*svelte-\w+\s*/g, '')
@@ -297,7 +299,6 @@ test('selected item\'s default view', async (t) => {
       selectedItem: {name: 'Item #4'}
     }
   });
-
 
   t.htmlEqual(target.innerHTML, testTarget.innerHTML);
   select.destroy();
@@ -842,10 +843,54 @@ test('Select List closes when you click enter', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
 
-  // select.destroy();
+  select.destroy();
 });
 
-// tab should move between tabIndexes and others Selects
+test('tabbing should move between tabIndexes and others Selects', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isFocused: false
+    }
+  });
+
+  const other = new Select({
+    target: extraTarget,
+    data: {
+      items,
+      isFocused: false
+    }
+  });
+
+  // window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
+  // TAB not working from Puppeteer - not sure why.
+
+  select.destroy();
+  other.destroy();
+});
+
+test(`shouldn't be able to clear a disabled Select`, async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isDisabled: true,
+      selectedItem: {name: 'Item #4'}
+    }
+  });
+
+
+  t.ok(!document.querySelector('.clearSelectedItem'));
+
+  // window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
+  // TAB not working from Puppeteer - not sure why.
+
+  //select.destroy();
+
+});
+
+
 // shouldn't be able to clear a disabled Select
 // 2-way bind for selection: Select <--> parent
 // text ellipsis for overflowing List item

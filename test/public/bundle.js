@@ -24223,6 +24223,10 @@
 		return document.createTextNode(data);
 	}
 
+	function createComment() {
+		return document.createComment('');
+	}
+
 	function addListener(node, event, handler, options) {
 		node.addEventListener(event, handler, options);
 	}
@@ -24816,9 +24820,8 @@
 	}
 	function filteredItems({items, filterText}) {
 	  const itemsWithIndex = items.map((item, i) => {
-	    return Object.assign(item, {
-	      index: i
-	    })
+	    item.index = i;
+	    return item;
 	  });
 	  return itemsWithIndex.filter(item => {
 	    if (filterText.length < 1) return true;
@@ -24844,7 +24847,7 @@
 	    target.style.left = '0';
 	  },
 	  handleKeyDown(e) {
-	    const {isFocused} = this.get();
+	    const {isFocused, listOpen} = this.get();
 	    if (!isFocused) return;
 
 	    switch (e.key) {
@@ -24857,8 +24860,7 @@
 	        this.set({listOpen: true});
 	        break;
 	      case 'Tab':
-	        e.preventDefault();
-	        this.set({listOpen: true});
+	        if (!listOpen) this.set({isFocused: false});
 	        break;
 	    }
 	  },
@@ -24878,6 +24880,7 @@
 	    target = undefined;
 	  },
 	  handleWindowClick(event) {
+	    if (!this.refs.container) return;
 	    if (this.refs.container.contains(event.target)) return;
 	    this.set({isFocused: false, listOpen: false});
 	    if (this.refs.input) this.refs.input.blur();
@@ -24895,8 +24898,6 @@
 	  },
 	  loadList() {
 	    if (target && list) return;
-
-	    if (this.refs.selectedItem) this.refs.selectedItem.removeAttribute('tabindex');
 	    target = document.createElement('div');
 
 	    Object.assign(target.style, {
@@ -24924,11 +24925,9 @@
 	    list.on('itemSelected', (newSelection) => {
 	      if (newSelection) {
 	        this.set({
-	          selectedItem: Object.assign({}, selectedItem, newSelection),
+	          selectedItem: {...selectedItem, ...newSelection},
 	          listOpen: false
 	        });
-	        if (this.get().showSelectedItem)
-	          this.refs.selectedItem.setAttribute('tabindex', '0');
 	      }
 	    });
 	  }
@@ -25096,7 +25095,7 @@
 
 	// (8:4) {#if showSelectedItem }
 	function create_if_block(component, ctx) {
-		var div0, text, div1;
+		var div, text, if_block_anchor;
 
 		var switch_value = ctx.Selection;
 
@@ -25117,33 +25116,30 @@
 			component.handleFocus();
 		}
 
-		function click_handler(event) {
-			component.handleClear(event);
-		}
+		var if_block = (!ctx.isDisabled) && create_if_block_1(component, ctx);
 
 		return {
 			c() {
-				div0 = createElement("div");
+				div = createElement("div");
 				if (switch_instance) switch_instance._fragment.c();
 				text = createText("\n    ");
-				div1 = createElement("div");
-				div1.innerHTML = `<svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
-				addListener(div0, "focus", focus_handler);
-				div0.className = "selectedItem svelte-xv2d79";
-				addListener(div1, "click", click_handler);
-				div1.className = "clearSelectedItem svelte-xv2d79";
+				if (if_block) if_block.c();
+				if_block_anchor = createComment();
+				addListener(div, "focus", focus_handler);
+				div.className = "selectedItem svelte-xv2d79";
 			},
 
 			m(target_1, anchor) {
-				insert(target_1, div0, anchor);
+				insert(target_1, div, anchor);
 
 				if (switch_instance) {
-					switch_instance._mount(div0, null);
+					switch_instance._mount(div, null);
 				}
 
-				component.refs.selectedItem = div0;
+				component.refs.selectedItem = div;
 				insert(target_1, text, anchor);
-				insert(target_1, div1, anchor);
+				if (if_block) if_block.m(target_1, anchor);
+				insert(target_1, if_block_anchor, anchor);
 			},
 
 			p(changed, ctx) {
@@ -25158,7 +25154,7 @@
 					if (switch_value) {
 						switch_instance = new switch_value(switch_props(ctx));
 						switch_instance._fragment.c();
-						switch_instance._mount(div0, null);
+						switch_instance._mount(div, null);
 					} else {
 						switch_instance = null;
 					}
@@ -25167,22 +25163,65 @@
 				else if (switch_value) {
 					switch_instance._set(switch_instance_changes);
 				}
+
+				if (!ctx.isDisabled) {
+					if (!if_block) {
+						if_block = create_if_block_1(component, ctx);
+						if_block.c();
+						if_block.m(if_block_anchor.parentNode, if_block_anchor);
+					}
+				} else if (if_block) {
+					if_block.d(1);
+					if_block = null;
+				}
 			},
 
 			d(detach) {
 				if (detach) {
-					detachNode(div0);
+					detachNode(div);
 				}
 
 				if (switch_instance) switch_instance.destroy();
-				removeListener(div0, "focus", focus_handler);
-				if (component.refs.selectedItem === div0) component.refs.selectedItem = null;
+				removeListener(div, "focus", focus_handler);
+				if (component.refs.selectedItem === div) component.refs.selectedItem = null;
 				if (detach) {
 					detachNode(text);
-					detachNode(div1);
 				}
 
-				removeListener(div1, "click", click_handler);
+				if (if_block) if_block.d(detach);
+				if (detach) {
+					detachNode(if_block_anchor);
+				}
+			}
+		};
+	}
+
+	// (12:4) {#if !isDisabled}
+	function create_if_block_1(component, ctx) {
+		var div;
+
+		function click_handler(event) {
+			component.handleClear(event);
+		}
+
+		return {
+			c() {
+				div = createElement("div");
+				div.innerHTML = `<svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+				addListener(div, "click", click_handler);
+				div.className = "clearSelectedItem svelte-xv2d79";
+			},
+
+			m(target_1, anchor) {
+				insert(target_1, div, anchor);
+			},
+
+			d(detach) {
+				if (detach) {
+					detachNode(div);
+				}
+
+				removeListener(div, "click", click_handler);
 			}
 		};
 	}
@@ -25859,6 +25898,7 @@
 	// setup
 	const target$1 = document.querySelector('main');
 	const testTarget = document.getElementById('testTemplate');
+	const extraTarget = document.getElementById('extra');
 	const items = [
 	  {name: 'Item #1'},
 	  {name: 'Item #2'},
@@ -25928,6 +25968,7 @@
 	  div.innerHTML = html
 	    .replace(/<link.+\/?>/g, '')
 	    .replace(/<!--.+?-->/g, '')
+	    .replace(/<!---->/g, '')
 	    .replace(/<object.+\/object>/g, '')
 	    .replace(/svelte-ref-\w+/g, '')
 	    .replace(/\s*svelte-\w+\s*/g, '')
@@ -26140,7 +26181,6 @@
 	      selectedItem: {name: 'Item #4'}
 	    }
 	  });
-
 
 	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
 	  select.destroy();
@@ -26685,10 +26725,54 @@
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
 
-	  // select.destroy();
+	  select.destroy();
 	});
 
-	// tab should move between tabIndexes and others Selects
+	test('tabbing should move between tabIndexes and others Selects', async (t) => {
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items,
+	      isFocused: false
+	    }
+	  });
+
+	  const other = new Select({
+	    target: extraTarget,
+	    data: {
+	      items,
+	      isFocused: false
+	    }
+	  });
+
+	  // window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
+	  // TAB not working from Puppeteer - not sure why.
+
+	  select.destroy();
+	  other.destroy();
+	});
+
+	test(`shouldn't be able to clear a disabled Select`, async (t) => {
+	  const select = new Select({
+	    target: target$1,
+	    data: {
+	      items,
+	      isDisabled: true,
+	      selectedItem: {name: 'Item #4'}
+	    }
+	  });
+
+
+	  t.ok(!document.querySelector('.clearSelectedItem'));
+
+	  // window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
+	  // TAB not working from Puppeteer - not sure why.
+
+	  //select.destroy();
+
+	});
+
+
 	// shouldn't be able to clear a disabled Select
 	// 2-way bind for selection: Select <--> parent
 	// text ellipsis for overflowing List item
