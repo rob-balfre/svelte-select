@@ -1,6 +1,6 @@
 <svelte:window on:click="handleWindowClick(event)" on:keydown="handleKeyDown(event)" on:resize="getPosition()"/>
 
-<div class="selectContainer {isDisabled ? 'disabled' : ''}{isFocused ? 'focused' : ''}" on:click="handleClick(event)"
+<div class="selectContainer {isDisabled ? 'disabled' : ''}{isFocused ? 'focused' : ''}" on:click="handleClick()"
      ref:container style="{containerStyles}">
     <input on:focus="handleFocus()" ref:input placeholder="{placeholderText}" bind:value="filterText"
            disabled="{isDisabled}" style="{inputStyles}">
@@ -102,9 +102,6 @@
   import Item from './Item.html'
   import Selection from './Selection.html'
 
-  let list;
-  let target;
-
   export default {
     data() {
       return {
@@ -113,7 +110,9 @@
         listOpen: false,
         Item,
         Selection,
-        paddingLeft: 0
+        paddingLeft: 0,
+        list: undefined,
+        target: undefined
       }
     },
     computed: {
@@ -159,17 +158,19 @@
         }
       }
 
-      if (changed.filteredItems && list) {
-        list.set({items: current.filteredItems})
+      if (changed.filteredItems && current.list) {
+        current.list.set({items: current.filteredItems})
       }
     },
     methods: {
       getPosition() {
+        const {target} = this.get();
         if (!target) return;
         const {top, height, width} = this.refs.container.getBoundingClientRect();
         target.style.top = `${height + 5}px`;
         target.style.minWidth = `${width}px`;
         target.style.left = '0';
+        this.set({target});
       },
       handleKeyDown(e) {
         const {isFocused, listOpen} = this.get();
@@ -194,6 +195,7 @@
         if (this.refs.input) this.refs.input.focus();
       },
       removeList() {
+        let {list, target} = this.get();
         this.set({filterText: ''});
 
         if (!list) return;
@@ -203,6 +205,8 @@
         if (!target) return;
         target.remove();
         target = undefined;
+
+        this.set({list, target});
       },
       handleWindowClick(event) {
         if (!this.refs.container) return;
@@ -210,8 +214,7 @@
         this.set({isFocused: false, listOpen: false});
         if (this.refs.input) this.refs.input.blur();
       },
-      handleClick(event) {
-        event.stopPropagation();
+      handleClick() {
         const {isDisabled, listOpen} = this.get();
         if (isDisabled) return;
         this.set({isFocused: true, listOpen: !listOpen});
@@ -222,6 +225,7 @@
         this.handleFocus();
       },
       loadList() {
+        let {target, list} = this.get();
         if (target && list) return;
         target = document.createElement('div');
 
@@ -229,6 +233,8 @@
           position: 'absolute',
           'z-index': 2
         });
+
+        this.set({list, target});
 
         this.getPosition();
         this.refs.container.appendChild(target);
@@ -255,6 +261,8 @@
             });
           }
         });
+
+        this.set({list, target});
       }
     },
     oncreate() {

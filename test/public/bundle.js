@@ -24976,9 +24976,6 @@
 
 
 
-	let list;
-	let target;
-
 	function showSelectedItem({selectedItem, filterText}) {
 	  return selectedItem && filterText.length === 0;
 	}
@@ -25002,16 +24999,20 @@
 	    listOpen: false,
 	    Item,
 	    Selection,
-	    paddingLeft: 0
+	    paddingLeft: 0,
+	    list: undefined,
+	    target: undefined
 	  }
 	}
 	var methods$1 = {
 	  getPosition() {
+	    const {target} = this.get();
 	    if (!target) return;
 	    const {top, height, width} = this.refs.container.getBoundingClientRect();
 	    target.style.top = `${height + 5}px`;
 	    target.style.minWidth = `${width}px`;
 	    target.style.left = '0';
+	    this.set({target});
 	  },
 	  handleKeyDown(e) {
 	    const {isFocused, listOpen} = this.get();
@@ -25036,6 +25037,7 @@
 	    if (this.refs.input) this.refs.input.focus();
 	  },
 	  removeList() {
+	    let {list, target} = this.get();
 	    this.set({filterText: ''});
 
 	    if (!list) return;
@@ -25045,6 +25047,8 @@
 	    if (!target) return;
 	    target.remove();
 	    target = undefined;
+
+	    this.set({list, target});
 	  },
 	  handleWindowClick(event) {
 	    if (!this.refs.container) return;
@@ -25052,8 +25056,7 @@
 	    this.set({isFocused: false, listOpen: false});
 	    if (this.refs.input) this.refs.input.blur();
 	  },
-	  handleClick(event) {
-	    event.stopPropagation();
+	  handleClick() {
 	    const {isDisabled, listOpen} = this.get();
 	    if (isDisabled) return;
 	    this.set({isFocused: true, listOpen: !listOpen});
@@ -25064,6 +25067,7 @@
 	    this.handleFocus();
 	  },
 	  loadList() {
+	    let {target, list} = this.get();
 	    if (target && list) return;
 	    target = document.createElement('div');
 
@@ -25071,6 +25075,8 @@
 	      position: 'absolute',
 	      'z-index': 2
 	    });
+
+	    this.set({list, target});
 
 	    this.getPosition();
 	    this.refs.container.appendChild(target);
@@ -25097,6 +25103,8 @@
 	        });
 	      }
 	    });
+
+	    this.set({list, target});
 	  }
 	};
 
@@ -25132,8 +25140,8 @@
 	    }
 	  }
 
-	  if (changed.filteredItems && list) {
-	    list.set({items: current.filteredItems});
+	  if (changed.filteredItems && current.list) {
+	    current.list.set({items: current.filteredItems});
 	  }
 	}
 	function add_css$1() {
@@ -25171,7 +25179,7 @@
 		var if_block = (ctx.showSelectedItem) && create_if_block(component, ctx);
 
 		function click_handler(event) {
-			component.handleClick(event);
+			component.handleClick();
 		}
 
 		return {
@@ -25191,8 +25199,8 @@
 				div.style.cssText = ctx.containerStyles;
 			},
 
-			m(target_1, anchor) {
-				insert(target_1, div, anchor);
+			m(target, anchor) {
+				insert(target, div, anchor);
 				append(div, input);
 				component.refs.input = input;
 
@@ -25296,17 +25304,17 @@
 				div.className = "selectedItem svelte-xv2d79";
 			},
 
-			m(target_1, anchor) {
-				insert(target_1, div, anchor);
+			m(target, anchor) {
+				insert(target, div, anchor);
 
 				if (switch_instance) {
 					switch_instance._mount(div, null);
 				}
 
 				component.refs.selectedItem = div;
-				insert(target_1, text, anchor);
-				if (if_block) if_block.m(target_1, anchor);
-				insert(target_1, if_block_anchor, anchor);
+				insert(target, text, anchor);
+				if (if_block) if_block.m(target, anchor);
+				insert(target, if_block_anchor, anchor);
 			},
 
 			p(changed, ctx) {
@@ -25379,8 +25387,8 @@
 				div.className = "clearSelectedItem svelte-xv2d79";
 			},
 
-			m(target_1, anchor) {
-				insert(target_1, div, anchor);
+			m(target, anchor) {
+				insert(target, div, anchor);
 			},
 
 			d(detach) {
@@ -26155,7 +26163,7 @@
 	//# sourceMappingURL=tape-modern.esm.js.map
 
 	// setup
-	const target$1 = document.querySelector('main');
+	const target = document.querySelector('main');
 	const testTarget = document.getElementById('testTemplate');
 	const extraTarget = document.getElementById('extra');
 	const items = [
@@ -26253,10 +26261,10 @@
 	  });
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	  });
 
-	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
 	  testTemplate.destroy();
 	  select.destroy();
@@ -26268,13 +26276,13 @@
 	  });
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      isFocused: true
 	    }
 	  });
 
-	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
 	  testTemplate.destroy();
 	  select.destroy();
@@ -26282,7 +26290,7 @@
 
 	test('when isFocused changes to true input should focus', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      isFocused: false
 	    }
@@ -26303,10 +26311,10 @@
 	  });
 
 	  const list = new List({
-	    target: target$1,
+	    target,
 	  });
 
-	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
 	  testTemplate.destroy();
 	  list.destroy();
@@ -26318,13 +26326,13 @@
 	  });
 
 	  const list = new List({
-	    target: target$1,
+	    target,
 	    data: {
 	      items: itemsWithIndex
 	    }
 	  });
 
-	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
 	  testTemplate.destroy();
 	  list.destroy();
@@ -26336,7 +26344,7 @@
 	  });
 
 	  const list = new List({
-	    target: target$1,
+	    target,
 	    data: {
 	      items: itemsWithIndex,
 	      activeItem: {name: 'Item #2'},
@@ -26344,7 +26352,7 @@
 	    }
 	  });
 
-	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
 	  testTemplate.destroy();
 	  list.destroy();
@@ -26352,7 +26360,7 @@
 
 	test('list scrolls to active item', async (t) => {
 	  const list = new List({
-	    target: target$1,
+	    target,
 	    data: {
 	      items: itemsWithIndex,
 	      activeItemIndex: 8,
@@ -26372,7 +26380,7 @@
 
 	test('hover item updates on keyUp or keyDown', async (t) => {
 	  const list = new List({
-	    target: target$1,
+	    target,
 	    data: {
 	      items: itemsWithIndex,
 	      activeItem: {name: 'Item #1'},
@@ -26389,7 +26397,7 @@
 
 	test('on enter active item fires a itemSelected event', async (t) => {
 	  const list = new List({
-	    target: target$1,
+	    target,
 	    data: {
 	      items: itemsWithIndex
 	    }
@@ -26410,7 +26418,7 @@
 
 	test('on tab active item fires a itemSelected event', async (t) => {
 	  const list = new List({
-	    target: target$1,
+	    target,
 	    data: {
 	      items: itemsWithIndex
 	    }
@@ -26435,13 +26443,13 @@
 	  });
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      selectedItem: {name: 'Item #4'}
 	    }
 	  });
 
-	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 	  select.destroy();
 	  testTemplate.destroy();
 	});
@@ -26452,10 +26460,10 @@
 	  });
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	  });
 
-	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 	  testTemplate.destroy();
 
 	  testTemplate = new Select_itemSelected({
@@ -26464,7 +26472,7 @@
 
 	  select.set({selectedItem: {name: 'Item #4'}});
 
-	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
 	  testTemplate.destroy();
 	  select.destroy();
@@ -26476,13 +26484,13 @@
 	  });
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      selectedItem: {name: 'Item #4'}
 	    }
 	  });
 
-	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 	  testTemplate.destroy();
 
 	  testTemplate = new Select_default({
@@ -26491,7 +26499,7 @@
 
 	  select.set({selectedItem: undefined});
 
-	  t.htmlEqual(target$1.innerHTML, testTarget.innerHTML);
+	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
 	  testTemplate.destroy();
 	  select.destroy();
@@ -26499,7 +26507,7 @@
 
 	test('clicking on Select opens List', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	  });
 
 	  document.querySelector('.selectContainer').click();
@@ -26515,7 +26523,7 @@
 	  });
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26535,7 +26543,7 @@
 	  });
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26553,7 +26561,7 @@
 	  });
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      activeItemIndex: 1,
@@ -26572,7 +26580,7 @@
 	  });
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      activeItemIndex: 1,
@@ -26594,7 +26602,7 @@
 	  document.body.appendChild(div);
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26610,7 +26618,7 @@
 
 	test('selecting item should close list but keep focus on select', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26626,7 +26634,7 @@
 
 	test('clicking Select with selected item should open list with item listed as active', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26643,7 +26651,7 @@
 
 	test('focus on Select input updates focus state', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26657,7 +26665,7 @@
 
 	test('key up and down when Select focused opens list', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26673,7 +26681,7 @@
 
 	test('List should keep width of parent Select', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      isFocused: true
@@ -26694,7 +26702,7 @@
 	  document.body.appendChild(div);
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26711,7 +26719,7 @@
 
 	test('typing in Select filter will hide selected Item', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26729,7 +26737,7 @@
 
 	test('clearing selected item closes List if open', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26750,7 +26758,7 @@
 	  document.body.appendChild(div);
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26772,7 +26780,7 @@
 	  document.body.appendChild(div);
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26794,7 +26802,7 @@
 	  document.body.appendChild(div);
 
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26813,7 +26821,7 @@
 
 	test('typing while Select is focused populates Select filter text', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26832,7 +26840,7 @@
 
 	test('Select input placeholder wipes while item is selected', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      selectedItem: {name: 'Item #2'},
@@ -26848,7 +26856,7 @@
 
 	test('Select listOpen state controls List', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      listOpen: true
@@ -26866,7 +26874,7 @@
 
 	test('clicking Select toggles List open state', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26883,7 +26891,7 @@
 
 	test('Select filter text filters list', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items
 	    }
@@ -26898,7 +26906,7 @@
 
 	test('Typing in the Select filter opens List', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      isFocused: true
@@ -26912,7 +26920,7 @@
 
 	test('While filtering, the first item in List should receive hover class', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      isFocused: true
@@ -26926,7 +26934,7 @@
 
 	test('Select container styles can be overridden', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      selectedItem: {name: 'Item #2'},
@@ -26941,7 +26949,7 @@
 
 	test('List mouseover events should be ignored when using arrow keys', async (t) => {
 	  const list = new List({
-	    target: target$1,
+	    target,
 	    data: {
 	      items: itemsWithIndex
 	    }
@@ -26958,7 +26966,7 @@
 
 	test('Select can be disabled', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      isDisabled: true,
@@ -26972,7 +26980,7 @@
 
 	test('Select List closes when you click enter', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      isFocused: true
@@ -26989,7 +26997,7 @@
 
 	test('tabbing should move between tabIndexes and others Selects', async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      isFocused: false
@@ -27013,7 +27021,7 @@
 
 	test(`shouldn't be able to clear a disabled Select`, async (t) => {
 	  const select = new Select({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      isDisabled: true,
@@ -27029,7 +27037,7 @@
 
 	test(`two way binding between Select and it's parent component`, async (t) => {
 	  const parent = new ParentContainer({
-	    target: target$1,
+	    target,
 	    data: {
 	      items,
 	      selectedItem: {name: 'Item #4'}
@@ -27050,10 +27058,10 @@
 	  parent.destroy();
 	});
 
-	test.only(`show ellipsis for overflowing text in a List item`, async (t) => {
+	test(`show ellipsis for overflowing text in a List item`, async (t) => {
 	  const longest = 'super super super super super super super super super super super super super super super super super super super super super super super super super super super super loooooonnnng name';
 	  const list = new List({
-	    target: target$1,
+	    target,
 	    data: {
 	      items: [
 	        {
@@ -27075,6 +27083,34 @@
 	  t.ok(last.scrollWidth === last.clientWidth);
 
 	  list.destroy();
+	});
+
+
+	test('clicking between Selects should close and blur other Select', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      items,
+	      isFocused: false
+	    }
+	  });
+
+	  const other = new Select({
+	    target: extraTarget,
+	    data: {
+	      items,
+	      isFocused: false
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+	  t.ok(select.get().list);
+	  document.querySelector('#extra .selectContainer').click();
+	  t.ok(!select.get().list);
+	  t.ok(other.get().list);
+
+	  select.destroy();
+	  other.destroy();
 	});
 
 

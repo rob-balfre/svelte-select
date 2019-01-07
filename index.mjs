@@ -622,9 +622,6 @@ assign(Selection.prototype, proto);
 
 
 
-let list;
-let target;
-
 function showSelectedItem({selectedItem, filterText}) {
   return selectedItem && filterText.length === 0;
 }
@@ -648,16 +645,20 @@ function data$1() {
     listOpen: false,
     Item,
     Selection,
-    paddingLeft: 0
+    paddingLeft: 0,
+    list: undefined,
+    target: undefined
   }
 }
 var methods$1 = {
   getPosition() {
+    const {target} = this.get();
     if (!target) return;
     const {top, height, width} = this.refs.container.getBoundingClientRect();
     target.style.top = `${height + 5}px`;
     target.style.minWidth = `${width}px`;
     target.style.left = '0';
+    this.set({target});
   },
   handleKeyDown(e) {
     const {isFocused, listOpen} = this.get();
@@ -682,6 +683,7 @@ var methods$1 = {
     if (this.refs.input) this.refs.input.focus();
   },
   removeList() {
+    let {list, target} = this.get();
     this.set({filterText: ''});
 
     if (!list) return;
@@ -691,6 +693,8 @@ var methods$1 = {
     if (!target) return;
     target.remove();
     target = undefined;
+
+    this.set({list, target});
   },
   handleWindowClick(event) {
     if (!this.refs.container) return;
@@ -698,8 +702,7 @@ var methods$1 = {
     this.set({isFocused: false, listOpen: false});
     if (this.refs.input) this.refs.input.blur();
   },
-  handleClick(event) {
-    event.stopPropagation();
+  handleClick() {
     const {isDisabled, listOpen} = this.get();
     if (isDisabled) return;
     this.set({isFocused: true, listOpen: !listOpen});
@@ -710,6 +713,7 @@ var methods$1 = {
     this.handleFocus();
   },
   loadList() {
+    let {target, list} = this.get();
     if (target && list) return;
     target = document.createElement('div');
 
@@ -717,6 +721,8 @@ var methods$1 = {
       position: 'absolute',
       'z-index': 2
     });
+
+    this.set({list, target});
 
     this.getPosition();
     this.refs.container.appendChild(target);
@@ -743,6 +749,8 @@ var methods$1 = {
         });
       }
     });
+
+    this.set({list, target});
   }
 };
 
@@ -778,8 +786,8 @@ function onstate({changed, current, previous}) {
     }
   }
 
-  if (changed.filteredItems && list) {
-    list.set({items: current.filteredItems});
+  if (changed.filteredItems && current.list) {
+    current.list.set({items: current.filteredItems});
   }
 }
 function add_css$1() {
@@ -817,7 +825,7 @@ function create_main_fragment$3(component, ctx) {
 	var if_block = (ctx.showSelectedItem) && create_if_block(component, ctx);
 
 	function click_handler(event) {
-		component.handleClick(event);
+		component.handleClick();
 	}
 
 	return {
@@ -837,8 +845,8 @@ function create_main_fragment$3(component, ctx) {
 			div.style.cssText = ctx.containerStyles;
 		},
 
-		m(target_1, anchor) {
-			insert(target_1, div, anchor);
+		m(target, anchor) {
+			insert(target, div, anchor);
 			append(div, input);
 			component.refs.input = input;
 
@@ -942,17 +950,17 @@ function create_if_block(component, ctx) {
 			div.className = "selectedItem svelte-xv2d79";
 		},
 
-		m(target_1, anchor) {
-			insert(target_1, div, anchor);
+		m(target, anchor) {
+			insert(target, div, anchor);
 
 			if (switch_instance) {
 				switch_instance._mount(div, null);
 			}
 
 			component.refs.selectedItem = div;
-			insert(target_1, text, anchor);
-			if (if_block) if_block.m(target_1, anchor);
-			insert(target_1, if_block_anchor, anchor);
+			insert(target, text, anchor);
+			if (if_block) if_block.m(target, anchor);
+			insert(target, if_block_anchor, anchor);
 		},
 
 		p(changed, ctx) {
@@ -1025,8 +1033,8 @@ function create_if_block_1(component, ctx) {
 			div.className = "clearSelectedItem svelte-xv2d79";
 		},
 
-		m(target_1, anchor) {
-			insert(target_1, div, anchor);
+		m(target, anchor) {
+			insert(target, div, anchor);
 		},
 
 		d(detach) {

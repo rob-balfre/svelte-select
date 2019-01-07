@@ -911,7 +911,7 @@ test(`two way binding between Select and it's parent component`, async (t) => {
   parent.destroy();
 });
 
-test.only(`show ellipsis for overflowing text in a List item`, async (t) => {
+test(`show ellipsis for overflowing text in a List item`, async (t) => {
   const longest = 'super super super super super super super super super super super super super super super super super super super super super super super super super super super super loooooonnnng name';
   const list = new List({
     target,
@@ -936,6 +936,34 @@ test.only(`show ellipsis for overflowing text in a List item`, async (t) => {
   t.ok(last.scrollWidth === last.clientWidth);
 
   list.destroy();
+});
+
+
+test('clicking between Selects should close and blur other Select', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isFocused: false
+    }
+  });
+
+  const other = new Select({
+    target: extraTarget,
+    data: {
+      items,
+      isFocused: false
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  t.ok(select.get().list);
+  document.querySelector('#extra .selectContainer').click();
+  t.ok(!select.get().list);
+  t.ok(other.get().list);
+
+  select.destroy();
+  other.destroy();
 });
 
 
