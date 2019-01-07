@@ -67,6 +67,9 @@
       }
     },
     onupdate({changed, current, previous}) {
+
+      // console.log(current.items);
+
       if (changed.items && current.items.length > 0) {
         this.scrollToActiveItem('hover');
         if (!current.items.find((item) => item.index === current.hoverItemIndex)) {
@@ -91,7 +94,8 @@
     },
     methods: {
       handleSelect(item) {
-        delete item.index;
+        // const itemSelected = Object.assign({}, item);
+        // delete itemSelected.index;
         this.fire('itemSelected', item);
       },
       handleHover(item) {

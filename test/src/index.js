@@ -16,29 +16,43 @@ const target = document.querySelector('main');
 const testTarget = document.getElementById('testTemplate');
 const extraTarget = document.getElementById('extra');
 const items = [
-  {name: 'Item #1'},
-  {name: 'Item #2'},
-  {name: 'Item #3'},
-  {name: 'Item #4'},
-  {name: 'Item #5'},
-  {name: 'Item #6'},
-  {name: 'Item #7'},
-  {name: 'Item #8'},
-  {name: 'Item #9'},
-  {name: 'Item #10'}
+  { value: 'chocolate', label: 'Chocolate' },
+  { value: 'pizza', label: 'Pizza' },
+  { value: 'cake', label: 'Cake' },
+  { value: 'chips', label: 'Chips' },
+  { value: 'ice-cream', label: 'Ice Cream' },
 ];
 const itemsWithIndex = [
-  {name: 'Item #1', index: 0},
-  {name: 'Item #2', index: 1},
-  {name: 'Item #3', index: 2},
-  {name: 'Item #4', index: 3},
-  {name: 'Item #5', index: 4},
-  {name: 'Item #6', index: 5},
-  {name: 'Item #7', index: 6},
-  {name: 'Item #8', index: 7},
-  {name: 'Item #9', index: 8},
-  {name: 'Item #10', index: 9}
+  { value: 'chocolate', label: 'Chocolate', index: 0 },
+  { value: 'pizza', label: 'Pizza', index: 1 },
+  { value: 'cake', label: 'Cake', index: 2 },
+  { value: 'chips', label: 'Chips', index: 3 },
+  { value: 'ice-cream', label: 'Ice Cream', index: 4 },
 ];
+// const items = [
+//   {name: 'Item #1'},
+//   {name: 'Item #2'},
+//   {name: 'Item #3'},
+//   {name: 'Item #4'},
+//   {name: 'Item #5'},
+//   {name: 'Item #6'},
+//   {name: 'Item #7'},
+//   {name: 'Item #8'},
+//   {name: 'Item #9'},
+//   {name: 'Item #10'}
+// ];
+// const itemsWithIndex = [
+//   {name: 'Item #1', index: 0},
+//   {name: 'Item #2', index: 1},
+//   {name: 'Item #3', index: 2},
+//   {name: 'Item #4', index: 3},
+//   {name: 'Item #5', index: 4},
+//   {name: 'Item #6', index: 5},
+//   {name: 'Item #7', index: 6},
+//   {name: 'Item #8', index: 7},
+//   {name: 'Item #9', index: 8},
+//   {name: 'Item #10', index: 9}
+// ];
 
 function indent(node, spaces) {
   if (node.childNodes.length === 0) return;
@@ -216,7 +230,7 @@ test('list scrolls to active item', async (t) => {
     target,
     data: {
       items: itemsWithIndex,
-      activeItemIndex: 8,
+      activeItemIndex: 4,
     }
   });
 
@@ -236,7 +250,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
     target,
     data: {
       items: itemsWithIndex,
-      activeItem: {name: 'Item #1'},
+      activeItem: { value: 'chocolate', label: 'Chocolate' },
       activeItemIndex: 0,
     }
   });
@@ -244,7 +258,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   const {container} = list.refs;
   const focusedElemBounding = container.querySelector('.listItem.hover');
-  t.equal(focusedElemBounding.innerHTML.trim(), `Item #2`);
+  t.equal(focusedElemBounding.innerHTML.trim(), `Pizza`);
   list.destroy();
 });
 
@@ -265,7 +279,7 @@ test('on enter active item fires a itemSelected event', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #3'}));
+  t.equal(JSON.stringify(selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
   list.destroy();
 });
 
@@ -286,7 +300,7 @@ test('on tab active item fires a itemSelected event', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
 
-  t.equal(JSON.stringify(selectedItem), JSON.stringify({name: 'Item #3'}));
+  t.equal(JSON.stringify(selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
   list.destroy();
 });
 
@@ -444,7 +458,7 @@ test('select item from list', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({name: 'Item #3'}));
+  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
 
   testTemplate.destroy();
   select.destroy();
@@ -498,7 +512,7 @@ test('clicking Select with selected item should open list with item listed as ac
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   document.querySelector('.selectContainer').click();
-  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({name: 'Item #3'}));
+  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
   select.destroy();
 });
 
@@ -750,8 +764,8 @@ test('Select filter text filters list', async (t) => {
     }
   });
 
-  t.ok(select.get().filteredItems.length === 10);
-  select.set({filterText: '5'});
+  t.ok(select.get().filteredItems.length === 5);
+  select.set({filterText: 'Ice Cream'});
   t.ok(select.get().filteredItems.length === 1);
 
   select.destroy();
@@ -780,7 +794,7 @@ test('While filtering, the first item in List should receive hover class', async
     }
   });
 
-  select.set({filterText: '2'});
+  select.set({filterText: 'I'});
   t.ok(document.querySelector('.listItem.hover'));
   select.destroy();
 });
@@ -919,11 +933,11 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
       items: [
         {
           index: 0,
-          name: longest
+          label: longest
         },
         {
           index: 1,
-          name: 'Not so loooooonnnng name'
+          label: 'Not so loooooonnnng name'
         }
       ]
     }
@@ -982,30 +996,26 @@ test('if only one item in list it should have hover state', async (t) => {
   list.destroy();
 });
 
-test.only(`filtered list items and hovering doesn't work`, async (t) => {
+test(`filtered list items and hovering doesn't work`, async (t) => {
   const select = new Select({
     target,
     data: {
-      items: [
-        { name: 'to filter one'},
-        { name: 'to filter two'},
-        { name: 'dont filter one'},
-        { name: 'dont filter two'},
-      ]
+      items
     }
   });
 
   document.querySelector('.selectContainer').click();
-  select.set({filterText: 'dont'});
+  select.set({filterText: 'i'});
   //hovering in puppeteer is alluding me :(
 
-  select.destroy();
+  // select.destroy();
 });
 
 
 // data shouldn't be stripped from item - currently only saves name
 // clearing doesn't work when data is bound by parent bind:selectedItem...
-// when opening list when item is already selected that item should be highlighted/active
+// on load when opening list when item is already selected that item should be highlighted/active
+// 1st item hover sometimes doesn't work unless you hover over 2nd item first
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

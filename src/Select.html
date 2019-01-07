@@ -129,7 +129,7 @@
         });
         return itemsWithIndex.filter(item => {
           if (filterText.length < 1) return true;
-          return item.name.toLowerCase().includes(filterText.toLowerCase())
+          return item.label.toLowerCase().includes(filterText.toLowerCase())
         })
       }
     },
