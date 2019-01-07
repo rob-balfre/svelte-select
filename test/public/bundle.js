@@ -24678,8 +24678,8 @@
 	}
 	function add_css() {
 		var style = createElement("style");
-		style.id = 'svelte-1y5hj7n-style';
-		style.textContent = ".listContainer.svelte-1y5hj7n{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto;background:#fff}.listItem.svelte-1y5hj7n{height:40px;line-height:40px;padding:0 20px}.listItem.hover.svelte-1y5hj7n{background:#e7f2ff}.listItem.svelte-1y5hj7n:active{background:#b9daff}.listItem.svelte-1y5hj7n:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1y5hj7n{background:#007aff;color:#fff}.empty.svelte-1y5hj7n{text-align:center;padding:20px 0;color:#78848F}";
+		style.id = 'svelte-4st1d1-style';
+		style.textContent = ".listContainer.svelte-4st1d1{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto;background:#fff}.listItem.svelte-4st1d1{height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap}.listItem.hover.svelte-4st1d1{background:#e7f2ff}.listItem.svelte-4st1d1:active{background:#b9daff}.listItem.svelte-4st1d1:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-4st1d1{background:#007aff;color:#fff}.empty.svelte-4st1d1{text-align:center;padding:20px 0;color:#78848F}";
 		append(document.head, style);
 	}
 
@@ -24731,7 +24731,7 @@
 				for (var i = 0; i < each_blocks.length; i += 1) {
 					each_blocks[i].c();
 				}
-				div.className = "listContainer svelte-1y5hj7n";
+				div.className = "listContainer svelte-4st1d1";
 			},
 
 			m(target, anchor) {
@@ -24806,7 +24806,7 @@
 			c() {
 				div = createElement("div");
 				div.textContent = "No options";
-				div.className = "empty svelte-1y5hj7n";
+				div.className = "empty svelte-4st1d1";
 			},
 
 			m(target, anchor) {
@@ -24849,7 +24849,7 @@
 
 				addListener(div, "mouseover", mouseover_handler);
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-1y5hj7n";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-4st1d1";
 			},
 
 			m(target, anchor) {
@@ -24886,7 +24886,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.activeItemIndex || changed.hoverItemIndex || changed.items) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-1y5hj7n")) {
+				if ((changed.activeItemIndex || changed.hoverItemIndex || changed.items) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-4st1d1")) {
 					div.className = div_class_value;
 				}
 			},
@@ -24910,7 +24910,7 @@
 		this._intro = true;
 		this._handlers.update = [onupdate];
 
-		if (!document.getElementById("svelte-1y5hj7n-style")) add_css();
+		if (!document.getElementById("svelte-4st1d1-style")) add_css();
 
 		this._fragment = create_main_fragment$1(this, this._state);
 
@@ -27050,11 +27050,34 @@
 	  parent.destroy();
 	});
 
+	test.only(`show ellipsis for overflowing text in a List item`, async (t) => {
+	  const longest = 'super super super super super super super super super super super super super super super super super super super super super super super super super super super super loooooonnnng name';
+	  const list = new List({
+	    target: target$1,
+	    data: {
+	      items: [
+	        {
+	          index: 0,
+	          name: longest
+	        },
+	        {
+	          index: 1,
+	          name: 'Not so loooooonnnng name'
+	        }
+	      ]
+	    }
+	  });
+
+	  const first = document.querySelector('.listItem');
+	  const last = document.querySelector('.listItem:last-child');
+
+	  t.ok(first.scrollWidth > first.clientWidth);
+	  t.ok(last.scrollWidth === last.clientWidth);
+
+	  list.destroy();
+	});
 
 
-
-	// 2-way bind for selection: Select <--> parent
-	// text ellipsis for overflowing List item
 	// clicking on 2nd Select should close and blur 1st Select
 	// if only one item in list it should have hover state at all times
 	// filtered list items and hovering doesn't work

@@ -911,11 +911,34 @@ test(`two way binding between Select and it's parent component`, async (t) => {
   parent.destroy();
 });
 
+test.only(`show ellipsis for overflowing text in a List item`, async (t) => {
+  const longest = 'super super super super super super super super super super super super super super super super super super super super super super super super super super super super loooooonnnng name';
+  const list = new List({
+    target,
+    data: {
+      items: [
+        {
+          index: 0,
+          name: longest
+        },
+        {
+          index: 1,
+          name: 'Not so loooooonnnng name'
+        }
+      ]
+    }
+  });
+
+  const first = document.querySelector('.listItem');
+  const last = document.querySelector('.listItem:last-child');
+
+  t.ok(first.scrollWidth > first.clientWidth);
+  t.ok(last.scrollWidth === last.clientWidth);
+
+  list.destroy();
+});
 
 
-
-// 2-way bind for selection: Select <--> parent
-// text ellipsis for overflowing List item
 // clicking on 2nd Select should close and blur 1st Select
 // if only one item in list it should have hover state at all times
 // filtered list items and hovering doesn't work
