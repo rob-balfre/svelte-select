@@ -966,7 +966,7 @@ test('clicking between Selects should close and blur other Select', async (t) =>
   other.destroy();
 });
 
-test('if only one item in list it should have hover state at all times', async (t) => {
+test('if only one item in list it should have hover state', async (t) => {
   const list = new List({
     target,
     data: {
@@ -982,11 +982,30 @@ test('if only one item in list it should have hover state at all times', async (
   list.destroy();
 });
 
+test.only(`filtered list items and hovering doesn't work`, async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items: [
+        { name: 'to filter one'},
+        { name: 'to filter two'},
+        { name: 'dont filter one'},
+        { name: 'dont filter two'},
+      ]
+    }
+  });
 
-// if only one item in list it should have hover state at all times
-// filtered list items and hovering doesn't work
+  document.querySelector('.selectContainer').click();
+  select.set({filterText: 'dont'});
+  //hovering in puppeteer is alluding me :(
+
+  select.destroy();
+});
+
+
 // data shouldn't be stripped from item - currently only saves name
 // clearing doesn't work when data is bound by parent bind:selectedItem...
+// when opening list when item is already selected that item should be highlighted/active
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

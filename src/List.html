@@ -3,7 +3,7 @@
 <div class="listContainer" ref:container>
     {#each items as item, i}
     <div on:mouseover="handleHover(item)" on:click="handleClick(item, event)"
-         class="listItem {itemClasses(activeItemIndex, hoverItemIndex, item, i)}">
+         class="listItem {itemClasses(activeItemIndex, hoverItemIndex, item, item.index, items)}">
         <svelte:component this="{Item}" {item}/>
     </div>
     {:else}
@@ -69,6 +69,12 @@
     onupdate({changed, current, previous}) {
       if (changed.items && current.items.length > 0) {
         this.scrollToActiveItem('hover');
+        if (!current.items.find((item) => item.index === current.hoverItemIndex)) {
+          this.set({
+            hoverItemIndex: current.items[0].index,
+            disableMouseHover: false
+          })
+        }
       }
       if (changed.activeItemIndex && current.activeItemIndex > -1) {
         this.scrollToActiveItem('active');
@@ -79,8 +85,8 @@
 
     },
     helpers: {
-      itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex) {
-        return `${activeItemIndex === item.index ? 'active ' : ''}${hoverItemIndex === itemIndex ? 'hover' : ''}`;
+      itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex, items) {
+        return `${activeItemIndex === item.index ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
       }
     },
     methods: {

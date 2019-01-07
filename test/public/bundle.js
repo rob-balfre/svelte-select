@@ -24593,8 +24593,8 @@
 	    disableMouseHover: false
 	  }
 	}
-	function itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex) {
-	  return `${activeItemIndex === item.index ? 'active ' : ''}${hoverItemIndex === itemIndex ? 'hover' : ''}`;
+	function itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex, items) {
+	  return `${activeItemIndex === item.index ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
 	}
 	var methods = {
 	  handleSelect(item) {
@@ -24667,6 +24667,12 @@
 	function onupdate({changed, current, previous}) {
 	  if (changed.items && current.items.length > 0) {
 	    this.scrollToActiveItem('hover');
+	    if (!current.items.find((item) => item.index === current.hoverItemIndex)) {
+	      this.set({
+	        hoverItemIndex: current.items[0].index,
+	        disableMouseHover: false
+	      });
+	    }
 	  }
 	  if (changed.activeItemIndex && current.activeItemIndex > -1) {
 	    this.scrollToActiveItem('active');
@@ -24849,7 +24855,7 @@
 
 				addListener(div, "mouseover", mouseover_handler);
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-4st1d1";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items) + " svelte-4st1d1";
 			},
 
 			m(target, anchor) {
@@ -24886,7 +24892,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.activeItemIndex || changed.hoverItemIndex || changed.items) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.i) + " svelte-4st1d1")) {
+				if ((changed.activeItemIndex || changed.hoverItemIndex || changed.items) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items) + " svelte-4st1d1")) {
 					div.className = div_class_value;
 				}
 			},
@@ -27113,7 +27119,7 @@
 	  other.destroy();
 	});
 
-	test('if only one item in list it should have hover state at all times', async (t) => {
+	test('if only one item in list it should have hover state', async (t) => {
 	  const list = new List({
 	    target,
 	    data: {
@@ -27129,11 +27135,30 @@
 	  list.destroy();
 	});
 
+	test.only(`filtered list items and hovering doesn't work`, async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      items: [
+	        { name: 'to filter one'},
+	        { name: 'to filter two'},
+	        { name: 'dont filter one'},
+	        { name: 'dont filter two'},
+	      ]
+	    }
+	  });
 
-	// if only one item in list it should have hover state at all times
-	// filtered list items and hovering doesn't work
+	  document.querySelector('.selectContainer').click();
+	  select.set({filterText: 'dont'});
+	  //hovering in puppeteer is alluding me :(
+
+	  select.destroy();
+	});
+
+
 	// data shouldn't be stripped from item - currently only saves name
 	// clearing doesn't work when data is bound by parent bind:selectedItem...
+	// when opening list when item is already selected that item should be highlighted/active
 
 	function focus(element, setFocus) {
 	  return new Promise(fulfil => {
