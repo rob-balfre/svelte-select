@@ -27113,8 +27113,23 @@
 	  other.destroy();
 	});
 
+	test('if only one item in list it should have hover state at all times', async (t) => {
+	  const list = new List({
+	    target,
+	    data: {
+	      items: [{
+	        index: 0,
+	        name: 'test one'
+	      }]
+	    }
+	  });
 
-	// clicking on 2nd Select should close and blur 1st Select
+	  t.ok(document.querySelector('.listItem').classList.contains('hover'));
+
+	  list.destroy();
+	});
+
+
 	// if only one item in list it should have hover state at all times
 	// filtered list items and hovering doesn't work
 	// data shouldn't be stripped from item - currently only saves name
