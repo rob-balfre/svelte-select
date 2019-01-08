@@ -3,7 +3,7 @@
 <div class="listContainer" ref:container>
     {#each items as item, i}
     <div on:mouseover="handleHover(item)" on:click="handleClick(item, event)"
-         class="listItem {itemClasses(activeItemIndex, hoverItemIndex, item, item.index, items)}">
+         class="listItem {itemClasses(hoverItemIndex, item, item.index, items, selectedItem)}">
         <svelte:component this="{Item}" {item}/>
     </div>
     {:else}
@@ -60,10 +60,10 @@
     data() {
       return {
         hoverItemIndex: 0,
-        activeItemIndex: undefined,
         items: [],
         Item,
-        disableMouseHover: false
+        disableMouseHover: false,
+        selectedItem: undefined
       }
     },
     onupdate({changed, current, previous}) {
@@ -85,17 +85,20 @@
           hoverItemIndex: current.activeItemIndex,
         })
       }
+      if (changed.selectedItem && current.selectedItem) {
+        this.scrollToActiveItem('active');
+        const hoverItemIndex = current.items.find(item => item.value === current.selectedItem.value).index;
+        this.set({hoverItemIndex});
+      }
 
     },
     helpers: {
-      itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex, items) {
-        return `${activeItemIndex === item.index ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+      itemClasses(hoverItemIndex, item, itemIndex, items, selectedItem) {
+        return `${selectedItem && (selectedItem.value === item.value) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
       }
     },
     methods: {
       handleSelect(item) {
-        // const itemSelected = Object.assign({}, item);
-        // delete itemSelected.index;
         this.fire('itemSelected', item);
       },
       handleHover(item) {

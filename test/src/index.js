@@ -1,5 +1,5 @@
 import svelte from 'svelte';
-import { Store } from 'svelte/store.js';
+import {Store} from 'svelte/store.js';
 import Select from '../../src/Select.html';
 import List from '../../src/List.html';
 import SelectDefault from './Select/Select--default.html'
@@ -16,43 +16,19 @@ const target = document.querySelector('main');
 const testTarget = document.getElementById('testTemplate');
 const extraTarget = document.getElementById('extra');
 const items = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'pizza', label: 'Pizza' },
-  { value: 'cake', label: 'Cake' },
-  { value: 'chips', label: 'Chips' },
-  { value: 'ice-cream', label: 'Ice Cream' },
+  {value: 'chocolate', label: 'Chocolate'},
+  {value: 'pizza', label: 'Pizza'},
+  {value: 'cake', label: 'Cake'},
+  {value: 'chips', label: 'Chips'},
+  {value: 'ice-cream', label: 'Ice Cream'},
 ];
 const itemsWithIndex = [
-  { value: 'chocolate', label: 'Chocolate', index: 0 },
-  { value: 'pizza', label: 'Pizza', index: 1 },
-  { value: 'cake', label: 'Cake', index: 2 },
-  { value: 'chips', label: 'Chips', index: 3 },
-  { value: 'ice-cream', label: 'Ice Cream', index: 4 },
+  {value: 'chocolate', label: 'Chocolate', index: 0},
+  {value: 'pizza', label: 'Pizza', index: 1},
+  {value: 'cake', label: 'Cake', index: 2},
+  {value: 'chips', label: 'Chips', index: 3},
+  {value: 'ice-cream', label: 'Ice Cream', index: 4},
 ];
-// const items = [
-//   {name: 'Item #1'},
-//   {name: 'Item #2'},
-//   {name: 'Item #3'},
-//   {name: 'Item #4'},
-//   {name: 'Item #5'},
-//   {name: 'Item #6'},
-//   {name: 'Item #7'},
-//   {name: 'Item #8'},
-//   {name: 'Item #9'},
-//   {name: 'Item #10'}
-// ];
-// const itemsWithIndex = [
-//   {name: 'Item #1', index: 0},
-//   {name: 'Item #2', index: 1},
-//   {name: 'Item #3', index: 2},
-//   {name: 'Item #4', index: 3},
-//   {name: 'Item #5', index: 4},
-//   {name: 'Item #6', index: 5},
-//   {name: 'Item #7', index: 6},
-//   {name: 'Item #8', index: 7},
-//   {name: 'Item #9', index: 8},
-//   {name: 'Item #10', index: 9}
-// ];
 
 function indent(node, spaces) {
   if (node.childNodes.length === 0) return;
@@ -214,7 +190,7 @@ test('should highlight active list item', async (t) => {
     target,
     data: {
       items: itemsWithIndex,
-      activeItem: {name: 'Item #2'},
+      selectedItem: {value: 'pizza', label: 'Pizza', index: 1},
       activeItemIndex: 1,
     }
   });
@@ -226,11 +202,16 @@ test('should highlight active list item', async (t) => {
 });
 
 test('list scrolls to active item', async (t) => {
+  const extras = [
+    {value: 'chicken-schnitzel', label: 'Chicken Schnitzel', index: 5},
+    {value: 'fried-chicken', label: 'Fried Chicken', index: 6},
+    {value: 'sunday-roast', label: 'Sunday Roast', index: 7},
+  ];
   const list = new List({
     target,
     data: {
-      items: itemsWithIndex,
-      activeItemIndex: 4,
+      items: itemsWithIndex.concat(extras),
+      selectedItem: {value: 'sunday-roast', label: 'Sunday Roast'},
     }
   });
 
@@ -250,7 +231,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
     target,
     data: {
       items: itemsWithIndex,
-      activeItem: { value: 'chocolate', label: 'Chocolate' },
+      activeItem: {value: 'chocolate', label: 'Chocolate'},
       activeItemIndex: 0,
     }
   });
@@ -279,7 +260,7 @@ test('on enter active item fires a itemSelected event', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-  t.equal(JSON.stringify(selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
+  t.equal(JSON.stringify(selectedItem), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
   list.destroy();
 });
 
@@ -300,7 +281,7 @@ test('on tab active item fires a itemSelected event', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
 
-  t.equal(JSON.stringify(selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
+  t.equal(JSON.stringify(selectedItem), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
   list.destroy();
 });
 
@@ -312,7 +293,7 @@ test('selected item\'s default view', async (t) => {
   const select = new Select({
     target,
     data: {
-      selectedItem: {name: 'Item #4'}
+      selectedItem: {value: 'chips', label: 'Chips'},
     }
   });
 
@@ -337,7 +318,7 @@ test('select view updates with selectedItem updates', async (t) => {
     target: testTarget
   });
 
-  select.set({selectedItem: {name: 'Item #4'}});
+  select.set({selectedItem: {value: 'chips', label: 'Chips'}});
 
   t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
@@ -353,7 +334,7 @@ test('clear wipes selectedItem and updates view', async (t) => {
   const select = new Select({
     target,
     data: {
-      selectedItem: {name: 'Item #4'}
+      selectedItem: {value: 'chips', label: 'Chips'},
     }
   });
 
@@ -450,7 +431,6 @@ test('select item from list', async (t) => {
     target,
     data: {
       items,
-      activeItemIndex: 1,
     }
   });
 
@@ -458,7 +438,7 @@ test('select item from list', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
+  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'cake', label: 'Cake'}));
 
   testTemplate.destroy();
   select.destroy();
@@ -512,7 +492,7 @@ test('clicking Select with selected item should open list with item listed as ac
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   document.querySelector('.selectContainer').click();
-  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
+  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'cake', label: 'Cake'}));
   select.destroy();
 });
 
@@ -907,13 +887,13 @@ test(`two way binding between Select and it's parent component`, async (t) => {
     target,
     data: {
       items,
-      selectedItem: {name: 'Item #4'}
+      selectedItem: {value: 'chips', label: 'Chips'},
     }
   });
 
   t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
   parent.set({
-    selectedItem: {name: 'Item #1'}
+    selectedItem: {value: 'ice-cream', label: 'Ice Cream'},
   });
   t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
   document.querySelector('.selectContainer').click();
@@ -1008,14 +988,23 @@ test(`filtered list items and hovering doesn't work`, async (t) => {
   select.set({filterText: 'i'});
   //hovering in puppeteer is alluding me :(
 
-  // select.destroy();
+  select.destroy();
 });
 
+test(`data shouldn't be stripped from item - currently only saves name`, async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
 
-// data shouldn't be stripped from item - currently only saves name
-// clearing doesn't work when data is bound by parent bind:selectedItem...
-// on load when opening list when item is already selected that item should be highlighted/active
-// 1st item hover sometimes doesn't work unless you hover over 2nd item first
+  document.querySelector('.selectContainer').click();
+  document.querySelector('.listItem').click();
+  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'chocolate', label: 'Chocolate'}));
+
+  select.destroy();
+});
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

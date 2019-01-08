@@ -112,7 +112,8 @@
         Selection,
         paddingLeft: 0,
         list: undefined,
-        target: undefined
+        target: undefined,
+        selectedItem: undefined
       }
     },
     computed: {
@@ -248,15 +249,17 @@
         const {items, selectedItem, filteredItems} = this.get();
 
         if (items) {
-          const match = JSON.stringify(selectedItem);
-          const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
-          list.set({items: filteredItems, activeItemIndex});
+          // const match = JSON.stringify(selectedItem);
+          // const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
+          list.set({items: filteredItems, selectedItem });
         }
 
         list.on('itemSelected', (newSelection) => {
           if (newSelection) {
+            const selection = Object.assign({}, newSelection);
+            delete selection.index;
             this.set({
-              selectedItem: {...selectedItem, ...newSelection},
+              selectedItem: {...selectedItem, ...selection},
               listOpen: false
             });
           }

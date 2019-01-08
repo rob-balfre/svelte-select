@@ -24587,19 +24587,17 @@
 	function data() {
 	  return {
 	    hoverItemIndex: 0,
-	    activeItemIndex: undefined,
 	    items: [],
 	    Item,
-	    disableMouseHover: false
+	    disableMouseHover: false,
+	    selectedItem: undefined
 	  }
 	}
-	function itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex, items) {
-	  return `${activeItemIndex === item.index ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+	function itemClasses(hoverItemIndex, item, itemIndex, items, selectedItem) {
+	  return `${selectedItem && (selectedItem.value === item.value) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
 	}
 	var methods = {
 	  handleSelect(item) {
-	    // const itemSelected = Object.assign({}, item);
-	    // delete itemSelected.index;
 	    this.fire('itemSelected', item);
 	  },
 	  handleHover(item) {
@@ -24684,6 +24682,11 @@
 	      hoverItemIndex: current.activeItemIndex,
 	    });
 	  }
+	  if (changed.selectedItem && current.selectedItem) {
+	    this.scrollToActiveItem('active');
+	    const hoverItemIndex = current.items.find(item => item.value === current.selectedItem.value).index;
+	    this.set({hoverItemIndex});
+	  }
 
 	}
 	function add_css() {
@@ -24759,7 +24762,7 @@
 			},
 
 			p(changed, ctx) {
-				if (changed.activeItemIndex || changed.hoverItemIndex || changed.items || changed.Item) {
+				if (changed.hoverItemIndex || changed.items || changed.selectedItem || changed.Item) {
 					each_value = ctx.items;
 
 					for (var i = 0; i < each_value.length; i += 1) {
@@ -24859,7 +24862,7 @@
 
 				addListener(div, "mouseover", mouseover_handler);
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items) + " svelte-4st1d1";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items, ctx.selectedItem) + " svelte-4st1d1";
 			},
 
 			m(target, anchor) {
@@ -24896,7 +24899,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.activeItemIndex || changed.hoverItemIndex || changed.items) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items) + " svelte-4st1d1")) {
+				if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items, ctx.selectedItem) + " svelte-4st1d1")) {
 					div.className = div_class_value;
 				}
 			},
@@ -25011,7 +25014,8 @@
 	    Selection,
 	    paddingLeft: 0,
 	    list: undefined,
-	    target: undefined
+	    target: undefined,
+	    selectedItem: undefined
 	  }
 	}
 	var methods$1 = {
@@ -25100,15 +25104,17 @@
 	    const {items, selectedItem, filteredItems} = this.get();
 
 	    if (items) {
-	      const match = JSON.stringify(selectedItem);
-	      const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
-	      list.set({items: filteredItems, activeItemIndex});
+	      // const match = JSON.stringify(selectedItem);
+	      // const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
+	      list.set({items: filteredItems, selectedItem });
 	    }
 
 	    list.on('itemSelected', (newSelection) => {
 	      if (newSelection) {
+	        const selection = Object.assign({}, newSelection);
+	        delete selection.index;
 	        this.set({
-	          selectedItem: {...selectedItem, ...newSelection},
+	          selectedItem: {...selectedItem, ...selection},
 	          listOpen: false
 	        });
 	      }
@@ -25593,7 +25599,7 @@
 				text = createText("\n\n");
 				div_2 = createElement("div");
 				div_2.innerHTML = `<input placeholder="" class="svelte-u7khaw">
-			    <div class="selectedItem svelte-u7khaw">Item #4</div>
+			    <div class="selectedItem svelte-u7khaw">Chips</div>
 			    <div class="clearSelectedItem svelte-u7khaw"><svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div>`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
@@ -26167,43 +26173,19 @@
 	const testTarget = document.getElementById('testTemplate');
 	const extraTarget = document.getElementById('extra');
 	const items = [
-	  { value: 'chocolate', label: 'Chocolate' },
-	  { value: 'pizza', label: 'Pizza' },
-	  { value: 'cake', label: 'Cake' },
-	  { value: 'chips', label: 'Chips' },
-	  { value: 'ice-cream', label: 'Ice Cream' },
+	  {value: 'chocolate', label: 'Chocolate'},
+	  {value: 'pizza', label: 'Pizza'},
+	  {value: 'cake', label: 'Cake'},
+	  {value: 'chips', label: 'Chips'},
+	  {value: 'ice-cream', label: 'Ice Cream'},
 	];
 	const itemsWithIndex = [
-	  { value: 'chocolate', label: 'Chocolate', index: 0 },
-	  { value: 'pizza', label: 'Pizza', index: 1 },
-	  { value: 'cake', label: 'Cake', index: 2 },
-	  { value: 'chips', label: 'Chips', index: 3 },
-	  { value: 'ice-cream', label: 'Ice Cream', index: 4 },
+	  {value: 'chocolate', label: 'Chocolate', index: 0},
+	  {value: 'pizza', label: 'Pizza', index: 1},
+	  {value: 'cake', label: 'Cake', index: 2},
+	  {value: 'chips', label: 'Chips', index: 3},
+	  {value: 'ice-cream', label: 'Ice Cream', index: 4},
 	];
-	// const items = [
-	//   {name: 'Item #1'},
-	//   {name: 'Item #2'},
-	//   {name: 'Item #3'},
-	//   {name: 'Item #4'},
-	//   {name: 'Item #5'},
-	//   {name: 'Item #6'},
-	//   {name: 'Item #7'},
-	//   {name: 'Item #8'},
-	//   {name: 'Item #9'},
-	//   {name: 'Item #10'}
-	// ];
-	// const itemsWithIndex = [
-	//   {name: 'Item #1', index: 0},
-	//   {name: 'Item #2', index: 1},
-	//   {name: 'Item #3', index: 2},
-	//   {name: 'Item #4', index: 3},
-	//   {name: 'Item #5', index: 4},
-	//   {name: 'Item #6', index: 5},
-	//   {name: 'Item #7', index: 6},
-	//   {name: 'Item #8', index: 7},
-	//   {name: 'Item #9', index: 8},
-	//   {name: 'Item #10', index: 9}
-	// ];
 
 	function indent(node, spaces) {
 	  if (node.childNodes.length === 0) return;
@@ -26361,7 +26343,7 @@
 	    target,
 	    data: {
 	      items: itemsWithIndex,
-	      activeItem: {name: 'Item #2'},
+	      selectedItem: {value: 'pizza', label: 'Pizza', index: 1},
 	      activeItemIndex: 1,
 	    }
 	  });
@@ -26373,11 +26355,16 @@
 	});
 
 	test('list scrolls to active item', async (t) => {
+	  const extras = [
+	    {value: 'chicken-schnitzel', label: 'Chicken Schnitzel', index: 5},
+	    {value: 'fried-chicken', label: 'Fried Chicken', index: 6},
+	    {value: 'sunday-roast', label: 'Sunday Roast', index: 7},
+	  ];
 	  const list = new List({
 	    target,
 	    data: {
-	      items: itemsWithIndex,
-	      activeItemIndex: 4,
+	      items: itemsWithIndex.concat(extras),
+	      selectedItem: {value: 'sunday-roast', label: 'Sunday Roast'},
 	    }
 	  });
 
@@ -26397,7 +26384,7 @@
 	    target,
 	    data: {
 	      items: itemsWithIndex,
-	      activeItem: { value: 'chocolate', label: 'Chocolate' },
+	      activeItem: {value: 'chocolate', label: 'Chocolate'},
 	      activeItemIndex: 0,
 	    }
 	  });
@@ -26426,7 +26413,7 @@
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-	  t.equal(JSON.stringify(selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
+	  t.equal(JSON.stringify(selectedItem), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
 	  list.destroy();
 	});
 
@@ -26447,7 +26434,7 @@
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
 
-	  t.equal(JSON.stringify(selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
+	  t.equal(JSON.stringify(selectedItem), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
 	  list.destroy();
 	});
 
@@ -26459,7 +26446,7 @@
 	  const select = new Select({
 	    target,
 	    data: {
-	      selectedItem: {name: 'Item #4'}
+	      selectedItem: {value: 'chips', label: 'Chips'},
 	    }
 	  });
 
@@ -26484,7 +26471,7 @@
 	    target: testTarget
 	  });
 
-	  select.set({selectedItem: {name: 'Item #4'}});
+	  select.set({selectedItem: {value: 'chips', label: 'Chips'}});
 
 	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
@@ -26500,7 +26487,7 @@
 	  const select = new Select({
 	    target,
 	    data: {
-	      selectedItem: {name: 'Item #4'}
+	      selectedItem: {value: 'chips', label: 'Chips'},
 	    }
 	  });
 
@@ -26597,7 +26584,6 @@
 	    target,
 	    data: {
 	      items,
-	      activeItemIndex: 1,
 	    }
 	  });
 
@@ -26605,7 +26591,7 @@
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-	  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
+	  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'cake', label: 'Cake'}));
 
 	  testTemplate.destroy();
 	  select.destroy();
@@ -26659,7 +26645,7 @@
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 	  document.querySelector('.selectContainer').click();
-	  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({ value: 'cake', label: 'Cake', index: 2 }));
+	  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'cake', label: 'Cake'}));
 	  select.destroy();
 	});
 
@@ -27054,13 +27040,13 @@
 	    target,
 	    data: {
 	      items,
-	      selectedItem: {name: 'Item #4'}
+	      selectedItem: {value: 'chips', label: 'Chips'},
 	    }
 	  });
 
 	  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
 	  parent.set({
-	    selectedItem: {name: 'Item #1'}
+	    selectedItem: {value: 'ice-cream', label: 'Ice Cream'},
 	  });
 	  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
 	  document.querySelector('.selectContainer').click();
@@ -27155,14 +27141,23 @@
 	  select.set({filterText: 'i'});
 	  //hovering in puppeteer is alluding me :(
 
-	  // select.destroy();
+	  select.destroy();
 	});
 
+	test(`data shouldn't be stripped from item - currently only saves name`, async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      items
+	    }
+	  });
 
-	// data shouldn't be stripped from item - currently only saves name
-	// clearing doesn't work when data is bound by parent bind:selectedItem...
-	// on load when opening list when item is already selected that item should be highlighted/active
-	// 1st item hover sometimes doesn't work unless you hover over 2nd item first
+	  document.querySelector('.selectContainer').click();
+	  document.querySelector('.listItem').click();
+	  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'chocolate', label: 'Chocolate'}));
+
+	  select.destroy();
+	});
 
 	function focus(element, setFocus) {
 	  return new Promise(fulfil => {

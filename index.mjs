@@ -233,19 +233,17 @@ assign(Item.prototype, proto);
 function data() {
   return {
     hoverItemIndex: 0,
-    activeItemIndex: undefined,
     items: [],
     Item,
-    disableMouseHover: false
+    disableMouseHover: false,
+    selectedItem: undefined
   }
 }
-function itemClasses(activeItemIndex, hoverItemIndex, item, itemIndex, items) {
-  return `${activeItemIndex === item.index ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+function itemClasses(hoverItemIndex, item, itemIndex, items, selectedItem) {
+  return `${selectedItem && (selectedItem.value === item.value) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
 }
 var methods = {
   handleSelect(item) {
-    // const itemSelected = Object.assign({}, item);
-    // delete itemSelected.index;
     this.fire('itemSelected', item);
   },
   handleHover(item) {
@@ -330,6 +328,11 @@ function onupdate({changed, current, previous}) {
       hoverItemIndex: current.activeItemIndex,
     });
   }
+  if (changed.selectedItem && current.selectedItem) {
+    this.scrollToActiveItem('active');
+    const hoverItemIndex = current.items.find(item => item.value === current.selectedItem.value).index;
+    this.set({hoverItemIndex});
+  }
 
 }
 function add_css() {
@@ -405,7 +408,7 @@ function create_main_fragment$1(component, ctx) {
 		},
 
 		p(changed, ctx) {
-			if (changed.activeItemIndex || changed.hoverItemIndex || changed.items || changed.Item) {
+			if (changed.hoverItemIndex || changed.items || changed.selectedItem || changed.Item) {
 				each_value = ctx.items;
 
 				for (var i = 0; i < each_value.length; i += 1) {
@@ -505,7 +508,7 @@ function create_each_block(component, ctx) {
 
 			addListener(div, "mouseover", mouseover_handler);
 			addListener(div, "click", click_handler);
-			div.className = div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items) + " svelte-4st1d1";
+			div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items, ctx.selectedItem) + " svelte-4st1d1";
 		},
 
 		m(target, anchor) {
@@ -542,7 +545,7 @@ function create_each_block(component, ctx) {
 			}
 
 			div._svelte.ctx = ctx;
-			if ((changed.activeItemIndex || changed.hoverItemIndex || changed.items) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.activeItemIndex, ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items) + " svelte-4st1d1")) {
+			if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items, ctx.selectedItem) + " svelte-4st1d1")) {
 				div.className = div_class_value;
 			}
 		},
@@ -657,7 +660,8 @@ function data$1() {
     Selection,
     paddingLeft: 0,
     list: undefined,
-    target: undefined
+    target: undefined,
+    selectedItem: undefined
   }
 }
 var methods$1 = {
@@ -746,15 +750,17 @@ var methods$1 = {
     const {items, selectedItem, filteredItems} = this.get();
 
     if (items) {
-      const match = JSON.stringify(selectedItem);
-      const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
-      list.set({items: filteredItems, activeItemIndex});
+      // const match = JSON.stringify(selectedItem);
+      // const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
+      list.set({items: filteredItems, selectedItem });
     }
 
     list.on('itemSelected', (newSelection) => {
       if (newSelection) {
+        const selection = Object.assign({}, newSelection);
+        delete selection.index;
         this.set({
-          selectedItem: {...selectedItem, ...newSelection},
+          selectedItem: {...selectedItem, ...selection},
           listOpen: false
         });
       }
