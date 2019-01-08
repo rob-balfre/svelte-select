@@ -24180,7 +24180,7 @@
 		Object.defineProperty(exports, '__esModule', { value: true });
 
 	})));
-	//# sourceMappingURL=svelte.js.map
+
 	});
 
 	unwrapExports(svelte);
@@ -26166,7 +26166,6 @@
 	        });
 	    });
 	}
-	//# sourceMappingURL=tape-modern.esm.js.map
 
 	// setup
 	const target = document.querySelector('main');

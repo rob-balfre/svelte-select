@@ -1,11 +1,11 @@
-# svelte-select ([demo](https://svelte.technology/repl?version=2&gist=f5a127d9c21f529016d434dcbe405c3f))
+# svelte-select ([demo](https://svelte.technology/repl?version=2.16.0&gist=e661111b3d55a1bd44edf58873b85d26))
 
 A select component for Svelte apps.
 
 ## Installation
 
 ```bash
-yarn add todo...
+yarn add svelte-select
 ```
 
 
@@ -15,7 +15,7 @@ yarn add todo...
 <Select {items}></Select>
 
 <script>
-  import Select from '@...todo/svelte-select';
+  import Select from 'svelte-select';
 
   export default {
     components: { Select },
