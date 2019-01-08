@@ -1,4 +1,4 @@
-# svelte-select ([demo](https://svelte.technology/repl?version=2.16.0&gist=e661111b3d55a1bd44edf58873b85d26))
+# svelte-select ([demo](https://svelte.technology/repl?version=2.16.0&gist=7d765f6616d632702d2131a7dc48ee0d))
 
 A select component for Svelte apps.
 
