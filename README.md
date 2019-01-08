@@ -5,13 +5,34 @@ A select component for Svelte apps.
 ## Installation
 
 ```bash
-yarn add todo
+yarn add todo...
 ```
 
 
 ## Usage
 
 ```html
+<Select {items}></Select>
+
+<script>
+  import Select from '@...todo/svelte-select';
+
+  export default {
+    components: { Select },
+
+    data() {
+      return {
+         items: [
+          {value: 'chocolate', label: 'Chocolate'},
+          {value: 'pizza', label: 'Pizza'},
+          {value: 'cake', label: 'Cake'},
+          {value: 'chips', label: 'Chips'},
+          {value: 'ice-cream', label: 'Ice Cream'},
+        ]
+      };
+    }
+  };
+</script>
 
 ```
 
