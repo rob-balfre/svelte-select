@@ -208,7 +208,7 @@
         list = undefined;
 
         if (!target) return;
-        target.remove();
+        target.parentNode.removeChild(target);
         target = undefined;
 
         this.set({list, target});

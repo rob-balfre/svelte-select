@@ -24180,7 +24180,7 @@
 		Object.defineProperty(exports, '__esModule', { value: true });
 
 	})));
-
+	//# sourceMappingURL=svelte.js.map
 	});
 
 	unwrapExports(svelte);
@@ -24664,9 +24664,6 @@
 	};
 
 	function onupdate({changed, current, previous}) {
-
-	  // console.log(current.items);
-
 	  if (changed.items && current.items.length > 0) {
 	    this.scrollToActiveItem('hover');
 	    if (!current.items.find((item) => item.index === current.hoverItemIndex)) {
@@ -24684,8 +24681,12 @@
 	  }
 	  if (changed.selectedItem && current.selectedItem) {
 	    this.scrollToActiveItem('active');
-	    const hoverItemIndex = current.items.find(item => item.value === current.selectedItem.value).index;
-	    this.set({hoverItemIndex});
+	    if (current.items) {
+	      const hoverItem = current.items.find(item => item.value === current.selectedItem.value);
+	      if (hoverItem) {
+	        this.set({hoverItemIndex: hoverItem.index});
+	      }
+	    }
 	  }
 
 	}
@@ -25059,7 +25060,7 @@
 	    list = undefined;
 
 	    if (!target) return;
-	    target.remove();
+	    target.parentNode.removeChild(target);
 	    target = undefined;
 
 	    this.set({list, target});
@@ -26166,6 +26167,7 @@
 	        });
 	    });
 	}
+	//# sourceMappingURL=tape-modern.esm.js.map
 
 	// setup
 	const target = document.querySelector('main');
