@@ -1069,6 +1069,23 @@ test('placeholder should be prop value', async (t) => {
   select.destroy();
 });
 
+test('should display spinner when waiting is enabled', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isWaiting: true
+    }
+  });
+
+  t.ok(document.querySelector('.spinner'));
+
+  select.destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {

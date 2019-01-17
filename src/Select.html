@@ -22,7 +22,7 @@
     <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>
         <svelte:component this="{Selection}" {selectedItem} {getSelectionLabel} />
     </div>
-    {#if isClearable && !isDisabled}
+    {#if isClearable && !isDisabled && !isWaiting}
     <div class="clearSelectedItem" on:click="handleClear(event)">
         <svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
              role="presentation">
@@ -31,13 +31,25 @@
         </svg>
     </div>
     {/if}
-    {:elseif !isSearchable}
+    {/if}
+
+    {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
     <div class="indicator">
-        <svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r">
-            <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+    <svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r">
+    <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+    </svg>
+    </div>
+    {/if}
+
+    {#if isWaiting}
+    <div class="spinner">
+        <svg class="spinner_icon" viewBox="25 25 50 50">
+            <circle class="spinner_path" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"
+                    stroke-miterlimit="10"></circle>
         </svg>
     </div>
     {/if}
+
 </div>
 
 <style>
@@ -106,7 +118,7 @@
     .clearSelectedItem {
         position: absolute;
         right: 10px;
-        top: 12px;
+        top: 11px;
         width: 20px;
         height: 20px;
         color: #c5cacf;
@@ -123,7 +135,7 @@
     .indicator {
         position: absolute;
         right: 10px;
-        top: 12px;
+        top: 11px;
         width: 20px;
         height: 20px;
         color: #c5cacf;
@@ -135,6 +147,41 @@
         line-height: 1;
         stroke: currentcolor;
         stroke-width: 0;
+    }
+
+    .spinner {
+        position: absolute;
+        right: 10px;
+        top: 11px;
+        width: 20px;
+        height: 20px;
+        color: #51ce6c;
+        animation: rotate 0.75s linear infinite;
+    }
+
+    .spinner_icon {
+        display: block;
+        height: 100%;
+        transform-origin: center center;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        -webkit-transform: none;
+    }
+
+    .spinner_path {
+        stroke-dasharray: 90;
+        stroke-linecap: round;
+    }
+
+    @keyframes rotate {
+        100% {
+            transform: rotate(360deg);
+        }
     }
 </style>
 

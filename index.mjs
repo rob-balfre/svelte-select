@@ -824,13 +824,13 @@ function onstate({changed, current, previous}) {
 }
 function add_css$1() {
 	var style = createElement("style");
-	style.id = 'svelte-p8jbwe-style';
-	style.textContent = ".selectContainer.svelte-p8jbwe{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;padding:0 16px}.selectContainer.svelte-p8jbwe input.svelte-p8jbwe{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-p8jbwe input.svelte-p8jbwe::placeholder{color:#78848F}.selectContainer.svelte-p8jbwe input.svelte-p8jbwe:focus{outline:none}.selectContainer.svelte-p8jbwe:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-p8jbwe{border-color:#006FE8}.selectContainer.disabled.svelte-p8jbwe{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-p8jbwe input.svelte-p8jbwe::placeholder{color:#C1C6CC}.selectedItem.svelte-p8jbwe{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-p8jbwe:focus{outline:none}.clearSelectedItem.svelte-p8jbwe{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-p8jbwe:hover{color:#2c3e50}.selectContainer.focused.svelte-p8jbwe .clearSelectedItem.svelte-p8jbwe{color:#3F4F5F}.indicator.svelte-p8jbwe{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-p8jbwe svg.svelte-p8jbwe{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}";
+	style.id = 'svelte-iy0jej-style';
+	style.textContent = ".selectContainer.svelte-iy0jej{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;padding:0 16px}.selectContainer.svelte-iy0jej input.svelte-iy0jej{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-iy0jej input.svelte-iy0jej::placeholder{color:#78848F}.selectContainer.svelte-iy0jej input.svelte-iy0jej:focus{outline:none}.selectContainer.svelte-iy0jej:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-iy0jej{border-color:#006FE8}.selectContainer.disabled.svelte-iy0jej{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-iy0jej input.svelte-iy0jej::placeholder{color:#C1C6CC}.selectedItem.svelte-iy0jej{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-iy0jej:focus{outline:none}.clearSelectedItem.svelte-iy0jej{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-iy0jej:hover{color:#2c3e50}.selectContainer.focused.svelte-iy0jej .clearSelectedItem.svelte-iy0jej{color:#3F4F5F}.indicator.svelte-iy0jej{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-iy0jej svg.svelte-iy0jej{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-iy0jej{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-iy0jej-rotate 0.75s linear infinite}.spinner_icon.svelte-iy0jej{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-iy0jej{stroke-dasharray:90;stroke-linecap:round}@keyframes svelte-iy0jej-rotate{100%{transform:rotate(360deg)}}";
 	append(document.head, style);
 }
 
 function create_main_fragment$3(component, ctx) {
-	var div, input, input_updating = false, input_readonly_value, text, div_class_value;
+	var div, input, input_updating = false, input_readonly_value, text0, text1, text2, div_class_value;
 
 	function onwindowclick(event) {
 		component.handleWindowClick(event);	}
@@ -854,13 +854,11 @@ function create_main_fragment$3(component, ctx) {
 		component.handleFocus();
 	}
 
-	function select_block_type(ctx) {
-		if (ctx.showSelectedItem) return create_if_block;
-		if (!ctx.isSearchable) return create_if_block_2;
-	}
+	var if_block0 = (ctx.showSelectedItem) && create_if_block_2(component, ctx);
 
-	var current_block_type = select_block_type(ctx);
-	var if_block = current_block_type && current_block_type(component, ctx);
+	var if_block1 = (!ctx.isSearchable && !ctx.isDisabled && !ctx.isWaiting && (ctx.showSelectedItem && !ctx.isClearable || !ctx.showSelectedItem)) && create_if_block_1(component, ctx);
+
+	var if_block2 = (ctx.isWaiting) && create_if_block(component, ctx);
 
 	function click_handler(event) {
 		component.handleClick();
@@ -870,8 +868,12 @@ function create_main_fragment$3(component, ctx) {
 		c() {
 			div = createElement("div");
 			input = createElement("input");
-			text = createText("\n\n    ");
-			if (if_block) if_block.c();
+			text0 = createText("\n\n    ");
+			if (if_block0) if_block0.c();
+			text1 = createText("\n\n    ");
+			if (if_block1) if_block1.c();
+			text2 = createText("\n\n    ");
+			if (if_block2) if_block2.c();
 			addListener(input, "input", input_input_handler);
 			addListener(input, "focus", focus_handler);
 			input.readOnly = input_readonly_value = !ctx.isSearchable;
@@ -880,9 +882,9 @@ function create_main_fragment$3(component, ctx) {
 			input.spellcheck = "false";
 			input.placeholder = ctx.placeholderText;
 			input.disabled = ctx.isDisabled;
-			input.className = "svelte-p8jbwe";
+			input.className = "svelte-iy0jej";
 			addListener(div, "click", click_handler);
-			div.className = div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-p8jbwe";
+			div.className = div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-iy0jej";
 			div.style.cssText = ctx.containerStyles;
 		},
 
@@ -893,8 +895,12 @@ function create_main_fragment$3(component, ctx) {
 
 			input.value = ctx.filterText;
 
-			append(div, text);
-			if (if_block) if_block.m(div, null);
+			append(div, text0);
+			if (if_block0) if_block0.m(div, null);
+			append(div, text1);
+			if (if_block1) if_block1.m(div, null);
+			append(div, text2);
+			if (if_block2) if_block2.m(div, null);
 			component.refs.container = div;
 		},
 
@@ -912,16 +918,42 @@ function create_main_fragment$3(component, ctx) {
 				input.disabled = ctx.isDisabled;
 			}
 
-			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
-				if_block.p(changed, ctx);
-			} else {
-				if (if_block) if_block.d(1);
-				if_block = current_block_type && current_block_type(component, ctx);
-				if (if_block) if_block.c();
-				if (if_block) if_block.m(div, null);
+			if (ctx.showSelectedItem) {
+				if (if_block0) {
+					if_block0.p(changed, ctx);
+				} else {
+					if_block0 = create_if_block_2(component, ctx);
+					if_block0.c();
+					if_block0.m(div, text1);
+				}
+			} else if (if_block0) {
+				if_block0.d(1);
+				if_block0 = null;
 			}
 
-			if ((changed.isDisabled || changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-p8jbwe")) {
+			if (!ctx.isSearchable && !ctx.isDisabled && !ctx.isWaiting && (ctx.showSelectedItem && !ctx.isClearable || !ctx.showSelectedItem)) {
+				if (!if_block1) {
+					if_block1 = create_if_block_1(component, ctx);
+					if_block1.c();
+					if_block1.m(div, text2);
+				}
+			} else if (if_block1) {
+				if_block1.d(1);
+				if_block1 = null;
+			}
+
+			if (ctx.isWaiting) {
+				if (!if_block2) {
+					if_block2 = create_if_block(component, ctx);
+					if_block2.c();
+					if_block2.m(div, null);
+				}
+			} else if (if_block2) {
+				if_block2.d(1);
+				if_block2 = null;
+			}
+
+			if ((changed.isDisabled || changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-iy0jej")) {
 				div.className = div_class_value;
 			}
 
@@ -944,40 +976,17 @@ function create_main_fragment$3(component, ctx) {
 			removeListener(input, "input", input_input_handler);
 			removeListener(input, "focus", focus_handler);
 			if (component.refs.input === input) component.refs.input = null;
-			if (if_block) if_block.d();
+			if (if_block0) if_block0.d();
+			if (if_block1) if_block1.d();
+			if (if_block2) if_block2.d();
 			removeListener(div, "click", click_handler);
 			if (component.refs.container === div) component.refs.container = null;
 		}
 	};
 }
 
-// (34:27) 
-function create_if_block_2(component, ctx) {
-	var div;
-
-	return {
-		c() {
-			div = createElement("div");
-			div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-p8jbwe"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
-			div.className = "indicator svelte-p8jbwe";
-		},
-
-		m(target, anchor) {
-			insert(target, div, anchor);
-		},
-
-		p: noop,
-
-		d(detach) {
-			if (detach) {
-				detachNode(div);
-			}
-		}
-	};
-}
-
 // (21:4) {#if showSelectedItem }
-function create_if_block(component, ctx) {
+function create_if_block_2(component, ctx) {
 	var div, text, if_block_anchor;
 
 	var switch_value = ctx.Selection;
@@ -1002,7 +1011,7 @@ function create_if_block(component, ctx) {
 		component.handleFocus();
 	}
 
-	var if_block = (ctx.isClearable && !ctx.isDisabled) && create_if_block_1(component, ctx);
+	var if_block = (ctx.isClearable && !ctx.isDisabled && !ctx.isWaiting) && create_if_block_3(component, ctx);
 
 	return {
 		c() {
@@ -1012,7 +1021,7 @@ function create_if_block(component, ctx) {
 			if (if_block) if_block.c();
 			if_block_anchor = createComment();
 			addListener(div, "focus", focus_handler);
-			div.className = "selectedItem svelte-p8jbwe";
+			div.className = "selectedItem svelte-iy0jej";
 		},
 
 		m(target, anchor) {
@@ -1051,9 +1060,9 @@ function create_if_block(component, ctx) {
 				switch_instance._set(switch_instance_changes);
 			}
 
-			if (ctx.isClearable && !ctx.isDisabled) {
+			if (ctx.isClearable && !ctx.isDisabled && !ctx.isWaiting) {
 				if (!if_block) {
-					if_block = create_if_block_1(component, ctx);
+					if_block = create_if_block_3(component, ctx);
 					if_block.c();
 					if_block.m(if_block_anchor.parentNode, if_block_anchor);
 				}
@@ -1083,8 +1092,8 @@ function create_if_block(component, ctx) {
 	};
 }
 
-// (25:4) {#if isClearable && !isDisabled}
-function create_if_block_1(component, ctx) {
+// (25:4) {#if isClearable && !isDisabled && !isWaiting}
+function create_if_block_3(component, ctx) {
 	var div;
 
 	function click_handler(event) {
@@ -1094,9 +1103,9 @@ function create_if_block_1(component, ctx) {
 	return {
 		c() {
 			div = createElement("div");
-			div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-p8jbwe"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+			div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-iy0jej"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 			addListener(div, "click", click_handler);
-			div.className = "clearSelectedItem svelte-p8jbwe";
+			div.className = "clearSelectedItem svelte-iy0jej";
 		},
 
 		m(target, anchor) {
@@ -1113,6 +1122,52 @@ function create_if_block_1(component, ctx) {
 	};
 }
 
+// (36:4) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
+function create_if_block_1(component, ctx) {
+	var div;
+
+	return {
+		c() {
+			div = createElement("div");
+			div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-iy0jej"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
+			div.className = "indicator svelte-iy0jej";
+		},
+
+		m(target, anchor) {
+			insert(target, div, anchor);
+		},
+
+		d(detach) {
+			if (detach) {
+				detachNode(div);
+			}
+		}
+	};
+}
+
+// (44:4) {#if isWaiting}
+function create_if_block(component, ctx) {
+	var div;
+
+	return {
+		c() {
+			div = createElement("div");
+			div.innerHTML = `<svg class="spinner_icon svelte-iy0jej" viewBox="25 25 50 50"><circle class="spinner_path svelte-iy0jej" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
+			div.className = "spinner svelte-iy0jej";
+		},
+
+		m(target, anchor) {
+			insert(target, div, anchor);
+		},
+
+		d(detach) {
+			if (detach) {
+				detachNode(div);
+			}
+		}
+	};
+}
+
 function Select(options) {
 	init(this, options);
 	this.refs = {};
@@ -1125,7 +1180,7 @@ function Select(options) {
 
 	this._handlers.destroy = [ondestroy];
 
-	if (!document.getElementById("svelte-p8jbwe-style")) add_css$1();
+	if (!document.getElementById("svelte-iy0jej-style")) add_css$1();
 
 	onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 
