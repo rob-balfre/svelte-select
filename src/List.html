@@ -74,8 +74,6 @@
             hoverItemIndex: current.items.length - 1
           });
         }
-
-        this.scrollToActiveItem('hover');
       }
       if (changed.activeItemIndex && current.activeItemIndex > -1) {
         this.set({
@@ -125,6 +123,7 @@
         }
 
         this.set({hoverItemIndex});
+        this.scrollToActiveItem('hover');
       },
       handleKeyDown(e) {
         const {items, hoverItemIndex} = this.get();
