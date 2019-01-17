@@ -308,10 +308,6 @@ var methods = {
     }
 
     container.scrollTop -= offsetBounding;
-
-    setTimeout(() => {
-      this.set({disableMouseHover: false});
-    }, 0);
   }
 };
 
@@ -319,8 +315,7 @@ function onupdate({changed, current}) {
   if (changed.items && current.items.length > 0) {
     if (!current.items[current.hoverItemIndex]) {
       this.set({
-        hoverItemIndex: current.items.length - 1,
-        disableMouseHover: false
+        hoverItemIndex: current.items.length - 1
       });
     }
 
@@ -334,10 +329,13 @@ function onupdate({changed, current}) {
     this.scrollToActiveItem('active');
   }
   if (changed.selectedItem && current.selectedItem) {
-    const hoverItemIndex = current.items.find(item => item.value === current.selectedItem.value).index;
-    this.set({hoverItemIndex});
-
     this.scrollToActiveItem('active');
+    if (current.items) {
+      const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedItem.value);
+      if (hoverItemIndex) {
+        this.set({hoverItemIndex});
+      }
+    }
   }
 }
 function add_css() {
