@@ -4,7 +4,7 @@
     {#each items as item, i}
     <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
          class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedItem)}">
-        <svelte:component this="{Item}" {item}/>
+        <svelte:component this="{Item}" {item} {getOptionLabel}/>
     </div>
     {:else}
     <div class="empty">No options</div>
@@ -21,6 +21,7 @@
     }
 
     .listItem {
+        cursor: default;
         height: 40px;
         line-height: 40px;
         padding: 0 20px;
@@ -62,29 +63,34 @@
         hoverItemIndex: 0,
         items: [],
         Item,
-        selectedItem: undefined
+        selectedItem: undefined,
+        getOptionLabel: (option) => option.label
       }
     },
     onupdate({changed, current}) {
       if (changed.items && current.items.length > 0) {
+        if (!current.items[current.hoverItemIndex]) {
+          this.set({
+            hoverItemIndex: current.items.length - 1,
+            disableMouseHover: false
+          });
+        }
+
         this.scrollToActiveItem('hover');
       }
       if (changed.activeItemIndex && current.activeItemIndex > -1) {
-        this.scrollToActiveItem('active');
         this.set({
           hoverItemIndex: current.activeItemIndex,
-        })
+        });
+
+        this.scrollToActiveItem('active');
       }
       if (changed.selectedItem && current.selectedItem) {
-        this.scrollToActiveItem('active');
-        if (current.items) {
-          const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedItem.value);
-          if (hoverItemIndex) {
-            this.set({hoverItemIndex});
-          }
-        }
-      }
+        const hoverItemIndex = current.items.find(item => item.value === current.selectedItem.value).index;
+        this.set({hoverItemIndex});
 
+        this.scrollToActiveItem('active');
+      }
     },
     helpers: {
       itemClasses(hoverItemIndex, item, itemIndex, items, selectedItem) {
@@ -116,10 +122,11 @@
           hoverItemIndex = hoverItemIndex + increment;
         }
 
-        this.set({items, hoverItemIndex})
+        this.set({hoverItemIndex});
       },
       handleKeyDown(e) {
         const {items, hoverItemIndex} = this.get();
+
         switch (e.key) {
           case 'ArrowDown':
             e.preventDefault();
@@ -145,10 +152,16 @@
         const {container} = this.refs;
         let offsetBounding;
         const focusedElemBounding = container.querySelector(`.listItem.${className}`);
+
         if (focusedElemBounding) {
           offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
         }
+
         container.scrollTop -= offsetBounding;
+
+        setTimeout(() => {
+          this.set({disableMouseHover: false});
+        }, 0);
       }
     }
   }

@@ -1,23 +1,42 @@
 <svelte:window on:click="handleWindowClick(event)" on:keydown="handleKeyDown(event)" on:resize="getPosition()"/>
 
-<div class="selectContainer {isDisabled ? 'disabled' : ''}{isFocused ? 'focused' : ''}" on:click="handleClick()"
-     ref:container style="{containerStyles}">
-    <input on:focus="handleFocus()" ref:input placeholder="{placeholderText}" bind:value="filterText"
-           disabled="{isDisabled}" style="{inputStyles}">
+<div
+  class="selectContainer {isDisabled ? 'disabled' : ''}{isFocused ? 'focused' : ''}"
+  style="{containerStyles}"
+  on:click="handleClick()"
+  ref:container>
+
+    <input
+      ref:input
+      readonly="{!isSearchable}"
+      on:focus="handleFocus()"
+      bind:value="filterText"
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+      placeholder="{placeholderText}"
+      disabled="{isDisabled}"
+    >
 
     {#if showSelectedItem }
     <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>
-        <svelte:component this="{Selection}" {selectedItem}/>
+        <svelte:component this="{Selection}" {selectedItem} {getSelectionLabel} />
     </div>
-    {#if !isDisabled}
+    {#if isClearable && !isDisabled}
     <div class="clearSelectedItem" on:click="handleClear(event)">
-        <svg class="icon svelte-qw6fkp" width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
+        <svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
              role="presentation">
             <path fill="currentColor"
                   d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path>
         </svg>
     </div>
     {/if}
+    {:elseif !isSearchable}
+    <div class="indicator">
+        <svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r">
+            <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+        </svg>
+    </div>
     {/if}
 </div>
 
@@ -31,6 +50,7 @@
     }
 
     .selectContainer input {
+        cursor: default;
         border: none;
         color: #3F4F5F;
         height: 44px;
@@ -99,6 +119,23 @@
     .selectContainer.focused .clearSelectedItem {
         color: #3F4F5F;
     }
+
+    .indicator {
+        position: absolute;
+        right: 10px;
+        top: 12px;
+        width: 20px;
+        height: 20px;
+        color: #c5cacf;
+    }
+
+    .indicator svg {
+        display: inline-block;
+        fill: currentcolor;
+        line-height: 1;
+        stroke: currentcolor;
+        stroke-width: 0;
+    }
 </style>
 
 <script>
@@ -109,6 +146,7 @@
   export default {
     data() {
       return {
+        containerStyles: undefined,
         items: [],
         filterText: '',
         listOpen: false,
@@ -117,20 +155,25 @@
         paddingLeft: 0,
         list: undefined,
         target: undefined,
-        selectedItem: undefined
+        selectedItem: undefined,
+        isClearable: true,
+        isSearchable: true,
+        getOptionLabel: (option) => option.label,
+        getSelectionLabel: (option) => option.label,
+        placeholder: 'Select...'
       }
     },
     computed: {
       showSelectedItem({selectedItem, filterText}) {
         return selectedItem && filterText.length === 0;
       },
-      placeholderText({selectedItem}) {
-        return selectedItem ? '' : 'Select...'
+      placeholderText({selectedItem, placeholder}) {
+        return selectedItem ? '' : placeholder
       },
-      filteredItems({items, filterText}) {
+      filteredItems({items, filterText, getOptionLabel}) {
         return items.filter(item => {
           if (filterText.length < 1) return true;
-          return item.label.toLowerCase().includes(filterText.toLowerCase())
+          return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
         })
       }
     },
@@ -175,6 +218,7 @@
       },
       handleKeyDown(e) {
         const {isFocused, listOpen} = this.get();
+
         if (!isFocused) return;
 
         switch (e.key) {
@@ -239,11 +283,17 @@
 
         this.getPosition();
         this.refs.container.appendChild(target);
+
+        const { Item, getOptionLabel } = this.get();
+        const data = { Item };
+
+        if(getOptionLabel) {
+          data.getOptionLabel = getOptionLabel;
+        }
+
         list = new List({
           target,
-          data: {
-            Item: this.get().Item
-          }
+          data
         });
 
         const {items, selectedItem, filteredItems} = this.get();
@@ -257,6 +307,7 @@
         list.on('itemSelected', (newSelection) => {
           if (newSelection) {
             const selection = Object.assign({}, newSelection);
+
             this.set({
               selectedItem: {...selectedItem, ...selection},
               listOpen: false
