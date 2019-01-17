@@ -794,23 +794,6 @@ test('Select container styles can be overridden', async (t) => {
   select.destroy();
 });
 
-test('List mouseover events should be ignored when using arrow keys', async (t) => {
-  const list = new List({
-    target,
-    data: {
-      items: itemsWithIndex
-    }
-  });
-
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-
-  t.ok(list.get().disableMouseHover);
-
-  list.destroy();
-});
-
 test('Select can be disabled', async (t) => {
   const select = new Select({
     target,

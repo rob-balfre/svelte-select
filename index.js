@@ -241,7 +241,6 @@
 	    hoverItemIndex: 0,
 	    items: [],
 	    Item,
-	    disableMouseHover: false,
 	    selectedItem: undefined
 	  }
 	}
@@ -252,13 +251,8 @@
 	  handleSelect(item) {
 	    this.fire('itemSelected', item);
 	  },
-	  handleHover(item, i) {
-	    const {disableMouseHover} = this.get();
-	    if (!disableMouseHover) {
-	      this.set({hoverItemIndex: i});
-	    } else {
-	      this.set({disableMouseHover: false});
-	    }
+	  handleHover(i) {
+	    this.set({hoverItemIndex: i});
 	  },
 	  handleClick(item, i, event) {
 	    event.stopPropagation();
@@ -304,7 +298,6 @@
 	    }
 	  },
 	  scrollToActiveItem(className) {
-	    this.set({disableMouseHover: true});
 	    const {container} = this.refs;
 	    let offsetBounding;
 	    const focusedElemBounding = container.querySelector(`.listItem.${className}`);
@@ -352,7 +345,7 @@
 	function mouseover_handler(event) {
 		const { component, ctx } = this._svelte;
 
-		component.handleHover(ctx.item, ctx.i);
+		component.handleHover(ctx.i);
 	}
 
 	function get_each_context(ctx, list, i) {

@@ -24589,7 +24589,6 @@
 	    hoverItemIndex: 0,
 	    items: [],
 	    Item,
-	    disableMouseHover: false,
 	    selectedItem: undefined
 	  }
 	}
@@ -24600,13 +24599,8 @@
 	  handleSelect(item) {
 	    this.fire('itemSelected', item);
 	  },
-	  handleHover(item, i) {
-	    const {disableMouseHover} = this.get();
-	    if (!disableMouseHover) {
-	      this.set({hoverItemIndex: i});
-	    } else {
-	      this.set({disableMouseHover: false});
-	    }
+	  handleHover(i) {
+	    this.set({hoverItemIndex: i});
 	  },
 	  handleClick(item, i, event) {
 	    event.stopPropagation();
@@ -24652,7 +24646,6 @@
 	    }
 	  },
 	  scrollToActiveItem(className) {
-	    this.set({disableMouseHover: true});
 	    const {container} = this.refs;
 	    let offsetBounding;
 	    const focusedElemBounding = container.querySelector(`.listItem.${className}`);
@@ -24700,7 +24693,7 @@
 	function mouseover_handler(event) {
 		const { component, ctx } = this._svelte;
 
-		component.handleHover(ctx.item, ctx.i);
+		component.handleHover(ctx.i);
 	}
 
 	function get_each_context(ctx, list, i) {
@@ -26935,23 +26928,6 @@
 
 	  t.equal(document.querySelector('.selectContainer').style.cssText, `padding-left: 40px;`);
 	  select.destroy();
-	});
-
-	test('List mouseover events should be ignored when using arrow keys', async (t) => {
-	  const list = new List({
-	    target,
-	    data: {
-	      items: itemsWithIndex
-	    }
-	  });
-
-	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-
-	  t.ok(list.get().disableMouseHover);
-
-	  list.destroy();
 	});
 
 	test('Select can be disabled', async (t) => {

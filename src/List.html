@@ -2,7 +2,7 @@
 
 <div class="listContainer" ref:container>
     {#each items as item, i}
-    <div on:mouseover="handleHover(item, i)" on:click="handleClick(item, i, event)"
+    <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
          class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedItem)}">
         <svelte:component this="{Item}" {item}/>
     </div>
@@ -62,7 +62,6 @@
         hoverItemIndex: 0,
         items: [],
         Item,
-        disableMouseHover: false,
         selectedItem: undefined
       }
     },
@@ -96,13 +95,8 @@
       handleSelect(item) {
         this.fire('itemSelected', item);
       },
-      handleHover(item, i) {
-        const {disableMouseHover} = this.get();
-        if (!disableMouseHover) {
-          this.set({hoverItemIndex: i});
-        } else {
-          this.set({disableMouseHover: false})
-        }
+      handleHover(i) {
+        this.set({hoverItemIndex: i});
       },
       handleClick(item, i, event) {
         event.stopPropagation();
@@ -148,7 +142,6 @@
         }
       },
       scrollToActiveItem(className) {
-        this.set({disableMouseHover: true});
         const {container} = this.refs;
         let offsetBounding;
         const focusedElemBounding = container.querySelector(`.listItem.${className}`);
