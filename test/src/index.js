@@ -1086,6 +1086,21 @@ test('should display spinner when waiting is enabled', async (t) => {
   select.destroy();
 });
 
+test.only('inputStyles prop applies css to select input', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items,
+      selectedItem: {value: 'pizza', label: 'Pizza'},
+      activeItemIndex: 1,
+      inputStyles: `padding-left: 40px;`
+    }
+  });
+
+  t.equal(document.querySelector('.selectContainer input').style.cssText, `padding-left: 40px;`);
+  select.destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {

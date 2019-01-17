@@ -24627,6 +24627,7 @@
 	    }
 
 	    this.set({hoverItemIndex});
+	    this.scrollToActiveItem('hover');
 	  },
 	  handleKeyDown(e) {
 	    const {items, hoverItemIndex} = this.get();
@@ -24672,8 +24673,6 @@
 	        hoverItemIndex: current.items.length - 1
 	      });
 	    }
-
-	    this.scrollToActiveItem('hover');
 	  }
 	  if (changed.activeItemIndex && current.activeItemIndex > -1) {
 	    this.set({
@@ -25236,6 +25235,7 @@
 				input.spellcheck = "false";
 				input.placeholder = ctx.placeholderText;
 				input.disabled = ctx.isDisabled;
+				input.style.cssText = ctx.inputStyles;
 				input.className = "svelte-1r3r83f";
 				addListener(div, "click", click_handler);
 				div.className = div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-1r3r83f";
@@ -25270,6 +25270,10 @@
 
 				if (changed.isDisabled) {
 					input.disabled = ctx.isDisabled;
+				}
+
+				if (changed.inputStyles) {
+					input.style.cssText = ctx.inputStyles;
 				}
 
 				if (ctx.showSelectedItem) {
@@ -25339,7 +25343,7 @@
 		};
 	}
 
-	// (21:2) {#if showSelectedItem }
+	// (22:2) {#if showSelectedItem }
 	function create_if_block_2(component, ctx) {
 		var div, text, if_block_anchor;
 
@@ -25446,7 +25450,7 @@
 		};
 	}
 
-	// (25:2) {#if isClearable && !isDisabled && !isWaiting}
+	// (26:2) {#if isClearable && !isDisabled && !isWaiting}
 	function create_if_block_3(component, ctx) {
 		var div;
 
@@ -25476,7 +25480,7 @@
 		};
 	}
 
-	// (36:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
+	// (37:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
 	function create_if_block_1(component, ctx) {
 		var div;
 
@@ -25499,7 +25503,7 @@
 		};
 	}
 
-	// (45:2) {#if isWaiting}
+	// (46:2) {#if isWaiting}
 	function create_if_block(component, ctx) {
 		var div;
 
@@ -27341,6 +27345,21 @@
 
 	  t.ok(document.querySelector('.spinner'));
 
+	  select.destroy();
+	});
+
+	test.only('inputStyles prop applies css to select input', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      items,
+	      selectedItem: {value: 'pizza', label: 'Pizza'},
+	      activeItemIndex: 1,
+	      inputStyles: `padding-left: 40px;`
+	    }
+	  });
+
+	  t.equal(document.querySelector('.selectContainer input').style.cssText, `padding-left: 40px;`);
 	  select.destroy();
 	});
 
