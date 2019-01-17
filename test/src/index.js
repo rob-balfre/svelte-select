@@ -1003,7 +1003,7 @@ test(`data shouldn't be stripped from item - currently only saves name`, async (
   document.querySelector('.listItem').click();
   t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'chocolate', label: 'Chocolate'}));
 
-  select.destroy();
+  // select.destroy();
 });
 
 function focus(element, setFocus) {

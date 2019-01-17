@@ -246,17 +246,17 @@ var methods = {
   handleSelect(item) {
     this.fire('itemSelected', item);
   },
-  handleHover(item) {
+  handleHover(item, i) {
     const {disableMouseHover} = this.get();
     if (!disableMouseHover) {
-      this.set({hoverItemIndex: item.index});
+      this.set({hoverItemIndex: i});
     } else {
       this.set({disableMouseHover: false});
     }
   },
-  handleClick(item, event) {
+  handleClick(item, i, event) {
     event.stopPropagation();
-    this.set({activeItemIndex: item.index, hoverItemIndex: item.index});
+    this.set({activeItemIndex: i, hoverItemIndex: i});
     this.handleSelect(item);
   },
   updateHoverItem(increment) {
@@ -309,18 +309,9 @@ var methods = {
   }
 };
 
-function onupdate({changed, current, previous}) {
-
-  // console.log(current.items);
-
+function onupdate({changed, current}) {
   if (changed.items && current.items.length > 0) {
     this.scrollToActiveItem('hover');
-    if (!current.items.find((item) => item.index === current.hoverItemIndex)) {
-      this.set({
-        hoverItemIndex: current.items[0].index,
-        disableMouseHover: false
-      });
-    }
   }
   if (changed.activeItemIndex && current.activeItemIndex > -1) {
     this.scrollToActiveItem('active');
@@ -330,8 +321,12 @@ function onupdate({changed, current, previous}) {
   }
   if (changed.selectedItem && current.selectedItem) {
     this.scrollToActiveItem('active');
-    const hoverItemIndex = current.items.find(item => item.value === current.selectedItem.value).index;
-    this.set({hoverItemIndex});
+    if (current.items) {
+      const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedItem.value);
+      if (hoverItemIndex) {
+        this.set({hoverItemIndex});
+      }
+    }
   }
 
 }
@@ -345,13 +340,13 @@ function add_css() {
 function click_handler(event) {
 	const { component, ctx } = this._svelte;
 
-	component.handleClick(ctx.item, event);
+	component.handleClick(ctx.item, ctx.i, event);
 }
 
 function mouseover_handler(event) {
 	const { component, ctx } = this._svelte;
 
-	component.handleHover(ctx.item);
+	component.handleHover(ctx.item, ctx.i);
 }
 
 function get_each_context(ctx, list, i) {
@@ -508,7 +503,7 @@ function create_each_block(component, ctx) {
 
 			addListener(div, "mouseover", mouseover_handler);
 			addListener(div, "click", click_handler);
-			div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items, ctx.selectedItem) + " svelte-4st1d1";
+			div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-4st1d1";
 		},
 
 		m(target, anchor) {
@@ -545,7 +540,7 @@ function create_each_block(component, ctx) {
 			}
 
 			div._svelte.ctx = ctx;
-			if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items, ctx.selectedItem) + " svelte-4st1d1")) {
+			if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-4st1d1")) {
 				div.className = div_class_value;
 			}
 		},
@@ -642,11 +637,7 @@ function placeholderText({selectedItem}) {
   return selectedItem ? '' : 'Select...'
 }
 function filteredItems({items, filterText}) {
-  const itemsWithIndex = items.map((item, i) => {
-    item.index = i;
-    return item;
-  });
-  return itemsWithIndex.filter(item => {
+  return items.filter(item => {
     if (filterText.length < 1) return true;
     return item.label.toLowerCase().includes(filterText.toLowerCase())
   })
@@ -705,7 +696,7 @@ var methods$1 = {
     list = undefined;
 
     if (!target) return;
-    target.remove();
+    target.parentNode.removeChild(target);
     target = undefined;
 
     this.set({list, target});
@@ -758,7 +749,6 @@ var methods$1 = {
     list.on('itemSelected', (newSelection) => {
       if (newSelection) {
         const selection = Object.assign({}, newSelection);
-        delete selection.index;
         this.set({
           selectedItem: {...selectedItem, ...selection},
           listOpen: false

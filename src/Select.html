@@ -128,11 +128,7 @@
         return selectedItem ? '' : 'Select...'
       },
       filteredItems({items, filterText}) {
-        const itemsWithIndex = items.map((item, i) => {
-          item.index = i;
-          return item;
-        });
-        return itemsWithIndex.filter(item => {
+        return items.filter(item => {
           if (filterText.length < 1) return true;
           return item.label.toLowerCase().includes(filterText.toLowerCase())
         })
@@ -261,7 +257,6 @@
         list.on('itemSelected', (newSelection) => {
           if (newSelection) {
             const selection = Object.assign({}, newSelection);
-            delete selection.index;
             this.set({
               selectedItem: {...selectedItem, ...selection},
               listOpen: false

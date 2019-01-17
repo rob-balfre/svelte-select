@@ -2,8 +2,8 @@
 
 <div class="listContainer" ref:container>
     {#each items as item, i}
-    <div on:mouseover="handleHover(item)" on:click="handleClick(item, event)"
-         class="listItem {itemClasses(hoverItemIndex, item, item.index, items, selectedItem)}">
+    <div on:mouseover="handleHover(item, i)" on:click="handleClick(item, i, event)"
+         class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedItem)}">
         <svelte:component this="{Item}" {item}/>
     </div>
     {:else}
@@ -66,15 +66,9 @@
         selectedItem: undefined
       }
     },
-    onupdate({changed, current, previous}) {
+    onupdate({changed, current}) {
       if (changed.items && current.items.length > 0) {
         this.scrollToActiveItem('hover');
-        if (!current.items.find((item) => item.index === current.hoverItemIndex)) {
-          this.set({
-            hoverItemIndex: current.items[0].index,
-            disableMouseHover: false
-          })
-        }
       }
       if (changed.activeItemIndex && current.activeItemIndex > -1) {
         this.scrollToActiveItem('active');
@@ -85,9 +79,9 @@
       if (changed.selectedItem && current.selectedItem) {
         this.scrollToActiveItem('active');
         if (current.items) {
-          const hoverItem = current.items.find(item => item.value === current.selectedItem.value);
-          if (hoverItem) {
-            this.set({hoverItemIndex: hoverItem.index});
+          const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedItem.value);
+          if (hoverItemIndex) {
+            this.set({hoverItemIndex});
           }
         }
       }
@@ -102,17 +96,17 @@
       handleSelect(item) {
         this.fire('itemSelected', item);
       },
-      handleHover(item) {
+      handleHover(item, i) {
         const {disableMouseHover} = this.get();
         if (!disableMouseHover) {
-          this.set({hoverItemIndex: item.index});
+          this.set({hoverItemIndex: i});
         } else {
           this.set({disableMouseHover: false})
         }
       },
-      handleClick(item, event) {
+      handleClick(item, i, event) {
         event.stopPropagation();
-        this.set({activeItemIndex: item.index, hoverItemIndex: item.index});
+        this.set({activeItemIndex: i, hoverItemIndex: i});
         this.handleSelect(item);
       },
       updateHoverItem(increment) {

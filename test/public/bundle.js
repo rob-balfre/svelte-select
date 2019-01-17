@@ -24600,17 +24600,17 @@
 	  handleSelect(item) {
 	    this.fire('itemSelected', item);
 	  },
-	  handleHover(item) {
+	  handleHover(item, i) {
 	    const {disableMouseHover} = this.get();
 	    if (!disableMouseHover) {
-	      this.set({hoverItemIndex: item.index});
+	      this.set({hoverItemIndex: i});
 	    } else {
 	      this.set({disableMouseHover: false});
 	    }
 	  },
-	  handleClick(item, event) {
+	  handleClick(item, i, event) {
 	    event.stopPropagation();
-	    this.set({activeItemIndex: item.index, hoverItemIndex: item.index});
+	    this.set({activeItemIndex: i, hoverItemIndex: i});
 	    this.handleSelect(item);
 	  },
 	  updateHoverItem(increment) {
@@ -24663,15 +24663,9 @@
 	  }
 	};
 
-	function onupdate({changed, current, previous}) {
+	function onupdate({changed, current}) {
 	  if (changed.items && current.items.length > 0) {
 	    this.scrollToActiveItem('hover');
-	    if (!current.items.find((item) => item.index === current.hoverItemIndex)) {
-	      this.set({
-	        hoverItemIndex: current.items[0].index,
-	        disableMouseHover: false
-	      });
-	    }
 	  }
 	  if (changed.activeItemIndex && current.activeItemIndex > -1) {
 	    this.scrollToActiveItem('active');
@@ -24682,9 +24676,9 @@
 	  if (changed.selectedItem && current.selectedItem) {
 	    this.scrollToActiveItem('active');
 	    if (current.items) {
-	      const hoverItem = current.items.find(item => item.value === current.selectedItem.value);
-	      if (hoverItem) {
-	        this.set({hoverItemIndex: hoverItem.index});
+	      const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedItem.value);
+	      if (hoverItemIndex) {
+	        this.set({hoverItemIndex});
 	      }
 	    }
 	  }
@@ -24700,13 +24694,13 @@
 	function click_handler(event) {
 		const { component, ctx } = this._svelte;
 
-		component.handleClick(ctx.item, event);
+		component.handleClick(ctx.item, ctx.i, event);
 	}
 
 	function mouseover_handler(event) {
 		const { component, ctx } = this._svelte;
 
-		component.handleHover(ctx.item);
+		component.handleHover(ctx.item, ctx.i);
 	}
 
 	function get_each_context(ctx, list, i) {
@@ -24863,7 +24857,7 @@
 
 				addListener(div, "mouseover", mouseover_handler);
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items, ctx.selectedItem) + " svelte-4st1d1";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-4st1d1";
 			},
 
 			m(target, anchor) {
@@ -24900,7 +24894,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.item.index, ctx.items, ctx.selectedItem) + " svelte-4st1d1")) {
+				if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-4st1d1")) {
 					div.className = div_class_value;
 				}
 			},
@@ -24997,11 +24991,7 @@
 	  return selectedItem ? '' : 'Select...'
 	}
 	function filteredItems({items, filterText}) {
-	  const itemsWithIndex = items.map((item, i) => {
-	    item.index = i;
-	    return item;
-	  });
-	  return itemsWithIndex.filter(item => {
+	  return items.filter(item => {
 	    if (filterText.length < 1) return true;
 	    return item.label.toLowerCase().includes(filterText.toLowerCase())
 	  })
@@ -25113,7 +25103,6 @@
 	    list.on('itemSelected', (newSelection) => {
 	      if (newSelection) {
 	        const selection = Object.assign({}, newSelection);
-	        delete selection.index;
 	        this.set({
 	          selectedItem: {...selectedItem, ...selection},
 	          listOpen: false
@@ -27157,7 +27146,7 @@
 	  document.querySelector('.listItem').click();
 	  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'chocolate', label: 'Chocolate'}));
 
-	  select.destroy();
+	  // select.destroy();
 	});
 
 	function focus(element, setFocus) {
