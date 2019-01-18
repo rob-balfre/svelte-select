@@ -1,57 +1,57 @@
 <svelte:window on:keydown="handleKeyDown(event)"/>
 
 <div class="listContainer" ref:container>
-    {#each items as item, i}
-    <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
-         class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedItem)}">
-        <svelte:component this="{Item}" {item} {getOptionLabel}/>
-    </div>
-    {:else}
-    <div class="empty">No options</div>
-    {/each}
+  {#each items as item, i}
+  <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
+       class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedItem)}">
+    <svelte:component this="{Item}" {item} {getOptionLabel}/>
+  </div>
+  {:else}
+  <div class="empty">No options</div>
+  {/each}
 </div>
 
 <style>
-    .listContainer {
-        box-shadow: 0 2px 3px 0 rgba(44, 62, 80, 0.24);
-        border-radius: 4px;
-        max-height: 250px;
-        overflow-y: auto;
-        background: #fff;
-    }
+  .listContainer {
+    box-shadow: 0 2px 3px 0 rgba(44, 62, 80, 0.24);
+    border-radius: 4px;
+    max-height: 250px;
+    overflow-y: auto;
+    background: #fff;
+  }
 
-    .listItem {
-        cursor: default;
-        height: 40px;
-        line-height: 40px;
-        padding: 0 20px;
-        text-overflow: ellipsis;
-        overflow-x: hidden;
-        white-space: nowrap;
-    }
+  .listItem {
+    cursor: default;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
+  }
 
-    .listItem.hover {
-        background: #e7f2ff;
-    }
+  .listItem.hover {
+    background: #e7f2ff;
+  }
 
-    .listItem:active {
-        background: #b9daff;
-    }
+  .listItem:active {
+    background: #b9daff;
+  }
 
-    .listItem:first-child {
-        border-radius: 4px 4px 0 0;
-    }
+  .listItem:first-child {
+    border-radius: 4px 4px 0 0;
+  }
 
-    .listItem.active {
-        background: #007aff;
-        color: #fff;
-    }
+  .listItem.active {
+    background: #007aff;
+    color: #fff;
+  }
 
-    .empty {
-        text-align: center;
-        padding: 20px 0;
-        color: #78848F;
-    }
+  .empty {
+    text-align: center;
+    padding: 20px 0;
+    color: #78848F;
+  }
 </style>
 
 <script>
@@ -74,8 +74,6 @@
             hoverItemIndex: current.items.length - 1
           });
         }
-
-        this.scrollToActiveItem('hover');
       }
       if (changed.activeItemIndex && current.activeItemIndex > -1) {
         this.set({
@@ -125,6 +123,7 @@
         }
 
         this.set({hoverItemIndex});
+        this.scrollToActiveItem('hover');
       },
       handleKeyDown(e) {
         const {items, hoverItemIndex} = this.get();

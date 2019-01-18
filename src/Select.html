@@ -6,183 +6,185 @@
   on:click="handleClick()"
   ref:container>
 
-    <input
-      ref:input
-      readonly="{!isSearchable}"
-      on:focus="handleFocus()"
-      bind:value="filterText"
-      autocomplete="off"
-      autocorrect="off"
-      spellcheck="false"
-      placeholder="{placeholderText}"
-      disabled="{isDisabled}"
-    >
+  <input
+    ref:input
+    readonly="{!isSearchable}"
+    on:focus="handleFocus()"
+    bind:value="filterText"
+    autocomplete="off"
+    autocorrect="off"
+    spellcheck="false"
+    placeholder="{placeholderText}"
+    disabled="{isDisabled}"
+    style="{inputStyles}"
+  >
 
-    {#if showSelectedItem }
-    <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>
-        <svelte:component this="{Selection}" {selectedItem} {getSelectionLabel} />
-    </div>
-    {#if isClearable && !isDisabled && !isWaiting}
-    <div class="clearSelectedItem" on:click="handleClear(event)">
-        <svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
-             role="presentation">
-            <path fill="currentColor"
-                  d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path>
-        </svg>
-    </div>
-    {/if}
-    {/if}
-
-    {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
-    <div class="indicator">
-    <svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r">
-    <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+  {#if showSelectedItem }
+  <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>
+    <svelte:component this="{Selection}" {selectedItem} {getSelectionLabel}/>
+  </div>
+  {#if isClearable && !isDisabled && !isWaiting}
+  <div class="clearSelectedItem" on:click="handleClear(event)">
+    <svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
+         role="presentation">
+      <path fill="currentColor"
+            d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path>
     </svg>
-    </div>
-    {/if}
+  </div>
+  {/if}
+  {/if}
 
-    {#if isWaiting}
-    <div class="spinner">
-        <svg class="spinner_icon" viewBox="25 25 50 50">
-            <circle class="spinner_path" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"
-                    stroke-miterlimit="10"></circle>
-        </svg>
-    </div>
-    {/if}
+  {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
+  <div class="indicator">
+    <svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r">
+      <path
+        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+    </svg>
+  </div>
+  {/if}
+
+  {#if isWaiting}
+  <div class="spinner">
+    <svg class="spinner_icon" viewBox="25 25 50 50">
+      <circle class="spinner_path" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"
+              stroke-miterlimit="10"></circle>
+    </svg>
+  </div>
+  {/if}
 
 </div>
 
 <style>
-    .selectContainer {
-        border: 1px solid #D8DBDF;
-        border-radius: 3px;
-        height: 44px;
-        position: relative;
-        padding: 0 16px;
-    }
+  .selectContainer {
+    border: 1px solid #D8DBDF;
+    border-radius: 3px;
+    height: 44px;
+    position: relative;
+    padding: 0 16px;
+  }
 
-    .selectContainer input {
-        cursor: default;
-        border: none;
-        color: #3F4F5F;
-        height: 44px;
-        line-height: 44px;
-        padding: 0 16px;
-        width: 100%;
-        background: transparent;
-        font-size: 14px;
-        letter-spacing: -0.08px;
-        position: absolute;
-        left: 0;
-    }
+  .selectContainer input {
+    cursor: default;
+    border: none;
+    color: #3F4F5F;
+    height: 44px;
+    line-height: 44px;
+    padding: 0 16px;
+    width: 100%;
+    background: transparent;
+    font-size: 14px;
+    letter-spacing: -0.08px;
+    position: absolute;
+    left: 0;
+  }
 
-    .selectContainer input::placeholder {
-        color: #78848F;
-    }
+  .selectContainer input::placeholder {
+    color: #78848F;
+  }
 
-    .selectContainer input:focus {
-        outline: none;
-    }
+  .selectContainer input:focus {
+    outline: none;
+  }
 
-    .selectContainer:hover {
-        border-color: #b2b8bf;
-    }
+  .selectContainer:hover {
+    border-color: #b2b8bf;
+  }
 
-    .selectContainer.focused {
-        border-color: #006FE8;
-    }
+  .selectContainer.focused {
+    border-color: #006FE8;
+  }
 
-    .selectContainer.disabled {
-        background: #F6F7F8;
-        border-color: #F6F7F8;
-        color: #C1C6CC;
-    }
+  .selectContainer.disabled {
+    background: #F6F7F8;
+    border-color: #F6F7F8;
+    color: #C1C6CC;
+  }
 
-    .selectContainer.disabled input::placeholder {
-        color: #C1C6CC;
-    }
+  .selectContainer.disabled input::placeholder {
+    color: #C1C6CC;
+  }
 
-    .selectedItem {
-        /*padding: 0 16px;*/
-        line-height: 44px;
-        text-overflow: ellipsis;
-        overflow-x: hidden;
-        white-space: nowrap;
-        padding-right: 20px;
-    }
+  .selectedItem {
+    /*padding: 0 16px;*/
+    line-height: 44px;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
+    padding-right: 20px;
+  }
 
-    .selectedItem:focus {
-        outline: none;
-    }
+  .selectedItem:focus {
+    outline: none;
+  }
 
-    .clearSelectedItem {
-        position: absolute;
-        right: 10px;
-        top: 11px;
-        width: 20px;
-        height: 20px;
-        color: #c5cacf;
-    }
+  .clearSelectedItem {
+    position: absolute;
+    right: 10px;
+    top: 11px;
+    width: 20px;
+    height: 20px;
+    color: #c5cacf;
+  }
 
-    .clearSelectedItem:hover {
-        color: #2c3e50;
-    }
+  .clearSelectedItem:hover {
+    color: #2c3e50;
+  }
 
-    .selectContainer.focused .clearSelectedItem {
-        color: #3F4F5F;
-    }
+  .selectContainer.focused .clearSelectedItem {
+    color: #3F4F5F;
+  }
 
-    .indicator {
-        position: absolute;
-        right: 10px;
-        top: 11px;
-        width: 20px;
-        height: 20px;
-        color: #c5cacf;
-    }
+  .indicator {
+    position: absolute;
+    right: 10px;
+    top: 11px;
+    width: 20px;
+    height: 20px;
+    color: #c5cacf;
+  }
 
-    .indicator svg {
-        display: inline-block;
-        fill: currentcolor;
-        line-height: 1;
-        stroke: currentcolor;
-        stroke-width: 0;
-    }
+  .indicator svg {
+    display: inline-block;
+    fill: currentcolor;
+    line-height: 1;
+    stroke: currentcolor;
+    stroke-width: 0;
+  }
 
-    .spinner {
-        position: absolute;
-        right: 10px;
-        top: 11px;
-        width: 20px;
-        height: 20px;
-        color: #51ce6c;
-        animation: rotate 0.75s linear infinite;
-    }
+  .spinner {
+    position: absolute;
+    right: 10px;
+    top: 11px;
+    width: 20px;
+    height: 20px;
+    color: #51ce6c;
+    animation: rotate 0.75s linear infinite;
+  }
 
-    .spinner_icon {
-        display: block;
-        height: 100%;
-        transform-origin: center center;
-        width: 100%;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: auto;
-        -webkit-transform: none;
-    }
+  .spinner_icon {
+    display: block;
+    height: 100%;
+    transform-origin: center center;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    -webkit-transform: none;
+  }
 
-    .spinner_path {
-        stroke-dasharray: 90;
-        stroke-linecap: round;
-    }
+  .spinner_path {
+    stroke-dasharray: 90;
+    stroke-linecap: round;
+  }
 
-    @keyframes rotate {
-        100% {
-            transform: rotate(360deg);
-        }
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
     }
+  }
 </style>
 
 <script>
@@ -331,10 +333,10 @@
         this.getPosition();
         this.refs.container.appendChild(target);
 
-        const { Item, getOptionLabel } = this.get();
-        const data = { Item };
+        const {Item, getOptionLabel} = this.get();
+        const data = {Item};
 
-        if(getOptionLabel) {
+        if (getOptionLabel) {
           data.getOptionLabel = getOptionLabel;
         }
 
@@ -348,7 +350,7 @@
         if (items) {
           // const match = JSON.stringify(selectedItem);
           // const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
-          list.set({items: filteredItems, selectedItem });
+          list.set({items: filteredItems, selectedItem});
         }
 
         list.on('itemSelected', (newSelection) => {

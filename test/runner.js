@@ -12,7 +12,8 @@ async function go() {
   const server = http.createServer(sirv('test/public'));
   server.listen(port);
 
-  await ports.wait(port).catch(() => {}); // workaround windows gremlins
+  await ports.wait(port).catch(() => {
+  }); // workaround windows gremlins
 
   const browser = await puppeteer.launch({args: ['--no-sandbox']});
   page = await browser.newPage();

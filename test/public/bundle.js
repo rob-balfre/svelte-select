@@ -24627,6 +24627,7 @@
 	    }
 
 	    this.set({hoverItemIndex});
+	    this.scrollToActiveItem('hover');
 	  },
 	  handleKeyDown(e) {
 	    const {items, hoverItemIndex} = this.get();
@@ -24672,8 +24673,6 @@
 	        hoverItemIndex: current.items.length - 1
 	      });
 	    }
-
-	    this.scrollToActiveItem('hover');
 	  }
 	  if (changed.activeItemIndex && current.activeItemIndex > -1) {
 	    this.set({
@@ -24694,8 +24693,8 @@
 	}
 	function add_css() {
 		var style = createElement("style");
-		style.id = 'svelte-1qk2b3b-style';
-		style.textContent = ".listContainer.svelte-1qk2b3b{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto;background:#fff}.listItem.svelte-1qk2b3b{cursor:default;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap}.listItem.hover.svelte-1qk2b3b{background:#e7f2ff}.listItem.svelte-1qk2b3b:active{background:#b9daff}.listItem.svelte-1qk2b3b:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1qk2b3b{background:#007aff;color:#fff}.empty.svelte-1qk2b3b{text-align:center;padding:20px 0;color:#78848F}";
+		style.id = 'svelte-uap5if-style';
+		style.textContent = ".listContainer.svelte-uap5if{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto;background:#fff}.listItem.svelte-uap5if{cursor:default;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap}.listItem.hover.svelte-uap5if{background:#e7f2ff}.listItem.svelte-uap5if:active{background:#b9daff}.listItem.svelte-uap5if:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-uap5if{background:#007aff;color:#fff}.empty.svelte-uap5if{text-align:center;padding:20px 0;color:#78848F}";
 		append(document.head, style);
 	}
 
@@ -24747,7 +24746,7 @@
 				for (var i = 0; i < each_blocks.length; i += 1) {
 					each_blocks[i].c();
 				}
-				div.className = "listContainer svelte-1qk2b3b";
+				div.className = "listContainer svelte-uap5if";
 			},
 
 			m(target, anchor) {
@@ -24814,7 +24813,7 @@
 		};
 	}
 
-	// (9:4) {:else}
+	// (9:2) {:else}
 	function create_else_block(component, ctx) {
 		var div;
 
@@ -24822,7 +24821,7 @@
 			c() {
 				div = createElement("div");
 				div.textContent = "No options";
-				div.className = "empty svelte-1qk2b3b";
+				div.className = "empty svelte-uap5if";
 			},
 
 			m(target, anchor) {
@@ -24837,7 +24836,7 @@
 		};
 	}
 
-	// (4:4) {#each items as item, i}
+	// (4:2) {#each items as item, i}
 	function create_each_block(component, ctx) {
 		var div, text, div_class_value;
 
@@ -24863,12 +24862,12 @@
 			c() {
 				div = createElement("div");
 				if (switch_instance) switch_instance._fragment.c();
-				text = createText("\n    ");
+				text = createText("\n  ");
 				div._svelte = { component, ctx };
 
 				addListener(div, "mouseover", mouseover_handler);
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-1qk2b3b";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-uap5if";
 			},
 
 			m(target, anchor) {
@@ -24906,7 +24905,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-1qk2b3b")) {
+				if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-uap5if")) {
 					div.className = div_class_value;
 				}
 			},
@@ -24930,7 +24929,7 @@
 		this._intro = true;
 		this._handlers.update = [onupdate];
 
-		if (!document.getElementById("svelte-1qk2b3b-style")) add_css();
+		if (!document.getElementById("svelte-uap5if-style")) add_css();
 
 		this._fragment = create_main_fragment$1(this, this._state);
 
@@ -25105,10 +25104,10 @@
 	    this.getPosition();
 	    this.refs.container.appendChild(target);
 
-	    const { Item: Item$$1, getOptionLabel } = this.get();
-	    const data = { Item: Item$$1 };
+	    const {Item: Item$$1, getOptionLabel} = this.get();
+	    const data = {Item: Item$$1};
 
-	    if(getOptionLabel) {
+	    if (getOptionLabel) {
 	      data.getOptionLabel = getOptionLabel;
 	    }
 
@@ -25122,7 +25121,7 @@
 	    if (items) {
 	      // const match = JSON.stringify(selectedItem);
 	      // const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
-	      list.set({items: filteredItems, selectedItem });
+	      list.set({items: filteredItems, selectedItem});
 	    }
 
 	    list.on('itemSelected', (newSelection) => {
@@ -25178,8 +25177,8 @@
 	}
 	function add_css$1() {
 		var style = createElement("style");
-		style.id = 'svelte-iy0jej-style';
-		style.textContent = ".selectContainer.svelte-iy0jej{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;padding:0 16px}.selectContainer.svelte-iy0jej input.svelte-iy0jej{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-iy0jej input.svelte-iy0jej::placeholder{color:#78848F}.selectContainer.svelte-iy0jej input.svelte-iy0jej:focus{outline:none}.selectContainer.svelte-iy0jej:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-iy0jej{border-color:#006FE8}.selectContainer.disabled.svelte-iy0jej{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-iy0jej input.svelte-iy0jej::placeholder{color:#C1C6CC}.selectedItem.svelte-iy0jej{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-iy0jej:focus{outline:none}.clearSelectedItem.svelte-iy0jej{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-iy0jej:hover{color:#2c3e50}.selectContainer.focused.svelte-iy0jej .clearSelectedItem.svelte-iy0jej{color:#3F4F5F}.indicator.svelte-iy0jej{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-iy0jej svg.svelte-iy0jej{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-iy0jej{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-iy0jej-rotate 0.75s linear infinite}.spinner_icon.svelte-iy0jej{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-iy0jej{stroke-dasharray:90;stroke-linecap:round}@keyframes svelte-iy0jej-rotate{100%{transform:rotate(360deg)}}";
+		style.id = 'svelte-1r3r83f-style';
+		style.textContent = ".selectContainer.svelte-1r3r83f{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;padding:0 16px}.selectContainer.svelte-1r3r83f input.svelte-1r3r83f{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-1r3r83f input.svelte-1r3r83f::placeholder{color:#78848F}.selectContainer.svelte-1r3r83f input.svelte-1r3r83f:focus{outline:none}.selectContainer.svelte-1r3r83f:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-1r3r83f{border-color:#006FE8}.selectContainer.disabled.svelte-1r3r83f{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-1r3r83f input.svelte-1r3r83f::placeholder{color:#C1C6CC}.selectedItem.svelte-1r3r83f{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-1r3r83f:focus{outline:none}.clearSelectedItem.svelte-1r3r83f{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-1r3r83f:hover{color:#2c3e50}.selectContainer.focused.svelte-1r3r83f .clearSelectedItem.svelte-1r3r83f{color:#3F4F5F}.indicator.svelte-1r3r83f{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-1r3r83f svg.svelte-1r3r83f{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-1r3r83f{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-1r3r83f-rotate 0.75s linear infinite}.spinner_icon.svelte-1r3r83f{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-1r3r83f{stroke-dasharray:90;stroke-linecap:round}@keyframes svelte-1r3r83f-rotate{100%{transform:rotate(360deg)}}";
 		append(document.head, style);
 	}
 
@@ -25222,11 +25221,11 @@
 			c() {
 				div = createElement("div");
 				input = createElement("input");
-				text0 = createText("\n\n    ");
+				text0 = createText("\n\n  ");
 				if (if_block0) if_block0.c();
-				text1 = createText("\n\n    ");
+				text1 = createText("\n\n  ");
 				if (if_block1) if_block1.c();
-				text2 = createText("\n\n    ");
+				text2 = createText("\n\n  ");
 				if (if_block2) if_block2.c();
 				addListener(input, "input", input_input_handler);
 				addListener(input, "focus", focus_handler);
@@ -25236,9 +25235,10 @@
 				input.spellcheck = "false";
 				input.placeholder = ctx.placeholderText;
 				input.disabled = ctx.isDisabled;
-				input.className = "svelte-iy0jej";
+				input.style.cssText = ctx.inputStyles;
+				input.className = "svelte-1r3r83f";
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-iy0jej";
+				div.className = div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-1r3r83f";
 				div.style.cssText = ctx.containerStyles;
 			},
 
@@ -25270,6 +25270,10 @@
 
 				if (changed.isDisabled) {
 					input.disabled = ctx.isDisabled;
+				}
+
+				if (changed.inputStyles) {
+					input.style.cssText = ctx.inputStyles;
 				}
 
 				if (ctx.showSelectedItem) {
@@ -25307,7 +25311,7 @@
 					if_block2 = null;
 				}
 
-				if ((changed.isDisabled || changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-iy0jej")) {
+				if ((changed.isDisabled || changed.isFocused) && div_class_value !== (div_class_value = "selectContainer " + (ctx.isDisabled ? 'disabled' : '') + (ctx.isFocused ? 'focused' : '') + " svelte-1r3r83f")) {
 					div.className = div_class_value;
 				}
 
@@ -25339,7 +25343,7 @@
 		};
 	}
 
-	// (21:4) {#if showSelectedItem }
+	// (22:2) {#if showSelectedItem }
 	function create_if_block_2(component, ctx) {
 		var div, text, if_block_anchor;
 
@@ -25371,11 +25375,11 @@
 			c() {
 				div = createElement("div");
 				if (switch_instance) switch_instance._fragment.c();
-				text = createText("\n    ");
+				text = createText("\n  ");
 				if (if_block) if_block.c();
 				if_block_anchor = createComment();
 				addListener(div, "focus", focus_handler);
-				div.className = "selectedItem svelte-iy0jej";
+				div.className = "selectedItem svelte-1r3r83f";
 			},
 
 			m(target, anchor) {
@@ -25446,7 +25450,7 @@
 		};
 	}
 
-	// (25:4) {#if isClearable && !isDisabled && !isWaiting}
+	// (26:2) {#if isClearable && !isDisabled && !isWaiting}
 	function create_if_block_3(component, ctx) {
 		var div;
 
@@ -25457,9 +25461,9 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-iy0jej"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+				div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-1r3r83f"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 				addListener(div, "click", click_handler);
-				div.className = "clearSelectedItem svelte-iy0jej";
+				div.className = "clearSelectedItem svelte-1r3r83f";
 			},
 
 			m(target, anchor) {
@@ -25476,15 +25480,15 @@
 		};
 	}
 
-	// (36:4) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
+	// (37:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
 	function create_if_block_1(component, ctx) {
 		var div;
 
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-iy0jej"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
-				div.className = "indicator svelte-iy0jej";
+				div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-1r3r83f"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
+				div.className = "indicator svelte-1r3r83f";
 			},
 
 			m(target, anchor) {
@@ -25499,15 +25503,15 @@
 		};
 	}
 
-	// (44:4) {#if isWaiting}
+	// (46:2) {#if isWaiting}
 	function create_if_block(component, ctx) {
 		var div;
 
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg class="spinner_icon svelte-iy0jej" viewBox="25 25 50 50"><circle class="spinner_path svelte-iy0jej" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
-				div.className = "spinner svelte-iy0jej";
+				div.innerHTML = `<svg class="spinner_icon svelte-1r3r83f" viewBox="25 25 50 50"><circle class="spinner_path svelte-1r3r83f" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
+				div.className = "spinner svelte-1r3r83f";
 			},
 
 			m(target, anchor) {
@@ -25534,7 +25538,7 @@
 
 		this._handlers.destroy = [ondestroy];
 
-		if (!document.getElementById("svelte-iy0jej-style")) add_css$1();
+		if (!document.getElementById("svelte-1r3r83f-style")) add_css$1();
 
 		onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 
@@ -25574,8 +25578,8 @@
 
 	function add_css$2() {
 		var style = createElement("style");
-		style.id = 'svelte-18jdpam-style';
-		style.textContent = ".selectContainer.svelte-18jdpam{border:1px solid #D8DBDF;border-radius:3px;height:44px}.selectContainer.svelte-18jdpam input.svelte-18jdpam{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-18jdpam input.svelte-18jdpam::placeholder{color:#78848F}.selectContainer.svelte-18jdpam:hover{border-color:#b2b8bf}.selectContainer.svelte-18jdpam input.svelte-18jdpam:focus{outline:none}";
+		style.id = 'svelte-k3oaj2-style';
+		style.textContent = ".selectContainer.svelte-k3oaj2{border:1px solid #D8DBDF;border-radius:3px;height:44px}.selectContainer.svelte-k3oaj2 input.svelte-k3oaj2{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-k3oaj2 input.svelte-k3oaj2::placeholder{color:#78848F}.selectContainer.svelte-k3oaj2:hover{border-color:#b2b8bf}.selectContainer.svelte-k3oaj2 input.svelte-k3oaj2:focus{outline:none}";
 		append(document.head, style);
 	}
 
@@ -25587,10 +25591,10 @@
 				link = createElement("link");
 				text = createText("\n\n");
 				div = createElement("div");
-				div.innerHTML = `<input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="Select..." class="svelte-18jdpam">`;
+				div.innerHTML = `<input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="Select..." class="svelte-k3oaj2">`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div.className = "selectContainer svelte-18jdpam";
+				div.className = "selectContainer svelte-k3oaj2";
 			},
 
 			m(target, anchor) {
@@ -25616,7 +25620,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-18jdpam-style")) add_css$2();
+		if (!document.getElementById("svelte-k3oaj2-style")) add_css$2();
 
 		this._fragment = create_main_fragment$4(this, this._state);
 
@@ -25632,8 +25636,8 @@
 
 	function add_css$3() {
 		var style = createElement("style");
-		style.id = 'svelte-et2xg0-style';
-		style.textContent = ".selectContainer.svelte-et2xg0{width:430px;border:1px solid #D8DBDF;border-radius:3px;height:44px}.selectContainer.svelte-et2xg0 input.svelte-et2xg0{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-et2xg0 input.svelte-et2xg0::placeholder{color:#78848F}.selectContainer.svelte-et2xg0 input.svelte-et2xg0:focus{outline:none}.selectContainer.focused.svelte-et2xg0{border-color:#006FE8}";
+		style.id = 'svelte-tpcifk-style';
+		style.textContent = ".selectContainer.svelte-tpcifk{width:430px;border:1px solid #D8DBDF;border-radius:3px;height:44px}.selectContainer.svelte-tpcifk input.svelte-tpcifk{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-tpcifk input.svelte-tpcifk::placeholder{color:#78848F}.selectContainer.svelte-tpcifk input.svelte-tpcifk:focus{outline:none}.selectContainer.focused.svelte-tpcifk{border-color:#006FE8}";
 		append(document.head, style);
 	}
 
@@ -25645,10 +25649,10 @@
 				link = createElement("link");
 				text = createText("\n\n");
 				div = createElement("div");
-				div.innerHTML = `<input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="Select..." class="svelte-et2xg0">`;
+				div.innerHTML = `<input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="Select..." class="svelte-tpcifk">`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div.className = "selectContainer focused svelte-et2xg0";
+				div.className = "selectContainer focused svelte-tpcifk";
 			},
 
 			m(target, anchor) {
@@ -25674,7 +25678,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-et2xg0-style")) add_css$3();
+		if (!document.getElementById("svelte-tpcifk-style")) add_css$3();
 
 		this._fragment = create_main_fragment$5(this, this._state);
 
@@ -25690,8 +25694,8 @@
 
 	function add_css$4() {
 		var style = createElement("style");
-		style.id = 'svelte-u7khaw-style';
-		style.textContent = ".selectContainer.svelte-u7khaw{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-u7khaw input.svelte-u7khaw{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-u7khaw input.svelte-u7khaw::placeholder{color:#78848F}.selectContainer.svelte-u7khaw:hover{border-color:#b2b8bf}.selectContainer.svelte-u7khaw input.svelte-u7khaw:focus{outline:none}.selectedItem.svelte-u7khaw{padding:0 16px;line-height:44px}.clearSelectedItem.svelte-u7khaw{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-u7khaw:hover{color:#2c3e50}";
+		style.id = 'svelte-1eqcgt4-style';
+		style.textContent = ".selectContainer.svelte-1eqcgt4{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-1eqcgt4 input.svelte-1eqcgt4{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-1eqcgt4 input.svelte-1eqcgt4::placeholder{color:#78848F}.selectContainer.svelte-1eqcgt4:hover{border-color:#b2b8bf}.selectContainer.svelte-1eqcgt4 input.svelte-1eqcgt4:focus{outline:none}.selectedItem.svelte-1eqcgt4{padding:0 16px;line-height:44px}.clearSelectedItem.svelte-1eqcgt4{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-1eqcgt4:hover{color:#2c3e50}";
 		append(document.head, style);
 	}
 
@@ -25703,12 +25707,12 @@
 				link = createElement("link");
 				text = createText("\n\n");
 				div_2 = createElement("div");
-				div_2.innerHTML = `<input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="" class="svelte-u7khaw">
-			    <div class="selectedItem svelte-u7khaw">Chips</div>
-			    <div class="clearSelectedItem svelte-u7khaw"><svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div>`;
+				div_2.innerHTML = `<input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="" class="svelte-1eqcgt4">
+			  <div class="selectedItem svelte-1eqcgt4">Chips</div>
+			  <div class="clearSelectedItem svelte-1eqcgt4"><svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div>`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div_2.className = "selectContainer svelte-u7khaw";
+				div_2.className = "selectContainer svelte-1eqcgt4";
 			},
 
 			m(target, anchor) {
@@ -25734,7 +25738,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-u7khaw-style")) add_css$4();
+		if (!document.getElementById("svelte-1eqcgt4-style")) add_css$4();
 
 		this._fragment = create_main_fragment$6(this, this._state);
 
@@ -25750,8 +25754,8 @@
 
 	function add_css$5() {
 		var style = createElement("style");
-		style.id = 'svelte-ufeflu-style';
-		style.textContent = ".listContainer.svelte-ufeflu{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listItem.svelte-ufeflu{padding:20px}.listItem.svelte-ufeflu:hover,.listItem.hover.svelte-ufeflu{background:#e7f2ff}.listItem.svelte-ufeflu:first-child{border-radius:4px 4px 0 0}";
+		style.id = 'svelte-mj7ksi-style';
+		style.textContent = ".listContainer.svelte-mj7ksi{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listItem.svelte-mj7ksi{padding:20px}.listItem.svelte-mj7ksi:hover,.listItem.hover.svelte-mj7ksi{background:#e7f2ff}.listItem.svelte-mj7ksi:first-child{border-radius:4px 4px 0 0}";
 		append(document.head, style);
 	}
 
@@ -25763,14 +25767,14 @@
 				link = createElement("link");
 				text = createText("\n\n");
 				div_5 = createElement("div");
-				div_5.innerHTML = `<div class="listItem hover svelte-ufeflu">Chocolate</div>
-			    <div class="listItem svelte-ufeflu">Pizza</div>
-			    <div class="listItem svelte-ufeflu">Cake</div>
-			    <div class="listItem svelte-ufeflu">Chips</div>
-			    <div class="listItem svelte-ufeflu">Ice Cream</div>`;
+				div_5.innerHTML = `<div class="listItem hover svelte-mj7ksi">Chocolate</div>
+			  <div class="listItem svelte-mj7ksi">Pizza</div>
+			  <div class="listItem svelte-mj7ksi">Cake</div>
+			  <div class="listItem svelte-mj7ksi">Chips</div>
+			  <div class="listItem svelte-mj7ksi">Ice Cream</div>`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div_5.className = "listContainer svelte-ufeflu";
+				div_5.className = "listContainer svelte-mj7ksi";
 			},
 
 			m(target, anchor) {
@@ -25796,7 +25800,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-ufeflu-style")) add_css$5();
+		if (!document.getElementById("svelte-mj7ksi-style")) add_css$5();
 
 		this._fragment = create_main_fragment$7(this, this._state);
 
@@ -25812,8 +25816,8 @@
 
 	function add_css$6() {
 		var style = createElement("style");
-		style.id = 'svelte-so046o-style';
-		style.textContent = ".listContainer.svelte-so046o{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.empty.svelte-so046o{text-align:center;padding:20px 0;color:#78848F}";
+		style.id = 'svelte-1padgs0-style';
+		style.textContent = ".listContainer.svelte-1padgs0{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.empty.svelte-1padgs0{text-align:center;padding:20px 0;color:#78848F}";
 		append(document.head, style);
 	}
 
@@ -25825,10 +25829,10 @@
 				link = createElement("link");
 				text = createText("\n\n");
 				div_1 = createElement("div");
-				div_1.innerHTML = `<div class="empty svelte-so046o">No options</div>`;
+				div_1.innerHTML = `<div class="empty svelte-1padgs0">No options</div>`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div_1.className = "listContainer svelte-so046o";
+				div_1.className = "listContainer svelte-1padgs0";
 			},
 
 			m(target, anchor) {
@@ -25854,7 +25858,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-so046o-style")) add_css$6();
+		if (!document.getElementById("svelte-1padgs0-style")) add_css$6();
 
 		this._fragment = create_main_fragment$8(this, this._state);
 
@@ -25870,8 +25874,8 @@
 
 	function add_css$7() {
 		var style = createElement("style");
-		style.id = 'svelte-1sky8p1-style';
-		style.textContent = ".listContainer.svelte-1sky8p1{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listItem.svelte-1sky8p1{padding:20px}.listItem.svelte-1sky8p1:hover{background:#e7f2ff}.listItem.svelte-1sky8p1:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1sky8p1{background:#007aff;color:#fff}";
+		style.id = 'svelte-1sufgn9-style';
+		style.textContent = ".listContainer.svelte-1sufgn9{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listItem.svelte-1sufgn9{padding:20px}.listItem.svelte-1sufgn9:hover{background:#e7f2ff}.listItem.svelte-1sufgn9:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1sufgn9{background:#007aff;color:#fff}";
 		append(document.head, style);
 	}
 
@@ -25883,14 +25887,14 @@
 				link = createElement("link");
 				text = createText("\n\n");
 				div_5 = createElement("div");
-				div_5.innerHTML = `<div class="listItem svelte-1sky8p1">Chocolate</div>
-			    <div class="listItem active hover svelte-1sky8p1">Pizza</div>
-			    <div class="listItem svelte-1sky8p1">Cake</div>
-			    <div class="listItem svelte-1sky8p1">Chips</div>
-			    <div class="listItem svelte-1sky8p1">Ice Cream</div>`;
+				div_5.innerHTML = `<div class="listItem svelte-1sufgn9">Chocolate</div>
+			  <div class="listItem active hover svelte-1sufgn9">Pizza</div>
+			  <div class="listItem svelte-1sufgn9">Cake</div>
+			  <div class="listItem svelte-1sufgn9">Chips</div>
+			  <div class="listItem svelte-1sufgn9">Ice Cream</div>`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div_5.className = "listContainer svelte-1sky8p1";
+				div_5.className = "listContainer svelte-1sufgn9";
 			},
 
 			m(target, anchor) {
@@ -25916,7 +25920,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-1sky8p1-style")) add_css$7();
+		if (!document.getElementById("svelte-1sufgn9-style")) add_css$7();
 
 		this._fragment = create_main_fragment$9(this, this._state);
 
@@ -25962,7 +25966,7 @@
 			c() {
 				div = createElement("div");
 				select._fragment.c();
-				text0 = createText("\n\n    ");
+				text0 = createText("\n\n  ");
 				p = createElement("p");
 				text1 = createText(text1_value);
 				p.className = "result";
@@ -27341,6 +27345,21 @@
 
 	  t.ok(document.querySelector('.spinner'));
 
+	  select.destroy();
+	});
+
+	test.only('inputStyles prop applies css to select input', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      items,
+	      selectedItem: {value: 'pizza', label: 'Pizza'},
+	      activeItemIndex: 1,
+	      inputStyles: `padding-left: 40px;`
+	    }
+	  });
+
+	  t.equal(document.querySelector('.selectContainer input').style.cssText, `padding-left: 40px;`);
 	  select.destroy();
 	});
 
