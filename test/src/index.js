@@ -6,6 +6,9 @@ import SelectDefault from './Select/Select--default.html'
 import SelectFocus from './Select/Select--focus.html'
 import SelectItemSelected from './Select/Select--itemSelected.html'
 import ListDefault from './List/List--default.html'
+import ListGrouped from './List/List--grouped.html'
+import ListGroupedFiltered from './List/List--groupedFiltered.html'
+import ListGroupedReversed from './List/List--groupedReversed.html'
 import ListEmpty from './List/List--empty.html'
 import ListActiveItem from './List/List--activeItem.html'
 import ParentContainer from './Select/ParentContainer.html'
@@ -20,7 +23,14 @@ const items = [
   {value: 'pizza', label: 'Pizza'},
   {value: 'cake', label: 'Cake'},
   {value: 'chips', label: 'Chips'},
-  {value: 'ice-cream', label: 'Ice Cream'},
+  {value: 'ice-cream', label: 'Ice Cream'}
+];
+const itemsWithGroup = [
+  {value: 'chocolate', label: 'Chocolate',group: 'Sweet'},
+  {value: 'pizza', label: 'Pizza',group: 'Savory'},
+  {value: 'cake', label: 'Cake',group: 'Sweet'},
+  {value: 'chips', label: 'Chips',group: 'Savory'},
+  {value: 'ice-cream', label: 'Ice Cream',group: 'Sweet'}
 ];
 const itemsWithIndex = [
   {value: 'chocolate', label: 'Chocolate', index: 0},
@@ -1055,11 +1065,8 @@ test('placeholder should be prop value', async (t) => {
   const select = new Select({
     target,
     data: {
-      items,
-      placeholder,
-      isSearchable: false,
-      isClearable: false,
-      getOptionLabel: (option) => `${option.label}${option.label}`
+      items: itemsWithGroup,
+      placeholder
     }
   });
 
@@ -1086,7 +1093,7 @@ test('should display spinner when waiting is enabled', async (t) => {
   select.destroy();
 });
 
-test.only('inputStyles prop applies css to select input', async (t) => {
+test('inputStyles prop applies css to select input', async (t) => {
   const select = new Select({
     target,
     data: {
@@ -1098,6 +1105,75 @@ test.only('inputStyles prop applies css to select input', async (t) => {
   });
 
   t.equal(document.querySelector('.selectContainer input').style.cssText, `padding-left: 40px;`);
+  select.destroy();
+});
+
+test('items should be grouped by groupBy expression', async (t) => {
+  const testTemplate = new ListGrouped({
+    target: testTarget
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      items: itemsWithGroup,
+      groupBy: (item) => item.group
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+
+  t.htmlEqual(target.querySelector('.listContainer').outerHTML, testTarget.innerHTML);
+
+  testTemplate.destroy();
+  select.destroy();
+});
+
+test('groups should be filtered by expression', async (t) => {
+  const testTemplate = new ListGroupedFiltered({
+    target: testTarget
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      items: itemsWithGroup,
+      groupBy: (item) => item.group,
+      groupFilter: (groups) => {
+        return groups.filter((group) => {
+          return group !== 'Sweet';
+        });
+      }
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+
+  t.htmlEqual(target.querySelector('.listContainer').outerHTML, testTarget.innerHTML);
+
+  testTemplate.destroy();
+  select.destroy();
+});
+
+test('groups should be sorted by expression', async (t) => {
+  const testTemplate = new ListGroupedReversed({
+    target: testTarget
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      items: itemsWithGroup,
+      groupBy: (item) => item.group,
+      groupFilter: (groups) => groups.reverse()
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+
+  t.htmlEqual(target.querySelector('.listContainer').outerHTML, testTarget.innerHTML);
+
+  testTemplate.destroy();
   select.destroy();
 });
 

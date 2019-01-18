@@ -339,8 +339,8 @@ function onupdate({changed, current}) {
 }
 function add_css() {
 	var style = createElement("style");
-	style.id = 'svelte-uap5if-style';
-	style.textContent = ".listContainer.svelte-uap5if{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto;background:#fff}.listItem.svelte-uap5if{cursor:default;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap}.listItem.hover.svelte-uap5if{background:#e7f2ff}.listItem.svelte-uap5if:active{background:#b9daff}.listItem.svelte-uap5if:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-uap5if{background:#007aff;color:#fff}.empty.svelte-uap5if{text-align:center;padding:20px 0;color:#78848F}";
+	style.id = 'svelte-1h82xdc-style';
+	style.textContent = ".listContainer.svelte-1h82xdc{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto;background:#fff}.listGroupTitle.svelte-1h82xdc{color:#8f8f8f;cursor:default;font-size:12px;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;text-transform:uppercase}.listItem.svelte-1h82xdc{cursor:default;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap}.listItem.hover.svelte-1h82xdc{background:#e7f2ff}.listItem.svelte-1h82xdc:active{background:#b9daff}.listItem.svelte-1h82xdc:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1h82xdc{background:#007aff;color:#fff}.empty.svelte-1h82xdc{text-align:center;padding:20px 0;color:#78848F}";
 	append(document.head, style);
 }
 
@@ -392,7 +392,7 @@ function create_main_fragment$1(component, ctx) {
 			for (var i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].c();
 			}
-			div.className = "listContainer svelte-uap5if";
+			div.className = "listContainer svelte-1h82xdc";
 		},
 
 		m(target, anchor) {
@@ -459,7 +459,7 @@ function create_main_fragment$1(component, ctx) {
 	};
 }
 
-// (9:2) {:else}
+// (15:2) {:else}
 function create_else_block(component, ctx) {
 	var div;
 
@@ -467,7 +467,7 @@ function create_else_block(component, ctx) {
 		c() {
 			div = createElement("div");
 			div.textContent = "No options";
-			div.className = "empty svelte-uap5if";
+			div.className = "empty svelte-1h82xdc";
 		},
 
 		m(target, anchor) {
@@ -482,9 +482,41 @@ function create_else_block(component, ctx) {
 	};
 }
 
+// (5:2) {#if item.groupValue}
+function create_if_block(component, ctx) {
+	var div, text_value = ctx.item.groupValue, text;
+
+	return {
+		c() {
+			div = createElement("div");
+			text = createText(text_value);
+			div.className = "listGroupTitle svelte-1h82xdc";
+		},
+
+		m(target, anchor) {
+			insert(target, div, anchor);
+			append(div, text);
+		},
+
+		p(changed, ctx) {
+			if ((changed.items) && text_value !== (text_value = ctx.item.groupValue)) {
+				setData(text, text_value);
+			}
+		},
+
+		d(detach) {
+			if (detach) {
+				detachNode(div);
+			}
+		}
+	};
+}
+
 // (4:2) {#each items as item, i}
 function create_each_block(component, ctx) {
-	var div, text, div_class_value;
+	var text0, div, text1, div_class_value;
+
+	var if_block = (ctx.item.groupValue) && create_if_block(component, ctx);
 
 	var switch_value = ctx.Item;
 
@@ -506,28 +538,45 @@ function create_each_block(component, ctx) {
 
 	return {
 		c() {
+			if (if_block) if_block.c();
+			text0 = createText("\n\n  ");
 			div = createElement("div");
 			if (switch_instance) switch_instance._fragment.c();
-			text = createText("\n  ");
+			text1 = createText("\n  ");
 			div._svelte = { component, ctx };
 
 			addListener(div, "mouseover", mouseover_handler);
 			addListener(div, "click", click_handler);
-			div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-uap5if";
+			div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-1h82xdc";
 		},
 
 		m(target, anchor) {
+			if (if_block) if_block.m(target, anchor);
+			insert(target, text0, anchor);
 			insert(target, div, anchor);
 
 			if (switch_instance) {
 				switch_instance._mount(div, null);
 			}
 
-			append(div, text);
+			append(div, text1);
 		},
 
 		p(changed, _ctx) {
 			ctx = _ctx;
+			if (ctx.item.groupValue) {
+				if (if_block) {
+					if_block.p(changed, ctx);
+				} else {
+					if_block = create_if_block(component, ctx);
+					if_block.c();
+					if_block.m(text0.parentNode, text0);
+				}
+			} else if (if_block) {
+				if_block.d(1);
+				if_block = null;
+			}
+
 			var switch_instance_changes = {};
 			if (changed.items) switch_instance_changes.item = ctx.item;
 			if (changed.getOptionLabel) switch_instance_changes.getOptionLabel = ctx.getOptionLabel;
@@ -540,7 +589,7 @@ function create_each_block(component, ctx) {
 				if (switch_value) {
 					switch_instance = new switch_value(switch_props(ctx));
 					switch_instance._fragment.c();
-					switch_instance._mount(div, text);
+					switch_instance._mount(div, text1);
 				} else {
 					switch_instance = null;
 				}
@@ -551,13 +600,15 @@ function create_each_block(component, ctx) {
 			}
 
 			div._svelte.ctx = ctx;
-			if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-uap5if")) {
+			if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-1h82xdc")) {
 				div.className = div_class_value;
 			}
 		},
 
 		d(detach) {
+			if (if_block) if_block.d(detach);
 			if (detach) {
+				detachNode(text0);
 				detachNode(div);
 			}
 
@@ -575,7 +626,7 @@ function List(options) {
 	this._intro = true;
 	this._handlers.update = [onupdate];
 
-	if (!document.getElementById("svelte-uap5if-style")) add_css();
+	if (!document.getElementById("svelte-1h82xdc-style")) add_css();
 
 	this._fragment = create_main_fragment$1(this, this._state);
 
@@ -647,11 +698,40 @@ function showSelectedItem({selectedItem, filterText}) {
 function placeholderText({selectedItem, placeholder}) {
   return selectedItem ? '' : placeholder
 }
-function filteredItems({items, filterText, getOptionLabel}) {
-  return items.filter(item => {
+function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel}) {
+  const filteredItems = items.filter(item => {
     if (filterText.length < 1) return true;
     return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
-  })
+  });
+
+  if(groupBy) {
+    const groupValues = [];
+    const groups = {};
+
+    filteredItems.forEach((item) => {
+      const groupValue = groupBy(item);
+
+      if(!groupValues.includes(groupValue)) {
+        groupValues.push(groupValue);
+        groups[groupValue] = [];
+        groups[groupValue].push(Object.assign({groupValue}, item));
+      } else {
+        groups[groupValue].push(Object.assign({}, item));
+      }
+
+      groups[groupValue].push();
+    });
+
+    const sortedGroupedItems = [];
+
+    groupFilter(groupValues).forEach((groupValue) => {
+      sortedGroupedItems.push(...groups[groupValue]);
+    });
+
+    return sortedGroupedItems;
+  }
+
+  return filteredItems;
 }
 function data$1() {
   return {
@@ -669,7 +749,9 @@ function data$1() {
     isSearchable: true,
     getOptionLabel: (option) => option.label,
     getSelectionLabel: (option) => option.label,
-    placeholder: 'Select...'
+    placeholder: 'Select...',
+    groupBy: undefined,
+    groupFilter: (groups) => groups
   }
 }
 var methods$1 = {
@@ -857,7 +939,7 @@ function create_main_fragment$3(component, ctx) {
 
 	var if_block1 = (!ctx.isSearchable && !ctx.isDisabled && !ctx.isWaiting && (ctx.showSelectedItem && !ctx.isClearable || !ctx.showSelectedItem)) && create_if_block_1(component, ctx);
 
-	var if_block2 = (ctx.isWaiting) && create_if_block(component, ctx);
+	var if_block2 = (ctx.isWaiting) && create_if_block$1(component, ctx);
 
 	function click_handler(event) {
 		component.handleClick();
@@ -948,7 +1030,7 @@ function create_main_fragment$3(component, ctx) {
 
 			if (ctx.isWaiting) {
 				if (!if_block2) {
-					if_block2 = create_if_block(component, ctx);
+					if_block2 = create_if_block$1(component, ctx);
 					if_block2.c();
 					if_block2.m(div, null);
 				}
@@ -1150,7 +1232,7 @@ function create_if_block_1(component, ctx) {
 }
 
 // (46:2) {#if isWaiting}
-function create_if_block(component, ctx) {
+function create_if_block$1(component, ctx) {
 	var div;
 
 	return {
@@ -1177,7 +1259,7 @@ function Select(options) {
 	this.refs = {};
 	this._state = assign(data$1(), options.data);
 
-	this._recompute({ selectedItem: 1, filterText: 1, placeholder: 1, items: 1, getOptionLabel: 1 }, this._state);
+	this._recompute({ selectedItem: 1, filterText: 1, placeholder: 1, items: 1, groupBy: 1, groupFilter: 1, getOptionLabel: 1 }, this._state);
 	this._intro = true;
 
 	this._handlers.state = [onstate];
@@ -1215,7 +1297,7 @@ Select.prototype._recompute = function _recompute(changed, state) {
 		if (this._differs(state.placeholderText, (state.placeholderText = placeholderText(state)))) changed.placeholderText = true;
 	}
 
-	if (changed.items || changed.filterText || changed.getOptionLabel) {
+	if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel) {
 		if (this._differs(state.filteredItems, (state.filteredItems = filteredItems(state)))) changed.filteredItems = true;
 	}
 };

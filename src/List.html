@@ -2,6 +2,12 @@
 
 <div class="listContainer" ref:container>
   {#each items as item, i}
+  {#if item.groupValue}
+  <div class="listGroupTitle">
+    {item.groupValue}
+  </div>
+  {/if}
+
   <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedItem)}">
     <svelte:component this="{Item}" {item} {getOptionLabel}/>
@@ -18,6 +24,19 @@
     max-height: 250px;
     overflow-y: auto;
     background: #fff;
+  }
+
+  .listGroupTitle {
+    color: #8f8f8f;
+    cursor: default;
+    font-size: 12px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-transform: uppercase;
   }
 
   .listItem {
