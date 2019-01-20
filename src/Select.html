@@ -209,7 +209,9 @@
         isSearchable: true,
         getOptionLabel: (option) => option.label,
         getSelectionLabel: (option) => option.label,
-        placeholder: 'Select...'
+        placeholder: 'Select...',
+        groupBy: undefined,
+        groupFilter: (groups) => groups
       }
     },
     computed: {
@@ -219,11 +221,40 @@
       placeholderText({selectedItem, placeholder}) {
         return selectedItem ? '' : placeholder
       },
-      filteredItems({items, filterText, getOptionLabel}) {
-        return items.filter(item => {
+      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel}) {
+        const filteredItems = items.filter(item => {
           if (filterText.length < 1) return true;
           return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
-        })
+        });
+
+        if(groupBy) {
+          const groupValues = [];
+          const groups = {};
+
+          filteredItems.forEach((item) => {
+            const groupValue = groupBy(item);
+
+            if(!groupValues.includes(groupValue)) {
+              groupValues.push(groupValue);
+              groups[groupValue] = [];
+              groups[groupValue].push(Object.assign({groupValue}, item));
+            } else {
+              groups[groupValue].push(Object.assign({}, item));
+            }
+
+            groups[groupValue].push();
+          });
+
+          const sortedGroupedItems = [];
+
+          groupFilter(groupValues).forEach((groupValue) => {
+            sortedGroupedItems.push(...groups[groupValue]);
+          });
+
+          return sortedGroupedItems;
+        }
+
+        return filteredItems;
       }
     },
     onstate({changed, current, previous}) {

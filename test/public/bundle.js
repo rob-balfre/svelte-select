@@ -24180,7 +24180,7 @@
 		Object.defineProperty(exports, '__esModule', { value: true });
 
 	})));
-	//# sourceMappingURL=svelte.js.map
+
 	});
 
 	unwrapExports(svelte);
@@ -24693,8 +24693,8 @@
 	}
 	function add_css() {
 		var style = createElement("style");
-		style.id = 'svelte-uap5if-style';
-		style.textContent = ".listContainer.svelte-uap5if{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto;background:#fff}.listItem.svelte-uap5if{cursor:default;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap}.listItem.hover.svelte-uap5if{background:#e7f2ff}.listItem.svelte-uap5if:active{background:#b9daff}.listItem.svelte-uap5if:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-uap5if{background:#007aff;color:#fff}.empty.svelte-uap5if{text-align:center;padding:20px 0;color:#78848F}";
+		style.id = 'svelte-1h82xdc-style';
+		style.textContent = ".listContainer.svelte-1h82xdc{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;overflow-y:auto;background:#fff}.listGroupTitle.svelte-1h82xdc{color:#8f8f8f;cursor:default;font-size:12px;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;text-transform:uppercase}.listItem.svelte-1h82xdc{cursor:default;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap}.listItem.hover.svelte-1h82xdc{background:#e7f2ff}.listItem.svelte-1h82xdc:active{background:#b9daff}.listItem.svelte-1h82xdc:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1h82xdc{background:#007aff;color:#fff}.empty.svelte-1h82xdc{text-align:center;padding:20px 0;color:#78848F}";
 		append(document.head, style);
 	}
 
@@ -24746,7 +24746,7 @@
 				for (var i = 0; i < each_blocks.length; i += 1) {
 					each_blocks[i].c();
 				}
-				div.className = "listContainer svelte-uap5if";
+				div.className = "listContainer svelte-1h82xdc";
 			},
 
 			m(target, anchor) {
@@ -24813,7 +24813,7 @@
 		};
 	}
 
-	// (9:2) {:else}
+	// (15:2) {:else}
 	function create_else_block(component, ctx) {
 		var div;
 
@@ -24821,7 +24821,7 @@
 			c() {
 				div = createElement("div");
 				div.textContent = "No options";
-				div.className = "empty svelte-uap5if";
+				div.className = "empty svelte-1h82xdc";
 			},
 
 			m(target, anchor) {
@@ -24836,9 +24836,41 @@
 		};
 	}
 
+	// (5:2) {#if item.groupValue}
+	function create_if_block(component, ctx) {
+		var div, text_value = ctx.item.groupValue, text;
+
+		return {
+			c() {
+				div = createElement("div");
+				text = createText(text_value);
+				div.className = "listGroupTitle svelte-1h82xdc";
+			},
+
+			m(target, anchor) {
+				insert(target, div, anchor);
+				append(div, text);
+			},
+
+			p(changed, ctx) {
+				if ((changed.items) && text_value !== (text_value = ctx.item.groupValue)) {
+					setData(text, text_value);
+				}
+			},
+
+			d(detach) {
+				if (detach) {
+					detachNode(div);
+				}
+			}
+		};
+	}
+
 	// (4:2) {#each items as item, i}
 	function create_each_block(component, ctx) {
-		var div, text, div_class_value;
+		var text0, div, text1, div_class_value;
+
+		var if_block = (ctx.item.groupValue) && create_if_block(component, ctx);
 
 		var switch_value = ctx.Item;
 
@@ -24860,28 +24892,45 @@
 
 		return {
 			c() {
+				if (if_block) if_block.c();
+				text0 = createText("\n\n  ");
 				div = createElement("div");
 				if (switch_instance) switch_instance._fragment.c();
-				text = createText("\n  ");
+				text1 = createText("\n  ");
 				div._svelte = { component, ctx };
 
 				addListener(div, "mouseover", mouseover_handler);
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-uap5if";
+				div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-1h82xdc";
 			},
 
 			m(target, anchor) {
+				if (if_block) if_block.m(target, anchor);
+				insert(target, text0, anchor);
 				insert(target, div, anchor);
 
 				if (switch_instance) {
 					switch_instance._mount(div, null);
 				}
 
-				append(div, text);
+				append(div, text1);
 			},
 
 			p(changed, _ctx) {
 				ctx = _ctx;
+				if (ctx.item.groupValue) {
+					if (if_block) {
+						if_block.p(changed, ctx);
+					} else {
+						if_block = create_if_block(component, ctx);
+						if_block.c();
+						if_block.m(text0.parentNode, text0);
+					}
+				} else if (if_block) {
+					if_block.d(1);
+					if_block = null;
+				}
+
 				var switch_instance_changes = {};
 				if (changed.items) switch_instance_changes.item = ctx.item;
 				if (changed.getOptionLabel) switch_instance_changes.getOptionLabel = ctx.getOptionLabel;
@@ -24894,7 +24943,7 @@
 					if (switch_value) {
 						switch_instance = new switch_value(switch_props(ctx));
 						switch_instance._fragment.c();
-						switch_instance._mount(div, text);
+						switch_instance._mount(div, text1);
 					} else {
 						switch_instance = null;
 					}
@@ -24905,13 +24954,15 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-uap5if")) {
+				if ((changed.hoverItemIndex || changed.items || changed.selectedItem) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedItem) + " svelte-1h82xdc")) {
 					div.className = div_class_value;
 				}
 			},
 
 			d(detach) {
+				if (if_block) if_block.d(detach);
 				if (detach) {
+					detachNode(text0);
 					detachNode(div);
 				}
 
@@ -24929,7 +24980,7 @@
 		this._intro = true;
 		this._handlers.update = [onupdate];
 
-		if (!document.getElementById("svelte-uap5if-style")) add_css();
+		if (!document.getElementById("svelte-1h82xdc-style")) add_css();
 
 		this._fragment = create_main_fragment$1(this, this._state);
 
@@ -25001,11 +25052,40 @@
 	function placeholderText({selectedItem, placeholder}) {
 	  return selectedItem ? '' : placeholder
 	}
-	function filteredItems({items, filterText, getOptionLabel}) {
-	  return items.filter(item => {
+	function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel}) {
+	  const filteredItems = items.filter(item => {
 	    if (filterText.length < 1) return true;
 	    return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
-	  })
+	  });
+
+	  if(groupBy) {
+	    const groupValues = [];
+	    const groups = {};
+
+	    filteredItems.forEach((item) => {
+	      const groupValue = groupBy(item);
+
+	      if(!groupValues.includes(groupValue)) {
+	        groupValues.push(groupValue);
+	        groups[groupValue] = [];
+	        groups[groupValue].push(Object.assign({groupValue}, item));
+	      } else {
+	        groups[groupValue].push(Object.assign({}, item));
+	      }
+
+	      groups[groupValue].push();
+	    });
+
+	    const sortedGroupedItems = [];
+
+	    groupFilter(groupValues).forEach((groupValue) => {
+	      sortedGroupedItems.push(...groups[groupValue]);
+	    });
+
+	    return sortedGroupedItems;
+	  }
+
+	  return filteredItems;
 	}
 	function data$1() {
 	  return {
@@ -25023,7 +25103,9 @@
 	    isSearchable: true,
 	    getOptionLabel: (option) => option.label,
 	    getSelectionLabel: (option) => option.label,
-	    placeholder: 'Select...'
+	    placeholder: 'Select...',
+	    groupBy: undefined,
+	    groupFilter: (groups) => groups
 	  }
 	}
 	var methods$1 = {
@@ -25211,7 +25293,7 @@
 
 		var if_block1 = (!ctx.isSearchable && !ctx.isDisabled && !ctx.isWaiting && (ctx.showSelectedItem && !ctx.isClearable || !ctx.showSelectedItem)) && create_if_block_1(component, ctx);
 
-		var if_block2 = (ctx.isWaiting) && create_if_block(component, ctx);
+		var if_block2 = (ctx.isWaiting) && create_if_block$1(component, ctx);
 
 		function click_handler(event) {
 			component.handleClick();
@@ -25302,7 +25384,7 @@
 
 				if (ctx.isWaiting) {
 					if (!if_block2) {
-						if_block2 = create_if_block(component, ctx);
+						if_block2 = create_if_block$1(component, ctx);
 						if_block2.c();
 						if_block2.m(div, null);
 					}
@@ -25504,7 +25586,7 @@
 	}
 
 	// (46:2) {#if isWaiting}
-	function create_if_block(component, ctx) {
+	function create_if_block$1(component, ctx) {
 		var div;
 
 		return {
@@ -25531,7 +25613,7 @@
 		this.refs = {};
 		this._state = assign(data$1(), options.data);
 
-		this._recompute({ selectedItem: 1, filterText: 1, placeholder: 1, items: 1, getOptionLabel: 1 }, this._state);
+		this._recompute({ selectedItem: 1, filterText: 1, placeholder: 1, items: 1, groupBy: 1, groupFilter: 1, getOptionLabel: 1 }, this._state);
 		this._intro = true;
 
 		this._handlers.state = [onstate];
@@ -25569,7 +25651,7 @@
 			if (this._differs(state.placeholderText, (state.placeholderText = placeholderText(state)))) changed.placeholderText = true;
 		}
 
-		if (changed.items || changed.filterText || changed.getOptionLabel) {
+		if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel) {
 			if (this._differs(state.filteredItems, (state.filteredItems = filteredItems(state)))) changed.filteredItems = true;
 		}
 	};
@@ -25812,16 +25894,204 @@
 
 	assign(List_default.prototype, proto);
 
-	/* test/src/List/List--empty.html generated by Svelte v2.15.3 */
+	/* test/src/List/List--grouped.html generated by Svelte v2.15.3 */
 
 	function add_css$6() {
+		var style = createElement("style");
+		style.id = 'svelte-66i8ah-style';
+		style.textContent = ".listContainer.svelte-66i8ah{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listGroupTitle.svelte-66i8ah{color:#8f8f8f;cursor:default;font-size:12px;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;text-transform:uppercase}.listItem.svelte-66i8ah{padding:20px}.listItem.svelte-66i8ah:hover,.listItem.hover.svelte-66i8ah{background:#e7f2ff}.listItem.svelte-66i8ah:first-child{border-radius:4px 4px 0 0}";
+		append(document.head, style);
+	}
+
+	function create_main_fragment$8(component, ctx) {
+		var link, text, div_7;
+
+		return {
+			c() {
+				link = createElement("link");
+				text = createText("\n\n");
+				div_7 = createElement("div");
+				div_7.innerHTML = `<div class="listGroupTitle svelte-66i8ah">Sweet</div>
+			  <div class="listItem hover svelte-66i8ah">Chocolate</div>
+			  <div class="listItem svelte-66i8ah">Cake</div>
+			  <div class="listItem svelte-66i8ah">Ice Cream</div>
+			  <div class="listGroupTitle svelte-66i8ah">Savory</div>
+			  <div class="listItem svelte-66i8ah">Pizza</div>
+			  <div class="listItem svelte-66i8ah">Chips</div>`;
+				link.rel = "stylesheet";
+				link.href = "../reset.css";
+				div_7.className = "listContainer svelte-66i8ah";
+			},
+
+			m(target, anchor) {
+				insert(target, link, anchor);
+				insert(target, text, anchor);
+				insert(target, div_7, anchor);
+			},
+
+			p: noop,
+
+			d(detach) {
+				if (detach) {
+					detachNode(link);
+					detachNode(text);
+					detachNode(div_7);
+				}
+			}
+		};
+	}
+
+	function List_grouped(options) {
+		init(this, options);
+		this._state = assign({}, options.data);
+		this._intro = true;
+
+		if (!document.getElementById("svelte-66i8ah-style")) add_css$6();
+
+		this._fragment = create_main_fragment$8(this, this._state);
+
+		if (options.target) {
+			this._fragment.c();
+			this._mount(options.target, options.anchor);
+		}
+	}
+
+	assign(List_grouped.prototype, proto);
+
+	/* test/src/List/List--groupedFiltered.html generated by Svelte v2.15.3 */
+
+	function add_css$7() {
+		var style = createElement("style");
+		style.id = 'svelte-66i8ah-style';
+		style.textContent = ".listContainer.svelte-66i8ah{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listGroupTitle.svelte-66i8ah{color:#8f8f8f;cursor:default;font-size:12px;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;text-transform:uppercase}.listItem.svelte-66i8ah{padding:20px}.listItem.svelte-66i8ah:hover,.listItem.hover.svelte-66i8ah{background:#e7f2ff}.listItem.svelte-66i8ah:first-child{border-radius:4px 4px 0 0}";
+		append(document.head, style);
+	}
+
+	function create_main_fragment$9(component, ctx) {
+		var link, text, div_3;
+
+		return {
+			c() {
+				link = createElement("link");
+				text = createText("\n\n");
+				div_3 = createElement("div");
+				div_3.innerHTML = `<div class="listGroupTitle svelte-66i8ah">Savory</div>
+			  <div class="listItem hover svelte-66i8ah">Pizza</div>
+			  <div class="listItem svelte-66i8ah">Chips</div>`;
+				link.rel = "stylesheet";
+				link.href = "../reset.css";
+				div_3.className = "listContainer svelte-66i8ah";
+			},
+
+			m(target, anchor) {
+				insert(target, link, anchor);
+				insert(target, text, anchor);
+				insert(target, div_3, anchor);
+			},
+
+			p: noop,
+
+			d(detach) {
+				if (detach) {
+					detachNode(link);
+					detachNode(text);
+					detachNode(div_3);
+				}
+			}
+		};
+	}
+
+	function List_groupedFiltered(options) {
+		init(this, options);
+		this._state = assign({}, options.data);
+		this._intro = true;
+
+		if (!document.getElementById("svelte-66i8ah-style")) add_css$7();
+
+		this._fragment = create_main_fragment$9(this, this._state);
+
+		if (options.target) {
+			this._fragment.c();
+			this._mount(options.target, options.anchor);
+		}
+	}
+
+	assign(List_groupedFiltered.prototype, proto);
+
+	/* test/src/List/List--groupedReversed.html generated by Svelte v2.15.3 */
+
+	function add_css$8() {
+		var style = createElement("style");
+		style.id = 'svelte-66i8ah-style';
+		style.textContent = ".listContainer.svelte-66i8ah{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listGroupTitle.svelte-66i8ah{color:#8f8f8f;cursor:default;font-size:12px;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;text-transform:uppercase}.listItem.svelte-66i8ah{padding:20px}.listItem.svelte-66i8ah:hover,.listItem.hover.svelte-66i8ah{background:#e7f2ff}.listItem.svelte-66i8ah:first-child{border-radius:4px 4px 0 0}";
+		append(document.head, style);
+	}
+
+	function create_main_fragment$a(component, ctx) {
+		var link, text, div_7;
+
+		return {
+			c() {
+				link = createElement("link");
+				text = createText("\n\n");
+				div_7 = createElement("div");
+				div_7.innerHTML = `<div class="listGroupTitle svelte-66i8ah">Savory</div>
+			  <div class="listItem hover svelte-66i8ah">Pizza</div>
+			  <div class="listItem svelte-66i8ah">Chips</div>
+			  <div class="listGroupTitle svelte-66i8ah">Sweet</div>
+			  <div class="listItem svelte-66i8ah">Chocolate</div>
+			  <div class="listItem svelte-66i8ah">Cake</div>
+			  <div class="listItem svelte-66i8ah">Ice Cream</div>`;
+				link.rel = "stylesheet";
+				link.href = "../reset.css";
+				div_7.className = "listContainer svelte-66i8ah";
+			},
+
+			m(target, anchor) {
+				insert(target, link, anchor);
+				insert(target, text, anchor);
+				insert(target, div_7, anchor);
+			},
+
+			p: noop,
+
+			d(detach) {
+				if (detach) {
+					detachNode(link);
+					detachNode(text);
+					detachNode(div_7);
+				}
+			}
+		};
+	}
+
+	function List_groupedReversed(options) {
+		init(this, options);
+		this._state = assign({}, options.data);
+		this._intro = true;
+
+		if (!document.getElementById("svelte-66i8ah-style")) add_css$8();
+
+		this._fragment = create_main_fragment$a(this, this._state);
+
+		if (options.target) {
+			this._fragment.c();
+			this._mount(options.target, options.anchor);
+		}
+	}
+
+	assign(List_groupedReversed.prototype, proto);
+
+	/* test/src/List/List--empty.html generated by Svelte v2.15.3 */
+
+	function add_css$9() {
 		var style = createElement("style");
 		style.id = 'svelte-1padgs0-style';
 		style.textContent = ".listContainer.svelte-1padgs0{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:176px;overflow-y:auto}.empty.svelte-1padgs0{text-align:center;padding:20px 0;color:#78848F}";
 		append(document.head, style);
 	}
 
-	function create_main_fragment$8(component, ctx) {
+	function create_main_fragment$b(component, ctx) {
 		var link, text, div_1;
 
 		return {
@@ -25858,9 +26128,9 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-1padgs0-style")) add_css$6();
+		if (!document.getElementById("svelte-1padgs0-style")) add_css$9();
 
-		this._fragment = create_main_fragment$8(this, this._state);
+		this._fragment = create_main_fragment$b(this, this._state);
 
 		if (options.target) {
 			this._fragment.c();
@@ -25872,14 +26142,14 @@
 
 	/* test/src/List/List--activeItem.html generated by Svelte v2.15.3 */
 
-	function add_css$7() {
+	function add_css$a() {
 		var style = createElement("style");
 		style.id = 'svelte-1sufgn9-style';
 		style.textContent = ".listContainer.svelte-1sufgn9{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;height:176px;overflow-y:auto}.listItem.svelte-1sufgn9{padding:20px}.listItem.svelte-1sufgn9:hover{background:#e7f2ff}.listItem.svelte-1sufgn9:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1sufgn9{background:#007aff;color:#fff}";
 		append(document.head, style);
 	}
 
-	function create_main_fragment$9(component, ctx) {
+	function create_main_fragment$c(component, ctx) {
 		var link, text, div_5;
 
 		return {
@@ -25920,9 +26190,9 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-1sufgn9-style")) add_css$7();
+		if (!document.getElementById("svelte-1sufgn9-style")) add_css$a();
 
-		this._fragment = create_main_fragment$9(this, this._state);
+		this._fragment = create_main_fragment$c(this, this._state);
 
 		if (options.target) {
 			this._fragment.c();
@@ -25936,7 +26206,7 @@
 
 
 
-	function create_main_fragment$a(component, ctx) {
+	function create_main_fragment$d(component, ctx) {
 		var div, select_updating = {}, text0, p, text1_value = ctx.selectedItem.label, text1;
 
 		var select_initial_data = { items: ctx.items };
@@ -26012,7 +26282,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		this._fragment = create_main_fragment$a(this, this._state);
+		this._fragment = create_main_fragment$d(this, this._state);
 
 		if (options.target) {
 			this._fragment.c();
@@ -26275,7 +26545,6 @@
 	        });
 	    });
 	}
-	//# sourceMappingURL=tape-modern.esm.js.map
 
 	// setup
 	const target = document.querySelector('main');
@@ -26286,7 +26555,14 @@
 	  {value: 'pizza', label: 'Pizza'},
 	  {value: 'cake', label: 'Cake'},
 	  {value: 'chips', label: 'Chips'},
-	  {value: 'ice-cream', label: 'Ice Cream'},
+	  {value: 'ice-cream', label: 'Ice Cream'}
+	];
+	const itemsWithGroup = [
+	  {value: 'chocolate', label: 'Chocolate',group: 'Sweet'},
+	  {value: 'pizza', label: 'Pizza',group: 'Savory'},
+	  {value: 'cake', label: 'Cake',group: 'Sweet'},
+	  {value: 'chips', label: 'Chips',group: 'Savory'},
+	  {value: 'ice-cream', label: 'Ice Cream',group: 'Sweet'}
 	];
 	const itemsWithIndex = [
 	  {value: 'chocolate', label: 'Chocolate', index: 0},
@@ -27317,11 +27593,8 @@
 	  const select = new Select({
 	    target,
 	    data: {
-	      items,
-	      placeholder,
-	      isSearchable: false,
-	      isClearable: false,
-	      getOptionLabel: (option) => `${option.label}${option.label}`
+	      items: itemsWithGroup,
+	      placeholder
 	    }
 	  });
 
@@ -27348,7 +27621,7 @@
 	  select.destroy();
 	});
 
-	test.only('inputStyles prop applies css to select input', async (t) => {
+	test('inputStyles prop applies css to select input', async (t) => {
 	  const select = new Select({
 	    target,
 	    data: {
@@ -27360,6 +27633,75 @@
 	  });
 
 	  t.equal(document.querySelector('.selectContainer input').style.cssText, `padding-left: 40px;`);
+	  select.destroy();
+	});
+
+	test('items should be grouped by groupBy expression', async (t) => {
+	  const testTemplate = new List_grouped({
+	    target: testTarget
+	  });
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      items: itemsWithGroup,
+	      groupBy: (item) => item.group
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+
+	  t.htmlEqual(target.querySelector('.listContainer').outerHTML, testTarget.innerHTML);
+
+	  testTemplate.destroy();
+	  select.destroy();
+	});
+
+	test('groups should be filtered by expression', async (t) => {
+	  const testTemplate = new List_groupedFiltered({
+	    target: testTarget
+	  });
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      items: itemsWithGroup,
+	      groupBy: (item) => item.group,
+	      groupFilter: (groups) => {
+	        return groups.filter((group) => {
+	          return group !== 'Sweet';
+	        });
+	      }
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+
+	  t.htmlEqual(target.querySelector('.listContainer').outerHTML, testTarget.innerHTML);
+
+	  testTemplate.destroy();
+	  select.destroy();
+	});
+
+	test('groups should be sorted by expression', async (t) => {
+	  const testTemplate = new List_groupedReversed({
+	    target: testTarget
+	  });
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      items: itemsWithGroup,
+	      groupBy: (item) => item.group,
+	      groupFilter: (groups) => groups.reverse()
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+
+	  t.htmlEqual(target.querySelector('.listContainer').outerHTML, testTarget.innerHTML);
+
+	  testTemplate.destroy();
 	  select.destroy();
 	});
 
