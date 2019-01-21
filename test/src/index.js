@@ -1219,8 +1219,42 @@ test('when isMulti is true and selectedValue is undefined show placeholder text'
 
   t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
+  select.destroy();
+  selectDefault.destroy();
+});
+
+test('when isMulti is true clicking item in List will populate selectedValue', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: undefined
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  document.querySelector('.listItem').click();
+
+  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{value: 'chocolate', label: 'Chocolate'}]));
+
+  select.destroy();
+});
+
+test('when isMulti is true items in selectedValue will not appear in List', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [{value: 'chocolate', label: 'Chocolate'}]
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+
+
   // select.destroy();
-  // selectDefault.destroy();
 });
 
 

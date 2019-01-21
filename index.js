@@ -983,7 +983,7 @@
 	    this.getPosition();
 	    this.refs.container.appendChild(target);
 
-	    const {Item: Item$$1, getOptionLabel} = this.get();
+	    let {Item: Item$$1, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
 	    const data = {Item: Item$$1};
 
 	    if (getOptionLabel) {
@@ -995,18 +995,20 @@
 	      data
 	    });
 
-	    const {items, selectedValue, filteredItems} = this.get();
-
 	    if (items) {
 	      list.set({items: filteredItems, selectedValue});
 	    }
 
 	    list.on('itemSelected', (newSelection) => {
 	      if (newSelection) {
-	        const selection = Object.assign({}, newSelection);
+	        if (isMulti) {
+	          selectedValue = selectedValue ? selectedValue.concat([Object.assign({}, newSelection)]) : [Object.assign({}, newSelection)];
+	        } else {
+	          selectedValue = Object.assign({}, newSelection);
+	        }
 
 	        this.set({
-	          selectedValue: {...selectedValue, ...selection},
+	          selectedValue,
 	          listOpen: false
 	        });
 	      }

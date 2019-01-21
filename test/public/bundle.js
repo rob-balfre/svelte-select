@@ -25331,7 +25331,7 @@
 	    this.getPosition();
 	    this.refs.container.appendChild(target);
 
-	    const {Item: Item$$1, getOptionLabel} = this.get();
+	    let {Item: Item$$1, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
 	    const data = {Item: Item$$1};
 
 	    if (getOptionLabel) {
@@ -25343,18 +25343,20 @@
 	      data
 	    });
 
-	    const {items, selectedValue, filteredItems} = this.get();
-
 	    if (items) {
 	      list.set({items: filteredItems, selectedValue});
 	    }
 
 	    list.on('itemSelected', (newSelection) => {
 	      if (newSelection) {
-	        const selection = Object.assign({}, newSelection);
+	        if (isMulti) {
+	          selectedValue = selectedValue ? selectedValue.concat([Object.assign({}, newSelection)]) : [Object.assign({}, newSelection)];
+	        } else {
+	          selectedValue = Object.assign({}, newSelection);
+	        }
 
 	        this.set({
-	          selectedValue: {...selectedValue, ...selection},
+	          selectedValue,
 	          listOpen: false
 	        });
 	      }
@@ -28108,8 +28110,42 @@
 
 	  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
+	  select.destroy();
+	  selectDefault.destroy();
+	});
+
+	test('when isMulti is true clicking item in List will populate selectedValue', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      isMulti: true,
+	      items,
+	      selectedValue: undefined
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+	  document.querySelector('.listItem').click();
+
+	  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{value: 'chocolate', label: 'Chocolate'}]));
+
+	  select.destroy();
+	});
+
+	test('when isMulti is true items in selectedValue will not appear in List', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      isMulti: true,
+	      items,
+	      selectedValue: [{value: 'chocolate', label: 'Chocolate'}]
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+
+
 	  // select.destroy();
-	  // selectDefault.destroy();
 	});
 
 
