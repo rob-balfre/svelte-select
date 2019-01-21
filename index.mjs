@@ -935,7 +935,7 @@ var methods$2 = {
   handleMultiItemClear(i) {
     let {selectedValue} = this.get();
     selectedValue.splice(i, 1);
-    this.set({selectedValue});
+    this.set({selectedValue: selectedValue.length > 0 ? selectedValue : undefined});
   },
   getPosition() {
     const {target} = this.get();
@@ -1087,8 +1087,8 @@ function onstate({changed, current, previous}) {
 }
 function add_css$2() {
 	var style = createElement("style");
-	style.id = 'svelte-5604wf-style';
-	style.textContent = ".selectContainer.svelte-5604wf{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;display:flex;padding:0 16px}.selectContainer.svelte-5604wf input.svelte-5604wf{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-5604wf input.svelte-5604wf::placeholder{color:#78848F}.selectContainer.svelte-5604wf input.svelte-5604wf:focus{outline:none}.selectContainer.svelte-5604wf:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-5604wf{border-color:#006FE8}.selectContainer.disabled.svelte-5604wf{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-5604wf input.svelte-5604wf::placeholder{color:#C1C6CC}.selectedItem.svelte-5604wf{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-5604wf:focus{outline:none}.clearSelectedItem.svelte-5604wf{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-5604wf:hover{color:#2c3e50}.selectContainer.focused.svelte-5604wf .clearSelectedItem.svelte-5604wf{color:#3F4F5F}.indicator.svelte-5604wf{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-5604wf svg.svelte-5604wf{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-5604wf{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-5604wf-rotate 0.75s linear infinite}.spinner_icon.svelte-5604wf{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-5604wf{stroke-dasharray:90;stroke-linecap:round}.multiSelect.svelte-5604wf{display:flex;padding:0 16px}.selectContainer.multiSelect.svelte-5604wf input.svelte-5604wf{width:auto;padding:0;flex-grow:1;position:relative}.multiSelectItems.svelte-5604wf{display:flex;padding:8px 0}@keyframes svelte-5604wf-rotate{100%{transform:rotate(360deg)}}";
+	style.id = 'svelte-r4vpyl-style';
+	style.textContent = ".selectContainer.svelte-r4vpyl{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;display:flex;padding:0 16px}.selectContainer.svelte-r4vpyl input.svelte-r4vpyl{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-r4vpyl input.svelte-r4vpyl::placeholder{color:#78848F}.selectContainer.svelte-r4vpyl input.svelte-r4vpyl:focus{outline:none}.selectContainer.svelte-r4vpyl:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-r4vpyl{border-color:#006FE8}.selectContainer.disabled.svelte-r4vpyl{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-r4vpyl input.svelte-r4vpyl::placeholder{color:#C1C6CC}.selectedItem.svelte-r4vpyl{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-r4vpyl:focus{outline:none}.clearSelect.svelte-r4vpyl{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.clearSelect.svelte-r4vpyl:hover{color:#2c3e50}.selectContainer.focused.svelte-r4vpyl .clearSelect.svelte-r4vpyl{color:#3F4F5F}.indicator.svelte-r4vpyl{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-r4vpyl svg.svelte-r4vpyl{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-r4vpyl{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-r4vpyl-rotate 0.75s linear infinite}.spinner_icon.svelte-r4vpyl{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-r4vpyl{stroke-dasharray:90;stroke-linecap:round}.multiSelect.svelte-r4vpyl{display:flex;padding:0 16px}.selectContainer.multiSelect.svelte-r4vpyl input.svelte-r4vpyl{width:auto;padding:0;flex-grow:1;position:relative}.multiSelectItems.svelte-r4vpyl{display:flex;padding:8px 0}@keyframes svelte-r4vpyl-rotate{100%{transform:rotate(360deg)}}";
 	append(document.head, style);
 }
 
@@ -1154,9 +1154,9 @@ function create_main_fragment$4(component, ctx) {
 			input.placeholder = ctx.placeholderText;
 			input.disabled = ctx.isDisabled;
 			input.style.cssText = ctx.inputStyles;
-			input.className = "svelte-5604wf";
+			input.className = "svelte-r4vpyl";
 			addListener(div, "click", click_handler);
-			div.className = "" + ctx.containerClasses + " svelte-5604wf";
+			div.className = "" + ctx.containerClasses + " svelte-r4vpyl";
 			div.style.cssText = ctx.containerStyles;
 		},
 
@@ -1258,7 +1258,7 @@ function create_main_fragment$4(component, ctx) {
 			}
 
 			if (changed.containerClasses) {
-				div.className = "" + ctx.containerClasses + " svelte-5604wf";
+				div.className = "" + ctx.containerClasses + " svelte-r4vpyl";
 			}
 
 			if (changed.containerStyles) {
@@ -1328,7 +1328,7 @@ function create_if_block_4(component, ctx) {
 			div = createElement("div");
 			if (switch_instance) switch_instance._fragment.c();
 			addListener(div, "focus", focus_handler);
-			div.className = "multiSelectItems svelte-5604wf";
+			div.className = "multiSelectItems svelte-r4vpyl";
 		},
 
 		m(target, anchor) {
@@ -1410,7 +1410,7 @@ function create_if_block_3(component, ctx) {
 			div = createElement("div");
 			if (switch_instance) switch_instance._fragment.c();
 			addListener(div, "focus", focus_handler);
-			div.className = "selectedItem svelte-5604wf";
+			div.className = "selectedItem svelte-r4vpyl";
 		},
 
 		m(target, anchor) {
@@ -1470,9 +1470,9 @@ function create_if_block_2(component, ctx) {
 	return {
 		c() {
 			div = createElement("div");
-			div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-5604wf"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+			div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-r4vpyl"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 			addListener(div, "click", click_handler);
-			div.className = "clearSelectedItem svelte-5604wf";
+			div.className = "clearSelect svelte-r4vpyl";
 		},
 
 		m(target, anchor) {
@@ -1496,8 +1496,8 @@ function create_if_block_1(component, ctx) {
 	return {
 		c() {
 			div = createElement("div");
-			div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-5604wf"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
-			div.className = "indicator svelte-5604wf";
+			div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-r4vpyl"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
+			div.className = "indicator svelte-r4vpyl";
 		},
 
 		m(target, anchor) {
@@ -1519,8 +1519,8 @@ function create_if_block$1(component, ctx) {
 	return {
 		c() {
 			div = createElement("div");
-			div.innerHTML = `<svg class="spinner_icon svelte-5604wf" viewBox="25 25 50 50"><circle class="spinner_path svelte-5604wf" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
-			div.className = "spinner svelte-5604wf";
+			div.innerHTML = `<svg class="spinner_icon svelte-r4vpyl" viewBox="25 25 50 50"><circle class="spinner_path svelte-r4vpyl" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
+			div.className = "spinner svelte-r4vpyl";
 		},
 
 		m(target, anchor) {
@@ -1547,7 +1547,7 @@ function Select(options) {
 
 	this._handlers.destroy = [ondestroy];
 
-	if (!document.getElementById("svelte-5604wf-style")) add_css$2();
+	if (!document.getElementById("svelte-r4vpyl-style")) add_css$2();
 
 	onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 

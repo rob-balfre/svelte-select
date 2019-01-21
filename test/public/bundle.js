@@ -25289,7 +25289,7 @@
 	  handleMultiItemClear(i) {
 	    let {selectedValue} = this.get();
 	    selectedValue.splice(i, 1);
-	    this.set({selectedValue});
+	    this.set({selectedValue: selectedValue.length > 0 ? selectedValue : undefined});
 	  },
 	  getPosition() {
 	    const {target} = this.get();
@@ -25441,8 +25441,8 @@
 	}
 	function add_css$2() {
 		var style = createElement("style");
-		style.id = 'svelte-5604wf-style';
-		style.textContent = ".selectContainer.svelte-5604wf{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;display:flex;padding:0 16px}.selectContainer.svelte-5604wf input.svelte-5604wf{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-5604wf input.svelte-5604wf::placeholder{color:#78848F}.selectContainer.svelte-5604wf input.svelte-5604wf:focus{outline:none}.selectContainer.svelte-5604wf:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-5604wf{border-color:#006FE8}.selectContainer.disabled.svelte-5604wf{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-5604wf input.svelte-5604wf::placeholder{color:#C1C6CC}.selectedItem.svelte-5604wf{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-5604wf:focus{outline:none}.clearSelectedItem.svelte-5604wf{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-5604wf:hover{color:#2c3e50}.selectContainer.focused.svelte-5604wf .clearSelectedItem.svelte-5604wf{color:#3F4F5F}.indicator.svelte-5604wf{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-5604wf svg.svelte-5604wf{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-5604wf{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-5604wf-rotate 0.75s linear infinite}.spinner_icon.svelte-5604wf{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-5604wf{stroke-dasharray:90;stroke-linecap:round}.multiSelect.svelte-5604wf{display:flex;padding:0 16px}.selectContainer.multiSelect.svelte-5604wf input.svelte-5604wf{width:auto;padding:0;flex-grow:1;position:relative}.multiSelectItems.svelte-5604wf{display:flex;padding:8px 0}@keyframes svelte-5604wf-rotate{100%{transform:rotate(360deg)}}";
+		style.id = 'svelte-r4vpyl-style';
+		style.textContent = ".selectContainer.svelte-r4vpyl{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;display:flex;padding:0 16px}.selectContainer.svelte-r4vpyl input.svelte-r4vpyl{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-r4vpyl input.svelte-r4vpyl::placeholder{color:#78848F}.selectContainer.svelte-r4vpyl input.svelte-r4vpyl:focus{outline:none}.selectContainer.svelte-r4vpyl:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-r4vpyl{border-color:#006FE8}.selectContainer.disabled.svelte-r4vpyl{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-r4vpyl input.svelte-r4vpyl::placeholder{color:#C1C6CC}.selectedItem.svelte-r4vpyl{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-r4vpyl:focus{outline:none}.clearSelect.svelte-r4vpyl{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.clearSelect.svelte-r4vpyl:hover{color:#2c3e50}.selectContainer.focused.svelte-r4vpyl .clearSelect.svelte-r4vpyl{color:#3F4F5F}.indicator.svelte-r4vpyl{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-r4vpyl svg.svelte-r4vpyl{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-r4vpyl{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-r4vpyl-rotate 0.75s linear infinite}.spinner_icon.svelte-r4vpyl{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-r4vpyl{stroke-dasharray:90;stroke-linecap:round}.multiSelect.svelte-r4vpyl{display:flex;padding:0 16px}.selectContainer.multiSelect.svelte-r4vpyl input.svelte-r4vpyl{width:auto;padding:0;flex-grow:1;position:relative}.multiSelectItems.svelte-r4vpyl{display:flex;padding:8px 0}@keyframes svelte-r4vpyl-rotate{100%{transform:rotate(360deg)}}";
 		append(document.head, style);
 	}
 
@@ -25508,9 +25508,9 @@
 				input.placeholder = ctx.placeholderText;
 				input.disabled = ctx.isDisabled;
 				input.style.cssText = ctx.inputStyles;
-				input.className = "svelte-5604wf";
+				input.className = "svelte-r4vpyl";
 				addListener(div, "click", click_handler);
-				div.className = "" + ctx.containerClasses + " svelte-5604wf";
+				div.className = "" + ctx.containerClasses + " svelte-r4vpyl";
 				div.style.cssText = ctx.containerStyles;
 			},
 
@@ -25612,7 +25612,7 @@
 				}
 
 				if (changed.containerClasses) {
-					div.className = "" + ctx.containerClasses + " svelte-5604wf";
+					div.className = "" + ctx.containerClasses + " svelte-r4vpyl";
 				}
 
 				if (changed.containerStyles) {
@@ -25682,7 +25682,7 @@
 				div = createElement("div");
 				if (switch_instance) switch_instance._fragment.c();
 				addListener(div, "focus", focus_handler);
-				div.className = "multiSelectItems svelte-5604wf";
+				div.className = "multiSelectItems svelte-r4vpyl";
 			},
 
 			m(target, anchor) {
@@ -25764,7 +25764,7 @@
 				div = createElement("div");
 				if (switch_instance) switch_instance._fragment.c();
 				addListener(div, "focus", focus_handler);
-				div.className = "selectedItem svelte-5604wf";
+				div.className = "selectedItem svelte-r4vpyl";
 			},
 
 			m(target, anchor) {
@@ -25824,9 +25824,9 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-5604wf"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+				div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-r4vpyl"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 				addListener(div, "click", click_handler);
-				div.className = "clearSelectedItem svelte-5604wf";
+				div.className = "clearSelect svelte-r4vpyl";
 			},
 
 			m(target, anchor) {
@@ -25850,8 +25850,8 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-5604wf"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
-				div.className = "indicator svelte-5604wf";
+				div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-r4vpyl"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
+				div.className = "indicator svelte-r4vpyl";
 			},
 
 			m(target, anchor) {
@@ -25873,8 +25873,8 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg class="spinner_icon svelte-5604wf" viewBox="25 25 50 50"><circle class="spinner_path svelte-5604wf" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
-				div.className = "spinner svelte-5604wf";
+				div.innerHTML = `<svg class="spinner_icon svelte-r4vpyl" viewBox="25 25 50 50"><circle class="spinner_path svelte-r4vpyl" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
+				div.className = "spinner svelte-r4vpyl";
 			},
 
 			m(target, anchor) {
@@ -25901,7 +25901,7 @@
 
 		this._handlers.destroy = [ondestroy];
 
-		if (!document.getElementById("svelte-5604wf-style")) add_css$2();
+		if (!document.getElementById("svelte-r4vpyl-style")) add_css$2();
 
 		onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 
@@ -26061,8 +26061,8 @@
 
 	function add_css$5() {
 		var style = createElement("style");
-		style.id = 'svelte-1eqcgt4-style';
-		style.textContent = ".selectContainer.svelte-1eqcgt4{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-1eqcgt4 input.svelte-1eqcgt4{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-1eqcgt4 input.svelte-1eqcgt4::placeholder{color:#78848F}.selectContainer.svelte-1eqcgt4:hover{border-color:#b2b8bf}.selectContainer.svelte-1eqcgt4 input.svelte-1eqcgt4:focus{outline:none}.selectedItem.svelte-1eqcgt4{padding:0 16px;line-height:44px}.clearSelectedItem.svelte-1eqcgt4{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-1eqcgt4:hover{color:#2c3e50}";
+		style.id = 'svelte-zfhbic-style';
+		style.textContent = ".selectContainer.svelte-zfhbic{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-zfhbic input.svelte-zfhbic{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-zfhbic input.svelte-zfhbic::placeholder{color:#78848F}.selectContainer.svelte-zfhbic:hover{border-color:#b2b8bf}.selectContainer.svelte-zfhbic input.svelte-zfhbic:focus{outline:none}.selectedItem.svelte-zfhbic{padding:0 16px;line-height:44px}.clearSelect.svelte-zfhbic{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelect.svelte-zfhbic:hover{color:#2c3e50}";
 		append(document.head, style);
 	}
 
@@ -26074,12 +26074,12 @@
 				link = createElement("link");
 				text = createText("\n\n");
 				div_2 = createElement("div");
-				div_2.innerHTML = `<input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="" class="svelte-1eqcgt4">
-			  <div class="selectedItem svelte-1eqcgt4">Chips</div>
-			  <div class="clearSelectedItem svelte-1eqcgt4"><svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div>`;
+				div_2.innerHTML = `<input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="" class="svelte-zfhbic">
+			  <div class="selectedItem svelte-zfhbic">Chips</div>
+			  <div class="clearSelect svelte-zfhbic"><svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div>`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div_2.className = "selectContainer svelte-1eqcgt4";
+				div_2.className = "selectContainer svelte-zfhbic";
 			},
 
 			m(target, anchor) {
@@ -26105,7 +26105,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-1eqcgt4-style")) add_css$5();
+		if (!document.getElementById("svelte-zfhbic-style")) add_css$5();
 
 		this._fragment = create_main_fragment$7(this, this._state);
 
@@ -26121,8 +26121,8 @@
 
 	function add_css$6() {
 		var style = createElement("style");
-		style.id = 'svelte-apwq0z-style';
-		style.textContent = ".selectContainer.svelte-apwq0z{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-apwq0z input.svelte-apwq0z{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-apwq0z input.svelte-apwq0z::placeholder{color:#78848F}.selectContainer.svelte-apwq0z:hover{border-color:#b2b8bf}.selectContainer.svelte-apwq0z input.svelte-apwq0z:focus{outline:none}.clearSelectedItem.svelte-apwq0z{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelectedItem.svelte-apwq0z:hover{color:#2c3e50}.multiSelect.svelte-apwq0z{display:flex;padding:0 16px}.multiSelectItems.svelte-apwq0z{display:flex;padding:8px 0}.multiSelectItem.svelte-apwq0z{background:#E8EAED;margin-right:5px;border-radius:4px;line-height:26px;display:flex;cursor:default}.multiSelectItem_label.svelte-apwq0z{padding:0 5px 0 10px}.selectContainer.multiSelect.svelte-apwq0z input.svelte-apwq0z{width:auto;padding:0;flex-grow:1}.multiSelectItem_clear.svelte-apwq0z{border-radius:0 4px 4px 0;width:20px;text-align:center}.multiSelectItem_clear.svelte-apwq0z:hover{background-color:red}.multiSelectItem_clear.svelte-apwq0z svg.svelte-apwq0z{width:14px;height:14px;position:relative;top:3px}";
+		style.id = 'svelte-r1vopr-style';
+		style.textContent = ".selectContainer.svelte-r1vopr{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-r1vopr input.svelte-r1vopr{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-r1vopr input.svelte-r1vopr::placeholder{color:#78848F}.selectContainer.svelte-r1vopr:hover{border-color:#b2b8bf}.selectContainer.svelte-r1vopr input.svelte-r1vopr:focus{outline:none}.clearSelect.svelte-r1vopr{position:absolute;right:10px;top:12px;width:20px;height:20px;color:#c5cacf}.clearSelect.svelte-r1vopr:hover{color:#2c3e50}.multiSelect.svelte-r1vopr{display:flex;padding:0 16px}.multiSelectItems.svelte-r1vopr{display:flex;padding:8px 0}.multiSelectItem.svelte-r1vopr{background:#E8EAED;margin-right:5px;border-radius:4px;line-height:26px;display:flex;cursor:default}.multiSelectItem_label.svelte-r1vopr{padding:0 5px 0 10px}.selectContainer.multiSelect.svelte-r1vopr input.svelte-r1vopr{width:auto;padding:0;flex-grow:1}.multiSelectItem_clear.svelte-r1vopr{border-radius:0 4px 4px 0;width:20px;text-align:center}.multiSelectItem_clear.svelte-r1vopr:hover{background-color:red}.multiSelectItem_clear.svelte-r1vopr svg.svelte-r1vopr{width:14px;height:14px;position:relative;top:3px}";
 		append(document.head, style);
 	}
 
@@ -26134,19 +26134,19 @@
 				link = createElement("link");
 				text = createText("\n\n");
 				div_8 = createElement("div");
-				div_8.innerHTML = `<div class="multiSelectItems svelte-apwq0z"><div class="multiSelectItem svelte-apwq0z"><div class="multiSelectItem_label svelte-apwq0z">
+				div_8.innerHTML = `<div class="multiSelectItems svelte-r1vopr"><div class="multiSelectItem svelte-r1vopr"><div class="multiSelectItem_label svelte-r1vopr">
 			        Pizza
 			      </div>
-			      <div class="multiSelectItem_clear svelte-apwq0z"><svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-apwq0z"><path d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div></div>
-			    <div class="multiSelectItem svelte-apwq0z"><div class="multiSelectItem_label svelte-apwq0z">
+			      <div class="multiSelectItem_clear svelte-r1vopr"><svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-r1vopr"><path d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div></div>
+			    <div class="multiSelectItem svelte-r1vopr"><div class="multiSelectItem_label svelte-r1vopr">
 			        Chips
 			      </div>
-			      <div class="multiSelectItem_clear svelte-apwq0z"><svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-apwq0z"><path d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div></div></div>
-			  <input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="" class="svelte-apwq0z">
-			  <div class="clearSelectedItem svelte-apwq0z"><svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div>`;
+			      <div class="multiSelectItem_clear svelte-r1vopr"><svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-r1vopr"><path d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div></div></div>
+			  <input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="" class="svelte-r1vopr">
+			  <div class="clearSelect svelte-r1vopr"><svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg></div>`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div_8.className = "selectContainer multiSelect svelte-apwq0z";
+				div_8.className = "selectContainer multiSelect svelte-r1vopr";
 			},
 
 			m(target, anchor) {
@@ -26172,7 +26172,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-apwq0z-style")) add_css$6();
+		if (!document.getElementById("svelte-r1vopr-style")) add_css$6();
 
 		this._fragment = create_main_fragment$8(this, this._state);
 
@@ -26188,8 +26188,8 @@
 
 	function add_css$7() {
 		var style = createElement("style");
-		style.id = 'svelte-apwq0z-style';
-		style.textContent = ".selectContainer.svelte-apwq0z{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-apwq0z input.svelte-apwq0z{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-apwq0z input.svelte-apwq0z::placeholder{color:#78848F}.selectContainer.svelte-apwq0z:hover{border-color:#b2b8bf}.selectContainer.svelte-apwq0z input.svelte-apwq0z:focus{outline:none}.multiSelect.svelte-apwq0z{display:flex;padding:0 16px}.selectContainer.multiSelect.svelte-apwq0z input.svelte-apwq0z{width:auto;padding:0;flex-grow:1}";
+		style.id = 'svelte-r1vopr-style';
+		style.textContent = ".selectContainer.svelte-r1vopr{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative}.selectContainer.svelte-r1vopr input.svelte-r1vopr{border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px}.selectContainer.svelte-r1vopr input.svelte-r1vopr::placeholder{color:#78848F}.selectContainer.svelte-r1vopr:hover{border-color:#b2b8bf}.selectContainer.svelte-r1vopr input.svelte-r1vopr:focus{outline:none}.multiSelect.svelte-r1vopr{display:flex;padding:0 16px}.selectContainer.multiSelect.svelte-r1vopr input.svelte-r1vopr{width:auto;padding:0;flex-grow:1}";
 		append(document.head, style);
 	}
 
@@ -26201,10 +26201,10 @@
 				link = createElement("link");
 				text = createText("\n\n");
 				div = createElement("div");
-				div.innerHTML = `<input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="Select..." class="svelte-apwq0z">`;
+				div.innerHTML = `<input autocomplete="off" autocorrect="off" spellcheck="true" placeholder="Select..." class="svelte-r1vopr">`;
 				link.rel = "stylesheet";
 				link.href = "../reset.css";
-				div.className = "selectContainer multiSelect svelte-apwq0z";
+				div.className = "selectContainer multiSelect svelte-r1vopr";
 			},
 
 			m(target, anchor) {
@@ -26230,7 +26230,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-apwq0z-style")) add_css$7();
+		if (!document.getElementById("svelte-r1vopr-style")) add_css$7();
 
 		this._fragment = create_main_fragment$9(this, this._state);
 
@@ -27543,7 +27543,7 @@
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-	  document.querySelector('.clearSelectedItem').click();
+	  document.querySelector('.clearSelect').click();
 	  t.ok(!document.querySelector('.listContainer'));
 
 	  select.destroy();
@@ -27809,7 +27809,7 @@
 	  });
 
 
-	  t.ok(!document.querySelector('.clearSelectedItem'));
+	  t.ok(!document.querySelector('.clearSelect'));
 
 	  select.destroy();
 	});
@@ -27958,7 +27958,7 @@
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-	  t.ok(!document.querySelector('.clearSelectedItem'));
+	  t.ok(!document.querySelector('.clearSelect'));
 
 	  select.destroy();
 	});
@@ -28230,6 +28230,38 @@
 
 	  select.destroy();
 	});
+
+	test('when isMulti is true and all selected items have been removed then placeholder should show and clear all should hide', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      isMulti: true,
+	      items,
+	      selectedValue: [{value: 'chocolate', label: 'Chocolate'}]
+	    }
+	  });
+
+	  document.querySelector('.multiSelectItem_clear').click();
+
+	  select.destroy();
+	});
+
+	test('when isMulti is true and items are selected then clear all should wipe all selected items', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      isMulti: true,
+	      items,
+	      selectedValue: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]
+	    }
+	  });
+
+	  document.querySelector('.clearSelect').click();
+	  t.equal(select.get().selectedValue, undefined);
+
+	  select.destroy();
+	});
+
 
 
 	function focus(element, setFocus) {

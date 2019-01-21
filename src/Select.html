@@ -33,7 +33,7 @@
   {/if}
 
   {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
-  <div class="clearSelectedItem" on:click="handleClear(event)">
+  <div class="clearSelect" on:click="handleClear(event)">
     <svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
          role="presentation">
       <path fill="currentColor"
@@ -126,7 +126,7 @@
     outline: none;
   }
 
-  .clearSelectedItem {
+  .clearSelect {
     position: absolute;
     right: 10px;
     top: 11px;
@@ -135,11 +135,11 @@
     color: #c5cacf;
   }
 
-  .clearSelectedItem:hover {
+  .clearSelect:hover {
     color: #2c3e50;
   }
 
-  .selectContainer.focused .clearSelectedItem {
+  .selectContainer.focused .clearSelect {
     color: #3F4F5F;
   }
 
@@ -336,7 +336,7 @@
       handleMultiItemClear(i) {
         let {selectedValue} = this.get();
         selectedValue.splice(i, 1);
-        this.set({selectedValue});
+        this.set({selectedValue: selectedValue.length > 0 ? selectedValue : undefined});
       },
       getPosition() {
         const {target} = this.get();

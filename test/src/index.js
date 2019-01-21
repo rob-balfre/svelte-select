@@ -607,7 +607,7 @@ test('clearing selected item closes List if open', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  document.querySelector('.clearSelectedItem').click();
+  document.querySelector('.clearSelect').click();
   t.ok(!document.querySelector('.listContainer'));
 
   select.destroy();
@@ -873,7 +873,7 @@ test(`shouldn't be able to clear a disabled Select`, async (t) => {
   });
 
 
-  t.ok(!document.querySelector('.clearSelectedItem'));
+  t.ok(!document.querySelector('.clearSelect'));
 
   select.destroy();
 });
@@ -1022,7 +1022,7 @@ test('should not be able to clear when clearing is disabled', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-  t.ok(!document.querySelector('.clearSelectedItem'));
+  t.ok(!document.querySelector('.clearSelect'));
 
   select.destroy();
 });
@@ -1294,6 +1294,38 @@ test('when isMulti is true clicking X on a selected item will remove it from sel
 
   select.destroy();
 });
+
+test('when isMulti is true and all selected items have been removed then placeholder should show and clear all should hide', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [{value: 'chocolate', label: 'Chocolate'}]
+    }
+  });
+
+  document.querySelector('.multiSelectItem_clear').click();
+
+  select.destroy();
+});
+
+test('when isMulti is true and items are selected then clear all should wipe all selected items', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]
+    }
+  });
+
+  document.querySelector('.clearSelect').click();
+  t.equal(select.get().selectedValue, undefined);
+
+  select.destroy();
+});
+
 
 
 function focus(element, setFocus) {
