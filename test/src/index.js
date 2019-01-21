@@ -1261,6 +1261,24 @@ test('when isMulti is true items in selectedValue will not appear in List', asyn
   select.destroy();
 });
 
+test('when isMulti is true both selectedValue and filterText filters List', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      filterText: 'Pizza',
+      selectedValue: [{value: 'chocolate', label: 'Chocolate'}]
+    }
+  });
+
+  t.equal(JSON.stringify(select.get().filteredItems), JSON.stringify([
+    {value: 'pizza', label: 'Pizza'}
+  ]));
+
+  select.destroy();
+});
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

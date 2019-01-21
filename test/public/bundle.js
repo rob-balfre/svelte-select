@@ -25196,12 +25196,14 @@
 	}
 	function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue}) {
 	  const filteredItems = items.filter(item => {
+	    let keepItem = true;
+
 	    if (isMulti && selectedValue) {
-	      return !selectedValue.find(({value}) => {
+	      keepItem = !selectedValue.find(({value}) => {
 	        return value === item.value
 	      });
 	    }
-	    if (filterText.length < 1) return true;
+	    if (keepItem && filterText.length < 1) return true;
 	    return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
 	  });
 
@@ -28152,6 +28154,24 @@
 	    {value: 'cake', label: 'Cake'},
 	    {value: 'chips', label: 'Chips'},
 	    {value: 'ice-cream', label: 'Ice Cream'}
+	  ]));
+
+	  select.destroy();
+	});
+
+	test('when isMulti is true both selectedValue and filterText filters List', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      isMulti: true,
+	      items,
+	      filterText: 'Pizza',
+	      selectedValue: [{value: 'chocolate', label: 'Chocolate'}]
+	    }
+	  });
+
+	  t.equal(JSON.stringify(select.get().filteredItems), JSON.stringify([
+	    {value: 'pizza', label: 'Pizza'}
 	  ]));
 
 	  select.destroy();

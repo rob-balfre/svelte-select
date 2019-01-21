@@ -260,12 +260,14 @@
       },
       filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue}) {
         const filteredItems = items.filter(item => {
+          let keepItem = true;
+
           if (isMulti && selectedValue) {
-            return !selectedValue.find(({value}) => {
+            keepItem = !selectedValue.find(({value}) => {
               return value === item.value
             });
           }
-          if (filterText.length < 1) return true;
+          if (keepItem && filterText.length < 1) return true;
           return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
         });
 
