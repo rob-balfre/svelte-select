@@ -1177,6 +1177,18 @@ test('groups should be sorted by expression', async (t) => {
   select.destroy();
 });
 
+test.only('should....', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
