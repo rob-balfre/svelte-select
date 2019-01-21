@@ -1279,6 +1279,22 @@ test('when isMulti is true both selectedValue and filterText filters List', asyn
   select.destroy();
 });
 
+test('when isMulti is true clicking X on a selected item will remove it from selectedValue', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]
+    }
+  });
+
+  document.querySelector('.multiSelectItem_clear').click();
+  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{value: 'pizza', label: 'Pizza'}]));
+
+  select.destroy();
+});
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

@@ -7,8 +7,9 @@
   ref:container>
 
   {#if isMulti && selectedValue && selectedValue.length > 0}
-  <div class="multiSelectItems" on:focus="handleFocus()" ref:selectedItem>
-    <svelte:component this="{MultiSelection}" {selectedValue} {getSelectionLabel}/>
+  <div class="multiSelectItems" on:focus="handleFocus()"
+       ref:selectedItem>
+    <svelte:component this="{MultiSelection}" {selectedValue} {getSelectionLabel} on:multiItemClear="handleMultiItemClear(event.i)"/>
   </div>
   {/if}
 
@@ -267,18 +268,19 @@
               return value === item.value
             });
           }
+
           if (keepItem && filterText.length < 1) return true;
-          return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
+          return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
         });
 
-        if(groupBy) {
+        if (groupBy) {
           const groupValues = [];
           const groups = {};
 
           filteredItems.forEach((item) => {
             const groupValue = groupBy(item);
 
-            if(!groupValues.includes(groupValue)) {
+            if (!groupValues.includes(groupValue)) {
               groupValues.push(groupValue);
               groups[groupValue] = [];
               groups[groupValue].push(Object.assign({groupValue}, item));
@@ -331,6 +333,11 @@
       }
     },
     methods: {
+      handleMultiItemClear(i) {
+        let {selectedValue} = this.get();
+        selectedValue.splice(i, 1);
+        this.set({selectedValue});
+      },
       getPosition() {
         const {target} = this.get();
         if (!target) return;
