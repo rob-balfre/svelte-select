@@ -1332,15 +1332,32 @@ test('when isMulti and groupBy is active then items should be selectable', async
     data: {
       isMulti: true,
       items: itemsWithGroup,
-      groupBy: (item) => item.group,
+      groupBy: (item) => item.group
     }
   });
 
+  target.style.maxWidth = '400px';
   document.querySelector('.selectContainer').click();
   document.querySelector('.listItem').click();
 
   t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
 
+  select.destroy();
+});
+
+test('when isMulti and selected items reach edge of container then Select height should increase and selected items should wrap to new line', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items
+    }
+  });
+
+  target.style.maxWidth = '250px';
+  t.ok(document.querySelector('.selectContainer').scrollHeight === 44);
+  select.set({selectedValue: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]})
+  t.ok(document.querySelector('.selectContainer').scrollHeight > 44);
   select.destroy();
 });
 

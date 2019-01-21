@@ -7,11 +7,9 @@
   ref:container>
 
   {#if isMulti && selectedValue && selectedValue.length > 0}
-  <div class="multiSelectItems" on:focus="handleFocus()"
-       ref:selectedItem>
+
     <svelte:component this="{MultiSelection}" {selectedValue} {getSelectionLabel}
-                      on:multiItemClear="handleMultiItemClear(event.i)"/>
-  </div>
+                      on:multiItemClear="handleMultiItemClear(event.i)" on:focus="handleFocus()"/>
   {/if}
 
   <input
@@ -28,7 +26,7 @@
   >
 
   {#if !isMulti && showSelectedItem }
-  <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>
+  <div class="selectedItem" on:focus="handleFocus()">
     <svelte:component this="{Selection}" {selectedValue} {getSelectionLabel}/>
   </div>
   {/if}
@@ -131,9 +129,10 @@
     position: absolute;
     right: 10px;
     top: 11px;
+    bottom: 11px;
     width: 20px;
-    height: 20px;
     color: #c5cacf;
+    flex: none !important;
   }
 
   .clearSelect:hover {
@@ -192,19 +191,18 @@
 
   .multiSelect {
     display: flex;
-    padding: 0 16px;
+    padding: 0 35px 0 16px;
+    height: auto;
+    flex-wrap: wrap;
+  }
+
+  .multiSelect>* {
+    flex: 1 1 50px;
   }
 
   .selectContainer.multiSelect input {
-    width: auto;
     padding: 0;
-    flex-grow: 1;
     position: relative;
-  }
-
-  .multiSelectItems {
-    display: flex;
-    padding: 8px 0;
   }
 
   @keyframes rotate {
@@ -233,7 +231,6 @@
         paddingLeft: 0,
         list: undefined,
         target: undefined,
-        // selectedItem: undefined,
         selectedValue: undefined,
         isClearable: true,
         isSearchable: true,
@@ -338,6 +335,7 @@
         let {selectedValue} = this.get();
         selectedValue.splice(i, 1);
         this.set({selectedValue: selectedValue.length > 0 ? selectedValue : undefined});
+        this.getPosition();
       },
       getPosition() {
         const {target} = this.get();
