@@ -5,14 +5,17 @@ import List from '../../src/List.html';
 import SelectDefault from './Select/Select--default.html'
 import SelectFocus from './Select/Select--focus.html'
 import SelectItemSelected from './Select/Select--itemSelected.html'
+import SelectMultiSelected from './Select/Select--multiSelected.html'
+import SelectMultiEmpty from './Select/Select--multiSelectEmpty.html'
 import ListDefault from './List/List--default.html'
+import ListEmpty from './List/List--empty.html'
 import ListGrouped from './List/List--grouped.html'
 import ListGroupedFiltered from './List/List--groupedFiltered.html'
 import ListGroupedReversed from './List/List--groupedReversed.html'
-import ListEmpty from './List/List--empty.html'
 import ListActiveItem from './List/List--activeItem.html'
 import ParentContainer from './Select/ParentContainer.html'
 import {assert, test, done} from 'tape-modern';
+
 
 // setup
 const target = document.querySelector('main');
@@ -200,7 +203,7 @@ test('should highlight active list item', async (t) => {
     target,
     data: {
       items: itemsWithIndex,
-      selectedItem: {value: 'pizza', label: 'Pizza', index: 1},
+      selectedValue: {value: 'pizza', label: 'Pizza', index: 1},
       activeItemIndex: 1,
     }
   });
@@ -221,7 +224,7 @@ test('list scrolls to active item', async (t) => {
     target,
     data: {
       items: itemsWithIndex.concat(extras),
-      selectedItem: {value: 'sunday-roast', label: 'Sunday Roast'},
+      selectedValue: {value: 'sunday-roast', label: 'Sunday Roast'},
     }
   });
 
@@ -261,16 +264,16 @@ test('on enter active item fires a itemSelected event', async (t) => {
     }
   });
 
-  let selectedItem = undefined;
+  let selectedValue = undefined;
   list.on('itemSelected', event => {
-    selectedItem = event;
+    selectedValue = event;
   });
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-  t.equal(JSON.stringify(selectedItem), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
+  t.equal(JSON.stringify(selectedValue), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
   list.destroy();
 });
 
@@ -282,16 +285,16 @@ test('on tab active item fires a itemSelected event', async (t) => {
     }
   });
 
-  let selectedItem = undefined;
+  let selectedValue = undefined;
   list.on('itemSelected', event => {
-    selectedItem = event;
+    selectedValue = event;
   });
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
 
-  t.equal(JSON.stringify(selectedItem), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
+  t.equal(JSON.stringify(selectedValue), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
   list.destroy();
 });
 
@@ -303,7 +306,7 @@ test('selected item\'s default view', async (t) => {
   const select = new Select({
     target,
     data: {
-      selectedItem: {value: 'chips', label: 'Chips'},
+      selectedValue: {value: 'chips', label: 'Chips'},
     }
   });
 
@@ -312,7 +315,7 @@ test('selected item\'s default view', async (t) => {
   testTemplate.destroy();
 });
 
-test('select view updates with selectedItem updates', async (t) => {
+test('select view updates with selectedValue updates', async (t) => {
   let testTemplate = new SelectDefault({
     target: testTarget
   });
@@ -328,7 +331,7 @@ test('select view updates with selectedItem updates', async (t) => {
     target: testTarget
   });
 
-  select.set({selectedItem: {value: 'chips', label: 'Chips'}});
+  select.set({selectedValue: {value: 'chips', label: 'Chips'}});
 
   t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
@@ -336,7 +339,7 @@ test('select view updates with selectedItem updates', async (t) => {
   select.destroy();
 });
 
-test('clear wipes selectedItem and updates view', async (t) => {
+test('clear wipes selectedValue and updates view', async (t) => {
   let testTemplate = new SelectItemSelected({
     target: testTarget
   });
@@ -344,7 +347,7 @@ test('clear wipes selectedItem and updates view', async (t) => {
   const select = new Select({
     target,
     data: {
-      selectedItem: {value: 'chips', label: 'Chips'},
+      selectedValue: {value: 'chips', label: 'Chips'},
     }
   });
 
@@ -355,7 +358,7 @@ test('clear wipes selectedItem and updates view', async (t) => {
     target: testTarget
   });
 
-  select.set({selectedItem: undefined});
+  select.set({selectedValue: undefined});
 
   t.htmlEqual(target.innerHTML, testTarget.innerHTML);
 
@@ -448,7 +451,7 @@ test('select item from list', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'cake', label: 'Cake'}));
+  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify({value: 'cake', label: 'Cake'}));
 
   testTemplate.destroy();
   select.destroy();
@@ -502,7 +505,7 @@ test('clicking Select with selected item should open list with item listed as ac
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   document.querySelector('.selectContainer').click();
-  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'cake', label: 'Cake'}));
+  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify({value: 'cake', label: 'Cake'}));
   select.destroy();
 });
 
@@ -587,7 +590,7 @@ test('typing in Select filter will hide selected Item', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   select.set({filterText: 'potato'});
-  t.ok(!document.querySelector('.selectContainer .selectedItem'));
+  t.ok(!document.querySelector('.selectContainer .selectedValue'));
 
   select.destroy();
 });
@@ -700,7 +703,7 @@ test('Select input placeholder wipes while item is selected', async (t) => {
     target,
     data: {
       items,
-      selectedItem: {name: 'Item #2'},
+      selectedValue: {name: 'Item #2'},
       activeItemIndex: 1,
     }
   });
@@ -794,7 +797,7 @@ test('Select container styles can be overridden', async (t) => {
     target,
     data: {
       items,
-      selectedItem: {name: 'Item #2'},
+      selectedValue: {name: 'Item #2'},
       activeItemIndex: 1,
       containerStyles: `padding-left: 40px;`
     }
@@ -865,7 +868,7 @@ test(`shouldn't be able to clear a disabled Select`, async (t) => {
     data: {
       items,
       isDisabled: true,
-      selectedItem: {name: 'Item #4'}
+      selectedValue: {name: 'Item #4'}
     }
   });
 
@@ -880,13 +883,13 @@ test(`two way binding between Select and it's parent component`, async (t) => {
     target,
     data: {
       items,
-      selectedItem: {value: 'chips', label: 'Chips'},
+      selectedValue: {value: 'chips', label: 'Chips'},
     }
   });
 
   t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
   parent.set({
-    selectedItem: {value: 'ice-cream', label: 'Ice Cream'},
+    selectedValue: {value: 'ice-cream', label: 'Ice Cream'},
   });
   t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
   document.querySelector('.selectContainer').click();
@@ -1001,7 +1004,7 @@ test(`data shouldn't be stripped from item - currently only saves name`, async (
 
   document.querySelector('.selectContainer').click();
   document.querySelector('.listItem').click();
-  t.equal(JSON.stringify(select.get().selectedItem), JSON.stringify({value: 'chocolate', label: 'Chocolate'}));
+  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify({value: 'chocolate', label: 'Chocolate'}));
 
   select.destroy();
 });
@@ -1098,7 +1101,7 @@ test('inputStyles prop applies css to select input', async (t) => {
     target,
     data: {
       items,
-      selectedItem: {value: 'pizza', label: 'Pizza'},
+      selectedValue: {value: 'pizza', label: 'Pizza'},
       activeItemIndex: 1,
       inputStyles: `padding-left: 40px;`
     }
@@ -1176,6 +1179,50 @@ test('groups should be sorted by expression', async (t) => {
   testTemplate.destroy();
   select.destroy();
 });
+
+test('when isMulti is true show each item in selectedValue', async (t) => {
+  const selectMultiSelected = new SelectMultiSelected({
+    target: testTarget,
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [
+        {value: 'pizza', label: 'Pizza'},
+        {value: 'chips', label: 'Chips'},
+      ],
+    }
+  });
+
+
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+  select.destroy();
+  selectMultiSelected.destroy();
+});
+
+test('when isMulti is true and selectedValue is undefined show placeholder text', async (t) => {
+  const selectDefault = new SelectMultiEmpty({
+    target: testTarget,
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: undefined
+    }
+  });
+
+  t.htmlEqual(target.innerHTML, testTarget.innerHTML);
+
+  // select.destroy();
+  // selectDefault.destroy();
+});
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
