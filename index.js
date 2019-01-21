@@ -1038,10 +1038,11 @@
 
 	    list.on('itemSelected', (newSelection) => {
 	      if (newSelection) {
+	        const item = Object.assign({}, items.find(item => item.value === newSelection.value));
 	        if (isMulti) {
-	          selectedValue = selectedValue ? selectedValue.concat([Object.assign({}, newSelection)]) : [Object.assign({}, newSelection)];
+	          selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
 	        } else {
-	          selectedValue = Object.assign({}, newSelection);
+	          selectedValue = item;
 	        }
 
 	        this.set({
@@ -1385,7 +1386,7 @@
 		};
 	}
 
-	// (29:2) {#if !isMulti && showSelectedItem }
+	// (30:2) {#if !isMulti && showSelectedItem }
 	function create_if_block_3(component, ctx) {
 		var div;
 
@@ -1465,7 +1466,7 @@
 		};
 	}
 
-	// (35:2) {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
+	// (36:2) {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
 	function create_if_block_2(component, ctx) {
 		var div;
 
@@ -1495,7 +1496,7 @@
 		};
 	}
 
-	// (45:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
+	// (46:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
 	function create_if_block_1(component, ctx) {
 		var div;
 
@@ -1518,7 +1519,7 @@
 		};
 	}
 
-	// (54:2) {#if isWaiting}
+	// (55:2) {#if isWaiting}
 	function create_if_block$1(component, ctx) {
 		var div;
 

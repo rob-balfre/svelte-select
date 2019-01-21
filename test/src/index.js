@@ -1326,6 +1326,24 @@ test('when isMulti is true and items are selected then clear all should wipe all
   select.destroy();
 });
 
+test('when isMulti and groupBy is active then items should be selectable', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items: itemsWithGroup,
+      groupBy: (item) => item.group,
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  document.querySelector('.listItem').click();
+
+  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
+
+  select.destroy();
+});
+
 
 
 function focus(element, setFocus) {

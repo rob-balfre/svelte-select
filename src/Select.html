@@ -9,7 +9,8 @@
   {#if isMulti && selectedValue && selectedValue.length > 0}
   <div class="multiSelectItems" on:focus="handleFocus()"
        ref:selectedItem>
-    <svelte:component this="{MultiSelection}" {selectedValue} {getSelectionLabel} on:multiItemClear="handleMultiItemClear(event.i)"/>
+    <svelte:component this="{MultiSelection}" {selectedValue} {getSelectionLabel}
+                      on:multiItemClear="handleMultiItemClear(event.i)"/>
   </div>
   {/if}
 
@@ -433,10 +434,11 @@
 
         list.on('itemSelected', (newSelection) => {
           if (newSelection) {
+            const item = Object.assign({}, items.find(item => item.value === newSelection.value));
             if (isMulti) {
-              selectedValue = selectedValue ? selectedValue.concat([Object.assign({}, newSelection)]) : [Object.assign({}, newSelection)];
+              selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
             } else {
-              selectedValue = Object.assign({}, newSelection);
+              selectedValue = item;
             }
 
             this.set({

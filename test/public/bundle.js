@@ -25386,10 +25386,11 @@
 
 	    list.on('itemSelected', (newSelection) => {
 	      if (newSelection) {
+	        const item = Object.assign({}, items.find(item => item.value === newSelection.value));
 	        if (isMulti) {
-	          selectedValue = selectedValue ? selectedValue.concat([Object.assign({}, newSelection)]) : [Object.assign({}, newSelection)];
+	          selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
 	        } else {
-	          selectedValue = Object.assign({}, newSelection);
+	          selectedValue = item;
 	        }
 
 	        this.set({
@@ -25733,7 +25734,7 @@
 		};
 	}
 
-	// (29:2) {#if !isMulti && showSelectedItem }
+	// (30:2) {#if !isMulti && showSelectedItem }
 	function create_if_block_3(component, ctx) {
 		var div;
 
@@ -25813,7 +25814,7 @@
 		};
 	}
 
-	// (35:2) {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
+	// (36:2) {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
 	function create_if_block_2(component, ctx) {
 		var div;
 
@@ -25843,7 +25844,7 @@
 		};
 	}
 
-	// (45:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
+	// (46:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
 	function create_if_block_1(component, ctx) {
 		var div;
 
@@ -25866,7 +25867,7 @@
 		};
 	}
 
-	// (54:2) {#if isWaiting}
+	// (55:2) {#if isWaiting}
 	function create_if_block$1(component, ctx) {
 		var div;
 
@@ -28258,6 +28259,24 @@
 
 	  document.querySelector('.clearSelect').click();
 	  t.equal(select.get().selectedValue, undefined);
+
+	  select.destroy();
+	});
+
+	test('when isMulti and groupBy is active then items should be selectable', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      isMulti: true,
+	      items: itemsWithGroup,
+	      groupBy: (item) => item.group,
+	    }
+	  });
+
+	  document.querySelector('.selectContainer').click();
+	  document.querySelector('.listItem').click();
+
+	  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
 
 	  select.destroy();
 	});
