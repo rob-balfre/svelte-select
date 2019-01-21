@@ -846,8 +846,13 @@
 	function placeholderText({selectedValue, placeholder}) {
 	  return selectedValue ? '' : placeholder
 	}
-	function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel}) {
+	function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue}) {
 	  const filteredItems = items.filter(item => {
+	    if (isMulti && selectedValue) {
+	      return !selectedValue.find(({value}) => {
+	        return value === item.value
+	      });
+	    }
 	    if (filterText.length < 1) return true;
 	    return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
 	  });
@@ -1543,7 +1548,7 @@
 			if (this._differs(state.placeholderText, (state.placeholderText = placeholderText(state)))) changed.placeholderText = true;
 		}
 
-		if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel) {
+		if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel || changed.isMulti || changed.selectedValue) {
 			if (this._differs(state.filteredItems, (state.filteredItems = filteredItems(state)))) changed.filteredItems = true;
 		}
 	};

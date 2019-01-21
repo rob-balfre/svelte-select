@@ -25194,8 +25194,13 @@
 	function placeholderText({selectedValue, placeholder}) {
 	  return selectedValue ? '' : placeholder
 	}
-	function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel}) {
+	function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue}) {
 	  const filteredItems = items.filter(item => {
+	    if (isMulti && selectedValue) {
+	      return !selectedValue.find(({value}) => {
+	        return value === item.value
+	      });
+	    }
 	    if (filterText.length < 1) return true;
 	    return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
 	  });
@@ -25891,7 +25896,7 @@
 			if (this._differs(state.placeholderText, (state.placeholderText = placeholderText(state)))) changed.placeholderText = true;
 		}
 
-		if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel) {
+		if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel || changed.isMulti || changed.selectedValue) {
 			if (this._differs(state.filteredItems, (state.filteredItems = filteredItems(state)))) changed.filteredItems = true;
 		}
 	};
@@ -26924,11 +26929,11 @@
 	  {value: 'ice-cream', label: 'Ice Cream'}
 	];
 	const itemsWithGroup = [
-	  {value: 'chocolate', label: 'Chocolate',group: 'Sweet'},
-	  {value: 'pizza', label: 'Pizza',group: 'Savory'},
-	  {value: 'cake', label: 'Cake',group: 'Sweet'},
-	  {value: 'chips', label: 'Chips',group: 'Savory'},
-	  {value: 'ice-cream', label: 'Ice Cream',group: 'Sweet'}
+	  {value: 'chocolate', label: 'Chocolate', group: 'Sweet'},
+	  {value: 'pizza', label: 'Pizza', group: 'Savory'},
+	  {value: 'cake', label: 'Cake', group: 'Sweet'},
+	  {value: 'chips', label: 'Chips', group: 'Savory'},
+	  {value: 'ice-cream', label: 'Ice Cream', group: 'Sweet'}
 	];
 	const itemsWithIndex = [
 	  {value: 'chocolate', label: 'Chocolate', index: 0},
@@ -28142,10 +28147,14 @@
 	    }
 	  });
 
-	  document.querySelector('.selectContainer').click();
+	  t.equal(JSON.stringify(select.get().filteredItems), JSON.stringify([
+	    {value: 'pizza', label: 'Pizza'},
+	    {value: 'cake', label: 'Cake'},
+	    {value: 'chips', label: 'Chips'},
+	    {value: 'ice-cream', label: 'Ice Cream'}
+	  ]));
 
-
-	  // select.destroy();
+	  select.destroy();
 	});
 
 

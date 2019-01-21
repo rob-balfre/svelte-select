@@ -29,11 +29,11 @@ const items = [
   {value: 'ice-cream', label: 'Ice Cream'}
 ];
 const itemsWithGroup = [
-  {value: 'chocolate', label: 'Chocolate',group: 'Sweet'},
-  {value: 'pizza', label: 'Pizza',group: 'Savory'},
-  {value: 'cake', label: 'Cake',group: 'Sweet'},
-  {value: 'chips', label: 'Chips',group: 'Savory'},
-  {value: 'ice-cream', label: 'Ice Cream',group: 'Sweet'}
+  {value: 'chocolate', label: 'Chocolate', group: 'Sweet'},
+  {value: 'pizza', label: 'Pizza', group: 'Savory'},
+  {value: 'cake', label: 'Cake', group: 'Sweet'},
+  {value: 'chips', label: 'Chips', group: 'Savory'},
+  {value: 'ice-cream', label: 'Ice Cream', group: 'Sweet'}
 ];
 const itemsWithIndex = [
   {value: 'chocolate', label: 'Chocolate', index: 0},
@@ -1251,10 +1251,14 @@ test('when isMulti is true items in selectedValue will not appear in List', asyn
     }
   });
 
-  document.querySelector('.selectContainer').click();
+  t.equal(JSON.stringify(select.get().filteredItems), JSON.stringify([
+    {value: 'pizza', label: 'Pizza'},
+    {value: 'cake', label: 'Cake'},
+    {value: 'chips', label: 'Chips'},
+    {value: 'ice-cream', label: 'Ice Cream'}
+  ]));
 
-
-  // select.destroy();
+  select.destroy();
 });
 
 

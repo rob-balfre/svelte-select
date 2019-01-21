@@ -258,8 +258,13 @@
       placeholderText({selectedValue, placeholder}) {
         return selectedValue ? '' : placeholder
       },
-      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel}) {
+      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue}) {
         const filteredItems = items.filter(item => {
+          if (isMulti && selectedValue) {
+            return !selectedValue.find(({value}) => {
+              return value === item.value
+            });
+          }
           if (filterText.length < 1) return true;
           return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
         });
