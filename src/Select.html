@@ -75,8 +75,8 @@
     cursor: default;
     border: none;
     color: #3F4F5F;
-    height: 44px;
-    line-height: 44px;
+    height: 42px;
+    line-height: 42px;
     padding: 0 16px;
     width: 100%;
     background: transparent;
@@ -113,7 +113,8 @@
   }
 
   .selectedItem {
-    line-height: 44px;
+    line-height: 42px;
+    height: 42px;
     text-overflow: ellipsis;
     overflow-x: hidden;
     white-space: nowrap;
@@ -426,7 +427,7 @@
         this.handleFocus();
       },
       loadList() {
-        let {target, list} = this.get();
+        let {target, list, Item, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
         if (target && list) return;
         target = document.createElement('div');
 
@@ -440,7 +441,6 @@
         this.getPosition();
         this.refs.container.appendChild(target);
 
-        let {Item, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
         const data = {Item};
 
         if (getOptionLabel) {
@@ -453,7 +453,7 @@
         });
 
         if (items) {
-          list.set({items: filteredItems, selectedValue});
+          list.set({items: filteredItems, selectedValue, isMulti});
         }
 
         list.on('itemSelected', (newSelection) => {

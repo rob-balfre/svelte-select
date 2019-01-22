@@ -1355,7 +1355,7 @@ test('when isMulti and selected items reach edge of container then Select height
   });
 
   target.style.maxWidth = '250px';
-  t.ok(document.querySelector('.selectContainer').scrollHeight === 44);
+  t.ok(document.querySelector('.selectContainer').scrollHeight === 42);
   select.set({selectedValue: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]})
   t.ok(document.querySelector('.selectContainer').scrollHeight > 44);
   select.destroy();
@@ -1396,6 +1396,24 @@ test('when isMulti and selectedValue is populated then navigating with ArrowRigh
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowRight'}));
   t.ok(select.get().activeSelectedValue === 1);
+
+  select.destroy();
+});
+
+test('when isMulti and selectedValue has items and list opens then first item in list should be active', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      isFocused: true
+    }
+  });
+
+  document.querySelector('.selectContainer').click();
+  document.querySelector('.listItem').click();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.listItem.hover'));
 
   select.destroy();
 });

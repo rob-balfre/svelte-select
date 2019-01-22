@@ -335,7 +335,7 @@
 	  }
 	  if (changed.selectedValue && current.selectedValue) {
 	    this.scrollToActiveItem('active');
-	    if (current.items) {
+	    if (current.items && !current.isMulti) {
 	      const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedValue.value);
 	      if (hoverItemIndex) {
 	        this.set({hoverItemIndex});
@@ -1033,7 +1033,7 @@
 	    this.handleFocus();
 	  },
 	  loadList() {
-	    let {target, list} = this.get();
+	    let {target, list, Item: Item$$1, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
 	    if (target && list) return;
 	    target = document.createElement('div');
 
@@ -1047,7 +1047,6 @@
 	    this.getPosition();
 	    this.refs.container.appendChild(target);
 
-	    let {Item: Item$$1, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
 	    const data = {Item: Item$$1};
 
 	    if (getOptionLabel) {
@@ -1060,7 +1059,7 @@
 	    });
 
 	    if (items) {
-	      list.set({items: filteredItems, selectedValue});
+	      list.set({items: filteredItems, selectedValue, isMulti});
 	    }
 
 	    list.on('itemSelected', (newSelection) => {
@@ -1125,8 +1124,8 @@
 	}
 	function add_css$2() {
 		var style = createElement("style");
-		style.id = 'svelte-k0j9xx-style';
-		style.textContent = ".selectContainer.svelte-k0j9xx{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;display:flex;padding:0 16px}.selectContainer.svelte-k0j9xx input.svelte-k0j9xx{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-k0j9xx input.svelte-k0j9xx::placeholder{color:#78848F}.selectContainer.svelte-k0j9xx input.svelte-k0j9xx:focus{outline:none}.selectContainer.svelte-k0j9xx:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-k0j9xx{border-color:#006FE8}.selectContainer.disabled.svelte-k0j9xx{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-k0j9xx input.svelte-k0j9xx::placeholder{color:#C1C6CC}.selectedItem.svelte-k0j9xx{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-k0j9xx:focus{outline:none}.clearSelect.svelte-k0j9xx{position:absolute;right:10px;top:11px;bottom:11px;width:20px;color:#c5cacf;flex:none !important}.clearSelect.svelte-k0j9xx:hover{color:#2c3e50}.selectContainer.focused.svelte-k0j9xx .clearSelect.svelte-k0j9xx{color:#3F4F5F}.indicator.svelte-k0j9xx{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-k0j9xx svg.svelte-k0j9xx{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-k0j9xx{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-k0j9xx-rotate 0.75s linear infinite}.spinner_icon.svelte-k0j9xx{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-k0j9xx{stroke-dasharray:90;stroke-linecap:round}.multiSelect.svelte-k0j9xx{display:flex;padding:0 35px 0 16px;height:auto;flex-wrap:wrap}.multiSelect.svelte-k0j9xx>.svelte-k0j9xx{flex:1 1 50px}.selectContainer.multiSelect.svelte-k0j9xx input.svelte-k0j9xx{padding:0;position:relative}@keyframes svelte-k0j9xx-rotate{100%{transform:rotate(360deg)}}";
+		style.id = 'svelte-84hful-style';
+		style.textContent = ".selectContainer.svelte-84hful{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;display:flex;padding:0 16px}.selectContainer.svelte-84hful input.svelte-84hful{cursor:default;border:none;color:#3F4F5F;height:42px;line-height:42px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-84hful input.svelte-84hful::placeholder{color:#78848F}.selectContainer.svelte-84hful input.svelte-84hful:focus{outline:none}.selectContainer.svelte-84hful:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-84hful{border-color:#006FE8}.selectContainer.disabled.svelte-84hful{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-84hful input.svelte-84hful::placeholder{color:#C1C6CC}.selectedItem.svelte-84hful{line-height:42px;height:42px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-84hful:focus{outline:none}.clearSelect.svelte-84hful{position:absolute;right:10px;top:11px;bottom:11px;width:20px;color:#c5cacf;flex:none !important}.clearSelect.svelte-84hful:hover{color:#2c3e50}.selectContainer.focused.svelte-84hful .clearSelect.svelte-84hful{color:#3F4F5F}.indicator.svelte-84hful{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-84hful svg.svelte-84hful{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-84hful{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-84hful-rotate 0.75s linear infinite}.spinner_icon.svelte-84hful{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-84hful{stroke-dasharray:90;stroke-linecap:round}.multiSelect.svelte-84hful{display:flex;padding:0 35px 0 16px;height:auto;flex-wrap:wrap}.multiSelect.svelte-84hful>.svelte-84hful{flex:1 1 50px}.selectContainer.multiSelect.svelte-84hful input.svelte-84hful{padding:0;position:relative}@keyframes svelte-84hful-rotate{100%{transform:rotate(360deg)}}";
 		append(document.head, style);
 	}
 
@@ -1192,9 +1191,9 @@
 				input.placeholder = ctx.placeholderText;
 				input.disabled = ctx.isDisabled;
 				input.style.cssText = ctx.inputStyles;
-				input.className = "svelte-k0j9xx";
+				input.className = "svelte-84hful";
 				addListener(div, "click", click_handler);
-				div.className = "" + ctx.containerClasses + " svelte-k0j9xx";
+				div.className = "" + ctx.containerClasses + " svelte-84hful";
 				div.style.cssText = ctx.containerStyles;
 			},
 
@@ -1296,7 +1295,7 @@
 				}
 
 				if (changed.containerClasses) {
-					div.className = "" + ctx.containerClasses + " svelte-k0j9xx";
+					div.className = "" + ctx.containerClasses + " svelte-84hful";
 				}
 
 				if (changed.containerStyles) {
@@ -1446,7 +1445,7 @@
 				div = createElement("div");
 				if (switch_instance) switch_instance._fragment.c();
 				addListener(div, "focus", focus_handler);
-				div.className = "selectedItem svelte-k0j9xx";
+				div.className = "selectedItem svelte-84hful";
 			},
 
 			m(target, anchor) {
@@ -1503,9 +1502,9 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-k0j9xx"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+				div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-84hful"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 				addListener(div, "click", click_handler);
-				div.className = "clearSelect svelte-k0j9xx";
+				div.className = "clearSelect svelte-84hful";
 			},
 
 			m(target, anchor) {
@@ -1529,8 +1528,8 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-k0j9xx"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
-				div.className = "indicator svelte-k0j9xx";
+				div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-84hful"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
+				div.className = "indicator svelte-84hful";
 			},
 
 			m(target, anchor) {
@@ -1552,8 +1551,8 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg class="spinner_icon svelte-k0j9xx" viewBox="25 25 50 50"><circle class="spinner_path svelte-k0j9xx" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
-				div.className = "spinner svelte-k0j9xx";
+				div.innerHTML = `<svg class="spinner_icon svelte-84hful" viewBox="25 25 50 50"><circle class="spinner_path svelte-84hful" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
+				div.className = "spinner svelte-84hful";
 			},
 
 			m(target, anchor) {
@@ -1580,7 +1579,7 @@
 
 		this._handlers.destroy = [ondestroy];
 
-		if (!document.getElementById("svelte-k0j9xx-style")) add_css$2();
+		if (!document.getElementById("svelte-84hful-style")) add_css$2();
 
 		onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 

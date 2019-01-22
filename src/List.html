@@ -103,7 +103,7 @@
       }
       if (changed.selectedValue && current.selectedValue) {
         this.scrollToActiveItem('active');
-        if (current.items) {
+        if (current.items && !current.isMulti) {
           const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedValue.value);
           if (hoverItemIndex) {
             this.set({hoverItemIndex});
