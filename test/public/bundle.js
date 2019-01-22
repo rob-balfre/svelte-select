@@ -28380,9 +28380,6 @@
 	  select.destroy();
 	});
 
-
-
-	// Bugs - first item isn't always hover active when list open (using arrow key)
 	// Bugs - when every item is selected expect the last that item can not be added via keypress
 
 

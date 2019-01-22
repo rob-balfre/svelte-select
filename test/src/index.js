@@ -1418,9 +1418,6 @@ test('when isMulti and selectedValue has items and list opens then first item in
   select.destroy();
 });
 
-
-
-// Bugs - first item isn't always hover active when list open (using arrow key)
 // Bugs - when every item is selected expect the last that item can not be added via keypress
 
 
