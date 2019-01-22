@@ -1418,8 +1418,6 @@ test('when isMulti and selectedValue has items and list opens then first item in
   select.destroy();
 });
 
-// Bugs - when every item is selected expect the last that item can not be added via keypress
-
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

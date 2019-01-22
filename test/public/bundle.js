@@ -28380,8 +28380,6 @@
 	  select.destroy();
 	});
 
-	// Bugs - when every item is selected expect the last that item can not be added via keypress
-
 
 	function focus(element, setFocus) {
 	  return new Promise(fulfil => {
