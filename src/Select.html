@@ -1,4 +1,8 @@
-<svelte:window on:click="handleWindowClick(event)" on:keydown="handleKeyDown(event)" on:resize="getPosition()"/>
+<svelte:window
+  on:click="handleWindowClick(event)"
+  on:keydown="handleKeyDown(event)"
+  on:resize="getPosition()"
+/>
 
 <div
   class="{containerClasses}"
@@ -7,9 +11,14 @@
   ref:container>
 
   {#if isMulti && selectedValue && selectedValue.length > 0}
-
-  <svelte:component this="{MultiSelection}" {selectedValue} {getSelectionLabel} {activeSelectedValue}
-                    on:multiItemClear="handleMultiItemClear(event.i)" on:focus="handleFocus()"/>
+  <svelte:component
+    this="{MultiSelection}"
+    {selectedValue}
+    {getSelectionLabel}
+    {activeSelectedValue}
+    on:multiItemClear="handleMultiItemClear(event.i)"
+    on:focus="handleFocus()"
+  />
   {/if}
 
   <input
@@ -221,26 +230,25 @@
   export default {
     data() {
       return {
-        containerStyles: undefined,
-        items: [],
-        filterText: '',
-        listOpen: false,
         Item,
         Selection,
         MultiSelection,
-        paddingLeft: 0,
+        items: [],
+        filterText: '',
+        placeholder: 'Select...',
+        listOpen: false,
+        containerStyles: undefined,
         list: undefined,
         target: undefined,
         selectedValue: undefined,
+        groupBy: undefined,
+        activeSelectedValue: undefined,
         isClearable: true,
+        isMulti: false,
         isSearchable: true,
+        groupFilter: (groups) => groups,
         getOptionLabel: (option) => option.label,
         getSelectionLabel: (option) => option.label,
-        placeholder: 'Select...',
-        groupBy: undefined,
-        groupFilter: (groups) => groups,
-        isMulti: false,
-        activeSelectedValue: undefined
       }
     },
     computed: {
@@ -429,6 +437,8 @@
       loadList() {
         let {target, list, Item, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
         if (target && list) return;
+
+        const data = {Item};
         target = document.createElement('div');
 
         Object.assign(target.style, {
@@ -437,11 +447,8 @@
         });
 
         this.set({list, target});
-
         this.getPosition();
         this.refs.container.appendChild(target);
-
-        const data = {Item};
 
         if (getOptionLabel) {
           data.getOptionLabel = getOptionLabel;

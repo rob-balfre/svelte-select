@@ -1,4 +1,4 @@
-# svelte-select ([demo](https://svelte.technology/repl?version=2.16.0&gist=7d765f6616d632702d2131a7dc48ee0d))
+# svelte-select ([demo](https://stackblitz.com/edit/svelte-rhbzxj))
 
 A select component for Svelte apps.
 
@@ -36,12 +36,32 @@ yarn add svelte-select
 
 ```
 
+## Select API options (props)
+
+Common props you may want to specify include:
+
+* `filterText` - text to filter list labels by
+* `placeholder` - placeholder text
+* `listOpen` - open/close list
+* `containerStyles` - add/override container styles 
+* `selectedValue` - Selected value(s) 
+* `groupBy` - Function to group list items
+* `isClearable` - Defaults true set to false to disable clear all
+* `isMulti` - Enable multi select
+* `isSearchable` - Defaults true set to false to disable search/filtering
+* `groupFilter` - Override default groupFilter function
+* `getOptionLabel` - Override default getOptionLabel function
+* `getSelectionLabel` - Override default getSelectionLabel function
+
+
+
 ## Development
 
 ```bash
 yarn global add serve@8
 yarn
 yarn dev
+yarn test:browser
 ```
 
 
@@ -56,4 +76,3 @@ If you're using Rollup with [rollup-plugin-svelte](https://github.com/rollup/rol
 ## License
 
 [LIL](LICENSE)
- 

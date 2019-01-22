@@ -24180,7 +24180,7 @@
 		Object.defineProperty(exports, '__esModule', { value: true });
 
 	})));
-
+	//# sourceMappingURL=svelte.js.map
 	});
 
 	unwrapExports(svelte);
@@ -25266,26 +25266,25 @@
 	}
 	function data$1() {
 	  return {
-	    containerStyles: undefined,
-	    items: [],
-	    filterText: '',
-	    listOpen: false,
 	    Item,
 	    Selection,
 	    MultiSelection,
-	    paddingLeft: 0,
+	    items: [],
+	    filterText: '',
+	    placeholder: 'Select...',
+	    listOpen: false,
+	    containerStyles: undefined,
 	    list: undefined,
 	    target: undefined,
 	    selectedValue: undefined,
+	    groupBy: undefined,
+	    activeSelectedValue: undefined,
 	    isClearable: true,
+	    isMulti: false,
 	    isSearchable: true,
+	    groupFilter: (groups) => groups,
 	    getOptionLabel: (option) => option.label,
 	    getSelectionLabel: (option) => option.label,
-	    placeholder: 'Select...',
-	    groupBy: undefined,
-	    groupFilter: (groups) => groups,
-	    isMulti: false,
-	    activeSelectedValue: undefined
 	  }
 	}
 	var methods$2 = {
@@ -25383,6 +25382,8 @@
 	  loadList() {
 	    let {target, list, Item: Item$$1, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
 	    if (target && list) return;
+
+	    const data = {Item: Item$$1};
 	    target = document.createElement('div');
 
 	    Object.assign(target.style, {
@@ -25391,11 +25392,8 @@
 	    });
 
 	    this.set({list, target});
-
 	    this.getPosition();
 	    this.refs.container.appendChild(target);
-
-	    const data = {Item: Item$$1};
 
 	    if (getOptionLabel) {
 	      data.getOptionLabel = getOptionLabel;
@@ -25676,7 +25674,7 @@
 		};
 	}
 
-	// (9:2) {#if isMulti && selectedValue && selectedValue.length > 0}
+	// (13:2) {#if isMulti && selectedValue && selectedValue.length > 0}
 	function create_if_block_4(component, ctx) {
 		var switch_instance_anchor;
 
@@ -25762,7 +25760,7 @@
 		};
 	}
 
-	// (28:2) {#if !isMulti && showSelectedItem }
+	// (37:2) {#if !isMulti && showSelectedItem }
 	function create_if_block_3(component, ctx) {
 		var div;
 
@@ -25839,7 +25837,7 @@
 		};
 	}
 
-	// (34:2) {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
+	// (43:2) {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
 	function create_if_block_2(component, ctx) {
 		var div;
 
@@ -25869,7 +25867,7 @@
 		};
 	}
 
-	// (44:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
+	// (53:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
 	function create_if_block_1(component, ctx) {
 		var div;
 
@@ -25892,7 +25890,7 @@
 		};
 	}
 
-	// (53:2) {#if isWaiting}
+	// (62:2) {#if isWaiting}
 	function create_if_block$1(component, ctx) {
 		var div;
 
@@ -26981,6 +26979,7 @@
 	        });
 	    });
 	}
+	//# sourceMappingURL=tape-modern.esm.js.map
 
 	// setup
 	const target = document.querySelector('main');
