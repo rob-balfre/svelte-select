@@ -24180,7 +24180,7 @@
 		Object.defineProperty(exports, '__esModule', { value: true });
 
 	})));
-	//# sourceMappingURL=svelte.js.map
+
 	});
 
 	unwrapExports(svelte);
@@ -25449,7 +25449,7 @@
 	    }
 	  }
 
-	  if (changed.filterText && current.filterText.length === 1) {
+	  if (changed.filterText) {
 	    this.loadList();
 	    this.set({listOpen: true});
 	    if (current.isMulti) {
@@ -26981,7 +26981,6 @@
 	        });
 	    });
 	}
-	//# sourceMappingURL=tape-modern.esm.js.map
 
 	// setup
 	const target = document.querySelector('main');
@@ -28380,6 +28379,17 @@
 	  select.destroy();
 	});
 
+	test('should....', async (t) => {
+	  const div = document.createElement('div');
+	  document.body.appendChild(div);
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      items
+	    }
+	  });
+	});
 
 	function focus(element, setFocus) {
 	  return new Promise(fulfil => {

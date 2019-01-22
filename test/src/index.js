@@ -1418,6 +1418,17 @@ test('when isMulti and selectedValue has items and list opens then first item in
   select.destroy();
 });
 
+test('should....', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items
+    }
+  });
+});
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

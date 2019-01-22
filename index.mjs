@@ -1095,7 +1095,7 @@ function onstate({changed, current, previous}) {
     }
   }
 
-  if (changed.filterText && current.filterText.length === 1) {
+  if (changed.filterText) {
     this.loadList();
     this.set({listOpen: true});
     if (current.isMulti) {
