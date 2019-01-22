@@ -9,7 +9,7 @@
   {/if}
 
   <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
-       class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedItem)}">
+       class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue)}">
     <svelte:component this="{Item}" {item} {getOptionLabel}/>
   </div>
   {:else}
@@ -82,7 +82,7 @@
         hoverItemIndex: 0,
         items: [],
         Item,
-        selectedItem: undefined,
+        selectedValue: undefined,
         getOptionLabel: (option) => option.label
       }
     },
@@ -101,10 +101,10 @@
 
         this.scrollToActiveItem('active');
       }
-      if (changed.selectedItem && current.selectedItem) {
+      if (changed.selectedValue && current.selectedValue) {
         this.scrollToActiveItem('active');
-        if (current.items) {
-          const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedItem.value);
+        if (current.items && !current.isMulti) {
+          const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedValue.value);
           if (hoverItemIndex) {
             this.set({hoverItemIndex});
           }
@@ -112,8 +112,8 @@
       }
     },
     helpers: {
-      itemClasses(hoverItemIndex, item, itemIndex, items, selectedItem) {
-        return `${selectedItem && (selectedItem.value === item.value) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue) {
+        return `${selectedValue && (selectedValue.value === item.value) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
       }
     },
     methods: {

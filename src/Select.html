@@ -1,10 +1,16 @@
 <svelte:window on:click="handleWindowClick(event)" on:keydown="handleKeyDown(event)" on:resize="getPosition()"/>
 
 <div
-  class="selectContainer {isDisabled ? 'disabled' : ''}{isFocused ? 'focused' : ''}"
+  class="{containerClasses}"
   style="{containerStyles}"
   on:click="handleClick()"
   ref:container>
+
+  {#if isMulti && selectedValue && selectedValue.length > 0}
+
+  <svelte:component this="{MultiSelection}" {selectedValue} {getSelectionLabel} {activeSelectedValue}
+                    on:multiItemClear="handleMultiItemClear(event.i)" on:focus="handleFocus()"/>
+  {/if}
 
   <input
     ref:input
@@ -19,19 +25,20 @@
     style="{inputStyles}"
   >
 
-  {#if showSelectedItem }
-  <div class="selectedItem" on:focus="handleFocus()" ref:selectedItem>
-    <svelte:component this="{Selection}" {selectedItem} {getSelectionLabel}/>
+  {#if !isMulti && showSelectedItem }
+  <div class="selectedItem" on:focus="handleFocus()">
+    <svelte:component this="{Selection}" {selectedValue} {getSelectionLabel}/>
   </div>
-  {#if isClearable && !isDisabled && !isWaiting}
-  <div class="clearSelectedItem" on:click="handleClear(event)">
+  {/if}
+
+  {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
+  <div class="clearSelect" on:click="handleClear(event)">
     <svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
          role="presentation">
       <path fill="currentColor"
             d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path>
     </svg>
   </div>
-  {/if}
   {/if}
 
   {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
@@ -60,6 +67,7 @@
     border-radius: 3px;
     height: 44px;
     position: relative;
+    display: flex;
     padding: 0 16px;
   }
 
@@ -67,8 +75,8 @@
     cursor: default;
     border: none;
     color: #3F4F5F;
-    height: 44px;
-    line-height: 44px;
+    height: 42px;
+    line-height: 42px;
     padding: 0 16px;
     width: 100%;
     background: transparent;
@@ -105,8 +113,8 @@
   }
 
   .selectedItem {
-    /*padding: 0 16px;*/
-    line-height: 44px;
+    line-height: 42px;
+    height: 42px;
     text-overflow: ellipsis;
     overflow-x: hidden;
     white-space: nowrap;
@@ -117,20 +125,21 @@
     outline: none;
   }
 
-  .clearSelectedItem {
+  .clearSelect {
     position: absolute;
     right: 10px;
     top: 11px;
+    bottom: 11px;
     width: 20px;
-    height: 20px;
     color: #c5cacf;
+    flex: none !important;
   }
 
-  .clearSelectedItem:hover {
+  .clearSelect:hover {
     color: #2c3e50;
   }
 
-  .selectContainer.focused .clearSelectedItem {
+  .selectContainer.focused .clearSelect {
     color: #3F4F5F;
   }
 
@@ -180,6 +189,22 @@
     stroke-linecap: round;
   }
 
+  .multiSelect {
+    display: flex;
+    padding: 0 35px 0 16px;
+    height: auto;
+    flex-wrap: wrap;
+  }
+
+  .multiSelect > * {
+    flex: 1 1 50px;
+  }
+
+  .selectContainer.multiSelect input {
+    padding: 0;
+    position: relative;
+  }
+
   @keyframes rotate {
     100% {
       transform: rotate(360deg);
@@ -191,6 +216,7 @@
   import List from './List.html';
   import Item from './Item.html'
   import Selection from './Selection.html'
+  import MultiSelection from './MultiSelection.html'
 
   export default {
     data() {
@@ -201,40 +227,59 @@
         listOpen: false,
         Item,
         Selection,
+        MultiSelection,
         paddingLeft: 0,
         list: undefined,
         target: undefined,
-        selectedItem: undefined,
+        selectedValue: undefined,
         isClearable: true,
         isSearchable: true,
         getOptionLabel: (option) => option.label,
         getSelectionLabel: (option) => option.label,
         placeholder: 'Select...',
         groupBy: undefined,
-        groupFilter: (groups) => groups
+        groupFilter: (groups) => groups,
+        isMulti: false,
+        activeSelectedValue: undefined
       }
     },
     computed: {
-      showSelectedItem({selectedItem, filterText}) {
-        return selectedItem && filterText.length === 0;
+      containerClasses({isMulti, isDisabled, isFocused}) {
+        let classes = `selectContainer`;
+        classes += isMulti ? ' multiSelect' : '';
+        classes += isDisabled ? ' disabled' : '';
+        classes += isFocused ? ' focused' : '';
+
+        return classes;
       },
-      placeholderText({selectedItem, placeholder}) {
-        return selectedItem ? '' : placeholder
+      showSelectedItem({selectedValue, filterText}) {
+        return selectedValue && filterText.length === 0;
       },
-      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel}) {
+      placeholderText({selectedValue, placeholder}) {
+        return selectedValue ? '' : placeholder
+      },
+      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue}) {
         const filteredItems = items.filter(item => {
-          if (filterText.length < 1) return true;
-          return getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
+          let keepItem = true;
+
+          if (isMulti && selectedValue) {
+            keepItem = !selectedValue.find(({value}) => {
+              return value === item.value
+            });
+          }
+
+          if (keepItem && filterText.length < 1) return true;
+          return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
         });
 
-        if(groupBy) {
+        if (groupBy) {
           const groupValues = [];
           const groups = {};
 
           filteredItems.forEach((item) => {
             const groupValue = groupBy(item);
 
-            if(!groupValues.includes(groupValue)) {
+            if (!groupValues.includes(groupValue)) {
               groupValues.push(groupValue);
               groups[groupValue] = [];
               groups[groupValue].push(Object.assign({groupValue}, item));
@@ -271,6 +316,9 @@
       if (changed.filterText) {
         this.loadList();
         this.set({listOpen: true});
+        if (current.isMulti) {
+          this.set({activeSelectedValue: undefined})
+        }
       }
 
       if (changed.isFocused) {
@@ -287,6 +335,12 @@
       }
     },
     methods: {
+      handleMultiItemClear(i) {
+        const {selectedValue} = this.get();
+        selectedValue.splice(i, 1);
+        this.set({selectedValue: selectedValue.length > 0 ? selectedValue : undefined});
+        this.getPosition();
+      },
       getPosition() {
         const {target} = this.get();
         if (!target) return;
@@ -297,21 +351,44 @@
         this.set({target});
       },
       handleKeyDown(e) {
-        const {isFocused, listOpen} = this.get();
-
+        let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue} = this.get();
         if (!isFocused) return;
 
         switch (e.key) {
           case 'ArrowDown':
             e.preventDefault();
-            this.set({listOpen: true});
+            this.set({listOpen: true, activeSelectedValue: undefined});
             break;
           case 'ArrowUp':
             e.preventDefault();
-            this.set({listOpen: true});
+            this.set({listOpen: true, activeSelectedValue: undefined});
             break;
           case 'Tab':
             if (!listOpen) this.set({isFocused: false});
+            break;
+          case 'Backspace':
+            if (!isMulti || filterText.length > 0) return;
+            this.handleMultiItemClear(activeSelectedValue !== undefined ? activeSelectedValue : selectedValue.length - 1);
+            if (activeSelectedValue === 0) break;
+            this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
+            break;
+          case 'ArrowLeft':
+            if (!isMulti || filterText.length > 0) return;
+            if (activeSelectedValue === undefined) {
+              activeSelectedValue = selectedValue.length - 1;
+            } else if (selectedValue.length > activeSelectedValue && activeSelectedValue !== 0) {
+              activeSelectedValue -= 1
+            }
+            this.set({activeSelectedValue});
+            break;
+          case 'ArrowRight':
+            if (!isMulti || filterText.length > 0 || activeSelectedValue === undefined) return;
+            if (activeSelectedValue === selectedValue.length - 1) {
+              activeSelectedValue = undefined;
+            } else if (activeSelectedValue < selectedValue.length - 1) {
+              activeSelectedValue += 1;
+            }
+            this.set({activeSelectedValue});
             break;
         }
       },
@@ -321,7 +398,7 @@
       },
       removeList() {
         let {list, target} = this.get();
-        this.set({filterText: ''});
+        this.set({filterText: '', activeSelectedValue: undefined});
 
         if (!list) return;
         list.destroy();
@@ -336,7 +413,7 @@
       handleWindowClick(event) {
         if (!this.refs.container) return;
         if (this.refs.container.contains(event.target)) return;
-        this.set({isFocused: false, listOpen: false});
+        this.set({isFocused: false, listOpen: false, activeSelectedValue: undefined});
         if (this.refs.input) this.refs.input.blur();
       },
       handleClick() {
@@ -346,11 +423,11 @@
       },
       handleClear(e) {
         e.stopPropagation();
-        this.set({selectedItem: undefined, listOpen: false});
+        this.set({selectedValue: undefined, listOpen: false});
         this.handleFocus();
       },
       loadList() {
-        let {target, list} = this.get();
+        let {target, list, Item, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
         if (target && list) return;
         target = document.createElement('div');
 
@@ -364,7 +441,6 @@
         this.getPosition();
         this.refs.container.appendChild(target);
 
-        const {Item, getOptionLabel} = this.get();
         const data = {Item};
 
         if (getOptionLabel) {
@@ -376,21 +452,23 @@
           data
         });
 
-        const {items, selectedItem, filteredItems} = this.get();
-
         if (items) {
-          // const match = JSON.stringify(selectedItem);
-          // const activeItemIndex = items.findIndex(item => JSON.stringify(item) === match);
-          list.set({items: filteredItems, selectedItem});
+          list.set({items: filteredItems, selectedValue, isMulti});
         }
 
         list.on('itemSelected', (newSelection) => {
           if (newSelection) {
-            const selection = Object.assign({}, newSelection);
+            const item = Object.assign({}, items.find(item => item.value === newSelection.value));
+            if (isMulti) {
+              selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
+            } else {
+              selectedValue = item;
+            }
 
             this.set({
-              selectedItem: {...selectedItem, ...selection},
-              listOpen: false
+              selectedValue,
+              listOpen: false,
+              activeSelectedValue: undefined
             });
           }
         });
