@@ -705,8 +705,8 @@
 
 	function add_css$1() {
 		var style = createElement("style");
-		style.id = 'svelte-141fy6l-style';
-		style.textContent = ".multiSelectItem.svelte-141fy6l{background:#E8EAED;margin-right:5px;border-radius:4px;line-height:26px;display:flex;cursor:default;height:26px;margin-top:9px}.multiSelectItem_label.svelte-141fy6l{padding:0 5px 0 10px}.multiSelectItem_clear.svelte-141fy6l{border-radius:0 4px 4px 0;width:20px;text-align:center}.multiSelectItem_clear.svelte-141fy6l:hover{background-color:red}.multiSelectItem_clear.svelte-141fy6l svg.svelte-141fy6l{width:14px;height:14px;position:relative;top:3px}";
+		style.id = 'svelte-9z9fu7-style';
+		style.textContent = ".multiSelectItem.svelte-9z9fu7{background:#EBEDEF;margin-right:5px;border-radius:16px;line-height:32px;display:flex;cursor:default;height:32px;margin-top:6px;padding:0 10px 0 15px}.multiSelectItem_label.svelte-9z9fu7{margin-right:5px}.multiSelectItem_clear.svelte-9z9fu7{border-radius:0 4px 4px 0;width:20px;text-align:center}.multiSelectItem.svelte-9z9fu7:hover,.multiSelectItem.active.svelte-9z9fu7{background-color:#006FFF;color:#fff}.multiSelectItem_clear.svelte-9z9fu7{border-radius:50%;background:#52616F;width:16px;height:16px;position:relative;top:8px;text-align:center;padding:1px}.multiSelectItem_clear.svelte-9z9fu7:hover,.active.svelte-9z9fu7 .multiSelectItem_clear.svelte-9z9fu7{background:#fff}.multiSelectItem_clear.svelte-9z9fu7:hover svg.svelte-9z9fu7,.active.svelte-9z9fu7 .multiSelectItem_clear svg.svelte-9z9fu7{fill:#006FFF}.multiSelectItem_clear.svelte-9z9fu7 svg.svelte-9z9fu7{fill:#EBEDEF;vertical-align:top}";
 		append(document.head, style);
 	}
 
@@ -752,7 +752,7 @@
 			},
 
 			p(changed, ctx) {
-				if (changed.selectedValue) {
+				if (changed.activeSelectedValue || changed.selectedValue) {
 					each_value = ctx.selectedValue;
 
 					for (var i = 0; i < each_value.length; i += 1) {
@@ -786,7 +786,7 @@
 
 	// (1:0) {#each selectedValue as value, i}
 	function create_each_block$1(component, ctx) {
-		var div2, div0, text0_value = ctx.value.label, text0, text1, div1, text2;
+		var div2, div0, text0_value = ctx.value.label, text0, text1, div1, text2, div2_class_value;
 
 		return {
 			c() {
@@ -795,15 +795,15 @@
 				text0 = createText(text0_value);
 				text1 = createText("\n  ");
 				div1 = createElement("div");
-				div1.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-141fy6l"><path d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+				div1.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-9z9fu7"><path d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 				text2 = createText("\n");
-				div0.className = "multiSelectItem_label svelte-141fy6l";
+				div0.className = "multiSelectItem_label svelte-9z9fu7";
 
 				div1._svelte = { component, ctx };
 
 				addListener(div1, "click", click_handler$1);
-				div1.className = "multiSelectItem_clear svelte-141fy6l";
-				div2.className = "multiSelectItem svelte-141fy6l";
+				div1.className = "multiSelectItem_clear svelte-9z9fu7";
+				div2.className = div2_class_value = "multiSelectItem " + (ctx.activeSelectedValue === ctx.i ? 'active' : '') + " svelte-9z9fu7";
 			},
 
 			m(target, anchor) {
@@ -822,6 +822,9 @@
 				}
 
 				div1._svelte.ctx = ctx;
+				if ((changed.activeSelectedValue) && div2_class_value !== (div2_class_value = "multiSelectItem " + (ctx.activeSelectedValue === ctx.i ? 'active' : '') + " svelte-9z9fu7")) {
+					div2.className = div2_class_value;
+				}
 			},
 
 			d(detach) {
@@ -839,7 +842,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-141fy6l-style")) add_css$1();
+		if (!document.getElementById("svelte-9z9fu7-style")) add_css$1();
 
 		this._fragment = create_main_fragment$3(this, this._state);
 
@@ -933,12 +936,13 @@
 	    placeholder: 'Select...',
 	    groupBy: undefined,
 	    groupFilter: (groups) => groups,
-	    isMulti: false
+	    isMulti: false,
+	    activeSelectedValue: undefined
 	  }
 	}
 	var methods$2 = {
 	  handleMultiItemClear(i) {
-	    let {selectedValue} = this.get();
+	    const {selectedValue} = this.get();
 	    selectedValue.splice(i, 1);
 	    this.set({selectedValue: selectedValue.length > 0 ? selectedValue : undefined});
 	    this.getPosition();
@@ -953,21 +957,44 @@
 	    this.set({target});
 	  },
 	  handleKeyDown(e) {
-	    const {isFocused, listOpen} = this.get();
-
+	    let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue} = this.get();
 	    if (!isFocused) return;
 
 	    switch (e.key) {
 	      case 'ArrowDown':
 	        e.preventDefault();
-	        this.set({listOpen: true});
+	        this.set({listOpen: true, activeSelectedValue: undefined});
 	        break;
 	      case 'ArrowUp':
 	        e.preventDefault();
-	        this.set({listOpen: true});
+	        this.set({listOpen: true, activeSelectedValue: undefined});
 	        break;
 	      case 'Tab':
 	        if (!listOpen) this.set({isFocused: false});
+	        break;
+	      case 'Backspace':
+	        if (!isMulti || filterText.length > 0) return;
+	        this.handleMultiItemClear(activeSelectedValue !== undefined ? activeSelectedValue : selectedValue.length - 1);
+	        if (activeSelectedValue === 0) break;
+	        this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
+	        break;
+	      case 'ArrowLeft':
+	        if (!isMulti || filterText.length > 0) return;
+	        if (activeSelectedValue === undefined) {
+	          activeSelectedValue = selectedValue.length - 1;
+	        } else if (selectedValue.length > activeSelectedValue && activeSelectedValue !== 0) {
+	          activeSelectedValue -= 1;
+	        }
+	        this.set({activeSelectedValue});
+	        break;
+	      case 'ArrowRight':
+	        if (!isMulti || filterText.length > 0 || activeSelectedValue === undefined) return;
+	        if (activeSelectedValue === selectedValue.length - 1) {
+	          activeSelectedValue = undefined;
+	        } else if (activeSelectedValue < selectedValue.length - 1) {
+	          activeSelectedValue += 1;
+	        }
+	        this.set({activeSelectedValue});
 	        break;
 	    }
 	  },
@@ -977,7 +1004,7 @@
 	  },
 	  removeList() {
 	    let {list, target} = this.get();
-	    this.set({filterText: ''});
+	    this.set({filterText: '', activeSelectedValue: undefined});
 
 	    if (!list) return;
 	    list.destroy();
@@ -992,7 +1019,7 @@
 	  handleWindowClick(event) {
 	    if (!this.refs.container) return;
 	    if (this.refs.container.contains(event.target)) return;
-	    this.set({isFocused: false, listOpen: false});
+	    this.set({isFocused: false, listOpen: false, activeSelectedValue: undefined});
 	    if (this.refs.input) this.refs.input.blur();
 	  },
 	  handleClick() {
@@ -1047,7 +1074,8 @@
 
 	        this.set({
 	          selectedValue,
-	          listOpen: false
+	          listOpen: false,
+	          activeSelectedValue: undefined
 	        });
 	      }
 	    });
@@ -1077,6 +1105,9 @@
 	  if (changed.filterText && current.filterText.length === 1) {
 	    this.loadList();
 	    this.set({listOpen: true});
+	    if (current.isMulti) {
+	      this.set({activeSelectedValue: undefined});
+	    }
 	  }
 
 	  if (changed.isFocused) {
@@ -1094,8 +1125,8 @@
 	}
 	function add_css$2() {
 		var style = createElement("style");
-		style.id = 'svelte-1bvbles-style';
-		style.textContent = ".selectContainer.svelte-1bvbles{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;display:flex;padding:0 16px}.selectContainer.svelte-1bvbles input.svelte-1bvbles{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-1bvbles input.svelte-1bvbles::placeholder{color:#78848F}.selectContainer.svelte-1bvbles input.svelte-1bvbles:focus{outline:none}.selectContainer.svelte-1bvbles:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-1bvbles{border-color:#006FE8}.selectContainer.disabled.svelte-1bvbles{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-1bvbles input.svelte-1bvbles::placeholder{color:#C1C6CC}.selectedItem.svelte-1bvbles{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-1bvbles:focus{outline:none}.clearSelect.svelte-1bvbles{position:absolute;right:10px;top:11px;bottom:11px;width:20px;color:#c5cacf;flex:none !important}.clearSelect.svelte-1bvbles:hover{color:#2c3e50}.selectContainer.focused.svelte-1bvbles .clearSelect.svelte-1bvbles{color:#3F4F5F}.indicator.svelte-1bvbles{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-1bvbles svg.svelte-1bvbles{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-1bvbles{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-1bvbles-rotate 0.75s linear infinite}.spinner_icon.svelte-1bvbles{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-1bvbles{stroke-dasharray:90;stroke-linecap:round}.multiSelect.svelte-1bvbles{display:flex;padding:0 35px 0 16px;height:auto;flex-wrap:wrap}.multiSelect.svelte-1bvbles>.svelte-1bvbles{flex:1 1 50px}.selectContainer.multiSelect.svelte-1bvbles input.svelte-1bvbles{padding:0;position:relative}@keyframes svelte-1bvbles-rotate{100%{transform:rotate(360deg)}}";
+		style.id = 'svelte-k0j9xx-style';
+		style.textContent = ".selectContainer.svelte-k0j9xx{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;display:flex;padding:0 16px}.selectContainer.svelte-k0j9xx input.svelte-k0j9xx{cursor:default;border:none;color:#3F4F5F;height:44px;line-height:44px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-k0j9xx input.svelte-k0j9xx::placeholder{color:#78848F}.selectContainer.svelte-k0j9xx input.svelte-k0j9xx:focus{outline:none}.selectContainer.svelte-k0j9xx:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-k0j9xx{border-color:#006FE8}.selectContainer.disabled.svelte-k0j9xx{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-k0j9xx input.svelte-k0j9xx::placeholder{color:#C1C6CC}.selectedItem.svelte-k0j9xx{line-height:44px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-k0j9xx:focus{outline:none}.clearSelect.svelte-k0j9xx{position:absolute;right:10px;top:11px;bottom:11px;width:20px;color:#c5cacf;flex:none !important}.clearSelect.svelte-k0j9xx:hover{color:#2c3e50}.selectContainer.focused.svelte-k0j9xx .clearSelect.svelte-k0j9xx{color:#3F4F5F}.indicator.svelte-k0j9xx{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-k0j9xx svg.svelte-k0j9xx{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-k0j9xx{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-k0j9xx-rotate 0.75s linear infinite}.spinner_icon.svelte-k0j9xx{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-k0j9xx{stroke-dasharray:90;stroke-linecap:round}.multiSelect.svelte-k0j9xx{display:flex;padding:0 35px 0 16px;height:auto;flex-wrap:wrap}.multiSelect.svelte-k0j9xx>.svelte-k0j9xx{flex:1 1 50px}.selectContainer.multiSelect.svelte-k0j9xx input.svelte-k0j9xx{padding:0;position:relative}@keyframes svelte-k0j9xx-rotate{100%{transform:rotate(360deg)}}";
 		append(document.head, style);
 	}
 
@@ -1161,9 +1192,9 @@
 				input.placeholder = ctx.placeholderText;
 				input.disabled = ctx.isDisabled;
 				input.style.cssText = ctx.inputStyles;
-				input.className = "svelte-1bvbles";
+				input.className = "svelte-k0j9xx";
 				addListener(div, "click", click_handler);
-				div.className = "" + ctx.containerClasses + " svelte-1bvbles";
+				div.className = "" + ctx.containerClasses + " svelte-k0j9xx";
 				div.style.cssText = ctx.containerStyles;
 			},
 
@@ -1265,7 +1296,7 @@
 				}
 
 				if (changed.containerClasses) {
-					div.className = "" + ctx.containerClasses + " svelte-1bvbles";
+					div.className = "" + ctx.containerClasses + " svelte-k0j9xx";
 				}
 
 				if (changed.containerStyles) {
@@ -1307,7 +1338,8 @@
 		function switch_props(ctx) {
 			var switch_instance_initial_data = {
 			 	selectedValue: ctx.selectedValue,
-			 	getSelectionLabel: ctx.getSelectionLabel
+			 	getSelectionLabel: ctx.getSelectionLabel,
+			 	activeSelectedValue: ctx.activeSelectedValue
 			 };
 			return {
 				root: component.root,
@@ -1349,6 +1381,7 @@
 				var switch_instance_changes = {};
 				if (changed.selectedValue) switch_instance_changes.selectedValue = ctx.selectedValue;
 				if (changed.getSelectionLabel) switch_instance_changes.getSelectionLabel = ctx.getSelectionLabel;
+				if (changed.activeSelectedValue) switch_instance_changes.activeSelectedValue = ctx.activeSelectedValue;
 
 				if (switch_value !== (switch_value = ctx.MultiSelection)) {
 					if (switch_instance) {
@@ -1413,7 +1446,7 @@
 				div = createElement("div");
 				if (switch_instance) switch_instance._fragment.c();
 				addListener(div, "focus", focus_handler);
-				div.className = "selectedItem svelte-1bvbles";
+				div.className = "selectedItem svelte-k0j9xx";
 			},
 
 			m(target, anchor) {
@@ -1470,9 +1503,9 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-1bvbles"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+				div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-k0j9xx"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 				addListener(div, "click", click_handler);
-				div.className = "clearSelect svelte-1bvbles";
+				div.className = "clearSelect svelte-k0j9xx";
 			},
 
 			m(target, anchor) {
@@ -1496,8 +1529,8 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-1bvbles"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
-				div.className = "indicator svelte-1bvbles";
+				div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-k0j9xx"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
+				div.className = "indicator svelte-k0j9xx";
 			},
 
 			m(target, anchor) {
@@ -1519,8 +1552,8 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg class="spinner_icon svelte-1bvbles" viewBox="25 25 50 50"><circle class="spinner_path svelte-1bvbles" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
-				div.className = "spinner svelte-1bvbles";
+				div.innerHTML = `<svg class="spinner_icon svelte-k0j9xx" viewBox="25 25 50 50"><circle class="spinner_path svelte-k0j9xx" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
+				div.className = "spinner svelte-k0j9xx";
 			},
 
 			m(target, anchor) {
@@ -1547,7 +1580,7 @@
 
 		this._handlers.destroy = [ondestroy];
 
-		if (!document.getElementById("svelte-1bvbles-style")) add_css$2();
+		if (!document.getElementById("svelte-k0j9xx-style")) add_css$2();
 
 		onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 

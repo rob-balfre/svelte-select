@@ -1361,6 +1361,49 @@ test('when isMulti and selected items reach edge of container then Select height
   select.destroy();
 });
 
+test('when isMulti and selectedValue is populated then navigating with LeftArrow updates activeSelectedValue', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}, {value: 'chips', label: 'Chips'},],
+      isFocused: true
+    }
+  });
+
+  target.style.maxWidth = '100%';
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+  t.ok(select.get().activeSelectedValue === 1)
+
+  select.destroy();
+});
+
+test('when isMulti and selectedValue is populated then navigating with ArrowRight updates activeSelectedValue', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}, {value: 'chips', label: 'Chips'},],
+      isFocused: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowRight'}));
+  t.ok(select.get().activeSelectedValue === 1);
+
+  select.destroy();
+});
+
+
+
+// Bugs - first item isn't always hover active when list open (using arrow key)
+// Bugs - when every item is selected expect the last that item can not be added via keypress
 
 
 function focus(element, setFocus) {

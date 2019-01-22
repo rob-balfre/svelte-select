@@ -1,5 +1,5 @@
 {#each selectedValue as value, i}
-<div class="multiSelectItem">
+<div class="multiSelectItem {activeSelectedValue === i ? 'active' : ''}">
   <div class="multiSelectItem_label">
     {value.label}
   </div>
@@ -25,18 +25,19 @@
 
 <style>
   .multiSelectItem {
-    background: #E8EAED;
+    background: #EBEDEF;
     margin-right: 5px;
-    border-radius: 4px;
-    line-height: 26px;
+    border-radius: 16px;
+    line-height: 32px;
     display: flex;
     cursor: default;
-    height: 26px;
-    margin-top: 9px;
+    height: 32px;
+    margin-top: 6px;
+    padding: 0 10px 0 15px;
   }
 
   .multiSelectItem_label {
-    padding: 0 5px 0 10px;
+    margin-right: 5px;
   }
 
   .selectContainer.multiSelect input {
@@ -51,14 +52,35 @@
     text-align: center;
   }
 
-  .multiSelectItem_clear:hover {
-    background-color: red;
+  .multiSelectItem:hover,
+  .multiSelectItem.active {
+    background-color: #006FFF;
+    color: #fff;
+  }
+
+  .multiSelectItem_clear {
+    border-radius: 50%;
+    background: #52616F;
+    width: 16px;
+    height: 16px;
+    position: relative;
+    top: 8px;
+    text-align: center;
+    padding: 1px;
+  }
+
+  .multiSelectItem_clear:hover,
+  .active .multiSelectItem_clear {
+    background: #fff;
+  }
+
+  .multiSelectItem_clear:hover svg,
+  .active .multiSelectItem_clear svg {
+    fill: #006FFF;
   }
 
   .multiSelectItem_clear svg {
-    width: 14px;
-    height: 14px;
-    position: relative;
-    top: 3px;
+    fill: #EBEDEF;
+    vertical-align: top;
   }
 </style>
