@@ -1,56 +1,76 @@
 <svelte:window on:keydown="handleKeyDown(event)"/>
 
 <div class="listContainer" ref:container>
-    {#each items as item, i}
-    <div on:mouseover="handleHover(item)" on:click="handleClick(item, event)"
-         class="listItem {itemClasses(hoverItemIndex, item, item.index, items, selectedItem)}">
-        <svelte:component this="{Item}" {item}/>
-    </div>
-    {:else}
-    <div class="empty">No options</div>
-    {/each}
+  {#each items as item, i}
+  {#if item.groupValue}
+  <div class="listGroupTitle">
+    {item.groupValue}
+  </div>
+  {/if}
+
+  <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
+       class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue)}">
+    <svelte:component this="{Item}" {item} {getOptionLabel}/>
+  </div>
+  {:else}
+  <div class="empty">No options</div>
+  {/each}
 </div>
 
 <style>
-    .listContainer {
-        box-shadow: 0 2px 3px 0 rgba(44, 62, 80, 0.24);
-        border-radius: 4px;
-        max-height: 250px;
-        overflow-y: auto;
-        background: #fff;
-    }
+  .listContainer {
+    box-shadow: 0 2px 3px 0 rgba(44, 62, 80, 0.24);
+    border-radius: 4px;
+    max-height: 250px;
+    overflow-y: auto;
+    background: #fff;
+  }
 
-    .listItem {
-        height: 40px;
-        line-height: 40px;
-        padding: 0 20px;
-        text-overflow: ellipsis;
-        overflow-x: hidden;
-        white-space: nowrap;
-    }
+  .listGroupTitle {
+    color: #8f8f8f;
+    cursor: default;
+    font-size: 12px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
 
-    .listItem.hover {
-        background: #e7f2ff;
-    }
+  .listItem {
+    cursor: default;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
+  }
 
-    .listItem:active {
-        background: #b9daff;
-    }
+  .listItem.hover {
+    background: #e7f2ff;
+  }
 
-    .listItem:first-child {
-        border-radius: 4px 4px 0 0;
-    }
+  .listItem:active {
+    background: #b9daff;
+  }
 
-    .listItem.active {
-        background: #007aff;
-        color: #fff;
-    }
+  .listItem:first-child {
+    border-radius: 4px 4px 0 0;
+  }
 
-    .empty {
-        text-align: center;
-        padding: 20px 0;
-        color: #78848F;
-    }
+  .listItem.active {
+    background: #007aff;
+    color: #fff;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 20px 0;
+    color: #78848F;
+  }
 </style>
 
 <script>
@@ -62,56 +82,50 @@
         hoverItemIndex: 0,
         items: [],
         Item,
-        disableMouseHover: false,
-        selectedItem: undefined
+        selectedValue: undefined,
+        getOptionLabel: (option) => option.label
       }
     },
-    onupdate({changed, current, previous}) {
-
-      // console.log(current.items);
-
+    onupdate({changed, current}) {
       if (changed.items && current.items.length > 0) {
-        this.scrollToActiveItem('hover');
-        if (!current.items.find((item) => item.index === current.hoverItemIndex)) {
+        if (!current.items[current.hoverItemIndex]) {
           this.set({
-            hoverItemIndex: current.items[0].index,
-            disableMouseHover: false
-          })
+            hoverItemIndex: current.items.length - 1
+          });
         }
       }
       if (changed.activeItemIndex && current.activeItemIndex > -1) {
-        this.scrollToActiveItem('active');
         this.set({
           hoverItemIndex: current.activeItemIndex,
-        })
-      }
-      if (changed.selectedItem && current.selectedItem) {
-        this.scrollToActiveItem('active');
-        const hoverItemIndex = current.items.find(item => item.value === current.selectedItem.value).index;
-        this.set({hoverItemIndex});
-      }
+        });
 
+        this.scrollToActiveItem('active');
+      }
+      if (changed.selectedValue && current.selectedValue) {
+        this.scrollToActiveItem('active');
+        if (current.items && !current.isMulti) {
+          const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedValue.value);
+          if (hoverItemIndex) {
+            this.set({hoverItemIndex});
+          }
+        }
+      }
     },
     helpers: {
-      itemClasses(hoverItemIndex, item, itemIndex, items, selectedItem) {
-        return `${selectedItem && (selectedItem.value === item.value) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue) {
+        return `${selectedValue && (selectedValue.value === item.value) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
       }
     },
     methods: {
       handleSelect(item) {
         this.fire('itemSelected', item);
       },
-      handleHover(item) {
-        const {disableMouseHover} = this.get();
-        if (!disableMouseHover) {
-          this.set({hoverItemIndex: item.index});
-        } else {
-          this.set({disableMouseHover: false})
-        }
+      handleHover(i) {
+        this.set({hoverItemIndex: i});
       },
-      handleClick(item, event) {
+      handleClick(item, i, event) {
         event.stopPropagation();
-        this.set({activeItemIndex: item.index, hoverItemIndex: item.index});
+        this.set({activeItemIndex: i, hoverItemIndex: i});
         this.handleSelect(item);
       },
       updateHoverItem(increment) {
@@ -127,10 +141,12 @@
           hoverItemIndex = hoverItemIndex + increment;
         }
 
-        this.set({items, hoverItemIndex})
+        this.set({hoverItemIndex});
+        this.scrollToActiveItem('hover');
       },
       handleKeyDown(e) {
         const {items, hoverItemIndex} = this.get();
+
         switch (e.key) {
           case 'ArrowDown':
             e.preventDefault();
@@ -153,13 +169,14 @@
         }
       },
       scrollToActiveItem(className) {
-        this.set({disableMouseHover: true});
         const {container} = this.refs;
         let offsetBounding;
         const focusedElemBounding = container.querySelector(`.listItem.${className}`);
+
         if (focusedElemBounding) {
           offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
         }
+
         container.scrollTop -= offsetBounding;
       }
     }

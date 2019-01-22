@@ -2,11 +2,13 @@
 <link rel="stylesheet" href="../reset.css"/>
 
 <div class="listContainer">
+  <div class="listGroupTitle">Sweet</div>
   <div class="listItem hover">Chocolate</div>
-  <div class="listItem">Pizza</div>
   <div class="listItem">Cake</div>
-  <div class="listItem">Chips</div>
   <div class="listItem">Ice Cream</div>
+  <div class="listGroupTitle">Savory</div>
+  <div class="listItem">Pizza</div>
+  <div class="listItem">Chips</div>
 </div>
 
 <style>
@@ -15,6 +17,19 @@
     border-radius: 4px;
     height: 176px;
     overflow-y: auto;
+  }
+
+  .listGroupTitle {
+    color: #8f8f8f;
+    cursor: default;
+    font-size: 12px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-transform: uppercase;
   }
 
   .listItem {

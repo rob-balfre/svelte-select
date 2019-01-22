@@ -1,15 +1,15 @@
 <div class="container">
-    <Select bind:selectedItem {items}></Select>
+  <Select bind:selectedValue {items}></Select>
 
-    <p class="result">{selectedItem.label}</p>
+  <p class="result">{selectedValue.label}</p>
 </div>
 
 <script>
-    import Select from '../../../src/Select.html';
+  import Select from '../../../src/Select.html';
 
-    export default {
-      components: {
-        Select
-      }
+  export default {
+    components: {
+      Select
     }
+  }
 </script>
