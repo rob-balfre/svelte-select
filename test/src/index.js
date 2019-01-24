@@ -1,5 +1,6 @@
 import svelte from 'svelte';
 import {Store} from 'svelte/store.js';
+import CustomItem from './CustomItem.html';
 import Select from '../../src/Select.html';
 import List from '../../src/List.html';
 import SelectDefault from './Select/Select--default.html'
@@ -1181,10 +1182,17 @@ test.only('should....', async (t) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
 
-  const select = new Select({
+  new Select({
     target,
     data: {
-      items
+      getSelectionLabel: (item) => item.name,
+      getOptionLabel: (option) => `<img src="${option.image_url}"> ${option.name} (${option.tagline}) - ${option.abv}%`,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',
+      isFocused: true,
+      noOptionsMessage: 'NO NO NO OPTIONS',
+      openMenuOnFocus: true,
+      Item: CustomItem
     }
   });
 });
@@ -1197,6 +1205,27 @@ function focus(element, setFocus) {
     });
 
     setFocus();
+  });
+}
+
+function getPosts(filterText) {
+  filterText = filterText ? filterText.replace(' ','_') : '';
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `https://api.punkapi.com/v2/beers?beer_name=${filterText}`);
+    xhr.send();
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        setTimeout(resolve(JSON.parse(xhr.response).sort((a, b) => {
+          if (a.name > b.name) return 1;
+          if (a.name < b.name) return -1;
+        })), 2000);
+      } else {
+        reject()
+      }
+    };
   });
 }
 

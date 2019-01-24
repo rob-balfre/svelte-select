@@ -195,6 +195,7 @@
   export default {
     data() {
       return {
+        autoFocus: false,
         containerStyles: undefined,
         items: [],
         filterText: '',
@@ -207,11 +208,15 @@
         selectedItem: undefined,
         isClearable: true,
         isSearchable: true,
+        optionIdentifier: 'value',
         getOptionLabel: (option) => option.label,
         getSelectionLabel: (option) => option.label,
         placeholder: 'Select...',
         groupBy: undefined,
-        groupFilter: (groups) => groups
+        groupFilter: (groups) => groups,
+        getOptions: undefined,
+        loadOptionsInterval: 200,
+        noOptionsMessage: 'No options'
       }
     },
     computed: {
@@ -269,8 +274,26 @@
       }
 
       if (changed.filterText) {
-        this.loadList();
-        this.set({listOpen: true});
+        if(current.loadOptions) {
+          clearTimeout(this.loadOptionsTimeout);
+          this.set({isWaiting:true});
+
+          this.loadOptionsTimeout = setTimeout(() => {
+            if(current.filterText) {
+              current.loadOptions(current.filterText).then((response) => {
+                this.set({ items: response });
+              });
+            } else {
+              this.set({ items: [] });
+            }
+
+            this.set({isWaiting:false});
+            this.set({listOpen: true});
+          }, current.loadOptionsInterval);
+        } else {
+          this.loadList();
+          this.set({listOpen: true});
+        }
       }
 
       if (changed.isFocused) {
@@ -292,7 +315,7 @@
         if (!target) return;
         const {top, height, width} = this.refs.container.getBoundingClientRect();
         target.style.top = `${height + 5}px`;
-        target.style.minWidth = `${width}px`;
+        target.style.width = `${width}px`;
         target.style.left = '0';
         this.set({target});
       },
@@ -364,8 +387,8 @@
         this.getPosition();
         this.refs.container.appendChild(target);
 
-        const {Item, getOptionLabel} = this.get();
-        const data = {Item};
+        const {Item, getOptionLabel, optionIdentifier, noOptionsMessage} = this.get();
+        const data = {Item, optionIdentifier, noOptionsMessage};
 
         if (getOptionLabel) {
           data.getOptionLabel = getOptionLabel;
@@ -399,7 +422,10 @@
       }
     },
     oncreate() {
-      const {listOpen} = this.get();
+      const {isFocused,listOpen} = this.get();
+      this.loadOptionsTimeout = undefined;
+
+      if (isFocused) this.refs.input.focus();
       if (listOpen) this.loadList();
     },
     ondestroy() {

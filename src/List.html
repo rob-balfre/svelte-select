@@ -9,11 +9,11 @@
   {/if}
 
   <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
-       class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedItem)}">
+       class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedItem, optionIdentifier)}">
     <svelte:component this="{Item}" {item} {getOptionLabel}/>
   </div>
   {:else}
-  <div class="empty">No options</div>
+  <div class="empty">{noOptionsMessage}</div>
   {/each}
 </div>
 
@@ -45,7 +45,7 @@
     line-height: 40px;
     padding: 0 20px;
     text-overflow: ellipsis;
-    overflow-x: hidden;
+    overflow: hidden;
     white-space: nowrap;
   }
 
@@ -80,6 +80,7 @@
     data() {
       return {
         hoverItemIndex: 0,
+        optionIdentifier: 'value',
         items: [],
         Item,
         selectedItem: undefined,
@@ -105,6 +106,7 @@
         this.scrollToActiveItem('active');
         if (current.items) {
           const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedItem.value);
+
           if (hoverItemIndex) {
             this.set({hoverItemIndex});
           }
@@ -112,8 +114,8 @@
       }
     },
     helpers: {
-      itemClasses(hoverItemIndex, item, itemIndex, items, selectedItem) {
-        return `${selectedItem && (selectedItem.value === item.value) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+      itemClasses(hoverItemIndex, item, itemIndex, items, selectedItem, optionIdentifier) {
+        return `${selectedItem && (selectedItem[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
       }
     },
     methods: {
@@ -150,11 +152,11 @@
         switch (e.key) {
           case 'ArrowDown':
             e.preventDefault();
-            this.updateHoverItem(1);
+            items.length && this.updateHoverItem(1);
             break;
           case 'ArrowUp':
             e.preventDefault();
-            this.updateHoverItem(-1);
+            items.length && this.updateHoverItem(-1);
             break;
           case 'Enter':
             e.preventDefault();
