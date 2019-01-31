@@ -1,6 +1,6 @@
 # svelte-select ([demo](https://stackblitz.com/edit/svelte-rhbzxj))
 
-A select component for Svelte apps.
+A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
 
 ## Installation
 
@@ -36,23 +36,27 @@ yarn add svelte-select
 
 ```
 
-## Select API options (props)
+## API
 
-Common props you may want to specify include:
-
+* `items` - array of items
 * `filterText` - text to filter list labels by
 * `placeholder` - placeholder text
+* `optionIdentifier` - Override default identifier ('value')
 * `listOpen` - open/close list
 * `containerStyles` - add/override container styles 
 * `selectedValue` - Selected value(s) 
 * `groupBy` - Function to group list items
 * `isClearable` - Defaults true set to false to disable clear all
+* `isDisabled` - Disable select
 * `isMulti` - Enable multi select
 * `isSearchable` - Defaults true set to false to disable search/filtering
 * `groupFilter` - Override default groupFilter function
 * `getOptionLabel` - Override default getOptionLabel function
-* `getSelectionLabel` - Override default getSelectionLabel function
-
+* `Item` - Override default item component
+* `Selection` - Override default selection component
+* `MultiSelection` - Override default multi selection component
+* `getOptions` - Methods that returns a Promise that updates items  
+* `noOptionsMessage` - Message to display when there are no items  
 
 
 ## Development

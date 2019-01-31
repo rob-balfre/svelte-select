@@ -1,5 +1,6 @@
 import svelte from 'svelte';
 import {Store} from 'svelte/store.js';
+import CustomItem from './CustomItem.html';
 import Select from '../../src/Select.html';
 import List from '../../src/List.html';
 import SelectDefault from './Select/Select--default.html'
@@ -252,7 +253,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   const {container} = list.refs;
   const focusedElemBounding = container.querySelector('.listItem.hover');
-  t.equal(focusedElemBounding.innerHTML.trim(), `Pizza`);
+  t.equal(focusedElemBounding.innerHTML.trim(), `<div class="item">Pizza</div>`);
   list.destroy();
 });
 
@@ -887,16 +888,18 @@ test(`two way binding between Select and it's parent component`, async (t) => {
     }
   });
 
-  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+  t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
+
   parent.set({
     selectedValue: {value: 'ice-cream', label: 'Ice Cream'},
   });
-  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+
+  t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
   document.querySelector('.selectContainer').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+  t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
 
   parent.destroy();
 });
@@ -1340,7 +1343,7 @@ test('when isMulti and groupBy is active then items should be selectable', async
   document.querySelector('.selectContainer').click();
   document.querySelector('.listItem').click();
 
-  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
+  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{groupValue: 'Sweet', value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
 
   select.destroy();
 });
@@ -1418,7 +1421,6 @@ test('when isMulti and selectedValue has items and list opens then first item in
   select.destroy();
 });
 
-
 test('when isMulti, isDisabled, and selectedValue has items then items should be locked', async (t) => {
   const select = new Select({
     target,
@@ -1441,7 +1443,7 @@ test('when getValue method is set should use that key to update selectedValue', 
     data: {
       items: [{id: 0, label: 'ONE'}, {id: 1, label: 'TWO'}],
       selectedValue: {id: 0, label: 'ONE'},
-      getValue: (option) => option.id
+      optionIdentifier: 'id'
     }
   });
 
@@ -1454,17 +1456,228 @@ test('when getValue method is set should use that key to update selectedValue', 
   select.destroy();
 });
 
-// test('should....', async (t) => {
-//   const div = document.createElement('div');
-//   document.body.appendChild(div);
-//
-//   const select = new Select({
-//     target,
-//     data: {
-//       items
-//     }
-//   });
-// });
+test('when loadOptions method is supplied and filterText has length then items should populate via promise resolve', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      getOptionLabel: (option) => option.name,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',
+      Item: CustomItem,
+      Selection: CustomItem
+    }
+  });
+
+  select.set({filterText: 'Juniper'});
+  await wait(500);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  select.destroy();
+});
+
+test('when noOptionsMessage is set and there are no items then show message', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      noOptionsMessage: 'SO SO SO SCANDALOUS',
+      isFocused: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.empty').innerHTML === 'SO SO SO SCANDALOUS');
+
+  select.destroy();
+});
+
+test('when noOptionsMessage is set and there are no items then show message', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      noOptionsMessage: 'SO SO SO SCANDALOUS',
+      isFocused: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.empty').innerHTML === 'SO SO SO SCANDALOUS');
+
+  select.destroy();
+});
+
+test('when getSelectionLabel method is supplied and selectedValue are no items then display result of getSelectionLabel', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      getSelectionLabel: (option) => option.notLabel,
+      selectedValue: {notLabel: 'This is not a label', value: 'not important'},
+    }
+  });
+
+
+  t.ok(document.querySelector('.selection').innerHTML === 'This is not a label');
+
+  select.destroy();
+});
+
+test('when getOptionLabel method and items is supplied then display result of getOptionLabel for each option', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      getOptionLabel: (option) => option.notLabel,
+      isFocused: true,
+      items: [{notLabel: 'This is not a label', value: 'not important #1'}, {notLabel: 'This is not also not a label', value: 'not important #2'}],
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.item').innerHTML === 'This is not a label');
+
+  select.destroy();
+});
+
+test('when getOptionLabel method and items is supplied then display result of getOptionLabel for each option', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      getOptionLabel: (option) => option.notLabel,
+      isFocused: true,
+      items: [{notLabel: 'This is not a label', value: 'not important #1'}, {notLabel: 'This is not also not a label', value: 'not important #2'}],
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.item').innerHTML === 'This is not a label');
+
+  select.destroy();
+});
+
+
+test('when a custom Item component is supplied then use to display each item', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      Item: CustomItem,
+      getOptionLabel: (option) => option.name,
+      isFocused: true,
+      items: [{
+        image_url: 'https://images.punkapi.com/v2/keg.png',
+        name: 'A Name', tagline: 'A tagline', abv: 'A abv'}],
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
+
+  select.destroy();
+});
+
+test('when a custom Selection component is supplied then use to display selection', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      Item: CustomItem,
+      Selection: CustomItem,
+      getOptionLabel: (option) => option.name,
+      isFocused: true,
+      items: [{
+        image_url: 'https://images.punkapi.com/v2/keg.png',
+        name: 'A Name', tagline: 'A tagline', abv: 'A abv'}],
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
+
+  select.destroy();
+});
+
+test('when loadOptions method is supplied, isMulti is true and filterText has length then items should populate via promise resolve', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      getOptionLabel: (option) => option.name,
+      getSelectionLabel: (option) => option.name,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',
+      Item: CustomItem,
+      isMulti: true
+    }
+  });
+
+  select.set({filterText: 'Juniper'});
+  await wait(500);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(document.querySelector('.multiSelectItem_label').innerHTML === 'Juniper Wheat Beer');
+  select.destroy();
+});
+
+test('when getSelectionLabel contains HTML then render the HTML', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      selectedValue: items[0],
+      getSelectionLabel: (option) => `<p>${option.label}</p>`,
+    }
+  });
+
+  t.ok(document.querySelector('.selection').innerHTML === '<p>Chocolate</p>');
+
+  select.destroy();
+});
+
+test('when getOptionLabel contains HTML then render the HTML', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      getOptionLabel: (option) => `<p>${option.label}</p>`,
+      isFocused: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.item').innerHTML === '<p>Chocolate</p>');
+
+  select.destroy();
+});
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
@@ -1474,6 +1687,27 @@ function focus(element, setFocus) {
     });
 
     setFocus();
+  });
+}
+
+function getPosts(filterText) {
+  filterText = filterText ? filterText.replace(' ','_') : '';
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `https://api.punkapi.com/v2/beers?beer_name=${filterText}`);
+    xhr.send();
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        setTimeout(resolve(JSON.parse(xhr.response).sort((a, b) => {
+          if (a.name > b.name) return 1;
+          if (a.name < b.name) return -1;
+        })), 2000);
+      } else {
+        reject()
+      }
+    };
   });
 }
 
