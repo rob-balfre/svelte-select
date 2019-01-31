@@ -1,5 +1,13 @@
 # svelte-select changelog
 
+## 1.2.0
+
+* Updated README
+* Added Async (getOptions)
+* Added noOptionsMessage  
+* Bug fixes
+* Updated examples
+
 ## 1.1.0
 
 * Updated README

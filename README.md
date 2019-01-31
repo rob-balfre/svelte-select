@@ -1,6 +1,6 @@
 # svelte-select ([demo](https://stackblitz.com/edit/svelte-rhbzxj))
 
-A select component for Svelte apps.
+A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
 
 ## Installation
 
