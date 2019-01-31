@@ -9,11 +9,11 @@
   {/if}
 
   <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
-       class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, getValue)}">
+       class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier)}">
     <svelte:component this="{Item}" {item} {getOptionLabel}/>
   </div>
   {:else}
-  <div class="empty">No options</div>
+  <div class="empty">{noOptionsMessage}</div>
   {/each}
 </div>
 
@@ -45,7 +45,7 @@
     line-height: 40px;
     padding: 0 20px;
     text-overflow: ellipsis;
-    overflow-x: hidden;
+    overflow: hidden;
     white-space: nowrap;
   }
 
@@ -80,12 +80,33 @@
     data() {
       return {
         hoverItemIndex: 0,
+        optionIdentifier: 'value',
         items: [],
         Item,
         selectedValue: undefined,
         getOptionLabel: (option) => option.label,
-        getValue: (option) => option.value
+        noOptionsMessage: 'No options'
       }
+    },
+    oncreate() {
+      this.isScrollingTimer = 0;
+
+      this.refs.container.addEventListener('scroll', () => {
+        clearTimeout(this.isScrollingTimer);
+
+        this.set({
+          isScrolling: true
+        });
+
+        this.isScrollingTimer = setTimeout(() => {
+          this.set({
+            isScrolling: false
+          });
+        }, 100);
+      }, false);
+    },
+    ondestroy() {
+      clearTimeout(this.isScrollingTimer);
     },
     onupdate({changed, current}) {
       if (changed.items && current.items.length > 0) {
@@ -104,8 +125,10 @@
       }
       if (changed.selectedValue && current.selectedValue) {
         this.scrollToActiveItem('active');
+
         if (current.items && !current.isMulti) {
-          const hoverItemIndex = current.items.findIndex((item) => current.getValue(item) === current.getValue(current.selectedValue));
+          const hoverItemIndex = current.items.findIndex((item) => item[current.optionIdentifier] === current.selectedValue[current.optionIdentifier]);
+
           if (hoverItemIndex) {
             this.set({hoverItemIndex});
           }
@@ -113,8 +136,8 @@
       }
     },
     helpers: {
-      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, getValue) {
-        return `${selectedValue && (getValue(selectedValue) === getValue(item)) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier) {
+        return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
       }
     },
     methods: {
@@ -122,6 +145,7 @@
         this.fire('itemSelected', item);
       },
       handleHover(i) {
+        if(this.get().isScrolling) return;
         this.set({hoverItemIndex: i});
       },
       handleClick(item, i, event) {
@@ -151,11 +175,11 @@
         switch (e.key) {
           case 'ArrowDown':
             e.preventDefault();
-            this.updateHoverItem(1);
+            items.length && this.updateHoverItem(1);
             break;
           case 'ArrowUp':
             e.preventDefault();
-            this.updateHoverItem(-1);
+            items.length && this.updateHoverItem(-1);
             break;
           case 'Enter':
             e.preventDefault();

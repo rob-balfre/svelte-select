@@ -1,5 +1,6 @@
 import svelte from 'svelte';
 import {Store} from 'svelte/store.js';
+import CustomItem from './CustomItem.html';
 import Select from '../../src/Select.html';
 import List from '../../src/List.html';
 import SelectDefault from './Select/Select--default.html'
@@ -252,7 +253,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   const {container} = list.refs;
   const focusedElemBounding = container.querySelector('.listItem.hover');
-  t.equal(focusedElemBounding.innerHTML.trim(), `Pizza`);
+  t.equal(focusedElemBounding.innerHTML.trim(), `<div class="item">Pizza</div>`);
   list.destroy();
 });
 
@@ -888,9 +889,11 @@ test(`two way binding between Select and it's parent component`, async (t) => {
   });
 
   t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+
   parent.set({
     selectedValue: {value: 'ice-cream', label: 'Ice Cream'},
   });
+
   t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
   document.querySelector('.selectContainer').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
@@ -1340,7 +1343,7 @@ test('when isMulti and groupBy is active then items should be selectable', async
   document.querySelector('.selectContainer').click();
   document.querySelector('.listItem').click();
 
-  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
+  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{groupValue: 'Sweet', value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
 
   select.destroy();
 });
@@ -1418,7 +1421,6 @@ test('when isMulti and selectedValue has items and list opens then first item in
   select.destroy();
 });
 
-
 test('when isMulti, isDisabled, and selectedValue has items then items should be locked', async (t) => {
   const select = new Select({
     target,
@@ -1454,14 +1456,21 @@ test('when getValue method is set should use that key to update selectedValue', 
   select.destroy();
 });
 
-// test('should....', async (t) => {
+// test.only('should....', async (t) => {
 //   const div = document.createElement('div');
 //   document.body.appendChild(div);
 //
-//   const select = new Select({
+//   new Select({
 //     target,
 //     data: {
-//       items
+//       getSelectionLabel: (item) => item.name,
+//       getOptionLabel: (option) => `<img src="${option.image_url}"> ${option.name} (${option.tagline}) - ${option.abv}%`,
+//       loadOptions: getPosts,
+//       optionIdentifier: 'id',
+//       isFocused: true,
+//       noOptionsMessage: 'NO NO NO OPTIONS',
+//       openMenuOnFocus: true,
+//       Item: CustomItem
 //     }
 //   });
 // });
@@ -1474,6 +1483,27 @@ function focus(element, setFocus) {
     });
 
     setFocus();
+  });
+}
+
+function getPosts(filterText) {
+  filterText = filterText ? filterText.replace(' ','_') : '';
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `https://api.punkapi.com/v2/beers?beer_name=${filterText}`);
+    xhr.send();
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        setTimeout(resolve(JSON.parse(xhr.response).sort((a, b) => {
+          if (a.name > b.name) return 1;
+          if (a.name < b.name) return -1;
+        })), 2000);
+      } else {
+        reject()
+      }
+    };
   });
 }
 

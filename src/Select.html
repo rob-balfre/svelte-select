@@ -13,10 +13,10 @@
   {#if isMulti && selectedValue && selectedValue.length > 0}
   <svelte:component
     this="{MultiSelection}"
-    {isDisabled}
     {selectedValue}
     {getSelectionLabel}
     {activeSelectedValue}
+    {isDisabled}
     on:multiItemClear="handleMultiItemClear(event.i)"
     on:focus="handleFocus()"
   />
@@ -231,6 +231,7 @@
   export default {
     data() {
       return {
+        containerStyles: undefined,
         Item,
         Selection,
         MultiSelection,
@@ -238,19 +239,21 @@
         filterText: '',
         placeholder: 'Select...',
         listOpen: false,
-        containerStyles: undefined,
         list: undefined,
         target: undefined,
         selectedValue: undefined,
-        groupBy: undefined,
         activeSelectedValue: undefined,
         isClearable: true,
         isMulti: false,
         isSearchable: true,
+        optionIdentifier: 'value',
+        groupBy: undefined,
+        getOptions: undefined,
+        loadOptionsInterval: 200,
+        noOptionsMessage: 'No options',
         groupFilter: (groups) => groups,
         getOptionLabel: (option) => option.label,
         getSelectionLabel: (option) => option.label,
-        getValue: (option) => option.value,
       }
     },
     computed: {
@@ -268,13 +271,13 @@
       placeholderText({selectedValue, placeholder}) {
         return selectedValue ? '' : placeholder
       },
-      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, getValue}) {
+      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue}) {
         const filteredItems = items.filter(item => {
           let keepItem = true;
 
           if (isMulti && selectedValue) {
             keepItem = !selectedValue.find(({value}) => {
-              return value === getValue(item)
+              return value === item.value
             });
           }
 
@@ -324,10 +327,29 @@
       }
 
       if (changed.filterText) {
-        this.loadList();
-        this.set({listOpen: true});
-        if (current.isMulti) {
-          this.set({activeSelectedValue: undefined})
+        if(current.loadOptions) {
+          clearTimeout(this.loadOptionsTimeout);
+          this.set({isWaiting:true});
+
+          this.loadOptionsTimeout = setTimeout(() => {
+            if(current.filterText) {
+              current.loadOptions(current.filterText).then((response) => {
+                this.set({ items: response });
+              });
+            } else {
+              this.set({ items: [] });
+            }
+
+            this.set({isWaiting:false});
+            this.set({listOpen: true});
+          }, current.loadOptionsInterval);
+        } else {
+          this.loadList();
+          this.set({listOpen: true});
+
+          if (current.isMulti) {
+            this.set({activeSelectedValue: undefined})
+          }
         }
       }
 
@@ -344,6 +366,7 @@
         current.list.set({items: current.filteredItems})
       }
     },
+
     methods: {
       handleMultiItemClear(i) {
         const {selectedValue} = this.get();
@@ -356,7 +379,7 @@
         if (!target) return;
         const {top, height, width} = this.refs.container.getBoundingClientRect();
         target.style.top = `${height + 5}px`;
-        target.style.minWidth = `${width}px`;
+        target.style.width = `${width}px`;
         target.style.left = '0';
         this.set({target});
       },
@@ -437,10 +460,15 @@
         this.handleFocus();
       },
       loadList() {
-        let {target, list, Item, getOptionLabel, items, selectedValue, filteredItems, isMulti, getValue} = this.get();
+        let {target, list, Item, getOptionLabel, optionIdentifier, noOptionsMessage, items, selectedValue, filteredItems, isMulti} = this.get();
         if (target && list) return;
 
-        const data = {Item, getValue};
+        const data = {Item, optionIdentifier, noOptionsMessage};
+
+        if (getOptionLabel) {
+          data.getOptionLabel = getOptionLabel;
+        }
+
         target = document.createElement('div');
 
         Object.assign(target.style, {
@@ -451,10 +479,6 @@
         this.set({list, target});
         this.getPosition();
         this.refs.container.appendChild(target);
-
-        if (getOptionLabel) {
-          data.getOptionLabel = getOptionLabel;
-        }
 
         list = new List({
           target,
@@ -467,7 +491,8 @@
 
         list.on('itemSelected', (newSelection) => {
           if (newSelection) {
-            const item = Object.assign({}, items.find(item => getValue(item) === getValue(newSelection)));
+            const item = Object.assign({}, newSelection);
+
             if (isMulti) {
               selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
             } else {
@@ -486,7 +511,10 @@
       }
     },
     oncreate() {
-      const {listOpen} = this.get();
+      const {isFocused,listOpen} = this.get();
+      this.loadOptionsTimeout = undefined;
+
+      if (isFocused) this.refs.input.focus();
       if (listOpen) this.loadList();
     },
     ondestroy() {
