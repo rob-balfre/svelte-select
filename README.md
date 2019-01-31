@@ -41,6 +41,7 @@ yarn add svelte-select
 * `items` - array of items
 * `filterText` - text to filter list labels by
 * `placeholder` - placeholder text
+* `optionIdentifier` - Override default identifier ('value')
 * `listOpen` - open/close list
 * `containerStyles` - add/override container styles 
 * `selectedValue` - Selected value(s) 
@@ -51,7 +52,6 @@ yarn add svelte-select
 * `isSearchable` - Defaults true set to false to disable search/filtering
 * `groupFilter` - Override default groupFilter function
 * `getOptionLabel` - Override default getOptionLabel function
-* `getSelectionLabel` - Override default getSelectionLabel function
 * `getValue` - Override default getValue function
 
 

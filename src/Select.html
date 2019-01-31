@@ -37,7 +37,7 @@
 
   {#if !isMulti && showSelectedItem }
   <div class="selectedItem" on:focus="handleFocus()">
-    <svelte:component this="{Selection}" {selectedValue} {getSelectionLabel}/>
+    <svelte:component this="{Selection}" item={selectedValue} {getSelectionLabel}/>
   </div>
   {/if}
 

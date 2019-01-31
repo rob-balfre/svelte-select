@@ -1443,7 +1443,7 @@ test('when getValue method is set should use that key to update selectedValue', 
     data: {
       items: [{id: 0, label: 'ONE'}, {id: 1, label: 'TWO'}],
       selectedValue: {id: 0, label: 'ONE'},
-      getValue: (option) => option.id
+      optionIdentifier: 'id'
     }
   });
 
@@ -1456,24 +1456,38 @@ test('when getValue method is set should use that key to update selectedValue', 
   select.destroy();
 });
 
-// test.only('should....', async (t) => {
-//   const div = document.createElement('div');
-//   document.body.appendChild(div);
-//
-//   new Select({
-//     target,
-//     data: {
-//       getSelectionLabel: (item) => item.name,
-//       getOptionLabel: (option) => `<img src="${option.image_url}"> ${option.name} (${option.tagline}) - ${option.abv}%`,
-//       loadOptions: getPosts,
-//       optionIdentifier: 'id',
-//       isFocused: true,
-//       noOptionsMessage: 'NO NO NO OPTIONS',
-//       openMenuOnFocus: true,
-//       Item: CustomItem
-//     }
-//   });
-// });
+test('when loadOptions method is supplied and filterText has length then items should populate via promise resolve', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      getSelectionLabel: (option) => `<img src="${option.image_url}"> ${option.name} (${option.tagline}) - ${option.abv}%`,
+      getOptionLabel: (option) => `<img src="${option.image_url}"> ${option.name} (${option.tagline}) - ${option.abv}%`,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',
+      Item: CustomItem,
+      Selection: CustomItem
+    }
+  });
+
+  select.set({filterText: 'Juniper'});
+  await wait(2000);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  select.destroy();
+});
+
+// TODO
+// noOptionsMessage test
+// getSelectionLabel test
+// getOptionLabel test
+// openMenuOnFocus test
+// CustomItem test
+// CustomSelection test
+// loadOptions and multi select test
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
