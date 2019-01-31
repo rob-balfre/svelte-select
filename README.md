@@ -36,10 +36,9 @@ yarn add svelte-select
 
 ```
 
-## Select API options (props)
+## API
 
-Common props you may want to specify include:
-
+* `items` - array of items
 * `filterText` - text to filter list labels by
 * `placeholder` - placeholder text
 * `listOpen` - open/close list
@@ -47,12 +46,13 @@ Common props you may want to specify include:
 * `selectedValue` - Selected value(s) 
 * `groupBy` - Function to group list items
 * `isClearable` - Defaults true set to false to disable clear all
+* `isDisabled` - Disable select
 * `isMulti` - Enable multi select
 * `isSearchable` - Defaults true set to false to disable search/filtering
 * `groupFilter` - Override default groupFilter function
 * `getOptionLabel` - Override default getOptionLabel function
 * `getSelectionLabel` - Override default getSelectionLabel function
-
+* `getValue` - Override default getValue function
 
 
 ## Development
