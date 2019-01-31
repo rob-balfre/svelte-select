@@ -888,18 +888,18 @@ test(`two way binding between Select and it's parent component`, async (t) => {
     }
   });
 
-  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+  t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
 
   parent.set({
     selectedValue: {value: 'ice-cream', label: 'Ice Cream'},
   });
 
-  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+  t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
   document.querySelector('.selectContainer').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+  t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
 
   parent.destroy();
 });
@@ -1463,8 +1463,7 @@ test('when loadOptions method is supplied and filterText has length then items s
   const select = new Select({
     target,
     data: {
-      getSelectionLabel: (option) => `<img src="${option.image_url}"> ${option.name} (${option.tagline}) - ${option.abv}%`,
-      getOptionLabel: (option) => `<img src="${option.image_url}"> ${option.name} (${option.tagline}) - ${option.abv}%`,
+      getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
       Item: CustomItem,
@@ -1473,21 +1472,212 @@ test('when loadOptions method is supplied and filterText has length then items s
   });
 
   select.set({filterText: 'Juniper'});
-  await wait(2000);
+  await wait(500);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
   select.destroy();
 });
 
-// TODO
-// noOptionsMessage test
-// getSelectionLabel test
-// getOptionLabel test
-// openMenuOnFocus test
-// CustomItem test
-// CustomSelection test
-// loadOptions and multi select test
+test('when noOptionsMessage is set and there are no items then show message', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      noOptionsMessage: 'SO SO SO SCANDALOUS',
+      isFocused: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.empty').innerHTML === 'SO SO SO SCANDALOUS');
+
+  select.destroy();
+});
+
+test('when noOptionsMessage is set and there are no items then show message', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      noOptionsMessage: 'SO SO SO SCANDALOUS',
+      isFocused: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.empty').innerHTML === 'SO SO SO SCANDALOUS');
+
+  select.destroy();
+});
+
+test('when getSelectionLabel method is supplied and selectedValue are no items then display result of getSelectionLabel', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      getSelectionLabel: (option) => option.notLabel,
+      selectedValue: {notLabel: 'This is not a label', value: 'not important'},
+    }
+  });
+
+
+  t.ok(document.querySelector('.selection').innerHTML === 'This is not a label');
+
+  select.destroy();
+});
+
+test('when getOptionLabel method and items is supplied then display result of getOptionLabel for each option', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      getOptionLabel: (option) => option.notLabel,
+      isFocused: true,
+      items: [{notLabel: 'This is not a label', value: 'not important #1'}, {notLabel: 'This is not also not a label', value: 'not important #2'}],
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.item').innerHTML === 'This is not a label');
+
+  select.destroy();
+});
+
+test('when getOptionLabel method and items is supplied then display result of getOptionLabel for each option', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      getOptionLabel: (option) => option.notLabel,
+      isFocused: true,
+      items: [{notLabel: 'This is not a label', value: 'not important #1'}, {notLabel: 'This is not also not a label', value: 'not important #2'}],
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.item').innerHTML === 'This is not a label');
+
+  select.destroy();
+});
+
+
+test('when a custom Item component is supplied then use to display each item', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      Item: CustomItem,
+      getOptionLabel: (option) => option.name,
+      isFocused: true,
+      items: [{
+        image_url: 'https://images.punkapi.com/v2/keg.png',
+        name: 'A Name', tagline: 'A tagline', abv: 'A abv'}],
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
+
+  select.destroy();
+});
+
+test('when a custom Selection component is supplied then use to display selection', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      Item: CustomItem,
+      Selection: CustomItem,
+      getOptionLabel: (option) => option.name,
+      isFocused: true,
+      items: [{
+        image_url: 'https://images.punkapi.com/v2/keg.png',
+        name: 'A Name', tagline: 'A tagline', abv: 'A abv'}],
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
+
+  select.destroy();
+});
+
+test('when loadOptions method is supplied, isMulti is true and filterText has length then items should populate via promise resolve', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      getOptionLabel: (option) => option.name,
+      getSelectionLabel: (option) => option.name,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',
+      Item: CustomItem,
+      isMulti: true
+    }
+  });
+
+  select.set({filterText: 'Juniper'});
+  await wait(500);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(document.querySelector('.multiSelectItem_label').innerHTML === 'Juniper Wheat Beer');
+  select.destroy();
+});
+
+test('when getSelectionLabel contains HTML then render the HTML', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      selectedValue: items[0],
+      getSelectionLabel: (option) => `<p>${option.label}</p>`,
+    }
+  });
+
+  t.ok(document.querySelector('.selection').innerHTML === '<p>Chocolate</p>');
+
+  select.destroy();
+});
+
+test('when getOptionLabel contains HTML then render the HTML', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      getOptionLabel: (option) => `<p>${option.label}</p>`,
+      isFocused: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  t.ok(document.querySelector('.item').innerHTML === '<p>Chocolate</p>');
+
+  select.destroy();
+});
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

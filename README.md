@@ -52,7 +52,11 @@ yarn add svelte-select
 * `isSearchable` - Defaults true set to false to disable search/filtering
 * `groupFilter` - Override default groupFilter function
 * `getOptionLabel` - Override default getOptionLabel function
-* `getValue` - Override default getValue function
+* `Item` - Override default item component
+* `Selection` - Override default selection component
+* `MultiSelection` - Override default multi selection component
+* `getOptions` - Methods that returns a Promise that updates items  
+* `noOptionsMessage` - Message to display when there are no items  
 
 
 ## Development

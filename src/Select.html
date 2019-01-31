@@ -271,13 +271,13 @@
       placeholderText({selectedValue, placeholder}) {
         return selectedValue ? '' : placeholder
       },
-      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue}) {
+      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier}) {
         const filteredItems = items.filter(item => {
           let keepItem = true;
 
           if (isMulti && selectedValue) {
             keepItem = !selectedValue.find(({value}) => {
-              return value === item.value
+              return value === item[optionIdentifier]
             });
           }
 
