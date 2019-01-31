@@ -87,6 +87,27 @@
         getOptionLabel: (option) => option.label
       }
     },
+    oncreate() {
+      this.isScrollingTimer = 0;
+
+      this.refs.container.addEventListener('scroll', (event) => {
+        console.log(event);
+        clearTimeout(this.isScrollingTimer);
+
+        this.set({
+          isScrolling: true
+        });
+
+        this.isScrollingTimer = setTimeout(() => {
+          this.set({
+            isScrolling: false
+          });
+        }, 100);
+      }, false);
+    },
+    ondestroy() {
+      clearTimeout(this.isScrollingTimer);
+    },
     onupdate({changed, current}) {
       if (changed.items && current.items.length > 0) {
         if (!current.items[current.hoverItemIndex]) {
@@ -123,6 +144,7 @@
         this.fire('itemSelected', item);
       },
       handleHover(i) {
+        if(this.get().isScrolling) return;
         this.set({hoverItemIndex: i});
       },
       handleClick(item, i, event) {

@@ -24554,36 +24554,39 @@
 
 	function add_css() {
 		var style = createElement("style");
-		style.id = 'svelte-1vkg4xw-style';
-		style.textContent = ".customItem.svelte-1vkg4xw{display:flex;align-items:center}img.svelte-1vkg4xw{width:5px;padding:5px 0;margin:0 10px}.customItem_name.svelte-1vkg4xw{font-weight:700;margin-right:10px}";
+		style.id = 'svelte-amx3s1-style';
+		style.textContent = ".customItem.svelte-amx3s1{display:flex;align-items:center}img.svelte-amx3s1{width:5px;padding:5px 0;margin:0 10px}.customItem_title.svelte-amx3s1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.customItem_name.svelte-amx3s1{display:inline-block;font-weight:700;margin-right:10px}.customItem_tagline.svelte-amx3s1{display:inline-block}";
 		append(document.head, style);
 	}
 
 	function create_main_fragment(component, ctx) {
-		var div2, img, img_src_value, img_alt_value, text0, div0, text1_value = ctx.item.name, text1, text2, div1, text3_value = ctx.item.tagline, text3;
+		var div3, img, img_src_value, img_alt_value, text0, div2, div0, text1_value = ctx.item.name, text1, text2, div1, text3_value = ctx.item.tagline, text3;
 
 		return {
 			c() {
-				div2 = createElement("div");
+				div3 = createElement("div");
 				img = createElement("img");
 				text0 = createText("\n  ");
+				div2 = createElement("div");
 				div0 = createElement("div");
 				text1 = createText(text1_value);
-				text2 = createText("\n  ");
+				text2 = createText("\n    ");
 				div1 = createElement("div");
 				text3 = createText(text3_value);
 				img.src = img_src_value = ctx.item.image_url;
 				img.alt = img_alt_value = ctx.item.name;
-				img.className = "svelte-1vkg4xw";
-				div0.className = "customItem_name svelte-1vkg4xw";
-				div1.className = "customItem_tagline";
-				div2.className = "customItem svelte-1vkg4xw";
+				img.className = "svelte-amx3s1";
+				div0.className = "customItem_name svelte-amx3s1";
+				div1.className = "customItem_tagline svelte-amx3s1";
+				div2.className = "customItem_title svelte-amx3s1";
+				div3.className = "customItem svelte-amx3s1";
 			},
 
 			m(target, anchor) {
-				insert(target, div2, anchor);
-				append(div2, img);
-				append(div2, text0);
+				insert(target, div3, anchor);
+				append(div3, img);
+				append(div3, text0);
+				append(div3, div2);
 				append(div2, div0);
 				append(div0, text1);
 				append(div2, text2);
@@ -24611,7 +24614,7 @@
 
 			d(detach) {
 				if (detach) {
-					detachNode(div2);
+					detachNode(div3);
 				}
 			}
 		};
@@ -24622,7 +24625,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-1vkg4xw-style")) add_css();
+		if (!document.getElementById("svelte-amx3s1-style")) add_css();
 
 		this._fragment = create_main_fragment(this, this._state);
 
@@ -24703,6 +24706,7 @@
 	    this.fire('itemSelected', item);
 	  },
 	  handleHover(i) {
+	    if(this.get().isScrolling) return;
 	    this.set({hoverItemIndex: i});
 	  },
 	  handleClick(item, i, event) {
@@ -24763,6 +24767,27 @@
 	  }
 	};
 
+	function oncreate() {
+	  this.isScrollingTimer = 0;
+
+	  this.refs.container.addEventListener('scroll', (event) => {
+	    console.log(event);
+	    clearTimeout(this.isScrollingTimer);
+
+	    this.set({
+	      isScrolling: true
+	    });
+
+	    this.isScrollingTimer = setTimeout(() => {
+	      this.set({
+	        isScrolling: false
+	      });
+	    }, 100);
+	  }, false);
+	}
+	function ondestroy() {
+	  clearTimeout(this.isScrollingTimer);
+	}
 	function onupdate({changed, current}) {
 	  if (changed.items && current.items.length > 0) {
 	    if (!current.items[current.hoverItemIndex]) {
@@ -25085,11 +25110,14 @@
 		this._intro = true;
 		this._handlers.update = [onupdate];
 
+		this._handlers.destroy = [ondestroy];
+
 		if (!document.getElementById("svelte-1q7fygl-style")) add_css$1();
 
 		this._fragment = create_main_fragment$2(this, this._state);
 
 		this.root._oncreate.push(() => {
+			oncreate.call(this);
 			this.fire("update", { changed: assignTrue({}, this._state), current: this._state });
 		});
 
@@ -25331,14 +25359,14 @@
 	  }
 	};
 
-	function oncreate() {
+	function oncreate$1() {
 	  const {isFocused,listOpen} = this.get();
 	  this.loadOptionsTimeout = undefined;
 
 	  if (isFocused) this.refs.input.focus();
 	  if (listOpen) this.loadList();
 	}
-	function ondestroy() {
+	function ondestroy$1() {
 	  this.removeList();
 	}
 	function onstate({changed, current, previous}) {
@@ -25749,7 +25777,7 @@
 
 		this._handlers.state = [onstate];
 
-		this._handlers.destroy = [ondestroy];
+		this._handlers.destroy = [ondestroy$1];
 
 		if (!document.getElementById("svelte-1r3r83f-style")) add_css$2();
 
@@ -25758,7 +25786,7 @@
 		this._fragment = create_main_fragment$4(this, this._state);
 
 		this.root._oncreate.push(() => {
-			oncreate.call(this);
+			oncreate$1.call(this);
 			this.fire("update", { changed: assignTrue({}, this._state), current: this._state });
 		});
 

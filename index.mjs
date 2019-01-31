@@ -265,6 +265,7 @@ var methods = {
     this.fire('itemSelected', item);
   },
   handleHover(i) {
+    if(this.get().isScrolling) return;
     this.set({hoverItemIndex: i});
   },
   handleClick(item, i, event) {
@@ -325,6 +326,27 @@ var methods = {
   }
 };
 
+function oncreate() {
+  this.isScrollingTimer = 0;
+
+  this.refs.container.addEventListener('scroll', (event) => {
+    console.log(event);
+    clearTimeout(this.isScrollingTimer);
+
+    this.set({
+      isScrolling: true
+    });
+
+    this.isScrollingTimer = setTimeout(() => {
+      this.set({
+        isScrolling: false
+      });
+    }, 100);
+  }, false);
+}
+function ondestroy() {
+  clearTimeout(this.isScrollingTimer);
+}
 function onupdate({changed, current}) {
   if (changed.items && current.items.length > 0) {
     if (!current.items[current.hoverItemIndex]) {
@@ -647,11 +669,14 @@ function List(options) {
 	this._intro = true;
 	this._handlers.update = [onupdate];
 
+	this._handlers.destroy = [ondestroy];
+
 	if (!document.getElementById("svelte-1q7fygl-style")) add_css();
 
 	this._fragment = create_main_fragment$1(this, this._state);
 
 	this.root._oncreate.push(() => {
+		oncreate.call(this);
 		this.fire("update", { changed: assignTrue({}, this._state), current: this._state });
 	});
 
@@ -893,14 +918,14 @@ var methods$1 = {
   }
 };
 
-function oncreate() {
+function oncreate$1() {
   const {isFocused,listOpen} = this.get();
   this.loadOptionsTimeout = undefined;
 
   if (isFocused) this.refs.input.focus();
   if (listOpen) this.loadList();
 }
-function ondestroy() {
+function ondestroy$1() {
   this.removeList();
 }
 function onstate({changed, current, previous}) {
@@ -1311,7 +1336,7 @@ function Select(options) {
 
 	this._handlers.state = [onstate];
 
-	this._handlers.destroy = [ondestroy];
+	this._handlers.destroy = [ondestroy$1];
 
 	if (!document.getElementById("svelte-1r3r83f-style")) add_css$1();
 
@@ -1320,7 +1345,7 @@ function Select(options) {
 	this._fragment = create_main_fragment$3(this, this._state);
 
 	this.root._oncreate.push(() => {
-		oncreate.call(this);
+		oncreate$1.call(this);
 		this.fire("update", { changed: assignTrue({}, this._state), current: this._state });
 	});
 
