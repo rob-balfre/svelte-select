@@ -1418,17 +1418,53 @@ test('when isMulti and selectedValue has items and list opens then first item in
   select.destroy();
 });
 
-test('should....', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
 
+test('when isMulti, isDisabled, and selectedValue has items then items should be locked', async (t) => {
   const select = new Select({
     target,
     data: {
-      items
+      isMulti: true,
+      items,
+      isDisabled: true,
+      selectedValue: [{value: 'chocolate', label: 'Chocolate'}],
     }
   });
+
+  t.ok(document.querySelector('.multiSelectItem.disabled'));
+
+  select.destroy();
 });
+
+test('when getValue method is set should use that key to update selectedValue', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      items: [{id: 0, label: 'ONE'}, {id: 1, label: 'TWO'}],
+      selectedValue: {id: 0, label: 'ONE'},
+      getValue: (option) => option.id
+    }
+  });
+
+  t.ok(select.get().selectedValue.id === 0);
+  document.querySelector('.selectContainer').click();
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(select.get().selectedValue.id === 1);
+
+  select.destroy();
+});
+
+// test('should....', async (t) => {
+//   const div = document.createElement('div');
+//   document.body.appendChild(div);
+//
+//   const select = new Select({
+//     target,
+//     data: {
+//       items
+//     }
+//   });
+// });
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
