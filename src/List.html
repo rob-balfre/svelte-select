@@ -84,14 +84,14 @@
         items: [],
         Item,
         selectedValue: undefined,
-        getOptionLabel: (option) => option.label
+        getOptionLabel: (option) => option.label,
+        noOptionsMessage: 'No options'
       }
     },
     oncreate() {
       this.isScrollingTimer = 0;
 
-      this.refs.container.addEventListener('scroll', (event) => {
-        console.log(event);
+      this.refs.container.addEventListener('scroll', () => {
         clearTimeout(this.isScrollingTimer);
 
         this.set({

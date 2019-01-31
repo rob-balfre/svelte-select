@@ -249,7 +249,7 @@
         groupBy: undefined,
         getOptions: undefined,
         loadOptionsInterval: 200,
-        noOptionsMessage: 'No options'
+        noOptionsMessage: 'No options',
         groupFilter: (groups) => groups,
         getOptionLabel: (option) => option.label,
         getSelectionLabel: (option) => option.label,
@@ -349,6 +349,7 @@
           if (current.isMulti) {
             this.set({activeSelectedValue: undefined})
           }
+        }
       }
 
       if (changed.isFocused) {
@@ -364,6 +365,7 @@
         current.list.set({items: current.filteredItems})
       }
     },
+
     methods: {
       handleMultiItemClear(i) {
         const {selectedValue} = this.get();
@@ -457,10 +459,15 @@
         this.handleFocus();
       },
       loadList() {
-        let {target, list, Item, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
+        let {target, list, Item, getOptionLabel, optionIdentifier, noOptionsMessage, items, selectedValue, filteredItems, isMulti} = this.get();
         if (target && list) return;
 
-        const data = {Item};
+        const data = {Item, optionIdentifier, noOptionsMessage};
+
+        if (getOptionLabel) {
+          data.getOptionLabel = getOptionLabel;
+        }
+
         target = document.createElement('div');
 
         Object.assign(target.style, {
@@ -471,16 +478,6 @@
         this.set({list, target});
         this.getPosition();
         this.refs.container.appendChild(target);
-
-<<<<<<< HEAD
-        const {Item, getOptionLabel, optionIdentifier, noOptionsMessage} = this.get();
-        const data = {Item, optionIdentifier, noOptionsMessage};
-
-=======
->>>>>>> 2fc5087fabf081f99a98beda7e07d83656a0a7a3
-        if (getOptionLabel) {
-          data.getOptionLabel = getOptionLabel;
-        }
 
         list = new List({
           target,
@@ -493,7 +490,8 @@
 
         list.on('itemSelected', (newSelection) => {
           if (newSelection) {
-            const item = Object.assign({}, items.find(item => item.value === newSelection.value));
+            const item = Object.assign({}, newSelection);
+
             if (isMulti) {
               selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
             } else {
