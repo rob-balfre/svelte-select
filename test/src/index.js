@@ -889,9 +889,11 @@ test(`two way binding between Select and it's parent component`, async (t) => {
   });
 
   t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
+
   parent.set({
     selectedValue: {value: 'ice-cream', label: 'Ice Cream'},
   });
+
   t.equal(document.querySelector('.selectedItem').innerHTML, document.querySelector('.result').innerHTML);
   document.querySelector('.selectContainer').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
@@ -1341,7 +1343,7 @@ test('when isMulti and groupBy is active then items should be selectable', async
   document.querySelector('.selectContainer').click();
   document.querySelector('.listItem').click();
 
-  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
+  t.equal(JSON.stringify(select.get().selectedValue), JSON.stringify([{groupValue: 'Sweet', value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
 
   select.destroy();
 });
