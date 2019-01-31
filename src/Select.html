@@ -13,6 +13,7 @@
   {#if isMulti && selectedValue && selectedValue.length > 0}
   <svelte:component
     this="{MultiSelection}"
+    {isDisabled}
     {selectedValue}
     {getSelectionLabel}
     {activeSelectedValue}
@@ -249,6 +250,7 @@
         groupFilter: (groups) => groups,
         getOptionLabel: (option) => option.label,
         getSelectionLabel: (option) => option.label,
+        getValue: (option) => option.value,
       }
     },
     computed: {
@@ -266,13 +268,13 @@
       placeholderText({selectedValue, placeholder}) {
         return selectedValue ? '' : placeholder
       },
-      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue}) {
+      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, getValue}) {
         const filteredItems = items.filter(item => {
           let keepItem = true;
 
           if (isMulti && selectedValue) {
             keepItem = !selectedValue.find(({value}) => {
-              return value === item.value
+              return value === getValue(item)
             });
           }
 
@@ -435,10 +437,10 @@
         this.handleFocus();
       },
       loadList() {
-        let {target, list, Item, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
+        let {target, list, Item, getOptionLabel, items, selectedValue, filteredItems, isMulti, getValue} = this.get();
         if (target && list) return;
 
-        const data = {Item};
+        const data = {Item, getValue};
         target = document.createElement('div');
 
         Object.assign(target.style, {
@@ -465,7 +467,7 @@
 
         list.on('itemSelected', (newSelection) => {
           if (newSelection) {
-            const item = Object.assign({}, items.find(item => item.value === newSelection.value));
+            const item = Object.assign({}, items.find(item => getValue(item) === getValue(newSelection)));
             if (isMulti) {
               selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
             } else {

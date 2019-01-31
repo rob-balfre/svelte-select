@@ -241,11 +241,12 @@ function data() {
     items: [],
     Item,
     selectedValue: undefined,
-    getOptionLabel: (option) => option.label
+    getOptionLabel: (option) => option.label,
+    getValue: (option) => option.value
   }
 }
-function itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue) {
-  return `${selectedValue && (selectedValue.value === item.value) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+function itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, getValue) {
+  return `${selectedValue && (getValue(selectedValue) === getValue(item)) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
 }
 var methods = {
   handleSelect(item) {
@@ -330,7 +331,7 @@ function onupdate({changed, current}) {
   if (changed.selectedValue && current.selectedValue) {
     this.scrollToActiveItem('active');
     if (current.items && !current.isMulti) {
-      const hoverItemIndex = current.items.findIndex((item) => item.value === current.selectedValue.value);
+      const hoverItemIndex = current.items.findIndex((item) => current.getValue(item) === current.getValue(current.selectedValue));
       if (hoverItemIndex) {
         this.set({hoverItemIndex});
       }
@@ -410,7 +411,7 @@ function create_main_fragment$1(component, ctx) {
 		},
 
 		p(changed, ctx) {
-			if (changed.hoverItemIndex || changed.items || changed.selectedValue || changed.Item || changed.getOptionLabel) {
+			if (changed.hoverItemIndex || changed.items || changed.selectedValue || changed.getValue || changed.Item || changed.getOptionLabel) {
 				each_value = ctx.items;
 
 				for (var i = 0; i < each_value.length; i += 1) {
@@ -547,7 +548,7 @@ function create_each_block(component, ctx) {
 
 			addListener(div, "mouseover", mouseover_handler);
 			addListener(div, "click", click_handler);
-			div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedValue) + " svelte-1h82xdc";
+			div.className = div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedValue, ctx.getValue) + " svelte-1h82xdc";
 		},
 
 		m(target, anchor) {
@@ -600,7 +601,7 @@ function create_each_block(component, ctx) {
 			}
 
 			div._svelte.ctx = ctx;
-			if ((changed.hoverItemIndex || changed.items || changed.selectedValue) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedValue) + " svelte-1h82xdc")) {
+			if ((changed.hoverItemIndex || changed.items || changed.selectedValue || changed.getValue) && div_class_value !== (div_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedValue, ctx.getValue) + " svelte-1h82xdc")) {
 				div.className = div_class_value;
 			}
 		},
@@ -693,14 +694,14 @@ assign(Selection.prototype, proto);
 var methods$1 = {
   handleClear(i, event) {
     event.stopPropagation();
-    this.fire('multiItemClear', { i });
+    this.fire('multiItemClear', {i});
   }
 };
 
 function add_css$1() {
 	var style = createElement("style");
-	style.id = 'svelte-9z9fu7-style';
-	style.textContent = ".multiSelectItem.svelte-9z9fu7{background:#EBEDEF;margin-right:5px;border-radius:16px;line-height:32px;display:flex;cursor:default;height:32px;margin-top:6px;padding:0 10px 0 15px}.multiSelectItem_label.svelte-9z9fu7{margin-right:5px}.multiSelectItem_clear.svelte-9z9fu7{border-radius:0 4px 4px 0;width:20px;text-align:center}.multiSelectItem.svelte-9z9fu7:hover,.multiSelectItem.active.svelte-9z9fu7{background-color:#006FFF;color:#fff}.multiSelectItem_clear.svelte-9z9fu7{border-radius:50%;background:#52616F;width:16px;height:16px;position:relative;top:8px;text-align:center;padding:1px}.multiSelectItem_clear.svelte-9z9fu7:hover,.active.svelte-9z9fu7 .multiSelectItem_clear.svelte-9z9fu7{background:#fff}.multiSelectItem_clear.svelte-9z9fu7:hover svg.svelte-9z9fu7,.active.svelte-9z9fu7 .multiSelectItem_clear svg.svelte-9z9fu7{fill:#006FFF}.multiSelectItem_clear.svelte-9z9fu7 svg.svelte-9z9fu7{fill:#EBEDEF;vertical-align:top}";
+	style.id = 'svelte-10o3np5-style';
+	style.textContent = ".multiSelectItem.svelte-10o3np5{background:#EBEDEF;margin-right:5px;border-radius:16px;line-height:32px;display:flex;cursor:default;height:32px;margin-top:5px;padding:0 10px 0 15px}.multiSelectItem_label.svelte-10o3np5{margin-right:5px}.multiSelectItem_clear.svelte-10o3np5{border-radius:0 4px 4px 0;width:20px;text-align:center}.multiSelectItem.svelte-10o3np5:hover,.multiSelectItem.active.svelte-10o3np5{background-color:#006FFF;color:#fff}.multiSelectItem.disabled.svelte-10o3np5:hover{background:#EBEDEF;color:#C1C6CC}.multiSelectItem_clear.svelte-10o3np5{border-radius:50%;background:#52616F;width:16px;height:16px;position:relative;top:8px;text-align:center;padding:1px}.multiSelectItem_clear.svelte-10o3np5:hover,.active.svelte-10o3np5 .multiSelectItem_clear.svelte-10o3np5{background:#fff}.multiSelectItem_clear.svelte-10o3np5:hover svg.svelte-10o3np5,.active.svelte-10o3np5 .multiSelectItem_clear svg.svelte-10o3np5{fill:#006FFF}.multiSelectItem_clear.svelte-10o3np5 svg.svelte-10o3np5{fill:#EBEDEF;vertical-align:top}";
 	append(document.head, style);
 }
 
@@ -746,7 +747,7 @@ function create_main_fragment$3(component, ctx) {
 		},
 
 		p(changed, ctx) {
-			if (changed.activeSelectedValue || changed.selectedValue) {
+			if (changed.activeSelectedValue || changed.isDisabled || changed.selectedValue) {
 				each_value = ctx.selectedValue;
 
 				for (var i = 0; i < each_value.length; i += 1) {
@@ -778,55 +779,93 @@ function create_main_fragment$3(component, ctx) {
 	};
 }
 
-// (1:0) {#each selectedValue as value, i}
-function create_each_block$1(component, ctx) {
-	var div2, div0, text0_value = ctx.value.label, text0, text1, div1, text2, div2_class_value;
+// (6:2) {#if !isDisabled}
+function create_if_block$1(component, ctx) {
+	var div;
 
 	return {
 		c() {
-			div2 = createElement("div");
-			div0 = createElement("div");
-			text0 = createText(text0_value);
-			text1 = createText("\n  ");
-			div1 = createElement("div");
-			div1.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-9z9fu7"><path d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
-			text2 = createText("\n");
-			div0.className = "multiSelectItem_label svelte-9z9fu7";
+			div = createElement("div");
+			div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-10o3np5"><path d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+			div._svelte = { component, ctx };
 
-			div1._svelte = { component, ctx };
-
-			addListener(div1, "click", click_handler$1);
-			div1.className = "multiSelectItem_clear svelte-9z9fu7";
-			div2.className = div2_class_value = "multiSelectItem " + (ctx.activeSelectedValue === ctx.i ? 'active' : '') + " svelte-9z9fu7";
+			addListener(div, "click", click_handler$1);
+			div.className = "multiSelectItem_clear svelte-10o3np5";
 		},
 
 		m(target, anchor) {
-			insert(target, div2, anchor);
-			append(div2, div0);
-			append(div0, text0);
-			append(div2, text1);
-			append(div2, div1);
-			append(div2, text2);
+			insert(target, div, anchor);
 		},
 
 		p(changed, _ctx) {
 			ctx = _ctx;
+			div._svelte.ctx = ctx;
+		},
+
+		d(detach) {
+			if (detach) {
+				detachNode(div);
+			}
+
+			removeListener(div, "click", click_handler$1);
+		}
+	};
+}
+
+// (1:0) {#each selectedValue as value, i}
+function create_each_block$1(component, ctx) {
+	var div1, div0, text0_value = ctx.value.label, text0, text1, text2, div1_class_value;
+
+	var if_block = (!ctx.isDisabled) && create_if_block$1(component, ctx);
+
+	return {
+		c() {
+			div1 = createElement("div");
+			div0 = createElement("div");
+			text0 = createText(text0_value);
+			text1 = createText("\n  ");
+			if (if_block) if_block.c();
+			text2 = createText("\n");
+			div0.className = "multiSelectItem_label svelte-10o3np5";
+			div1.className = div1_class_value = "multiSelectItem " + (ctx.activeSelectedValue === ctx.i ? 'active' : '') + " " + (ctx.isDisabled ? 'disabled' : '') + " svelte-10o3np5";
+		},
+
+		m(target, anchor) {
+			insert(target, div1, anchor);
+			append(div1, div0);
+			append(div0, text0);
+			append(div1, text1);
+			if (if_block) if_block.m(div1, null);
+			append(div1, text2);
+		},
+
+		p(changed, ctx) {
 			if ((changed.selectedValue) && text0_value !== (text0_value = ctx.value.label)) {
 				setData(text0, text0_value);
 			}
 
-			div1._svelte.ctx = ctx;
-			if ((changed.activeSelectedValue) && div2_class_value !== (div2_class_value = "multiSelectItem " + (ctx.activeSelectedValue === ctx.i ? 'active' : '') + " svelte-9z9fu7")) {
-				div2.className = div2_class_value;
+			if (!ctx.isDisabled) {
+				if (!if_block) {
+					if_block = create_if_block$1(component, ctx);
+					if_block.c();
+					if_block.m(div1, text2);
+				}
+			} else if (if_block) {
+				if_block.d(1);
+				if_block = null;
+			}
+
+			if ((changed.activeSelectedValue || changed.isDisabled) && div1_class_value !== (div1_class_value = "multiSelectItem " + (ctx.activeSelectedValue === ctx.i ? 'active' : '') + " " + (ctx.isDisabled ? 'disabled' : '') + " svelte-10o3np5")) {
+				div1.className = div1_class_value;
 			}
 		},
 
 		d(detach) {
 			if (detach) {
-				detachNode(div2);
+				detachNode(div1);
 			}
 
-			removeListener(div1, "click", click_handler$1);
+			if (if_block) if_block.d();
 		}
 	};
 }
@@ -836,7 +875,7 @@ function MultiSelection(options) {
 	this._state = assign({}, options.data);
 	this._intro = true;
 
-	if (!document.getElementById("svelte-9z9fu7-style")) add_css$1();
+	if (!document.getElementById("svelte-10o3np5-style")) add_css$1();
 
 	this._fragment = create_main_fragment$3(this, this._state);
 
@@ -867,13 +906,13 @@ function showSelectedItem({selectedValue, filterText}) {
 function placeholderText({selectedValue, placeholder}) {
   return selectedValue ? '' : placeholder
 }
-function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue}) {
+function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, getValue}) {
   const filteredItems = items.filter(item => {
     let keepItem = true;
 
     if (isMulti && selectedValue) {
       keepItem = !selectedValue.find(({value}) => {
-        return value === item.value
+        return value === getValue(item)
       });
     }
 
@@ -931,6 +970,7 @@ function data$1() {
     groupFilter: (groups) => groups,
     getOptionLabel: (option) => option.label,
     getSelectionLabel: (option) => option.label,
+    getValue: (option) => option.value,
   }
 }
 var methods$2 = {
@@ -1026,10 +1066,10 @@ var methods$2 = {
     this.handleFocus();
   },
   loadList() {
-    let {target, list, Item: Item$$1, getOptionLabel, items, selectedValue, filteredItems, isMulti} = this.get();
+    let {target, list, Item: Item$$1, getOptionLabel, items, selectedValue, filteredItems, isMulti, getValue} = this.get();
     if (target && list) return;
 
-    const data = {Item: Item$$1};
+    const data = {Item: Item$$1, getValue};
     target = document.createElement('div');
 
     Object.assign(target.style, {
@@ -1056,7 +1096,7 @@ var methods$2 = {
 
     list.on('itemSelected', (newSelection) => {
       if (newSelection) {
-        const item = Object.assign({}, items.find(item => item.value === newSelection.value));
+        const item = Object.assign({}, items.find(item => getValue(item) === getValue(newSelection)));
         if (isMulti) {
           selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
         } else {
@@ -1154,7 +1194,7 @@ function create_main_fragment$4(component, ctx) {
 
 	var if_block3 = (!ctx.isSearchable && !ctx.isDisabled && !ctx.isWaiting && (ctx.showSelectedItem && !ctx.isClearable || !ctx.showSelectedItem)) && create_if_block_1(component, ctx);
 
-	var if_block4 = (ctx.isWaiting) && create_if_block$1(component, ctx);
+	var if_block4 = (ctx.isWaiting) && create_if_block$2(component, ctx);
 
 	function click_handler(event) {
 		component.handleClick();
@@ -1277,7 +1317,7 @@ function create_main_fragment$4(component, ctx) {
 
 			if (ctx.isWaiting) {
 				if (!if_block4) {
-					if_block4 = create_if_block$1(component, ctx);
+					if_block4 = create_if_block$2(component, ctx);
 					if_block4.c();
 					if_block4.m(div, null);
 				}
@@ -1328,6 +1368,7 @@ function create_if_block_4(component, ctx) {
 
 	function switch_props(ctx) {
 		var switch_instance_initial_data = {
+		 	isDisabled: ctx.isDisabled,
 		 	selectedValue: ctx.selectedValue,
 		 	getSelectionLabel: ctx.getSelectionLabel,
 		 	activeSelectedValue: ctx.activeSelectedValue
@@ -1370,6 +1411,7 @@ function create_if_block_4(component, ctx) {
 
 		p(changed, ctx) {
 			var switch_instance_changes = {};
+			if (changed.isDisabled) switch_instance_changes.isDisabled = ctx.isDisabled;
 			if (changed.selectedValue) switch_instance_changes.selectedValue = ctx.selectedValue;
 			if (changed.getSelectionLabel) switch_instance_changes.getSelectionLabel = ctx.getSelectionLabel;
 			if (changed.activeSelectedValue) switch_instance_changes.activeSelectedValue = ctx.activeSelectedValue;
@@ -1406,7 +1448,7 @@ function create_if_block_4(component, ctx) {
 	};
 }
 
-// (37:2) {#if !isMulti && showSelectedItem }
+// (38:2) {#if !isMulti && showSelectedItem }
 function create_if_block_3(component, ctx) {
 	var div;
 
@@ -1483,7 +1525,7 @@ function create_if_block_3(component, ctx) {
 	};
 }
 
-// (43:2) {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
+// (44:2) {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
 function create_if_block_2(component, ctx) {
 	var div;
 
@@ -1513,7 +1555,7 @@ function create_if_block_2(component, ctx) {
 	};
 }
 
-// (53:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
+// (54:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
 function create_if_block_1(component, ctx) {
 	var div;
 
@@ -1536,8 +1578,8 @@ function create_if_block_1(component, ctx) {
 	};
 }
 
-// (62:2) {#if isWaiting}
-function create_if_block$1(component, ctx) {
+// (63:2) {#if isWaiting}
+function create_if_block$2(component, ctx) {
 	var div;
 
 	return {
@@ -1564,7 +1606,7 @@ function Select(options) {
 	this.refs = {};
 	this._state = assign(data$1(), options.data);
 
-	this._recompute({ isMulti: 1, isDisabled: 1, isFocused: 1, selectedValue: 1, filterText: 1, placeholder: 1, items: 1, groupBy: 1, groupFilter: 1, getOptionLabel: 1 }, this._state);
+	this._recompute({ isMulti: 1, isDisabled: 1, isFocused: 1, selectedValue: 1, filterText: 1, placeholder: 1, items: 1, groupBy: 1, groupFilter: 1, getOptionLabel: 1, getValue: 1 }, this._state);
 	this._intro = true;
 
 	this._handlers.state = [onstate];
@@ -1606,7 +1648,7 @@ Select.prototype._recompute = function _recompute(changed, state) {
 		if (this._differs(state.placeholderText, (state.placeholderText = placeholderText(state)))) changed.placeholderText = true;
 	}
 
-	if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel || changed.isMulti || changed.selectedValue) {
+	if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel || changed.isMulti || changed.selectedValue || changed.getValue) {
 		if (this._differs(state.filteredItems, (state.filteredItems = filteredItems(state)))) changed.filteredItems = true;
 	}
 };
