@@ -944,8 +944,8 @@ function showSelectedItem({selectedValue, filterText}) {
 function placeholderText({selectedValue, placeholder}) {
   return selectedValue ? '' : placeholder
 }
-function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier}) {
-  const filteredItems = items.filter(item => {
+function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier, loadOptions}) {
+  const filteredItems = loadOptions ? items : items.filter(item => {
     let keepItem = true;
 
     if (isMulti && selectedValue) {
@@ -1004,9 +1004,10 @@ function data$1() {
     isClearable: true,
     isMulti: false,
     isSearchable: true,
+    isDisabled: false,
     optionIdentifier: 'value',
     groupBy: undefined,
-    getOptions: undefined,
+    loadOptions: undefined,
     loadOptionsInterval: 200,
     noOptionsMessage: 'No options',
     groupFilter: (groups) => groups,
@@ -1031,7 +1032,7 @@ var methods$2 = {
     this.set({target});
   },
   handleKeyDown(e) {
-    let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue} = this.get();
+    let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue, list} = this.get();
     if (!isFocused) return;
 
     switch (e.key) {
@@ -1053,7 +1054,9 @@ var methods$2 = {
         this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
         break;
       case 'ArrowLeft':
+        if (list) list.set({ hoverItemIndex: -1});  
         if (!isMulti || filterText.length > 0) return;
+
         if (activeSelectedValue === undefined) {
           activeSelectedValue = selectedValue.length - 1;
         } else if (selectedValue.length > activeSelectedValue && activeSelectedValue !== 0) {
@@ -1062,6 +1065,7 @@ var methods$2 = {
         this.set({activeSelectedValue});
         break;
       case 'ArrowRight':
+        if (list) list.set({ hoverItemIndex: -1});
         if (!isMulti || filterText.length > 0 || activeSelectedValue === undefined) return;
         if (activeSelectedValue === selectedValue.length - 1) {
           activeSelectedValue = undefined;
@@ -1671,7 +1675,7 @@ function Select(options) {
 	this.refs = {};
 	this._state = assign(data$1(), options.data);
 
-	this._recompute({ isMulti: 1, isDisabled: 1, isFocused: 1, selectedValue: 1, filterText: 1, placeholder: 1, items: 1, groupBy: 1, groupFilter: 1, getOptionLabel: 1, optionIdentifier: 1 }, this._state);
+	this._recompute({ isMulti: 1, isDisabled: 1, isFocused: 1, selectedValue: 1, filterText: 1, placeholder: 1, items: 1, groupBy: 1, groupFilter: 1, getOptionLabel: 1, optionIdentifier: 1, loadOptions: 1 }, this._state);
 	this._intro = true;
 
 	this._handlers.state = [onstate];
@@ -1713,7 +1717,7 @@ Select.prototype._recompute = function _recompute(changed, state) {
 		if (this._differs(state.placeholderText, (state.placeholderText = placeholderText(state)))) changed.placeholderText = true;
 	}
 
-	if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel || changed.isMulti || changed.selectedValue || changed.optionIdentifier) {
+	if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel || changed.isMulti || changed.selectedValue || changed.optionIdentifier || changed.loadOptions) {
 		if (this._differs(state.filteredItems, (state.filteredItems = filteredItems(state)))) changed.filteredItems = true;
 	}
 };

@@ -25385,8 +25385,8 @@
 	function placeholderText({selectedValue, placeholder}) {
 	  return selectedValue ? '' : placeholder
 	}
-	function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier}) {
-	  const filteredItems = items.filter(item => {
+	function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier, loadOptions}) {
+	  const filteredItems = loadOptions ? items : items.filter(item => {
 	    let keepItem = true;
 
 	    if (isMulti && selectedValue) {
@@ -25445,9 +25445,10 @@
 	    isClearable: true,
 	    isMulti: false,
 	    isSearchable: true,
+	    isDisabled: false,
 	    optionIdentifier: 'value',
 	    groupBy: undefined,
-	    getOptions: undefined,
+	    loadOptions: undefined,
 	    loadOptionsInterval: 200,
 	    noOptionsMessage: 'No options',
 	    groupFilter: (groups) => groups,
@@ -25472,7 +25473,7 @@
 	    this.set({target});
 	  },
 	  handleKeyDown(e) {
-	    let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue} = this.get();
+	    let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue, list} = this.get();
 	    if (!isFocused) return;
 
 	    switch (e.key) {
@@ -25494,7 +25495,9 @@
 	        this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
 	        break;
 	      case 'ArrowLeft':
+	        if (list) list.set({ hoverItemIndex: -1});  
 	        if (!isMulti || filterText.length > 0) return;
+
 	        if (activeSelectedValue === undefined) {
 	          activeSelectedValue = selectedValue.length - 1;
 	        } else if (selectedValue.length > activeSelectedValue && activeSelectedValue !== 0) {
@@ -25503,6 +25506,7 @@
 	        this.set({activeSelectedValue});
 	        break;
 	      case 'ArrowRight':
+	        if (list) list.set({ hoverItemIndex: -1});
 	        if (!isMulti || filterText.length > 0 || activeSelectedValue === undefined) return;
 	        if (activeSelectedValue === selectedValue.length - 1) {
 	          activeSelectedValue = undefined;
@@ -26112,7 +26116,7 @@
 		this.refs = {};
 		this._state = assign(data$1(), options.data);
 
-		this._recompute({ isMulti: 1, isDisabled: 1, isFocused: 1, selectedValue: 1, filterText: 1, placeholder: 1, items: 1, groupBy: 1, groupFilter: 1, getOptionLabel: 1, optionIdentifier: 1 }, this._state);
+		this._recompute({ isMulti: 1, isDisabled: 1, isFocused: 1, selectedValue: 1, filterText: 1, placeholder: 1, items: 1, groupBy: 1, groupFilter: 1, getOptionLabel: 1, optionIdentifier: 1, loadOptions: 1 }, this._state);
 		this._intro = true;
 
 		this._handlers.state = [onstate];
@@ -26154,7 +26158,7 @@
 			if (this._differs(state.placeholderText, (state.placeholderText = placeholderText(state)))) changed.placeholderText = true;
 		}
 
-		if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel || changed.isMulti || changed.selectedValue || changed.optionIdentifier) {
+		if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel || changed.isMulti || changed.selectedValue || changed.optionIdentifier || changed.loadOptions) {
 			if (this._differs(state.filteredItems, (state.filteredItems = filteredItems(state)))) changed.filteredItems = true;
 		}
 	};
@@ -28835,6 +28839,33 @@
 
 	  select.destroy();
 	});
+
+	test('when isMulti is true, selectedValue populated and arrowLeft is pressed then no items in list should be active', async (t) => {
+	  const selectMultiSelected = new Select_multiSelected({
+	    target: testTarget,
+	  });
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      isMulti: true,
+	      items,
+	      selectedValue: [
+	        {value: 'pizza', label: 'Pizza'},
+	        {value: 'chips', label: 'Chips'},
+	      ],
+	      isFocused: true
+
+	    }
+	  });
+
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+	  t.ok(!document.querySelector('.hover'));
+	  select.destroy();
+	  selectMultiSelected.destroy();
+	});
+
 
 	function focus(element, setFocus) {
 	  return new Promise(fulfil => {
