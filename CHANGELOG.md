@@ -1,9 +1,17 @@
 # svelte-select changelog
 
+## 1.3.0
+
+* Updated README
+* Updated filtering with loadOptions
+* LeftArrow and RightArrow now remove highlight from list items
+* Added tests
+* Updated examples
+
 ## 1.2.0
 
 * Updated README
-* Added Async (getOptions)
+* Added Async (loadOptions)
 * Added noOptionsMessage  
 * Bug fixes
 * Updated examples
