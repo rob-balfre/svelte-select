@@ -25473,7 +25473,7 @@
 	    this.set({target});
 	  },
 	  handleKeyDown(e) {
-	    let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue} = this.get();
+	    let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue, list} = this.get();
 	    if (!isFocused) return;
 
 	    switch (e.key) {
@@ -25495,7 +25495,9 @@
 	        this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
 	        break;
 	      case 'ArrowLeft':
+	        if (list) list.set({ hoverItemIndex: -1});  
 	        if (!isMulti || filterText.length > 0) return;
+
 	        if (activeSelectedValue === undefined) {
 	          activeSelectedValue = selectedValue.length - 1;
 	        } else if (selectedValue.length > activeSelectedValue && activeSelectedValue !== 0) {
@@ -25504,6 +25506,7 @@
 	        this.set({activeSelectedValue});
 	        break;
 	      case 'ArrowRight':
+	        if (list) list.set({ hoverItemIndex: -1});
 	        if (!isMulti || filterText.length > 0 || activeSelectedValue === undefined) return;
 	        if (activeSelectedValue === selectedValue.length - 1) {
 	          activeSelectedValue = undefined;
@@ -28614,7 +28617,7 @@
 	  select.destroy();
 	});
 
-	test.only('when loadOptions method is supplied and filterText has length then items should populate via promise resolve', async (t) => {
+	test('when loadOptions method is supplied and filterText has length then items should populate via promise resolve', async (t) => {
 	  const div = document.createElement('div');
 	  document.body.appendChild(div);
 
@@ -28837,8 +28840,32 @@
 	  select.destroy();
 	});
 
-	// TODO
-	// left / right on multi should deselect active item on LIst
+	test('when isMulti is true, selectedValue populated and arrowLeft is pressed then no items in list should be active', async (t) => {
+	  const selectMultiSelected = new Select_multiSelected({
+	    target: testTarget,
+	  });
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      isMulti: true,
+	      items,
+	      selectedValue: [
+	        {value: 'pizza', label: 'Pizza'},
+	        {value: 'chips', label: 'Chips'},
+	      ],
+	      isFocused: true
+
+	    }
+	  });
+
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+	  t.ok(!document.querySelector('.hover'));
+	  select.destroy();
+	  selectMultiSelected.destroy();
+	});
+
 
 	function focus(element, setFocus) {
 	  return new Promise(fulfil => {

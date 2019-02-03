@@ -1032,7 +1032,7 @@ var methods$2 = {
     this.set({target});
   },
   handleKeyDown(e) {
-    let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue} = this.get();
+    let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue, list} = this.get();
     if (!isFocused) return;
 
     switch (e.key) {
@@ -1054,7 +1054,9 @@ var methods$2 = {
         this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
         break;
       case 'ArrowLeft':
+        if (list) list.set({ hoverItemIndex: -1});  
         if (!isMulti || filterText.length > 0) return;
+
         if (activeSelectedValue === undefined) {
           activeSelectedValue = selectedValue.length - 1;
         } else if (selectedValue.length > activeSelectedValue && activeSelectedValue !== 0) {
@@ -1063,6 +1065,7 @@ var methods$2 = {
         this.set({activeSelectedValue});
         break;
       case 'ArrowRight':
+        if (list) list.set({ hoverItemIndex: -1});
         if (!isMulti || filterText.length > 0 || activeSelectedValue === undefined) return;
         if (activeSelectedValue === selectedValue.length - 1) {
           activeSelectedValue = undefined;

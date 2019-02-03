@@ -1679,6 +1679,33 @@ test('when getOptionLabel contains HTML then render the HTML', async (t) => {
   select.destroy();
 });
 
+test('when isMulti is true, selectedValue populated and arrowLeft is pressed then no items in list should be active', async (t) => {
+  const selectMultiSelected = new SelectMultiSelected({
+    target: testTarget,
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [
+        {value: 'pizza', label: 'Pizza'},
+        {value: 'chips', label: 'Chips'},
+      ],
+      isFocused: true
+
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+  t.ok(!document.querySelector('.hover'));
+  select.destroy();
+  selectMultiSelected.destroy();
+});
+
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
