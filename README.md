@@ -33,30 +33,33 @@ yarn add svelte-select
     }
   };
 </script>
-
 ```
+
 
 ## API
 
-* `items` - array of items
-* `filterText` - text to filter list labels by
-* `placeholder` - placeholder text
-* `optionIdentifier` - Override default identifier ('value')
-* `listOpen` - open/close list
-* `containerStyles` - add/override container styles 
-* `selectedValue` - Selected value(s) 
-* `groupBy` - Function to group list items
-* `isClearable` - Defaults true set to false to disable clear all
-* `isDisabled` - Disable select
-* `isMulti` - Enable multi select
-* `isSearchable` - Defaults true set to false to disable search/filtering
-* `groupFilter` - Override default groupFilter function
-* `getOptionLabel` - Override default getOptionLabel function
-* `Item` - Override default item component
-* `Selection` - Override default selection component
-* `MultiSelection` - Override default multi selection component
-* `getOptions` - Methods that returns a Promise that updates items  
-* `noOptionsMessage` - Message to display when there are no items  
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| items | String | - | array of items
+| filterText | String | - | text to filter list labels by
+| placeholder | String | - | placeholder text
+| optionIdentifier | String | 'value' | override default identifier
+| listOpen | Boolean | false | open/close list
+| containerStyles | String | - | add/override container styles 
+| selectedValue | - | - | Selected value(s)
+| groupBy | Function | - | Function to group list items
+| isClearable | Boolean | false | Disable clear all
+| isDisabled | Boolean | false | Disable select
+| isMulti | Boolean | false | Enable multi select
+| isSearchable | Boolean | true | Disable search/filtering
+| groupFilter | Function | (groups) => groups | group filter function
+| getOptionLabel | Function | (option) => option.label | get option label function
+| getSelectionLabel | Function | (option) => option.label | get selection label function
+| Item | Component | Item | item component
+| Selection | Component | Selection | selection component
+| MultiSelection | Component | MultiSelection | multi selection component
+| getOptions | Promise | - | Methods that returns a Promise that updates items
+| noOptionsMessage | String | 'No options' | Message to display when there are no items  
 
 
 ## Development
@@ -67,7 +70,6 @@ yarn
 yarn dev
 yarn test:browser
 ```
-
 
 
 ## Configuring webpack
