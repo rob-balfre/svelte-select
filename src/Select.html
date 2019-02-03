@@ -249,7 +249,7 @@
         isDisabled: false,
         optionIdentifier: 'value',
         groupBy: undefined,
-        getOptions: undefined,
+        loadOptions: undefined,
         loadOptionsInterval: 200,
         noOptionsMessage: 'No options',
         groupFilter: (groups) => groups,
@@ -272,8 +272,8 @@
       placeholderText({selectedValue, placeholder}) {
         return selectedValue ? '' : placeholder
       },
-      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier}) {
-        const filteredItems = items.filter(item => {
+      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier, loadOptions}) {
+        const filteredItems = loadOptions ? items : items.filter(item => {
           let keepItem = true;
 
           if (isMulti && selectedValue) {

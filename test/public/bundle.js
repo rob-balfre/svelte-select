@@ -25385,8 +25385,8 @@
 	function placeholderText({selectedValue, placeholder}) {
 	  return selectedValue ? '' : placeholder
 	}
-	function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier}) {
-	  const filteredItems = items.filter(item => {
+	function filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier, loadOptions}) {
+	  const filteredItems = loadOptions ? items : items.filter(item => {
 	    let keepItem = true;
 
 	    if (isMulti && selectedValue) {
@@ -25445,9 +25445,10 @@
 	    isClearable: true,
 	    isMulti: false,
 	    isSearchable: true,
+	    isDisabled: false,
 	    optionIdentifier: 'value',
 	    groupBy: undefined,
-	    getOptions: undefined,
+	    loadOptions: undefined,
 	    loadOptionsInterval: 200,
 	    noOptionsMessage: 'No options',
 	    groupFilter: (groups) => groups,
@@ -26112,7 +26113,7 @@
 		this.refs = {};
 		this._state = assign(data$1(), options.data);
 
-		this._recompute({ isMulti: 1, isDisabled: 1, isFocused: 1, selectedValue: 1, filterText: 1, placeholder: 1, items: 1, groupBy: 1, groupFilter: 1, getOptionLabel: 1, optionIdentifier: 1 }, this._state);
+		this._recompute({ isMulti: 1, isDisabled: 1, isFocused: 1, selectedValue: 1, filterText: 1, placeholder: 1, items: 1, groupBy: 1, groupFilter: 1, getOptionLabel: 1, optionIdentifier: 1, loadOptions: 1 }, this._state);
 		this._intro = true;
 
 		this._handlers.state = [onstate];
@@ -26154,7 +26155,7 @@
 			if (this._differs(state.placeholderText, (state.placeholderText = placeholderText(state)))) changed.placeholderText = true;
 		}
 
-		if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel || changed.isMulti || changed.selectedValue || changed.optionIdentifier) {
+		if (changed.items || changed.filterText || changed.groupBy || changed.groupFilter || changed.getOptionLabel || changed.isMulti || changed.selectedValue || changed.optionIdentifier || changed.loadOptions) {
 			if (this._differs(state.filteredItems, (state.filteredItems = filteredItems(state)))) changed.filteredItems = true;
 		}
 	};
@@ -28613,7 +28614,7 @@
 	  select.destroy();
 	});
 
-	test('when loadOptions method is supplied and filterText has length then items should populate via promise resolve', async (t) => {
+	test.only('when loadOptions method is supplied and filterText has length then items should populate via promise resolve', async (t) => {
 	  const div = document.createElement('div');
 	  document.body.appendChild(div);
 
@@ -28835,6 +28836,9 @@
 
 	  select.destroy();
 	});
+
+	// TODO
+	// left / right on multi should deselect active item on LIst
 
 	function focus(element, setFocus) {
 	  return new Promise(fulfil => {

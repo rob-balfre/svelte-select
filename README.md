@@ -58,7 +58,7 @@ yarn add svelte-select
 | Item | Component | Item | item component
 | Selection | Component | Selection | selection component
 | MultiSelection | Component | MultiSelection | multi selection component
-| getOptions | Promise | - | Methods that returns a Promise that updates items
+| loadOptions | Promise | - | Method that returns a Promise that updates items
 | noOptionsMessage | String | 'No options' | Message to display when there are no items  
 
 
