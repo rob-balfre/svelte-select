@@ -1705,6 +1705,24 @@ test('when isMulti is true, selectedValue populated and arrowLeft is pressed the
   selectMultiSelected.destroy();
 });
 
+test('when hideEmptyState true then do not show "no options" div ', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      listOpen: true,
+      filterText: 'x',
+      hideEmptyState: true
+    }
+  });
+
+  t.ok(!document.querySelector('.empty'));
+
+  select.destroy();
+});
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

@@ -252,6 +252,7 @@
         loadOptions: undefined,
         loadOptionsInterval: 200,
         noOptionsMessage: 'No options',
+        hideEmptyState: false,
         groupFilter: (groups) => groups,
         getOptionLabel: (option) => option.label,
         getSelectionLabel: (option) => option.label,
@@ -464,10 +465,10 @@
         this.handleFocus();
       },
       loadList() {
-        let {target, list, Item, getOptionLabel, optionIdentifier, noOptionsMessage, items, selectedValue, filteredItems, isMulti} = this.get();
+        let {target, list, Item, getOptionLabel, optionIdentifier, noOptionsMessage, hideEmptyState, items, selectedValue, filteredItems, isMulti} = this.get();
         if (target && list) return;
 
-        const data = {Item, optionIdentifier, noOptionsMessage};
+        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState};
 
         if (getOptionLabel) {
           data.getOptionLabel = getOptionLabel;
