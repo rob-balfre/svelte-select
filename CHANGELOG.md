@@ -1,5 +1,12 @@
 # svelte-select changelog
 
+
+## 1.4.0
+
+* Added hideEmptyState
+* Updated README
+* Added tests
+
 ## 1.3.0
 
 * Updated README
