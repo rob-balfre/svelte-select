@@ -60,6 +60,7 @@ yarn add svelte-select
 | MultiSelection | Component | MultiSelection | multi selection component
 | loadOptions | Promise | - | Method that returns a Promise that updates items
 | noOptionsMessage | String | 'No options' | Message to display when there are no items  
+| hideEmptyState | Boolean | false | Hide list when no options
 
 
 ## Development

@@ -13,7 +13,9 @@
     <svelte:component this="{Item}" {item} {getOptionLabel}/>
   </div>
   {:else}
-  <div class="empty">{noOptionsMessage}</div>
+    {#if !hideEmptyState}
+    <div class="empty">{noOptionsMessage}</div>
+    {/if}
   {/each}
 </div>
 

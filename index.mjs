@@ -437,7 +437,7 @@ function create_main_fragment$1(component, ctx) {
 		},
 
 		p(changed, ctx) {
-			if (changed.hoverItemIndex || changed.items || changed.selectedValue || changed.optionIdentifier || changed.Item || changed.getOptionLabel || changed.noOptionsMessage) {
+			if (changed.hoverItemIndex || changed.items || changed.selectedValue || changed.optionIdentifier || changed.Item || changed.getOptionLabel || changed.hideEmptyState || changed.noOptionsMessage) {
 				each_value = ctx.items;
 
 				for (var i = 0; i < each_value.length; i += 1) {
@@ -488,6 +488,47 @@ function create_main_fragment$1(component, ctx) {
 
 // (15:2) {:else}
 function create_else_block(component, ctx) {
+	var if_block_anchor;
+
+	var if_block = (!ctx.hideEmptyState) && create_if_block_1(component, ctx);
+
+	return {
+		c() {
+			if (if_block) if_block.c();
+			if_block_anchor = createComment();
+		},
+
+		m(target, anchor) {
+			if (if_block) if_block.m(target, anchor);
+			insert(target, if_block_anchor, anchor);
+		},
+
+		p(changed, ctx) {
+			if (!ctx.hideEmptyState) {
+				if (if_block) {
+					if_block.p(changed, ctx);
+				} else {
+					if_block = create_if_block_1(component, ctx);
+					if_block.c();
+					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+				}
+			} else if (if_block) {
+				if_block.d(1);
+				if_block = null;
+			}
+		},
+
+		d(detach) {
+			if (if_block) if_block.d(detach);
+			if (detach) {
+				detachNode(if_block_anchor);
+			}
+		}
+	};
+}
+
+// (16:4) {#if !hideEmptyState}
+function create_if_block_1(component, ctx) {
 	var div, text;
 
 	return {
@@ -1010,6 +1051,7 @@ function data$1() {
     loadOptions: undefined,
     loadOptionsInterval: 200,
     noOptionsMessage: 'No options',
+    hideEmptyState: false,
     groupFilter: (groups) => groups,
     getOptionLabel: (option) => option.label,
     getSelectionLabel: (option) => option.label,
@@ -1111,10 +1153,10 @@ var methods$2 = {
     this.handleFocus();
   },
   loadList() {
-    let {target, list, Item: Item$$1, getOptionLabel, optionIdentifier, noOptionsMessage, items, selectedValue, filteredItems, isMulti} = this.get();
+    let {target, list, Item: Item$$1, getOptionLabel, optionIdentifier, noOptionsMessage, hideEmptyState, items, selectedValue, filteredItems, isMulti} = this.get();
     if (target && list) return;
 
-    const data = {Item: Item$$1, optionIdentifier, noOptionsMessage};
+    const data = {Item: Item$$1, optionIdentifier, noOptionsMessage, hideEmptyState};
 
     if (getOptionLabel) {
       data.getOptionLabel = getOptionLabel;
@@ -1261,7 +1303,7 @@ function create_main_fragment$4(component, ctx) {
 
 	var if_block2 = (ctx.showSelectedItem && ctx.isClearable && !ctx.isDisabled && !ctx.isWaiting) && create_if_block_2(component, ctx);
 
-	var if_block3 = (!ctx.isSearchable && !ctx.isDisabled && !ctx.isWaiting && (ctx.showSelectedItem && !ctx.isClearable || !ctx.showSelectedItem)) && create_if_block_1(component, ctx);
+	var if_block3 = (!ctx.isSearchable && !ctx.isDisabled && !ctx.isWaiting && (ctx.showSelectedItem && !ctx.isClearable || !ctx.showSelectedItem)) && create_if_block_1$1(component, ctx);
 
 	var if_block4 = (ctx.isWaiting) && create_if_block$2(component, ctx);
 
@@ -1375,7 +1417,7 @@ function create_main_fragment$4(component, ctx) {
 
 			if (!ctx.isSearchable && !ctx.isDisabled && !ctx.isWaiting && (ctx.showSelectedItem && !ctx.isClearable || !ctx.showSelectedItem)) {
 				if (!if_block3) {
-					if_block3 = create_if_block_1(component, ctx);
+					if_block3 = create_if_block_1$1(component, ctx);
 					if_block3.c();
 					if_block3.m(div, text4);
 				}
@@ -1625,7 +1667,7 @@ function create_if_block_2(component, ctx) {
 }
 
 // (54:2) {#if !isSearchable && !isDisabled && !isWaiting && (showSelectedItem && !isClearable || !showSelectedItem)}
-function create_if_block_1(component, ctx) {
+function create_if_block_1$1(component, ctx) {
 	var div;
 
 	return {
