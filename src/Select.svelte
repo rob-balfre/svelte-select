@@ -223,10 +223,10 @@
 </style>
 
 <script>
-  import List from './List.html';
-  import Item from './Item.html'
-  import Selection from './Selection.html'
-  import MultiSelection from './MultiSelection.html'
+  import List from './List.svelte';
+  import Item from './Item.svelte'
+  import Selection from './Selection.svelte'
+  import MultiSelection from './MultiSelection.svelte'
 
   export default {
     data() {

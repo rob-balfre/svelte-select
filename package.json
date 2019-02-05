@@ -3,7 +3,7 @@
   "version": "1.4.0",
   "repository": "https://bob-bea-fre@github.com/bob-bea-fre/svelte-select.git",
   "description": "A <Select> component for Svelte apps",
-  "svelte": "src/Select.html",
+  "svelte": "src/Select.svelte",
   "module": "index.mjs",
   "main": "index.js",
   "scripts": {
@@ -15,8 +15,10 @@
     "pretest": "npm run build"
   },
   "devDependencies": {
+    "@babel/polyfill": "7.0.0",
     "port-authority": "^1.0.5",
     "puppeteer": "^1.9.0",
+    "require-nocache": "1.0.0",
     "rollup": "^0.66.6",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-html": "^0.2.1",
