@@ -63,6 +63,39 @@ yarn add svelte-select
 | hideEmptyState | Boolean | false | Hide list when no options
 
 
+## Events
+
+| Event Name | Callback | Description |
+|------|------|----------|
+| select | selectedValue | fires when selectedValue changes
+| clear | - | fires when clear all is invoked
+
+```html
+<Select {items} on:select="handleSelect(event)" on:clear="handleClear()"></Select>
+
+<script>
+  import Select from 'svelte-select';
+
+  export default {
+    components: { Select },
+
+    data() {
+      return {
+         items: [...]
+      };
+    },
+    methods: {
+      handleSelect(selectedVal) {
+        ...
+      },
+      onClear() {
+        ...
+      }
+    }
+  };
+</script>
+```
+
 ## Development
 
 ```bash
