@@ -1151,6 +1151,7 @@ var methods$2 = {
     e.stopPropagation();
     this.set({selectedValue: undefined, listOpen: false});
     this.handleFocus();
+    this.fire('clear');
   },
   loadList() {
     let {target, list, Item: Item$$1, getOptionLabel, optionIdentifier, noOptionsMessage, hideEmptyState, items, selectedValue, filteredItems, isMulti} = this.get();
@@ -1216,6 +1217,10 @@ function ondestroy$1() {
 }
 function onstate({changed, current, previous}) {
   if (!previous) return;
+
+  if (changed.selectedValue && current.selectedValue ) {        
+    this.fire('select', current.selectedValue);
+  }
 
   if (changed.listOpen) {
     if (current.listOpen) {

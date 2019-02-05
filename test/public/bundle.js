@@ -25592,6 +25592,7 @@
 	    e.stopPropagation();
 	    this.set({selectedValue: undefined, listOpen: false});
 	    this.handleFocus();
+	    this.fire('clear');
 	  },
 	  loadList() {
 	    let {target, list, Item: Item$$1, getOptionLabel, optionIdentifier, noOptionsMessage, hideEmptyState, items, selectedValue, filteredItems, isMulti} = this.get();
@@ -25657,6 +25658,10 @@
 	}
 	function onstate({changed, current, previous}) {
 	  if (!previous) return;
+
+	  if (changed.selectedValue && current.selectedValue ) {        
+	    this.fire('select', current.selectedValue);
+	  }
 
 	  if (changed.listOpen) {
 	    if (current.listOpen) {
@@ -28924,6 +28929,57 @@
 
 	  t.ok(!document.querySelector('.empty'));
 
+	  select.destroy();
+	});
+
+	test('when selectedValue changes then select event should fire', async (t) => {
+	  const div = document.createElement('div');
+	  document.body.appendChild(div);
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      items,
+	      isFocused: true
+	    }
+	  });
+
+	  let selectEvent = undefined;
+	  const listener = select.on('select', event => {
+	    selectEvent = event;
+	  });
+
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+	  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+	  t.ok(selectEvent);
+
+	  listener.cancel();
+	  select.destroy();
+	});
+
+	test('when selectedValue is cleared then clear event from fire select event', async (t) => {
+	  const div = document.createElement('div');
+	  document.body.appendChild(div);
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      items,
+	      selectedValue: items[0],
+	    }
+	  });
+
+	  let clearEvent = false;
+	  const listener = select.on('clear', () => {
+	    clearEvent = true;
+	  });
+
+	  document.querySelector('.clearSelect').click();
+
+	  t.ok(clearEvent);
+
+	  listener.cancel();
 	  select.destroy();
 	});
 
