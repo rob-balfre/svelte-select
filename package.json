@@ -38,6 +38,7 @@
   "files": [
     "src",
     "index.mjs",
-    "index.js"
+    "index.js",
+    "Select.js"
   ]
 }

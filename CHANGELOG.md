@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 1.5.1
+
+* Fix for npm publish missing a file
+
 ## 1.5.0
 
 * Added events for select and clear
