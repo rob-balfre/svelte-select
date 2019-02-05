@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 1.5.0
+
+* Added events for select and clear
+* Updated README
+* Added tests
 
 ## 1.4.0
 
