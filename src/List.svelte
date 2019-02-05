@@ -76,7 +76,7 @@
 </style>
 
 <script>
-  import Item from './Item.html';
+  import Item from './Item.svelte';
 
   export default {
     data() {

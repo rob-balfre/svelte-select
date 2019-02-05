@@ -223,10 +223,10 @@
 </style>
 
 <script>
-  import List from './List.html';
-  import Item from './Item.html'
-  import Selection from './Selection.html'
-  import MultiSelection from './MultiSelection.html'
+  import List from './List.svelte';
+  import Item from './Item.svelte'
+  import Selection from './Selection.svelte'
+  import MultiSelection from './MultiSelection.svelte'
 
   export default {
     data() {
@@ -319,6 +319,10 @@
     },
     onstate({changed, current, previous}) {
       if (!previous) return;
+
+      if (changed.selectedValue && current.selectedValue ) {        
+        this.fire('select', current.selectedValue)
+      }
 
       if (changed.listOpen) {
         if (current.listOpen) {
@@ -463,6 +467,7 @@
         e.stopPropagation();
         this.set({selectedValue: undefined, listOpen: false});
         this.handleFocus();
+        this.fire('clear');
       },
       loadList() {
         let {target, list, Item, getOptionLabel, optionIdentifier, noOptionsMessage, hideEmptyState, items, selectedValue, filteredItems, isMulti} = this.get();

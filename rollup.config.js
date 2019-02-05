@@ -5,7 +5,7 @@ import pkg from './package.json';
 
 export default [
 	{
-		input: 'src/Select.html',
+		input: 'src/Select.svelte',
 		output: [
 			{ file: pkg.module, 'format': 'es' },
 			{ file: pkg.main, 'format': 'umd', name: 'Select' }

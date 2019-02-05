@@ -1,8 +1,8 @@
 import svelte from 'svelte';
 import {Store} from 'svelte/store.js';
 import CustomItem from './CustomItem.html';
-import Select from '../../src/Select.html';
-import List from '../../src/List.html';
+import Select from '../../src/Select.svelte';
+import List from '../../src/List.svelte';
 import SelectDefault from './Select/Select--default.html'
 import SelectFocus from './Select/Select--focus.html'
 import SelectItemSelected from './Select/Select--itemSelected.html'
@@ -1721,6 +1721,57 @@ test('when hideEmptyState true then do not show "no options" div ', async (t) =>
 
   t.ok(!document.querySelector('.empty'));
 
+  select.destroy();
+});
+
+test('when selectedValue changes then select event should fire', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isFocused: true
+    }
+  });
+
+  let selectEvent = undefined;
+  const listener = select.on('select', event => {
+    selectEvent = event;
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  t.ok(selectEvent);
+
+  listener.cancel();
+  select.destroy();
+});
+
+test('when selectedValue is cleared then clear event from fire select event', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      selectedValue: items[0],
+    }
+  });
+
+  let clearEvent = false;
+  const listener = select.on('clear', () => {
+    clearEvent = true;
+  });
+
+  document.querySelector('.clearSelect').click();
+
+  t.ok(clearEvent);
+
+  listener.cancel();
   select.destroy();
 });
 
