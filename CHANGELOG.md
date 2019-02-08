@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 1.5.2
+
+* Reset highlighted item index to 0 when list updates or filters
+
 ## 1.5.1
 
 * Fix for npm publish missing a file
