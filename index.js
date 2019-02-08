@@ -345,11 +345,9 @@
 	}
 	function onupdate({changed, current}) {
 	  if (changed.items && current.items.length > 0) {
-	    if (!current.items[current.hoverItemIndex]) {
-	      this.set({
-	        hoverItemIndex: current.items.length - 1
-	      });
-	    }
+	    this.set({
+	        hoverItemIndex: 0
+	    });
 	  }
 	  if (changed.activeItemIndex && current.activeItemIndex > -1) {
 	    this.set({

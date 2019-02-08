@@ -1775,6 +1775,29 @@ test('when selectedValue is cleared then clear event from fire select event', as
   select.destroy();
 });
 
+test('when items in list filter or update then first item in list should highlight', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isFocused: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+
+  t.ok(document.querySelector('.hover .item').innerHTML === 'Cake');
+  select.set({filterText: 'c'});
+  t.ok(document.querySelector('.hover .item').innerHTML === 'Chocolate');
+
+  select.destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
