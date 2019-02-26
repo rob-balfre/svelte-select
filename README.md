@@ -48,7 +48,7 @@ yarn add svelte-select
 | containerStyles | String | - | add/override container styles 
 | selectedValue | - | - | Selected value(s)
 | groupBy | Function | - | Function to group list items
-| isClearable | Boolean | false | Disable clear all
+| isClearable | Boolean | true | Enable clearing selected items
 | isDisabled | Boolean | false | Disable select
 | isMulti | Boolean | false | Enable multi select
 | isSearchable | Boolean | true | Disable search/filtering
