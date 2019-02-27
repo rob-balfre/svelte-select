@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 1.5.3
+
+* Removed unused class causing warnings
+* README typo
+
 ## 1.5.2
 
 * Reset highlighted item index to 0 when list updates or filters
