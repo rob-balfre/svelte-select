@@ -777,8 +777,8 @@ var methods$1 = {
 
 function add_css$1() {
 	var style = createElement("style");
-	style.id = 'svelte-10o3np5-style';
-	style.textContent = ".multiSelectItem.svelte-10o3np5{background:#EBEDEF;margin-right:5px;border-radius:16px;line-height:32px;display:flex;cursor:default;height:32px;margin-top:5px;padding:0 10px 0 15px}.multiSelectItem_label.svelte-10o3np5{margin-right:5px}.multiSelectItem_clear.svelte-10o3np5{border-radius:0 4px 4px 0;width:20px;text-align:center}.multiSelectItem.svelte-10o3np5:hover,.multiSelectItem.active.svelte-10o3np5{background-color:#006FFF;color:#fff}.multiSelectItem.disabled.svelte-10o3np5:hover{background:#EBEDEF;color:#C1C6CC}.multiSelectItem_clear.svelte-10o3np5{border-radius:50%;background:#52616F;width:16px;height:16px;position:relative;top:8px;text-align:center;padding:1px}.multiSelectItem_clear.svelte-10o3np5:hover,.active.svelte-10o3np5 .multiSelectItem_clear.svelte-10o3np5{background:#fff}.multiSelectItem_clear.svelte-10o3np5:hover svg.svelte-10o3np5,.active.svelte-10o3np5 .multiSelectItem_clear svg.svelte-10o3np5{fill:#006FFF}.multiSelectItem_clear.svelte-10o3np5 svg.svelte-10o3np5{fill:#EBEDEF;vertical-align:top}";
+	style.id = 'svelte-hjmdgm-style';
+	style.textContent = ".multiSelectItem.svelte-hjmdgm{background:#EBEDEF;margin-right:5px;border-radius:16px;line-height:32px;display:flex;cursor:default;height:32px;margin-top:5px;padding:0 10px 0 15px}.multiSelectItem_label.svelte-hjmdgm{margin-right:5px}.multiSelectItem_clear.svelte-hjmdgm{border-radius:0 4px 4px 0;width:20px;text-align:center}.multiSelectItem.svelte-hjmdgm:hover,.multiSelectItem.active.svelte-hjmdgm{background-color:#006FFF;color:#fff}.multiSelectItem.disabled.svelte-hjmdgm:hover{background:#EBEDEF;color:#C1C6CC}.multiSelectItem_clear.svelte-hjmdgm{border-radius:50%;background:#52616F;width:16px;height:16px;position:relative;top:8px;text-align:center;padding:1px}.multiSelectItem_clear.svelte-hjmdgm:hover,.active.svelte-hjmdgm .multiSelectItem_clear.svelte-hjmdgm{background:#fff}.multiSelectItem_clear.svelte-hjmdgm:hover svg.svelte-hjmdgm,.active.svelte-hjmdgm .multiSelectItem_clear svg.svelte-hjmdgm{fill:#006FFF}.multiSelectItem_clear.svelte-hjmdgm svg.svelte-hjmdgm{fill:#EBEDEF;vertical-align:top}";
 	append(document.head, style);
 }
 
@@ -863,11 +863,11 @@ function create_if_block$1(component, ctx) {
 	return {
 		c() {
 			div = createElement("div");
-			div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-10o3np5"><path d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+			div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-hjmdgm"><path d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 			div._svelte = { component, ctx };
 
 			addListener(div, "click", click_handler$1);
-			div.className = "multiSelectItem_clear svelte-10o3np5";
+			div.className = "multiSelectItem_clear svelte-hjmdgm";
 		},
 
 		m(target, anchor) {
@@ -903,8 +903,8 @@ function create_each_block$1(component, ctx) {
 			text1 = createText("\n  ");
 			if (if_block) if_block.c();
 			text2 = createText("\n");
-			div0.className = "multiSelectItem_label svelte-10o3np5";
-			div1.className = div1_class_value = "multiSelectItem " + (ctx.activeSelectedValue === ctx.i ? 'active' : '') + " " + (ctx.isDisabled ? 'disabled' : '') + " svelte-10o3np5";
+			div0.className = "multiSelectItem_label svelte-hjmdgm";
+			div1.className = div1_class_value = "multiSelectItem " + (ctx.activeSelectedValue === ctx.i ? 'active' : '') + " " + (ctx.isDisabled ? 'disabled' : '') + " svelte-hjmdgm";
 		},
 
 		m(target, anchor) {
@@ -932,7 +932,7 @@ function create_each_block$1(component, ctx) {
 				if_block = null;
 			}
 
-			if ((changed.activeSelectedValue || changed.isDisabled) && div1_class_value !== (div1_class_value = "multiSelectItem " + (ctx.activeSelectedValue === ctx.i ? 'active' : '') + " " + (ctx.isDisabled ? 'disabled' : '') + " svelte-10o3np5")) {
+			if ((changed.activeSelectedValue || changed.isDisabled) && div1_class_value !== (div1_class_value = "multiSelectItem " + (ctx.activeSelectedValue === ctx.i ? 'active' : '') + " " + (ctx.isDisabled ? 'disabled' : '') + " svelte-hjmdgm")) {
 				div1.className = div1_class_value;
 			}
 		},
@@ -952,7 +952,7 @@ function MultiSelection(options) {
 	this._state = assign({}, options.data);
 	this._intro = true;
 
-	if (!document.getElementById("svelte-10o3np5-style")) add_css$1();
+	if (!document.getElementById("svelte-hjmdgm-style")) add_css$1();
 
 	this._fragment = create_main_fragment$3(this, this._state);
 

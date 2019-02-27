@@ -42,12 +42,6 @@
     margin-right: 5px;
   }
 
-  .selectContainer.multiSelect input {
-    width: auto;
-    padding: 0;
-    flex-grow: 1;
-  }
-
   .multiSelectItem_clear {
     border-radius: 0 4px 4px 0;
     width: 20px;
