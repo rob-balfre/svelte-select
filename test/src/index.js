@@ -1798,6 +1798,7 @@ test('when items in list filter or update then first item in list should highlig
   select.destroy();
 });
 
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
