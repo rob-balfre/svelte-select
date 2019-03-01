@@ -1798,14 +1798,6 @@ test('when items in list filter or update then first item in list should highlig
   select.destroy();
 });
 
-test.only('derp', async (t) => {
-  const select = new Select({
-    target,
-    data: {
-      items
-    }
-  });
-});
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
