@@ -89,7 +89,7 @@
     line-height: 42px;
     padding: 0 16px;
     width: 100%;
-    background: transparent;
+    background: #fff;
     font-size: 14px;
     letter-spacing: -0.08px;
     position: absolute;
@@ -320,7 +320,7 @@
     onstate({changed, current, previous}) {
       if (!previous) return;
 
-      if (changed.selectedValue && current.selectedValue ) {        
+      if (changed.selectedValue && current.selectedValue ) {
         this.fire('select', current.selectedValue)
       }
 
