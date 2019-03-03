@@ -79,6 +79,7 @@
     position: relative;
     display: flex;
     padding: 0 16px;
+    background: #fff;
   }
 
   .selectContainer input {
@@ -89,7 +90,7 @@
     line-height: 42px;
     padding: 0 16px;
     width: 100%;
-    background: #fff;
+    background: transparent;
     font-size: 14px;
     letter-spacing: -0.08px;
     position: absolute;
@@ -320,8 +321,9 @@
     onstate({changed, current, previous}) {
       if (!previous) return;
 
-      if (changed.selectedValue && current.selectedValue ) {
-        this.fire('select', current.selectedValue)
+      if (changed.selectedValue && current.selectedValue) {
+        if (!previous.selectedValue || current.selectedValue[current.optionIdentifier] != previous.selectedValue[current.optionIdentifier])
+          this.fire('select', current.selectedValue)
       }
 
       if (changed.listOpen) {
