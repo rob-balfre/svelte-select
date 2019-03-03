@@ -24180,7 +24180,7 @@
 		Object.defineProperty(exports, '__esModule', { value: true });
 
 	})));
-	//# sourceMappingURL=svelte.js.map
+
 	});
 
 	unwrapExports(svelte);
@@ -25667,8 +25667,9 @@
 	function onstate({changed, current, previous}) {
 	  if (!previous) return;
 
-	  if (changed.selectedValue && current.selectedValue ) {
-	    this.fire('select', current.selectedValue);
+	  if (changed.selectedValue && current.selectedValue) {
+	    if (!previous.selectedValue || current.selectedValue[current.optionIdentifier] != previous.selectedValue[current.optionIdentifier])
+	      this.fire('select', current.selectedValue);
 	  }
 
 	  if (changed.listOpen) {
@@ -25721,8 +25722,8 @@
 	}
 	function add_css$3() {
 		var style = createElement("style");
-		style.id = 'svelte-1gw6fby-style';
-		style.textContent = ".selectContainer.svelte-1gw6fby{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;display:flex;padding:0 16px}.selectContainer.svelte-1gw6fby input.svelte-1gw6fby{cursor:default;border:none;color:#3F4F5F;height:42px;line-height:42px;padding:0 16px;width:100%;background:#fff;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-1gw6fby input.svelte-1gw6fby::placeholder{color:#78848F}.selectContainer.svelte-1gw6fby input.svelte-1gw6fby:focus{outline:none}.selectContainer.svelte-1gw6fby:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-1gw6fby{border-color:#006FE8}.selectContainer.disabled.svelte-1gw6fby{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-1gw6fby input.svelte-1gw6fby::placeholder{color:#C1C6CC}.selectedItem.svelte-1gw6fby{line-height:42px;height:42px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-1gw6fby:focus{outline:none}.clearSelect.svelte-1gw6fby{position:absolute;right:10px;top:11px;bottom:11px;width:20px;color:#c5cacf;flex:none !important}.clearSelect.svelte-1gw6fby:hover{color:#2c3e50}.selectContainer.focused.svelte-1gw6fby .clearSelect.svelte-1gw6fby{color:#3F4F5F}.indicator.svelte-1gw6fby{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-1gw6fby svg.svelte-1gw6fby{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-1gw6fby{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-1gw6fby-rotate 0.75s linear infinite}.spinner_icon.svelte-1gw6fby{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-1gw6fby{stroke-dasharray:90;stroke-linecap:round}.multiSelect.svelte-1gw6fby{display:flex;padding:0 35px 0 16px;height:auto;flex-wrap:wrap}.multiSelect.svelte-1gw6fby>.svelte-1gw6fby{flex:1 1 50px}.selectContainer.multiSelect.svelte-1gw6fby input.svelte-1gw6fby{padding:0;position:relative}@keyframes svelte-1gw6fby-rotate{100%{transform:rotate(360deg)}}";
+		style.id = 'svelte-hw8jyz-style';
+		style.textContent = ".selectContainer.svelte-hw8jyz{border:1px solid #D8DBDF;border-radius:3px;height:44px;position:relative;display:flex;padding:0 16px;background:#fff}.selectContainer.svelte-hw8jyz input.svelte-hw8jyz{cursor:default;border:none;color:#3F4F5F;height:42px;line-height:42px;padding:0 16px;width:100%;background:transparent;font-size:14px;letter-spacing:-0.08px;position:absolute;left:0}.selectContainer.svelte-hw8jyz input.svelte-hw8jyz::placeholder{color:#78848F}.selectContainer.svelte-hw8jyz input.svelte-hw8jyz:focus{outline:none}.selectContainer.svelte-hw8jyz:hover{border-color:#b2b8bf}.selectContainer.focused.svelte-hw8jyz{border-color:#006FE8}.selectContainer.disabled.svelte-hw8jyz{background:#F6F7F8;border-color:#F6F7F8;color:#C1C6CC}.selectContainer.disabled.svelte-hw8jyz input.svelte-hw8jyz::placeholder{color:#C1C6CC}.selectedItem.svelte-hw8jyz{line-height:42px;height:42px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;padding-right:20px}.selectedItem.svelte-hw8jyz:focus{outline:none}.clearSelect.svelte-hw8jyz{position:absolute;right:10px;top:11px;bottom:11px;width:20px;color:#c5cacf;flex:none !important}.clearSelect.svelte-hw8jyz:hover{color:#2c3e50}.selectContainer.focused.svelte-hw8jyz .clearSelect.svelte-hw8jyz{color:#3F4F5F}.indicator.svelte-hw8jyz{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#c5cacf}.indicator.svelte-hw8jyz svg.svelte-hw8jyz{display:inline-block;fill:currentcolor;line-height:1;stroke:currentcolor;stroke-width:0}.spinner.svelte-hw8jyz{position:absolute;right:10px;top:11px;width:20px;height:20px;color:#51ce6c;animation:svelte-hw8jyz-rotate 0.75s linear infinite}.spinner_icon.svelte-hw8jyz{display:block;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;-webkit-transform:none}.spinner_path.svelte-hw8jyz{stroke-dasharray:90;stroke-linecap:round}.multiSelect.svelte-hw8jyz{display:flex;padding:0 35px 0 16px;height:auto;flex-wrap:wrap}.multiSelect.svelte-hw8jyz>.svelte-hw8jyz{flex:1 1 50px}.selectContainer.multiSelect.svelte-hw8jyz input.svelte-hw8jyz{padding:0;position:relative}@keyframes svelte-hw8jyz-rotate{100%{transform:rotate(360deg)}}";
 		append(document.head, style);
 	}
 
@@ -25788,9 +25789,9 @@
 				input.placeholder = ctx.placeholderText;
 				input.disabled = ctx.isDisabled;
 				input.style.cssText = ctx.inputStyles;
-				input.className = "svelte-1gw6fby";
+				input.className = "svelte-hw8jyz";
 				addListener(div, "click", click_handler);
-				div.className = "" + ctx.containerClasses + " svelte-1gw6fby";
+				div.className = "" + ctx.containerClasses + " svelte-hw8jyz";
 				div.style.cssText = ctx.containerStyles;
 			},
 
@@ -25892,7 +25893,7 @@
 				}
 
 				if (changed.containerClasses) {
-					div.className = "" + ctx.containerClasses + " svelte-1gw6fby";
+					div.className = "" + ctx.containerClasses + " svelte-hw8jyz";
 				}
 
 				if (changed.containerStyles) {
@@ -26044,7 +26045,7 @@
 				div = createElement("div");
 				if (switch_instance) switch_instance._fragment.c();
 				addListener(div, "focus", focus_handler);
-				div.className = "selectedItem svelte-1gw6fby";
+				div.className = "selectedItem svelte-hw8jyz";
 			},
 
 			m(target, anchor) {
@@ -26101,9 +26102,9 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-1gw6fby"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
+				div.innerHTML = `<svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation" class="svelte-hw8jyz"><path fill="currentColor" d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124 l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"></path></svg>`;
 				addListener(div, "click", click_handler);
-				div.className = "clearSelect svelte-1gw6fby";
+				div.className = "clearSelect svelte-hw8jyz";
 			},
 
 			m(target, anchor) {
@@ -26127,8 +26128,8 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-1gw6fby"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
-				div.className = "indicator svelte-1gw6fby";
+				div.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 20 20" focusable="false" class="css-19bqh2r svelte-hw8jyz"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg>`;
+				div.className = "indicator svelte-hw8jyz";
 			},
 
 			m(target, anchor) {
@@ -26150,8 +26151,8 @@
 		return {
 			c() {
 				div = createElement("div");
-				div.innerHTML = `<svg class="spinner_icon svelte-1gw6fby" viewBox="25 25 50 50"><circle class="spinner_path svelte-1gw6fby" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
-				div.className = "spinner svelte-1gw6fby";
+				div.innerHTML = `<svg class="spinner_icon svelte-hw8jyz" viewBox="25 25 50 50"><circle class="spinner_path svelte-hw8jyz" cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10"></circle></svg>`;
+				div.className = "spinner svelte-hw8jyz";
 			},
 
 			m(target, anchor) {
@@ -26178,7 +26179,7 @@
 
 		this._handlers.destroy = [ondestroy$1];
 
-		if (!document.getElementById("svelte-1gw6fby-style")) add_css$3();
+		if (!document.getElementById("svelte-hw8jyz-style")) add_css$3();
 
 		onstate.call(this, { changed: assignTrue({}, this._state), current: this._state });
 
@@ -27232,7 +27233,6 @@
 	        });
 	    });
 	}
-	//# sourceMappingURL=tape-modern.esm.js.map
 
 	// setup
 	const target = document.querySelector('main');
@@ -29036,6 +29036,30 @@
 	  select.destroy();
 	});
 
+	test('when item is selected or state changes then check selectedValue[optionIdentifier] has changed before firing "select" event', async (t) => {
+	  const div = document.createElement('div');
+	  document.body.appendChild(div);
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      items,
+	      selectedValue: {value: 'cake', label: 'Cake'}
+	    }
+	  });
+
+	  let item = undefined;
+
+	  const listener = select.on('select', () => {
+	    item = true;
+	  });
+
+	  select.set({selectedValue: {value: 'cake', label: 'Cake'}});
+
+	  t.ok(!item);
+	  listener.cancel();
+	  select.destroy();
+	});
 
 	function focus(element, setFocus) {
 	  return new Promise(fulfil => {

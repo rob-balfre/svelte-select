@@ -1820,6 +1820,30 @@ test('when items in list filter or update then first item in list should highlig
   select.destroy();
 });
 
+test('when item is selected or state changes then check selectedValue[optionIdentifier] has changed before firing "select" event', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      selectedValue: {value: 'cake', label: 'Cake'}
+    }
+  });
+
+  let item = undefined;
+
+  const listener = select.on('select', () => {
+    item = true;
+  });
+
+  select.set({selectedValue: {value: 'cake', label: 'Cake'}});
+
+  t.ok(!item)
+  listener.cancel();
+  select.destroy();
+});
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
