@@ -299,6 +299,28 @@ test('on tab active item fires a itemSelected event', async (t) => {
   list.destroy();
 });
 
+test('on selected of current active item does not fire a itemSelected event', async (t) => {
+  const list = new List({
+    target,
+    data: {
+      items: itemsWithIndex,
+      selectedValue: { value: 'chocolate', label: 'Chocolate', index: 0 },
+      isFocused: true
+    }
+  });
+
+  let itemSelectedFired = false;
+
+  list.on('itemSelected', () => {
+    itemSelectedFired = true;
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  t.equal(itemSelectedFired, false);
+  list.destroy();
+});
+
 test('selected item\'s default view', async (t) => {
   const testTemplate = new SelectItemSelected({
     target: testTarget
