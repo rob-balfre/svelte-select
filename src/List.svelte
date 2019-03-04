@@ -151,6 +151,10 @@
       },
       handleClick(item, i, event) {
         event.stopPropagation();
+
+        const {optionIdentifier, selectedValue} = this.get();
+        if(selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
+
         this.set({activeItemIndex: i, hoverItemIndex: i});
         this.handleSelect(item);
       },
@@ -171,7 +175,7 @@
         this.scrollToActiveItem('hover');
       },
       handleKeyDown(e) {
-        const {items, hoverItemIndex} = this.get();
+        const {items, hoverItemIndex, optionIdentifier, selectedValue} = this.get();
 
         switch (e.key) {
           case 'ArrowDown':
@@ -184,11 +188,15 @@
             break;
           case 'Enter':
             e.preventDefault();
+
+            if(selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
+
             this.set({activeItemIndex: hoverItemIndex});
             this.handleSelect(items[hoverItemIndex]);
             break;
           case 'Tab':
             e.preventDefault();
+
             this.set({activeItemIndex: hoverItemIndex});
             this.handleSelect(items[hoverItemIndex]);
             break;
