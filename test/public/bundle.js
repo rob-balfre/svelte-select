@@ -24180,7 +24180,7 @@
 		Object.defineProperty(exports, '__esModule', { value: true });
 
 	})));
-
+	//# sourceMappingURL=svelte.js.map
 	});
 
 	unwrapExports(svelte);
@@ -24747,8 +24747,6 @@
 	        break;
 	      case 'Tab':
 	        e.preventDefault();
-
-	        if(selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
 
 	        this.set({activeItemIndex: hoverItemIndex});
 	        this.handleSelect(items[hoverItemIndex]);
@@ -27233,6 +27231,7 @@
 	        });
 	    });
 	}
+	//# sourceMappingURL=tape-modern.esm.js.map
 
 	// setup
 	const target = document.querySelector('main');
