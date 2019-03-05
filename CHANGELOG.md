@@ -1,5 +1,8 @@
 # svelte-select changelog
 
+## 1.5.5
+
+*  isMulti on:select bug fix
 
 ## 1.5.4
 
