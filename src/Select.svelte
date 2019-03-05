@@ -321,9 +321,14 @@
     onstate({changed, current, previous}) {
       if (!previous) return;
 
-      if (changed.selectedValue && current.selectedValue) {
-        if (!previous.selectedValue || current.selectedValue[current.optionIdentifier] != previous.selectedValue[current.optionIdentifier])
+      if (!current.isMulti && changed.selectedValue && current.selectedValue) {       
+        if (!previous.selectedValue || JSON.stringify(current.selectedValue[current.optionIdentifier]) != JSON.stringify(previous.selectedValue[current.optionIdentifier])) {
           this.fire('select', current.selectedValue)
+        }
+      }
+
+      if (current.isMulti && JSON.stringify(current.selectedValue) != JSON.stringify(previous.selectedValue)) {
+        this.fire('select', current.selectedValue)
       }
 
       if (changed.listOpen) {
