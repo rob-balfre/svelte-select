@@ -25665,9 +25665,14 @@
 	function onstate({changed, current, previous}) {
 	  if (!previous) return;
 
-	  if (changed.selectedValue && current.selectedValue) {
-	    if (!previous.selectedValue || current.selectedValue[current.optionIdentifier] != previous.selectedValue[current.optionIdentifier])
+	  if (!current.isMulti && changed.selectedValue && current.selectedValue) {       
+	    if (!previous.selectedValue || JSON.stringify(current.selectedValue[current.optionIdentifier]) != JSON.stringify(previous.selectedValue[current.optionIdentifier])) {
 	      this.fire('select', current.selectedValue);
+	    }
+	  }
+
+	  if (current.isMulti && JSON.stringify(current.selectedValue) != JSON.stringify(previous.selectedValue)) {
+	    this.fire('select', current.selectedValue);
 	  }
 
 	  if (changed.listOpen) {
@@ -29056,6 +29061,39 @@
 	  select.set({selectedValue: {value: 'cake', label: 'Cake'}});
 
 	  t.ok(!item);
+	  listener.cancel();
+	  select.destroy();
+	});
+
+	test('when isMulti and item is selected or state changes then check selectedValue[optionIdentifier] has changed before firing "select" event', async (t) => {
+	  const div = document.createElement('div');
+	  document.body.appendChild(div);
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      isMulti: true,
+	      items,
+	      selectedValue: [
+	        {value: 'pizza', label: 'Pizza'},
+	        {value: 'chips', label: 'Chips'},
+	      ],
+	    }
+	  });
+
+	  let item = undefined;
+
+	  const listener = select.on('select', () => {
+	    item = true;
+	  });
+
+	  select.set({selectedValue: [{value: 'pizza', label: 'Pizza'},{value: 'chips', label: 'Chips'}]});
+	  t.ok(!item);
+	  item = false;
+
+	  select.set({selectedValue: [{value: 'pizza', label: 'Pizza'}]});
+	  t.ok(item);
+
 	  listener.cancel();
 	  select.destroy();
 	});
