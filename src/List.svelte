@@ -197,8 +197,6 @@
           case 'Tab':
             e.preventDefault();
 
-            if(selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
-
             this.set({activeItemIndex: hoverItemIndex});
             this.handleSelect(items[hoverItemIndex]);
             break;

@@ -1845,6 +1845,39 @@ test('when item is selected or state changes then check selectedValue[optionIden
   select.destroy();
 });
 
+test('when isMulti and item is selected or state changes then check selectedValue[optionIdentifier] has changed before firing "select" event', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [
+        {value: 'pizza', label: 'Pizza'},
+        {value: 'chips', label: 'Chips'},
+      ],
+    }
+  });
+
+  let item = undefined;
+
+  const listener = select.on('select', () => {
+    item = true;
+  });
+
+  select.set({selectedValue: [{value: 'pizza', label: 'Pizza'},{value: 'chips', label: 'Chips'}]});
+  t.ok(!item);
+  item = false;
+
+  select.set({selectedValue: [{value: 'pizza', label: 'Pizza'}]});
+  t.ok(item);
+
+  listener.cancel();
+  select.destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {

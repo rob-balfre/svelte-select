@@ -1,5 +1,14 @@
 # svelte-select changelog
 
+## 1.5.5
+
+*  isMulti on:select bug fix
+
+## 1.5.4
+
+*  Set background default to #fff
+*  Only fire select event when a new item is selected
+
 ## 1.5.3
 
 * Removed unused class causing warnings
