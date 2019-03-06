@@ -27730,6 +27730,42 @@
 	  select.destroy();
 	});
 
+	test('when listPosition is set to top list should be above the input', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      items,
+	      listOpen: true,
+	      listPlacement: 'top'
+	    }
+	  });
+
+	  const distanceOfListBottomFromViewportTop = document.querySelector('.listContainer').getBoundingClientRect().bottom;
+	  const distanceOfInputTopFromViewportTop = document.querySelector('.selectContainer').getBoundingClientRect().top;
+
+	  t.ok(distanceOfListBottomFromViewportTop <= distanceOfInputTopFromViewportTop);
+
+	  select.destroy();
+	});
+
+	test('when listPlacement is set to bottom the list should be below the input', async (t) => {
+	  const select = new Select({
+	    target,
+	    data: {
+	      items,
+	      listOpen: true,
+	      listPlacement: 'bottom'
+	    }
+	  });
+
+	  const distanceOfListTopFromViewportTop = document.querySelector('.listContainer').getBoundingClientRect().top;
+	  const distanceOfInputBottomFromViewportTop = document.querySelector('.selectContainer').getBoundingClientRect().bottom;
+
+	  t.ok(distanceOfListTopFromViewportTop >= distanceOfInputBottomFromViewportTop);
+
+	  select.destroy();
+	});
+
 	test('blur should close list and remove focus from select', async (t) => {
 	  const div = document.createElement('div');
 	  document.body.appendChild(div);
