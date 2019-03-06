@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 1.6.0
+
+*  Added menuPlacement
+
 ## 1.5.5
 
 *  isMulti on:select bug fix
