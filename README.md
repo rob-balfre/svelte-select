@@ -61,6 +61,7 @@ yarn add svelte-select
 | loadOptions | Promise | - | Method that returns a Promise that updates items
 | noOptionsMessage | String | 'No options' | Message to display when there are no items  
 | hideEmptyState | Boolean | false | Hide list when no options
+| menuPlacement | String | 'auto' | when 'auto' displays either 'top' or 'bottom' depending on viewport
 
 
 ## Events

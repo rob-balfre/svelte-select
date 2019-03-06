@@ -225,9 +225,10 @@
 
 <script>
   import List from './List.svelte';
-  import Item from './Item.svelte'
-  import Selection from './Selection.svelte'
-  import MultiSelection from './MultiSelection.svelte'
+  import Item from './Item.svelte';
+  import Selection from './Selection.svelte';
+  import MultiSelection from './MultiSelection.svelte';
+  import isOutOfViewport from './utils/isOutofViewport';
 
   export default {
     data() {
@@ -239,6 +240,7 @@
         items: [],
         filterText: '',
         placeholder: 'Select...',
+        listPlacement: 'auto',
         listOpen: false,
         list: undefined,
         target: undefined,
@@ -388,13 +390,28 @@
         this.getPosition();
       },
       getPosition() {
-        const {target} = this.get();
+        const {listPlacement, target} = this.get();
+
         if (!target) return;
         const {top, height, width} = this.refs.container.getBoundingClientRect();
-        target.style.top = `${height + 5}px`;
+
         target.style.width = `${width}px`;
         target.style.left = '0';
+
+        if(listPlacement === 'top') {
+          target.style.bottom = `${height + 5}px`;
+        } else {
+          target.style.top = `${height + 5}px`;
+        }
+
         this.set({target});
+
+        if(listPlacement === 'auto' && isOutOfViewport(target).bottom) {
+          target.style.top = ``;
+          target.style.bottom = `${height + 5}px`;
+        }
+
+        target.style.visibility = '';
       },
       handleKeyDown(e) {
         let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue, list} = this.get();
@@ -490,11 +507,11 @@
 
         Object.assign(target.style, {
           position: 'absolute',
-          'z-index': 2
+          'z-index': 2,
+          'visibility': 'hidden'
         });
 
         this.set({list, target});
-        this.getPosition();
         this.refs.container.appendChild(target);
 
         list = new List({
@@ -525,6 +542,7 @@
         });
 
         this.set({list, target});
+        this.getPosition();
       }
     },
     oncreate() {
