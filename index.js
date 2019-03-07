@@ -1311,6 +1311,7 @@
 	      this.handleFocus();
 	    } else {
 	      this.set({filterText: ''});
+	      if (this.refs.input) this.refs.input.blur();
 	    }
 	  }
 
