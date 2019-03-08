@@ -25531,7 +25531,8 @@
 	    if (!target) return;
 	    const {top, height, width} = this.refs.container.getBoundingClientRect();
 
-	    target.style.width = `${width}px`;
+	    target.style['min-width'] = `${width}px`;
+	    target.style.width = `auto`;
 	    target.style.left = '0';
 
 	    if(listPlacement === 'top') {
@@ -25713,7 +25714,7 @@
 	    }
 	  }
 
-	  if (changed.filterText) {
+	  if (changed.filterText && current.filterText !== '') {
 	    if(current.loadOptions) {
 	      clearTimeout(this.loadOptionsTimeout);
 	      this.set({isWaiting:true});
@@ -29154,6 +29155,41 @@
 
 	  listener.cancel();
 	  selectSecond.destroy();
+	  select.destroy();
+	});
+
+	test('when items and loadOptions method are both supplied then fallback to items until filterText changes', async (t) => {
+	  const items = [{name: 'test1', id: 0}, {name: 'test2', id: 1}, {name: 'test3', id: 2}];
+
+	  const select = new Select({
+	    target,
+	    data: {
+	      getOptionLabel: (option) => option.name,
+	      getSelectionLabel: (option) => option.name,
+	      loadOptions: getPosts,
+	      optionIdentifier: 'id',      
+	      items,
+	      isFocused: true,
+	      listOpen: true
+	    }
+	  });
+
+	  const listener = select.on('state', ({current, changed}) => {
+	    if (changed.filterText && current.filterText === '' && !current.selectedValue) {
+	      select.set({
+	        items
+	      });
+	    }
+	  });
+
+	  t.ok(document.querySelector('.item').innerHTML === 'test1');
+	  select.set({filterText: 'Juniper'});
+	  await wait(500);
+	  t.ok(document.querySelector('.item').innerHTML === 'Juniper Wheat Beer');
+	  select.set({filterText: ''});
+	  t.ok(document.querySelector('.item').innerHTML === 'test1');
+
+	  listener.cancel();
 	  select.destroy();
 	});
 

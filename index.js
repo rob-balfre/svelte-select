@@ -1096,7 +1096,8 @@
 	    if (!target) return;
 	    const {top, height, width} = this.refs.container.getBoundingClientRect();
 
-	    target.style.width = `${width}px`;
+	    target.style['min-width'] = `${width}px`;
+	    target.style.width = `auto`;
 	    target.style.left = '0';
 
 	    if(listPlacement === 'top') {
@@ -1278,7 +1279,7 @@
 	    }
 	  }
 
-	  if (changed.filterText) {
+	  if (changed.filterText && current.filterText !== '') {
 	    if(current.loadOptions) {
 	      clearTimeout(this.loadOptionsTimeout);
 	      this.set({isWaiting:true});
