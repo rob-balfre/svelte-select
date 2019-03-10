@@ -340,21 +340,19 @@
           this.removeList();
         }
       }
-
-      if (changed.filterText && current.filterText !== '') {
+      if (changed.filterText) {
+	  
         if(current.loadOptions) {
           clearTimeout(this.loadOptionsTimeout);
           this.set({isWaiting:true});
 
           this.loadOptionsTimeout = setTimeout(() => {
-            if(current.filterText) {
               current.loadOptions(current.filterText).then((response) => {
                 this.set({ items: response });
-              });
-            } else {
-              this.set({ items: [] });
-            }
-
+              }, () => {
+                this.set({ items: [] });
+              })
+			  .catch(() => {  this.set({ items: [] }); });
             this.set({isWaiting:false});
             this.set({listOpen: true});
           }, current.loadOptionsInterval);
