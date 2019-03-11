@@ -1941,6 +1941,40 @@ test('when items and loadOptions method are both supplied then fallback to items
   select.destroy();
 });
 
+test('when items is just an array of strings and isArrayOfStrings is true then render list', async (t) => {
+  const items = ['one', 'two', 'three'];
+
+  const select = new Select({
+    target,
+    data: {
+      isArrayOfStrings: true,
+      items,
+      listOpen: true
+    }
+  });
+
+  t.ok(document.querySelector('.item').innerHTML === 'one');
+
+  select.destroy();
+});
+
+test('when selectedValue just a string and isArrayOfStrings is true then selectedValue should render', async (t) => {
+  const items = ['one', 'two', 'three'];
+
+  const select = new Select({
+    target,
+    data: {
+      isArrayOfStrings: true,
+      items,
+      selectedValue: 'one',
+    }
+  });
+
+  t.ok(document.querySelector('.selection').innerHTML === 'one');
+
+  select.destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {

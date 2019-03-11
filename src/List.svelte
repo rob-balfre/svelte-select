@@ -1,29 +1,38 @@
 <svelte:window on:keydown="handleKeyDown(event)"/>
 
+{#if useVirtualList}
+<div class="listContainer" ref:container>
+  <VirtualList {items} component={Item} {item} getOptionLabel={isArrayOfStrings ? getOptionString : getOptionLabel}/>
+</div>
+{/if}
+
+{#if !useVirtualList}
 <div class="listContainer" ref:container>
   {#each items as item, i}
-  {#if item.groupValue}
-  <div class="listGroupTitle">
-    {item.groupValue}
-  </div>
-  {/if}
+    {#if item.groupValue}
+      <div class="listGroupTitle">
+        {item.groupValue}
+      </div>
+    {/if}
 
-  <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
-       class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier)}">
-    <svelte:component this="{Item}" {item} {getOptionLabel}/>
-  </div>
+    <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
+        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier, isArrayOfStrings)}">
+          <svelte:component this="{Item}" {item} getOptionLabel={isArrayOfStrings ? getOptionString : getOptionLabel}/>
+    </div>
   {:else}
     {#if !hideEmptyState}
-    <div class="empty">{noOptionsMessage}</div>
+      <div class="empty">{noOptionsMessage}</div>
     {/if}
   {/each}
 </div>
+{/if}
 
 <style>
   .listContainer {
     box-shadow: 0 2px 3px 0 rgba(44, 62, 80, 0.24);
     border-radius: 4px;
     max-height: 250px;
+    min-height: 100px;
     overflow-y: auto;
     background: #fff;
   }
@@ -77,18 +86,25 @@
 </style>
 
 <script>
+  import VirtualList from '@sveltejs/svelte-virtual-list';
+
   import Item from './Item.svelte';
 
   export default {
+    components: {
+      VirtualList
+    },
     data() {
       return {
+        useVirtualList: false,
         hoverItemIndex: 0,
         optionIdentifier: 'value',
         items: [],
         Item,
         selectedValue: undefined,
         getOptionLabel: (option) => option.label,
-        noOptionsMessage: 'No options'
+        noOptionsMessage: 'No options',
+        getOptionString: (option) => option
       }
     },
     oncreate() {
@@ -137,8 +153,12 @@
       }
     },
     helpers: {
-      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier) {
-        return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier, isArrayOfStrings) {
+        if (isArrayOfStrings) {
+          return `${selectedValue && (selectedValue === item) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+        } else {
+          return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+        }
       }
     },
     methods: {
@@ -152,8 +172,10 @@
       handleClick(item, i, event) {
         event.stopPropagation();
 
-        const {optionIdentifier, selectedValue} = this.get();
-        if(selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
+        const {optionIdentifier, selectedValue, isArrayOfStrings} = this.get();
+        
+        if(!isArrayOfStrings && selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
+        if(isArrayOfStrings && selectedValue === item) return;
 
         this.set({activeItemIndex: i, hoverItemIndex: i});
         this.handleSelect(item);
@@ -175,7 +197,7 @@
         this.scrollToActiveItem('hover');
       },
       handleKeyDown(e) {
-        const {items, hoverItemIndex, optionIdentifier, selectedValue} = this.get();
+        const {items, hoverItemIndex, optionIdentifier, selectedValue, isArrayOfStrings} = this.get();
 
         switch (e.key) {
           case 'ArrowDown':
@@ -189,7 +211,8 @@
           case 'Enter':
             e.preventDefault();
 
-            if(selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
+            if(!isArrayOfStrings && selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
+            if(isArrayOfStrings && selectedValue === items[hoverItemIndex]) return;
 
             this.set({activeItemIndex: hoverItemIndex});
             this.handleSelect(items[hoverItemIndex]);

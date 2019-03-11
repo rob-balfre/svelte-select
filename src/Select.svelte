@@ -37,7 +37,7 @@
 
   {#if !isMulti && showSelectedItem }
   <div class="selectedItem" on:focus="handleFocus()">
-    <svelte:component this="{Selection}" item={selectedValue} {getSelectionLabel}/>
+    <svelte:component this="{Selection}" item={selectedValue} getSelectionLabel={isArrayOfStrings ? getSelectionString : getSelectionLabel}/>
   </div>
   {/if}
 
@@ -228,7 +228,8 @@
   import Item from './Item.svelte';
   import Selection from './Selection.svelte';
   import MultiSelection from './MultiSelection.svelte';
-  import isOutOfViewport from './utils/isOutofViewport';
+  import VirtualList from './VirtualList.svelte';
+  import isOutOfViewport from './utils/isOutOfViewport';
 
   export default {
     data() {
@@ -237,6 +238,7 @@
         Item,
         Selection,
         MultiSelection,
+        VirtualList,
         items: [],
         filterText: '',
         placeholder: 'Select...',
@@ -250,6 +252,7 @@
         isMulti: false,
         isSearchable: true,
         isDisabled: false,
+        isArrayOfStrings: false,
         optionIdentifier: 'value',
         groupBy: undefined,
         loadOptions: undefined,
@@ -259,6 +262,7 @@
         groupFilter: (groups) => groups,
         getOptionLabel: (option) => option.label,
         getSelectionLabel: (option) => option.label,
+        getSelectionString: (option) => option,
       }
     },
     computed: {
@@ -494,10 +498,10 @@
         this.fire('clear');
       },
       loadList() {
-        let {target, list, Item, getOptionLabel, optionIdentifier, noOptionsMessage, hideEmptyState, items, selectedValue, filteredItems, isMulti} = this.get();
+        let {target, list, Item, getOptionLabel, optionIdentifier, noOptionsMessage, hideEmptyState, items, selectedValue, filteredItems, isMulti, isArrayOfStrings} = this.get();
         if (target && list) return;
 
-        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState};
+        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isArrayOfStrings};
 
         if (getOptionLabel) {
           data.getOptionLabel = getOptionLabel;
@@ -524,8 +528,10 @@
         }
 
         list.on('itemSelected', (newSelection) => {
+          const {isArrayOfStrings} = this.get();
+
           if (newSelection) {
-            const item = Object.assign({}, newSelection);
+            const item = isArrayOfStrings ? newSelection : Object.assign({}, newSelection);
 
             if (isMulti) {
               selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
