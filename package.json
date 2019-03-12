@@ -42,6 +42,7 @@
     "Select.js"
   ],
   "dependencies": {
-    "@sveltejs/svelte-virtual-list": "^2.2.1"
+    "@sveltejs/svelte-virtual-list": "^2.2.1",
+    "namey-mcnameface": "^1.0.3"
   }
 }

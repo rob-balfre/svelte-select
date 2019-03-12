@@ -1,5 +1,7 @@
 import svelte from 'svelte';
 import {Store} from 'svelte/store.js';
+import getName from 'namey-mcnameface';
+
 import CustomItem from './CustomItem.html';
 import Select from '../../src/Select.svelte';
 import List from '../../src/List.svelte';
@@ -1973,6 +1975,40 @@ test('when selectedValue just a string and isArrayOfStrings is true then selecte
   t.ok(document.querySelector('.selection').innerHTML === 'one');
 
   select.destroy();
+});
+
+test.only('when VIRT...', async (t) => {
+  function fill(len, fn) {
+    return Array(len).fill().map((_, i) => fn(i));
+  }
+
+  // const items = fill(10000, (i) => {
+  //   const name = getName();
+  //   return { 
+  //     index: i,
+  //     value: name,
+  //     label: name
+  //   }
+  // });
+
+  const items = fill(10000, (i) => {
+      const name = getName();
+      return name
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      // selectedValue: 'one',
+      isVirtualList: true,
+      // isArrayOfStrings: true
+    }
+  });
+
+  // t.ok(document.querySelector('.selection').innerHTML === 'one');
+
+  // select.destroy();
 });
 
 function focus(element, setFocus) {

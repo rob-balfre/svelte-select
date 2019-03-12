@@ -564,6 +564,11 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
   integrity sha512-tgp+dl5cGk28utYktBsrFqA7HKgrhgPsg6Z/EfhWI4gl1Hwq8B/GmY/0oXZ6nF8hDVesS/FpnYaD/kOWhYQvyg==
 
+namey-mcnameface@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/namey-mcnameface/-/namey-mcnameface-1.0.3.tgz#86859738e3e70d958a2196a28e09530c94ba88d0"
+  integrity sha1-hoWXOOPnDZWKIZaijglTDJS6iNA=
+
 no-case@^2.2.0:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/no-case/-/no-case-2.3.2.tgz#60b813396be39b3f1288a4c1ed5d1e7d28b464ac"

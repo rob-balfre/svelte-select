@@ -1,12 +1,21 @@
 <svelte:window on:keydown="handleKeyDown(event)"/>
 
-{#if useVirtualList}
-<div class="listContainer" ref:container>
-  <VirtualList {items} component={Item} {item} getOptionLabel={isArrayOfStrings ? getOptionString : getOptionLabel}/>
+{#if isVirtualList}
+<div class="listContainer virtualList" ref:container>
+  <VirtualList 
+    {items} 
+    component={VirtualListItem} 
+    {getOptionLabel}
+    itemHeight={40}
+    on:hover="handleHover(event)"
+    on:click="handleClick(event)"
+    {hoverItemIndex}
+    {selectedValue}
+  />
 </div>
 {/if}
 
-{#if !useVirtualList}
+{#if !isVirtualList}
 <div class="listContainer" ref:container>
   {#each items as item, i}
     {#if item.groupValue}
@@ -15,7 +24,7 @@
       </div>
     {/if}
 
-    <div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
+    <div on:mouseover="handleHover(i)" on:click="handleClick({item, i, event})"
         class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier, isArrayOfStrings)}">
           <svelte:component this="{Item}" {item} getOptionLabel={isArrayOfStrings ? getOptionString : getOptionLabel}/>
     </div>
@@ -35,6 +44,10 @@
     min-height: 100px;
     overflow-y: auto;
     background: #fff;
+  }
+
+  .virtualList {
+    height: 200px;
   }
 
   .listGroupTitle {
@@ -89,6 +102,7 @@
   import VirtualList from '@sveltejs/svelte-virtual-list';
 
   import Item from './Item.svelte';
+  import VirtualListItem from './VirtualListItem.svelte';
 
   export default {
     components: {
@@ -96,13 +110,14 @@
     },
     data() {
       return {
-        useVirtualList: false,
+        isVirtualList: false,
         hoverItemIndex: 0,
         optionIdentifier: 'value',
         items: [],
         Item,
+        VirtualListItem,
         selectedValue: undefined,
-        getOptionLabel: (option) => option.label,
+        getOptionLabel: (option) => { if (option) return option.label },
         noOptionsMessage: 'No options',
         getOptionString: (option) => option
       }
@@ -169,13 +184,18 @@
         if(this.get().isScrolling) return;
         this.set({hoverItemIndex: i});
       },
-      handleClick(item, i, event) {
+      handleClick(args) {
+        const {item, i, event} = args;
+        console.log('event :', event);
+        console.log('item :', item);
         event.stopPropagation();
 
         const {optionIdentifier, selectedValue, isArrayOfStrings} = this.get();
         
         if(!isArrayOfStrings && selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
         if(isArrayOfStrings && selectedValue === item) return;
+
+        console.log('i :', i);
 
         this.set({activeItemIndex: i, hoverItemIndex: i});
         this.handleSelect(item);

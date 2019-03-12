@@ -68,7 +68,6 @@
     </svg>
   </div>
   {/if}
-
 </div>
 
 <style>
@@ -228,7 +227,6 @@
   import Item from './Item.svelte';
   import Selection from './Selection.svelte';
   import MultiSelection from './MultiSelection.svelte';
-  import VirtualList from './VirtualList.svelte';
   import isOutOfViewport from './utils/isOutOfViewport';
 
   export default {
@@ -238,7 +236,6 @@
         Item,
         Selection,
         MultiSelection,
-        VirtualList,
         items: [],
         filterText: '',
         placeholder: 'Select...',
@@ -253,6 +250,7 @@
         isSearchable: true,
         isDisabled: false,
         isArrayOfStrings: false,
+        isVirtualList: false,
         optionIdentifier: 'value',
         groupBy: undefined,
         loadOptions: undefined,
@@ -260,7 +258,9 @@
         noOptionsMessage: 'No options',
         hideEmptyState: false,
         groupFilter: (groups) => groups,
-        getOptionLabel: (option) => option.label,
+        getOptionLabel: (option) => {
+          if (option) return option.label
+         },
         getSelectionLabel: (option) => option.label,
         getSelectionString: (option) => option,
       }
@@ -281,6 +281,19 @@
         return selectedValue ? '' : placeholder
       },
       filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier, loadOptions}) {
+        
+
+        if (items && items.length > 0 && typeof items[0] !== 'object') {
+          items = items.map((item, index) => {
+            return {
+              index,
+              value: item,
+              label: item
+            }
+          })
+        }
+
+
         const filteredItems = loadOptions ? items : items.filter(item => {
           let keepItem = true;
 
@@ -498,10 +511,23 @@
         this.fire('clear');
       },
       loadList() {
-        let {target, list, Item, getOptionLabel, optionIdentifier, noOptionsMessage, hideEmptyState, items, selectedValue, filteredItems, isMulti, isArrayOfStrings} = this.get();
+        let {
+          target,
+          list, 
+          Item, 
+          getOptionLabel,
+          optionIdentifier,
+          noOptionsMessage, 
+          hideEmptyState,
+          items,
+          selectedValue,
+          filteredItems,
+          isMulti,
+          isArrayOfStrings, 
+          isVirtualList } = this.get();
         if (target && list) return;
 
-        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isArrayOfStrings};
+        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isArrayOfStrings, isVirtualList};
 
         if (getOptionLabel) {
           data.getOptionLabel = getOptionLabel;
