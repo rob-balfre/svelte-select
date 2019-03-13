@@ -37,7 +37,7 @@
 
   {#if !isMulti && showSelectedItem }
   <div class="selectedItem" on:focus="handleFocus()">
-    <svelte:component this="{Selection}" item={selectedValue} getSelectionLabel={isArrayOfStrings ? getSelectionString : getSelectionLabel}/>
+    <svelte:component this="{Selection}" item={selectedValue} {getSelectionLabel}/>
   </div>
   {/if}
 
@@ -249,7 +249,6 @@
         isMulti: false,
         isSearchable: true,
         isDisabled: false,
-        isArrayOfStrings: false,
         isVirtualList: false,
         optionIdentifier: 'value',
         groupBy: undefined,
@@ -262,7 +261,6 @@
           if (option) return option.label
          },
         getSelectionLabel: (option) => option.label,
-        getSelectionString: (option) => option,
       }
     },
     computed: {
@@ -340,7 +338,7 @@
     onstate({changed, current, previous}) {
       if (!previous) return;
 
-      if (!current.isMulti && changed.selectedValue && current.selectedValue) {       
+      if (!current.isMulti && changed.selectedValue && current.selectedValue) {    
         if (!previous.selectedValue || JSON.stringify(current.selectedValue[current.optionIdentifier]) != JSON.stringify(previous.selectedValue[current.optionIdentifier])) {
           this.fire('select', current.selectedValue)
         }
@@ -358,7 +356,6 @@
         }
       }
       if (changed.filterText) {
-	  
         if(current.loadOptions) {
           clearTimeout(this.loadOptionsTimeout);
           this.set({isWaiting:true});
@@ -523,11 +520,10 @@
           selectedValue,
           filteredItems,
           isMulti,
-          isArrayOfStrings, 
           isVirtualList } = this.get();
         if (target && list) return;
 
-        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isArrayOfStrings, isVirtualList};
+        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isVirtualList};
 
         if (getOptionLabel) {
           data.getOptionLabel = getOptionLabel;
@@ -553,11 +549,9 @@
           list.set({items: filteredItems, selectedValue, isMulti});
         }
 
-        list.on('itemSelected', (newSelection) => {
-          const {isArrayOfStrings} = this.get();
-
+        list.on('itemSelected', (newSelection) => {          
           if (newSelection) {
-            const item = isArrayOfStrings ? newSelection : Object.assign({}, newSelection);
+            const item = Object.assign({}, newSelection);
 
             if (isMulti) {
               selectedValue = selectedValue ? selectedValue.concat([item]) : [item];

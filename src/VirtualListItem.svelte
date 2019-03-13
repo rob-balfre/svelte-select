@@ -33,7 +33,6 @@
     .listItem.active {
         background: #007aff;
         color: #fff;
-        pointer-events: none;
     }
 </style>
 

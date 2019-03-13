@@ -1943,13 +1943,12 @@ test('when items and loadOptions method are both supplied then fallback to items
   select.destroy();
 });
 
-test('when items is just an array of strings and isArrayOfStrings is true then render list', async (t) => {
+test('when items is just an array of strings then render list', async (t) => {
   const items = ['one', 'two', 'three'];
 
   const select = new Select({
     target,
     data: {
-      isArrayOfStrings: true,
       items,
       listOpen: true
     }
@@ -1960,36 +1959,25 @@ test('when items is just an array of strings and isArrayOfStrings is true then r
   select.destroy();
 });
 
-test('when selectedValue just a string and isArrayOfStrings is true then selectedValue should render', async (t) => {
+test('when selectedValue just a string then selectedValue should render', async (t) => {
   const items = ['one', 'two', 'three'];
 
   const select = new Select({
     target,
     data: {
-      isArrayOfStrings: true,
       items,
-      selectedValue: 'one',
+      selectedValue: {value: 'one', label: 'one', index: 0}
     }
   });
 
   t.ok(document.querySelector('.selection').innerHTML === 'one');
-
   select.destroy();
 });
 
-test.only('when VIRT...', async (t) => {
+test('when isVirtualList then render list', async (t) => {
   function fill(len, fn) {
     return Array(len).fill().map((_, i) => fn(i));
   }
-
-  // const items = fill(10000, (i) => {
-  //   const name = getName();
-  //   return { 
-  //     index: i,
-  //     value: name,
-  //     label: name
-  //   }
-  // });
 
   const items = fill(10000, (i) => {
       const name = getName();
@@ -2000,15 +1988,14 @@ test.only('when VIRT...', async (t) => {
     target,
     data: {
       items,
-      // selectedValue: 'one',
       isVirtualList: true,
-      // isArrayOfStrings: true
+      listOpen: true
     }
   });
 
-  // t.ok(document.querySelector('.selection').innerHTML === 'one');
+  t.ok(document.querySelector('.listItem'));
 
-  // select.destroy();
+  select.destroy();
 });
 
 function focus(element, setFocus) {

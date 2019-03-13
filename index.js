@@ -996,8 +996,8 @@
 	}
 	function add_css$1() {
 		var style = createElement("style");
-		style.id = 'svelte-1v9mfqs-style';
-		style.textContent = ".listItem.svelte-1v9mfqs{cursor:default;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}.listItem.hover.svelte-1v9mfqs{background:#e7f2ff}.listItem.svelte-1v9mfqs:active{background:#b9daff}.listItem.svelte-1v9mfqs:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1v9mfqs{background:#007aff;color:#fff;pointer-events:none}";
+		style.id = 'svelte-11husjc-style';
+		style.textContent = ".listItem.svelte-11husjc{cursor:default;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}.listItem.hover.svelte-11husjc{background:#e7f2ff}.listItem.svelte-11husjc:active{background:#b9daff}.listItem.svelte-11husjc:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-11husjc{background:#007aff;color:#fff}";
 		append(document.head, style);
 	}
 
@@ -1019,7 +1019,7 @@
 				div0.className = "item";
 				addListener(div1, "mouseover", mouseover_handler);
 				addListener(div1, "click", click_handler);
-				div1.className = div1_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.selectedValue, ctx.i, ctx.item) + " svelte-1v9mfqs";
+				div1.className = div1_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.selectedValue, ctx.i, ctx.item) + " svelte-11husjc";
 			},
 
 			m(target, anchor) {
@@ -1034,7 +1034,7 @@
 					div0.innerHTML = raw_value;
 				}
 
-				if ((changed.hoverItemIndex || changed.selectedValue || changed.i || changed.item) && div1_class_value !== (div1_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.selectedValue, ctx.i, ctx.item) + " svelte-1v9mfqs")) {
+				if ((changed.hoverItemIndex || changed.selectedValue || changed.i || changed.item) && div1_class_value !== (div1_class_value = "listItem " + itemClasses(ctx.hoverItemIndex, ctx.selectedValue, ctx.i, ctx.item) + " svelte-11husjc")) {
 					div1.className = div1_class_value;
 				}
 			},
@@ -1055,7 +1055,7 @@
 		this._state = assign({}, options.data);
 		this._intro = true;
 
-		if (!document.getElementById("svelte-1v9mfqs-style")) add_css$1();
+		if (!document.getElementById("svelte-11husjc-style")) add_css$1();
 
 		this._fragment = create_main_fragment$2(this, this._state);
 
@@ -1090,15 +1090,14 @@
 	    selectedValue: undefined,
 	    getOptionLabel: (option) => { if (option) return option.label },
 	    noOptionsMessage: 'No options',
-	    getOptionString: (option) => option
+	    getOptionString: (option) => option,
+	    itemHeight: 40,
+	    start: 0,
+	    end: 0,
 	  }
 	}
-	function itemClasses$1(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier, isArrayOfStrings) {
-	  if (isArrayOfStrings) {
-	    return `${selectedValue && (selectedValue === item) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
-	  } else {
-	    return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
-	  }
+	function itemClasses$1(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier) {
+	  return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
 	}
 	var methods$2 = {
 	  handleSelect(item) {
@@ -1110,22 +1109,16 @@
 	  },
 	  handleClick(args) {
 	    const {item, i, event} = args;
-	    console.log('event :', event);
-	    console.log('item :', item);
 	    event.stopPropagation();
-
-	    const {optionIdentifier, selectedValue, isArrayOfStrings} = this.get();
-	    
-	    if(!isArrayOfStrings && selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
-	    if(isArrayOfStrings && selectedValue === item) return;
-
-	    console.log('i :', i);
-
+	    const {optionIdentifier, selectedValue} = this.get();
+	    if(selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
 	    this.set({activeItemIndex: i, hoverItemIndex: i});
 	    this.handleSelect(item);
 	  },
 	  updateHoverItem(increment) {
-	    let {items, hoverItemIndex} = this.get();
+	    let {items, hoverItemIndex, isVirtualList} = this.get();
+	    
+	    if (isVirtualList) return;
 
 	    if (increment > 0 && hoverItemIndex === (items.length - 1)) {
 	      hoverItemIndex = 0;
@@ -1138,10 +1131,10 @@
 	    }
 
 	    this.set({hoverItemIndex});
-	    this.scrollToActiveItem('hover');
+	    this.scrollToActiveItem('hover', increment);
 	  },
 	  handleKeyDown(e) {
-	    const {items, hoverItemIndex, optionIdentifier, selectedValue, isArrayOfStrings} = this.get();
+	    const {items, hoverItemIndex, optionIdentifier, selectedValue} = this.get();
 
 	    switch (e.key) {
 	      case 'ArrowDown':
@@ -1154,10 +1147,7 @@
 	        break;
 	      case 'Enter':
 	        e.preventDefault();
-
-	        if(!isArrayOfStrings && selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
-	        if(isArrayOfStrings && selectedValue === items[hoverItemIndex]) return;
-
+	        if(selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
 	        this.set({activeItemIndex: hoverItemIndex});
 	        this.handleSelect(items[hoverItemIndex]);
 	        break;
@@ -1169,8 +1159,12 @@
 	        break;
 	    }
 	  },
-	  scrollToActiveItem(className) {
+	  scrollToActiveItem(className, increment) {
 	    const {container} = this.refs;
+	    let {isVirtualList, start, end, hoverItemIndex, items} = this.get();
+	    
+	    if (isVirtualList) return;
+
 	    let offsetBounding;
 	    const focusedElemBounding = container.querySelector(`.listItem.${className}`);
 
@@ -1179,6 +1173,38 @@
 	    }
 
 	    container.scrollTop -= offsetBounding;
+
+	    // isVirtualList and scrollToActiveItem WIP...
+	    // if (isVirtualList & !focusedElemBounding) {
+	    //   const virtualContainer = container.querySelector('div').querySelector('div');
+
+	    //   if (increment > 0 && end < items.length ) {
+	    //     start += 1;
+	    //     end = start + 5;
+	    //   }
+
+	    //   if (end > hoverItemIndex && increment === -1) {
+	    //     start -= 1;
+	    //     end = start + 5;
+	    //   }
+
+	    //   if (end < hoverItemIndex && increment === -1) {
+	    //     start = items.length - 5;
+	    //     end = items.length;
+	    //   }
+
+	    //   if (hoverItemIndex === 0) {
+	    //     start = 0;
+	    //     end = 5;
+	    //   }
+
+	    //   this.set({
+	    //     start,
+	    //     end
+	    //   })
+	    // } else {
+	    //  container.scrollTop -= offsetBounding;
+	    // }
 	  }
 	};
 
@@ -1229,8 +1255,8 @@
 	}
 	function add_css$2() {
 		var style = createElement("style");
-		style.id = 'svelte-12jdua2-style';
-		style.textContent = ".listContainer.svelte-12jdua2{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;min-height:100px;overflow-y:auto;background:#fff}.virtualList.svelte-12jdua2{height:200px}.listGroupTitle.svelte-12jdua2{color:#8f8f8f;cursor:default;font-size:12px;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;text-transform:uppercase}.listItem.svelte-12jdua2{cursor:default;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}.listItem.hover.svelte-12jdua2{background:#e7f2ff}.listItem.svelte-12jdua2:active{background:#b9daff}.listItem.svelte-12jdua2:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-12jdua2{background:#007aff;color:#fff;pointer-events:none}.empty.svelte-12jdua2{text-align:center;padding:20px 0;color:#78848F}";
+		style.id = 'svelte-1kpjgba-style';
+		style.textContent = ".listContainer.svelte-1kpjgba{box-shadow:0 2px 3px 0 rgba(44, 62, 80, 0.24);border-radius:4px;max-height:250px;min-height:100px;overflow-y:auto;background:#fff}.virtualList.svelte-1kpjgba{height:200px}.listGroupTitle.svelte-1kpjgba{color:#8f8f8f;cursor:default;font-size:12px;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow-x:hidden;white-space:nowrap;text-transform:uppercase}.listItem.svelte-1kpjgba{cursor:default;height:40px;line-height:40px;padding:0 20px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}.listItem.hover.svelte-1kpjgba{background:#e7f2ff}.listItem.svelte-1kpjgba:active{background:#b9daff}.listItem.svelte-1kpjgba:first-child{border-radius:4px 4px 0 0}.listItem.active.svelte-1kpjgba{background:#007aff;color:#fff}.empty.svelte-1kpjgba{text-align:center;padding:20px 0;color:#78848F}";
 		append(document.head, style);
 	}
 
@@ -1325,20 +1351,48 @@
 
 	// (3:0) {#if isVirtualList}
 	function create_if_block_3(component, ctx) {
-		var div;
+		var div, virtuallist_updating = {};
 
 		var virtuallist_initial_data = {
 		 	items: ctx.items,
 		 	component: ctx.VirtualListItem,
 		 	getOptionLabel: ctx.getOptionLabel,
-		 	itemHeight: 40,
+		 	itemHeight: ctx.itemHeight,
 		 	hoverItemIndex: ctx.hoverItemIndex,
 		 	selectedValue: ctx.selectedValue
 		 };
+		if (ctx.start 
+	     !== void 0) {
+			virtuallist_initial_data.start = ctx.start 
+	    ;
+			virtuallist_updating.start = true;
+		}
+		if (ctx.end
+	   !== void 0) {
+			virtuallist_initial_data.end = ctx.end
+	  ;
+			virtuallist_updating.end = true;
+		}
 		var virtuallist = new VirtualList({
 			root: component.root,
 			store: component.store,
-			data: virtuallist_initial_data
+			data: virtuallist_initial_data,
+			_bind(changed, childState) {
+				var newState = {};
+				if (!virtuallist_updating.start && changed.start) {
+					newState.start = childState.start;
+				}
+
+				if (!virtuallist_updating.end && changed.end) {
+					newState.end = childState.end;
+				}
+				component._set(newState);
+				virtuallist_updating = {};
+			}
+		});
+
+		component.root._beforecreate.push(() => {
+			virtuallist._bind({ start: 1, end: 1 }, virtuallist.get());
 		});
 
 		virtuallist.on("hover", function(event) {
@@ -1352,7 +1406,7 @@
 			c() {
 				div = createElement("div");
 				virtuallist._fragment.c();
-				div.className = "listContainer virtualList svelte-12jdua2";
+				div.className = "listContainer virtualList svelte-1kpjgba";
 			},
 
 			m(target, anchor) {
@@ -1361,14 +1415,29 @@
 				component.refs.container = div;
 			},
 
-			p(changed, ctx) {
+			p(changed, _ctx) {
+				ctx = _ctx;
 				var virtuallist_changes = {};
 				if (changed.items) virtuallist_changes.items = ctx.items;
 				if (changed.VirtualListItem) virtuallist_changes.component = ctx.VirtualListItem;
 				if (changed.getOptionLabel) virtuallist_changes.getOptionLabel = ctx.getOptionLabel;
+				if (changed.itemHeight) virtuallist_changes.itemHeight = ctx.itemHeight;
 				if (changed.hoverItemIndex) virtuallist_changes.hoverItemIndex = ctx.hoverItemIndex;
 				if (changed.selectedValue) virtuallist_changes.selectedValue = ctx.selectedValue;
+				if (!virtuallist_updating.start && changed.start) {
+					virtuallist_changes.start = ctx.start 
+	    ;
+					virtuallist_updating.start = ctx.start 
+	     !== void 0;
+				}
+				if (!virtuallist_updating.end && changed.end) {
+					virtuallist_changes.end = ctx.end
+	  ;
+					virtuallist_updating.end = ctx.end
+	   !== void 0;
+				}
 				virtuallist._set(virtuallist_changes);
+				virtuallist_updating = {};
 			},
 
 			d(detach) {
@@ -1382,7 +1451,7 @@
 		};
 	}
 
-	// (18:0) {#if !isVirtualList}
+	// (20:0) {#if !isVirtualList}
 	function create_if_block(component, ctx) {
 		var div;
 
@@ -1408,7 +1477,7 @@
 				for (var i = 0; i < each_blocks.length; i += 1) {
 					each_blocks[i].c();
 				}
-				div.className = "listContainer svelte-12jdua2";
+				div.className = "listContainer svelte-1kpjgba";
 			},
 
 			m(target, anchor) {
@@ -1426,7 +1495,7 @@
 			},
 
 			p(changed, ctx) {
-				if (changed.hoverItemIndex || changed.items || changed.selectedValue || changed.optionIdentifier || changed.isArrayOfStrings || changed.Item || changed.getOptionString || changed.getOptionLabel || changed.hideEmptyState || changed.noOptionsMessage) {
+				if (changed.hoverItemIndex || changed.items || changed.selectedValue || changed.optionIdentifier || changed.Item || changed.getOptionLabel || changed.hideEmptyState || changed.noOptionsMessage) {
 					each_value = ctx.items;
 
 					for (var i = 0; i < each_value.length; i += 1) {
@@ -1473,7 +1542,7 @@
 		};
 	}
 
-	// (31:2) {:else}
+	// (33:2) {:else}
 	function create_else_block(component, ctx) {
 		var if_block_anchor;
 
@@ -1514,7 +1583,7 @@
 		};
 	}
 
-	// (32:4) {#if !hideEmptyState}
+	// (34:4) {#if !hideEmptyState}
 	function create_if_block_2(component, ctx) {
 		var div, text;
 
@@ -1522,7 +1591,7 @@
 			c() {
 				div = createElement("div");
 				text = createText(ctx.noOptionsMessage);
-				div.className = "empty svelte-12jdua2";
+				div.className = "empty svelte-1kpjgba";
 			},
 
 			m(target, anchor) {
@@ -1544,7 +1613,7 @@
 		};
 	}
 
-	// (21:4) {#if item.groupValue}
+	// (23:4) {#if item.groupValue}
 	function create_if_block_1(component, ctx) {
 		var div, text_value = ctx.item.groupValue, text;
 
@@ -1552,7 +1621,7 @@
 			c() {
 				div = createElement("div");
 				text = createText(text_value);
-				div.className = "listGroupTitle svelte-12jdua2";
+				div.className = "listGroupTitle svelte-1kpjgba";
 			},
 
 			m(target, anchor) {
@@ -1574,7 +1643,7 @@
 		};
 	}
 
-	// (20:2) {#each items as item, i}
+	// (22:2) {#each items as item, i}
 	function create_each_block$1(component, ctx) {
 		var text0, div, text1, div_class_value;
 
@@ -1585,7 +1654,7 @@
 		function switch_props(ctx) {
 			var switch_instance_initial_data = {
 			 	item: ctx.item,
-			 	getOptionLabel: ctx.isArrayOfStrings ? ctx.getOptionString : ctx.getOptionLabel
+			 	getOptionLabel: ctx.getOptionLabel
 			 };
 			return {
 				root: component.root,
@@ -1609,7 +1678,7 @@
 
 				addListener(div, "mouseover", mouseover_handler);
 				addListener(div, "click", click_handler);
-				div.className = div_class_value = "listItem " + itemClasses$1(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedValue, ctx.optionIdentifier, ctx.isArrayOfStrings) + " svelte-12jdua2";
+				div.className = div_class_value = "listItem " + itemClasses$1(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedValue, ctx.optionIdentifier) + " svelte-1kpjgba";
 			},
 
 			m(target, anchor) {
@@ -1641,7 +1710,7 @@
 
 				var switch_instance_changes = {};
 				if (changed.items) switch_instance_changes.item = ctx.item;
-				if (changed.isArrayOfStrings || changed.getOptionString || changed.getOptionLabel) switch_instance_changes.getOptionLabel = ctx.isArrayOfStrings ? ctx.getOptionString : ctx.getOptionLabel;
+				if (changed.getOptionLabel) switch_instance_changes.getOptionLabel = ctx.getOptionLabel;
 
 				if (switch_value !== (switch_value = ctx.Item)) {
 					if (switch_instance) {
@@ -1662,7 +1731,7 @@
 				}
 
 				div._svelte.ctx = ctx;
-				if ((changed.hoverItemIndex || changed.items || changed.selectedValue || changed.optionIdentifier || changed.isArrayOfStrings) && div_class_value !== (div_class_value = "listItem " + itemClasses$1(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedValue, ctx.optionIdentifier, ctx.isArrayOfStrings) + " svelte-12jdua2")) {
+				if ((changed.hoverItemIndex || changed.items || changed.selectedValue || changed.optionIdentifier) && div_class_value !== (div_class_value = "listItem " + itemClasses$1(ctx.hoverItemIndex, ctx.item, ctx.i, ctx.items, ctx.selectedValue, ctx.optionIdentifier) + " svelte-1kpjgba")) {
 					div.className = div_class_value;
 				}
 			},
@@ -1690,7 +1759,7 @@
 
 		this._handlers.destroy = [ondestroy];
 
-		if (!document.getElementById("svelte-12jdua2-style")) add_css$2();
+		if (!document.getElementById("svelte-1kpjgba-style")) add_css$2();
 
 		this._fragment = create_main_fragment$3(this, this._state);
 
@@ -2060,7 +2129,6 @@
 	    isMulti: false,
 	    isSearchable: true,
 	    isDisabled: false,
-	    isArrayOfStrings: false,
 	    isVirtualList: false,
 	    optionIdentifier: 'value',
 	    groupBy: undefined,
@@ -2073,7 +2141,6 @@
 	      if (option) return option.label
 	     },
 	    getSelectionLabel: (option) => option.label,
-	    getSelectionString: (option) => option,
 	  }
 	}
 	var methods$4 = {
@@ -2201,11 +2268,10 @@
 	      selectedValue,
 	      filteredItems,
 	      isMulti,
-	      isArrayOfStrings, 
 	      isVirtualList } = this.get();
 	    if (target && list) return;
 
-	    const data = {Item: Item$$1, optionIdentifier, noOptionsMessage, hideEmptyState, isArrayOfStrings, isVirtualList};
+	    const data = {Item: Item$$1, optionIdentifier, noOptionsMessage, hideEmptyState, isVirtualList};
 
 	    if (getOptionLabel) {
 	      data.getOptionLabel = getOptionLabel;
@@ -2231,11 +2297,9 @@
 	      list.set({items: filteredItems, selectedValue, isMulti});
 	    }
 
-	    list.on('itemSelected', (newSelection) => {
-	      const {isArrayOfStrings} = this.get();
-
+	    list.on('itemSelected', (newSelection) => {          
 	      if (newSelection) {
-	        const item = isArrayOfStrings ? newSelection : Object.assign({}, newSelection);
+	        const item = Object.assign({}, newSelection);
 
 	        if (isMulti) {
 	          selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
@@ -2269,7 +2333,7 @@
 	function onstate({changed, current, previous}) {
 	  if (!previous) return;
 
-	  if (!current.isMulti && changed.selectedValue && current.selectedValue) {       
+	  if (!current.isMulti && changed.selectedValue && current.selectedValue) {    
 	    if (!previous.selectedValue || JSON.stringify(current.selectedValue[current.optionIdentifier]) != JSON.stringify(previous.selectedValue[current.optionIdentifier])) {
 	      this.fire('select', current.selectedValue);
 	    }
@@ -2287,7 +2351,6 @@
 	    }
 	  }
 	  if (changed.filterText) {
-		  
 	    if(current.loadOptions) {
 	      clearTimeout(this.loadOptionsTimeout);
 	      this.set({isWaiting:true});
@@ -2629,7 +2692,7 @@
 		function switch_props(ctx) {
 			var switch_instance_initial_data = {
 			 	item: ctx.selectedValue,
-			 	getSelectionLabel: ctx.isArrayOfStrings ? ctx.getSelectionString : ctx.getSelectionLabel
+			 	getSelectionLabel: ctx.getSelectionLabel
 			 };
 			return {
 				root: component.root,
@@ -2665,7 +2728,7 @@
 			p(changed, ctx) {
 				var switch_instance_changes = {};
 				if (changed.selectedValue) switch_instance_changes.item = ctx.selectedValue;
-				if (changed.isArrayOfStrings || changed.getSelectionString || changed.getSelectionLabel) switch_instance_changes.getSelectionLabel = ctx.isArrayOfStrings ? ctx.getSelectionString : ctx.getSelectionLabel;
+				if (changed.getSelectionLabel) switch_instance_changes.getSelectionLabel = ctx.getSelectionLabel;
 
 				if (switch_value !== (switch_value = ctx.Selection)) {
 					if (switch_instance) {

@@ -6,11 +6,13 @@
     {items} 
     component={VirtualListItem} 
     {getOptionLabel}
-    itemHeight={40}
+    {itemHeight}
     on:hover="handleHover(event)"
     on:click="handleClick(event)"
     {hoverItemIndex}
     {selectedValue}
+    bind:start 
+    bind:end
   />
 </div>
 {/if}
@@ -25,8 +27,8 @@
     {/if}
 
     <div on:mouseover="handleHover(i)" on:click="handleClick({item, i, event})"
-        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier, isArrayOfStrings)}">
-          <svelte:component this="{Item}" {item} getOptionLabel={isArrayOfStrings ? getOptionString : getOptionLabel}/>
+        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier)}">
+          <svelte:component this="{Item}" {item} {getOptionLabel}/>
     </div>
   {:else}
     {#if !hideEmptyState}
@@ -88,7 +90,6 @@
   .listItem.active {
     background: #007aff;
     color: #fff;
-    pointer-events: none;
   }
 
   .empty {
@@ -119,7 +120,10 @@
         selectedValue: undefined,
         getOptionLabel: (option) => { if (option) return option.label },
         noOptionsMessage: 'No options',
-        getOptionString: (option) => option
+        getOptionString: (option) => option,
+        itemHeight: 40,
+        start: 0,
+        end: 0,
       }
     },
     oncreate() {
@@ -168,12 +172,8 @@
       }
     },
     helpers: {
-      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier, isArrayOfStrings) {
-        if (isArrayOfStrings) {
-          return `${selectedValue && (selectedValue === item) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
-        } else {
-          return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
-        }
+      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier) {
+        return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
       }
     },
     methods: {
@@ -186,22 +186,16 @@
       },
       handleClick(args) {
         const {item, i, event} = args;
-        console.log('event :', event);
-        console.log('item :', item);
         event.stopPropagation();
-
-        const {optionIdentifier, selectedValue, isArrayOfStrings} = this.get();
-        
-        if(!isArrayOfStrings && selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
-        if(isArrayOfStrings && selectedValue === item) return;
-
-        console.log('i :', i);
-
+        const {optionIdentifier, selectedValue} = this.get();
+        if(selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
         this.set({activeItemIndex: i, hoverItemIndex: i});
         this.handleSelect(item);
       },
       updateHoverItem(increment) {
-        let {items, hoverItemIndex} = this.get();
+        let {items, hoverItemIndex, isVirtualList} = this.get();
+        
+        if (isVirtualList) return;
 
         if (increment > 0 && hoverItemIndex === (items.length - 1)) {
           hoverItemIndex = 0;
@@ -214,10 +208,10 @@
         }
 
         this.set({hoverItemIndex});
-        this.scrollToActiveItem('hover');
+        this.scrollToActiveItem('hover', increment);
       },
       handleKeyDown(e) {
-        const {items, hoverItemIndex, optionIdentifier, selectedValue, isArrayOfStrings} = this.get();
+        const {items, hoverItemIndex, optionIdentifier, selectedValue} = this.get();
 
         switch (e.key) {
           case 'ArrowDown':
@@ -230,10 +224,7 @@
             break;
           case 'Enter':
             e.preventDefault();
-
-            if(!isArrayOfStrings && selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
-            if(isArrayOfStrings && selectedValue === items[hoverItemIndex]) return;
-
+            if(selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
             this.set({activeItemIndex: hoverItemIndex});
             this.handleSelect(items[hoverItemIndex]);
             break;
@@ -245,8 +236,12 @@
             break;
         }
       },
-      scrollToActiveItem(className) {
+      scrollToActiveItem(className, increment) {
         const {container} = this.refs;
+        let {isVirtualList, start, end, hoverItemIndex, items} = this.get();
+        
+        if (isVirtualList) return;
+
         let offsetBounding;
         const focusedElemBounding = container.querySelector(`.listItem.${className}`);
 
@@ -255,6 +250,38 @@
         }
 
         container.scrollTop -= offsetBounding;
+
+        // isVirtualList and scrollToActiveItem WIP...
+        // if (isVirtualList & !focusedElemBounding) {
+        //   const virtualContainer = container.querySelector('div').querySelector('div');
+
+        //   if (increment > 0 && end < items.length ) {
+        //     start += 1;
+        //     end = start + 5;
+        //   }
+
+        //   if (end > hoverItemIndex && increment === -1) {
+        //     start -= 1;
+        //     end = start + 5;
+        //   }
+
+        //   if (end < hoverItemIndex && increment === -1) {
+        //     start = items.length - 5;
+        //     end = items.length;
+        //   }
+
+        //   if (hoverItemIndex === 0) {
+        //     start = 0;
+        //     end = 5;
+        //   }
+
+        //   this.set({
+        //     start,
+        //     end
+        //   })
+        // } else {
+        //  container.scrollTop -= offsetBounding;
+        // }
       }
     }
   }
