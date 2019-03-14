@@ -5,7 +5,7 @@
 />
 
 <div
-  class="{containerClasses}"
+  class="{containerClasses} {hasError ? 'hasError' : ''}"
   style="{containerStyles}"
   on:click="handleClick()"
   ref:container>
@@ -215,6 +215,10 @@
     position: relative;
   }
 
+  .hasError {
+    border: 1px solid #FF2D55;
+  }
+
   @keyframes rotate {
     100% {
       transform: rotate(360deg);
@@ -261,6 +265,7 @@
           if (option) return option.label
          },
         getSelectionLabel: (option) => option.label,
+        hasError: false
       }
     },
     computed: {
