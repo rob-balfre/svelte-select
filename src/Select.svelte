@@ -284,8 +284,6 @@
         return selectedValue ? '' : placeholder
       },
       filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier, loadOptions}) {
-        
-
         if (items && items.length > 0 && typeof items[0] !== 'object') {
           items = items.map((item, index) => {
             return {
@@ -341,6 +339,10 @@
       }
     },
     onstate({changed, current, previous}) {
+      if (changed.selectedValue && current.isMulti && current.selectedValue && current.selectedValue.length > 1) {
+        this.checkSelectedValueForDuplicates();
+      }
+
       if (!previous) return;
 
       if (!current.isMulti && changed.selectedValue && current.selectedValue) {    
@@ -350,7 +352,9 @@
       }
 
       if (current.isMulti && JSON.stringify(current.selectedValue) != JSON.stringify(previous.selectedValue)) {
-        this.fire('select', current.selectedValue)
+        if (this.checkSelectedValueForDuplicates()) {
+          this.fire('select', current.selectedValue)
+        }
       }
 
       if (changed.listOpen) {
@@ -409,12 +413,30 @@
     },
 
     methods: {
+      checkSelectedValueForDuplicates() {
+        let noDuplicates = true;
+        const {selectedValue, optionIdentifier} = this.get();
+        if (selectedValue) {
+          const ids = [];
+          const uniqueValues = [];
+          
+          selectedValue.forEach(val => {
+            if (!ids.includes(val[optionIdentifier])) {
+              ids.push(val[optionIdentifier]);
+              uniqueValues.push(val);
+            } else {
+              noDuplicates = false;
+            }
+          })
+
+          this.set({selectedValue: uniqueValues})
+        }
+        return noDuplicates;
+      },
       setList(items) {
         const {list} = this.get();
         if (list) return list.set({items})
-        this.set({ items })
       },
-
       handleMultiItemClear(i) {
         const {selectedValue} = this.get();
         selectedValue.splice(i, 1);
@@ -464,9 +486,11 @@
             break;
           case 'Backspace':
             if (!isMulti || filterText.length > 0) return;
-            this.handleMultiItemClear(activeSelectedValue !== undefined ? activeSelectedValue : selectedValue.length - 1);
-            if (activeSelectedValue === 0) break;
-            this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
+            if (isMulti && selectedValue && selectedValue.length > 0) {
+              this.handleMultiItemClear(activeSelectedValue !== undefined ? activeSelectedValue : selectedValue.length - 1);
+              if (activeSelectedValue === 0) break;
+              this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
+            }
             break;
           case 'ArrowLeft':
             if (list) list.set({ hoverItemIndex: -1});  

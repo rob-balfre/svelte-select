@@ -2021,6 +2021,79 @@ test('when loadOptions method is supplied but filterText is empty then do not ru
   select.destroy();
 });
 
+test('when isMulti and selectedValue has items then check each item is unique', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [
+        {value: 'pizza', label: 'Pizza'},
+        {value: 'pizza', label: 'Pizza'},
+        {value: 'cake', label: 'Cake'},
+      ],
+    }
+  });
+
+  t.ok(select.get().selectedValue.length === 2);
+
+  select.destroy();
+});
+
+test('when isMulti and textFilter has length then enter should select item', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      isFocused: true,
+      filterText: 'p',
+      listOpen: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(select.get().selectedValue[0].value === 'pizza');
+
+  select.destroy();
+});
+
+test('when isMulti and textFilter has length and no items in list then enter should do nothing', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      isFocused: true,
+      filterText: 'zc',
+      listOpen: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(select.get().selectedValue === undefined);
+
+  select.destroy();
+});
+
+test('When isMulti and no selected item then delete should do nothing', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      isFocused: true,
+      listOpen: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Backspace'}));
+  t.ok(select.get().listOpen === true);
+
+  select.destroy();
+});
+
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {

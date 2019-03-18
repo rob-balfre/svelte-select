@@ -223,6 +223,7 @@
             break;
           case 'Enter':
             e.preventDefault();
+            if (items.length === 0) break;
             if(selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
             this.set({activeItemIndex: hoverItemIndex});
             this.handleSelect(items[hoverItemIndex]);
