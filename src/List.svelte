@@ -43,7 +43,6 @@
     box-shadow: 0 2px 3px 0 rgba(44, 62, 80, 0.24);
     border-radius: 4px;
     max-height: 250px;
-    min-height: 100px;
     overflow-y: auto;
     background: #fff;
   }
