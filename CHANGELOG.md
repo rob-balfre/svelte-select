@@ -1,5 +1,11 @@
 # svelte-select changelog
 
+## 1.7.0
+
+*  Multi-select bug fixes
+*  Added hasError prop and styles
+*  Added isVirtualList prop (Experimental)
+
 ## 1.6.0
 
 *  Added menuPlacement

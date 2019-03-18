@@ -52,6 +52,7 @@ yarn add svelte-select
 | isDisabled | Boolean | false | Disable select
 | isMulti | Boolean | false | Enable multi select
 | isSearchable | Boolean | true | Disable search/filtering
+| isVirtualList | Boolean | false | Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental)
 | groupFilter | Function | (groups) => groups | group filter function
 | getOptionLabel | Function | (option) => option.label | get option label function
 | getSelectionLabel | Function | (option) => option.label | get selection label function
@@ -62,6 +63,7 @@ yarn add svelte-select
 | noOptionsMessage | String | 'No options' | Message to display when there are no items  
 | hideEmptyState | Boolean | false | Hide list when no options
 | menuPlacement | String | 'auto' | when 'auto' displays either 'top' or 'bottom' depending on viewport
+| hasError | Boolean | false | show error styles around select input (red border)
 
 
 ## Events
