@@ -15,6 +15,11 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-0.5.0.tgz#b21510597fd601e5d7c95008b76bf0d254ebfd31"
   integrity sha512-oZLYFEAzUKyi3SKnXvj32ZCEGH6RDnao7COuCVhDydMS9NrCSVXhM79VaKyP5+Zc33m0QXEd2DN3UkU7OsHcfw==
 
+"@sveltejs/svelte-virtual-list@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@sveltejs/svelte-virtual-list/-/svelte-virtual-list-2.2.1.tgz#384182ae656a1fe0ae33f2712e9cc0a9f51055bd"
+  integrity sha512-k+Qs6NDwr2dpnwHcGarasQy6MxYl4rYKMg1C0i9nP16S/U10EwaH1yGjEw6fe9/zG+evvyDlmHUFCgnKnqLm/w==
+
 "@types/estree@0.0.39":
   version "0.0.39"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
@@ -558,6 +563,11 @@ ms@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
   integrity sha512-tgp+dl5cGk28utYktBsrFqA7HKgrhgPsg6Z/EfhWI4gl1Hwq8B/GmY/0oXZ6nF8hDVesS/FpnYaD/kOWhYQvyg==
+
+namey-mcnameface@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/namey-mcnameface/-/namey-mcnameface-1.0.3.tgz#86859738e3e70d958a2196a28e09530c94ba88d0"
+  integrity sha1-hoWXOOPnDZWKIZaijglTDJS6iNA=
 
 no-case@^2.2.0:
   version "2.3.2"

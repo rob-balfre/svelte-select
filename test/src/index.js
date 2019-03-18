@@ -1,5 +1,7 @@
 import svelte from 'svelte';
 import {Store} from 'svelte/store.js';
+import getName from 'namey-mcnameface';
+
 import CustomItem from './CustomItem.html';
 import Select from '../../src/Select.svelte';
 import List from '../../src/List.svelte';
@@ -1515,9 +1517,6 @@ test('when getValue method is set should use that key to update selectedValue', 
 });
 
 test('when loadOptions method is supplied and filterText has length then items should populate via promise resolve', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1538,9 +1537,6 @@ test('when loadOptions method is supplied and filterText has length then items s
 });
 
 test('when noOptionsMessage is set and there are no items then show message', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1556,9 +1552,6 @@ test('when noOptionsMessage is set and there are no items then show message', as
 });
 
 test('when noOptionsMessage is set and there are no items then show message', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1574,10 +1567,7 @@ test('when noOptionsMessage is set and there are no items then show message', as
 });
 
 test('when getSelectionLabel method is supplied and selectedValue are no items then display result of getSelectionLabel', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
-  const select = new Select({
+ const select = new Select({
     target,
     data: {
       getSelectionLabel: (option) => option.notLabel,
@@ -1592,9 +1582,6 @@ test('when getSelectionLabel method is supplied and selectedValue are no items t
 });
 
 test('when getOptionLabel method and items is supplied then display result of getOptionLabel for each option', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1611,9 +1598,6 @@ test('when getOptionLabel method and items is supplied then display result of ge
 });
 
 test('when getOptionLabel method and items is supplied then display result of getOptionLabel for each option', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1631,9 +1615,6 @@ test('when getOptionLabel method and items is supplied then display result of ge
 
 
 test('when a custom Item component is supplied then use to display each item', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1653,9 +1634,6 @@ test('when a custom Item component is supplied then use to display each item', a
 });
 
 test('when a custom Selection component is supplied then use to display selection', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1678,9 +1656,6 @@ test('when a custom Selection component is supplied then use to display selectio
 });
 
 test('when loadOptions method is supplied, isMulti is true and filterText has length then items should populate via promise resolve', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1702,9 +1677,6 @@ test('when loadOptions method is supplied, isMulti is true and filterText has le
 });
 
 test('when getSelectionLabel contains HTML then render the HTML', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1719,9 +1691,6 @@ test('when getSelectionLabel contains HTML then render the HTML', async (t) => {
 });
 
 test('when getOptionLabel contains HTML then render the HTML', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1764,9 +1733,6 @@ test('when isMulti is true, selectedValue populated and arrowLeft is pressed the
 });
 
 test('when hideEmptyState true then do not show "no options" div ', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1783,9 +1749,6 @@ test('when hideEmptyState true then do not show "no options" div ', async (t) =>
 });
 
 test('when selectedValue changes then select event should fire', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1809,9 +1772,6 @@ test('when selectedValue changes then select event should fire', async (t) => {
 });
 
 test('when selectedValue is cleared then clear event from fire select event', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1834,9 +1794,6 @@ test('when selectedValue is cleared then clear event from fire select event', as
 });
 
 test('when items in list filter or update then first item in list should highlight', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1857,9 +1814,6 @@ test('when items in list filter or update then first item in list should highlig
 });
 
 test('when item is selected or state changes then check selectedValue[optionIdentifier] has changed before firing "select" event', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1882,9 +1836,6 @@ test('when item is selected or state changes then check selectedValue[optionIden
 });
 
 test('when isMulti and item is selected or state changes then check selectedValue[optionIdentifier] has changed before firing "select" event', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
   const select = new Select({
     target,
     data: {
@@ -1913,6 +1864,235 @@ test('when isMulti and item is selected or state changes then check selectedValu
   listener.cancel();
   select.destroy();
 });
+
+test('when isFocused turns to false then check Select is no longer in focus', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isFocused: true,
+      items,
+    }
+  });
+
+  const selectSecond = new Select({
+    target: extraTarget,
+    data: {
+      isFocused: false,
+      items,
+    }
+  });
+
+  const listener = select.on('select', () => {
+    setTimeout(() => {
+      select.set({
+        isFocused: false,
+      })
+    }, 0)
+  
+    selectSecond.set({
+      isFocused: true
+    })
+  });
+
+  select.set({
+    selectedValue: {value: 'pizza', label: 'Pizza'},
+  })
+
+  await wait(0);
+
+  t.ok(selectSecond.get().isFocused);
+  t.ok(!select.get().isFocused);  
+
+  listener.cancel();
+  selectSecond.destroy();
+  select.destroy();
+});
+
+test('when items and loadOptions method are both supplied then fallback to items until filterText changes', async (t) => {
+  const items = [{name: 'test1', id: 0}, {name: 'test2', id: 1}, {name: 'test3', id: 2}];
+
+  const select = new Select({
+    target,
+    data: {
+      getOptionLabel: (option) => option.name,
+      getSelectionLabel: (option) => option.name,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',      
+      items,
+      isFocused: true,
+      listOpen: true
+    }
+  });
+
+  const listener = select.on('state', ({current, changed}) => {
+    if (changed.filterText && current.filterText === '' && !current.selectedValue) {
+      select.set({
+        items
+      })
+    }
+  });
+
+  t.ok(document.querySelector('.item').innerHTML === 'test1');
+  select.set({filterText: 'Juniper'});
+  await wait(500);
+  t.ok(document.querySelector('.item').innerHTML === 'Juniper Wheat Beer');
+  select.set({filterText: ''});
+  t.ok(document.querySelector('.item').innerHTML === 'test1');
+
+  listener.cancel();
+  select.destroy();
+});
+
+test('when items is just an array of strings then render list', async (t) => {
+  const items = ['one', 'two', 'three'];
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      listOpen: true
+    }
+  });
+
+  t.ok(document.querySelector('.item').innerHTML === 'one');
+
+  select.destroy();
+});
+
+test('when selectedValue just a string then selectedValue should render', async (t) => {
+  const items = ['one', 'two', 'three'];
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      selectedValue: {value: 'one', label: 'one', index: 0}
+    }
+  });
+
+  t.ok(document.querySelector('.selection').innerHTML === 'one');
+  select.destroy();
+});
+
+test('when isVirtualList then render list', async (t) => {
+  function fill(len, fn) {
+    return Array(len).fill().map((_, i) => fn(i));
+  }
+
+  const items = fill(10000, (i) => {
+      const name = getName();
+      return name
+  });
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isVirtualList: true,
+      listOpen: true
+    }
+  });
+
+  t.ok(document.querySelector('.listItem'));
+
+  select.destroy();
+});
+
+test('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      getOptionLabel: (option) => option.name,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',
+      Item: CustomItem,
+      Selection: CustomItem
+    }
+  });
+
+  select.set({filterText: 'Juniper'});
+  await wait(500);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(document.querySelector('.customItem_name').innerHTML === 'Juniper Wheat Beer');
+  select.set({selectedValue: undefined, filterText: '', listOpen: true});
+  t.ok(document.querySelector('.empty'));
+
+  select.destroy();
+});
+
+test('when isMulti and selectedValue has items then check each item is unique', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      selectedValue: [
+        {value: 'pizza', label: 'Pizza'},
+        {value: 'pizza', label: 'Pizza'},
+        {value: 'cake', label: 'Cake'},
+      ],
+    }
+  });
+
+  t.ok(select.get().selectedValue.length === 2);
+
+  select.destroy();
+});
+
+test('when isMulti and textFilter has length then enter should select item', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      isFocused: true,
+      filterText: 'p',
+      listOpen: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(select.get().selectedValue[0].value === 'pizza');
+
+  select.destroy();
+});
+
+test('when isMulti and textFilter has length and no items in list then enter should do nothing', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      isFocused: true,
+      filterText: 'zc',
+      listOpen: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(select.get().selectedValue === undefined);
+
+  select.destroy();
+});
+
+test('When isMulti and no selected item then delete should do nothing', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      isMulti: true,
+      items,
+      isFocused: true,
+      listOpen: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Backspace'}));
+  t.ok(select.get().listOpen === true);
+
+  select.destroy();
+});
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

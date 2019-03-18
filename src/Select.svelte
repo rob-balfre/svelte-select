@@ -5,7 +5,7 @@
 />
 
 <div
-  class="{containerClasses}"
+  class="{containerClasses} {hasError ? 'hasError' : ''}"
   style="{containerStyles}"
   on:click="handleClick()"
   ref:container>
@@ -68,7 +68,6 @@
     </svg>
   </div>
   {/if}
-
 </div>
 
 <style>
@@ -216,6 +215,10 @@
     position: relative;
   }
 
+  .hasError {
+    border: 1px solid #FF2D55;
+  }
+
   @keyframes rotate {
     100% {
       transform: rotate(360deg);
@@ -228,7 +231,7 @@
   import Item from './Item.svelte';
   import Selection from './Selection.svelte';
   import MultiSelection from './MultiSelection.svelte';
-  import isOutOfViewport from './utils/isOutofViewport';
+  import isOutOfViewport from './utils/isOutOfViewport';
 
   export default {
     data() {
@@ -250,6 +253,7 @@
         isMulti: false,
         isSearchable: true,
         isDisabled: false,
+        isVirtualList: false,
         optionIdentifier: 'value',
         groupBy: undefined,
         loadOptions: undefined,
@@ -257,8 +261,11 @@
         noOptionsMessage: 'No options',
         hideEmptyState: false,
         groupFilter: (groups) => groups,
-        getOptionLabel: (option) => option.label,
+        getOptionLabel: (option) => {
+          if (option) return option.label
+         },
         getSelectionLabel: (option) => option.label,
+        hasError: false
       }
     },
     computed: {
@@ -277,6 +284,17 @@
         return selectedValue ? '' : placeholder
       },
       filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier, loadOptions}) {
+        if (items && items.length > 0 && typeof items[0] !== 'object') {
+          items = items.map((item, index) => {
+            return {
+              index,
+              value: item,
+              label: item
+            }
+          })
+        }
+
+
         const filteredItems = loadOptions ? items : items.filter(item => {
           let keepItem = true;
 
@@ -321,16 +339,22 @@
       }
     },
     onstate({changed, current, previous}) {
+      if (changed.selectedValue && current.isMulti && current.selectedValue && current.selectedValue.length > 1) {
+        this.checkSelectedValueForDuplicates();
+      }
+
       if (!previous) return;
 
-      if (!current.isMulti && changed.selectedValue && current.selectedValue) {       
+      if (!current.isMulti && changed.selectedValue && current.selectedValue) {    
         if (!previous.selectedValue || JSON.stringify(current.selectedValue[current.optionIdentifier]) != JSON.stringify(previous.selectedValue[current.optionIdentifier])) {
           this.fire('select', current.selectedValue)
         }
       }
 
       if (current.isMulti && JSON.stringify(current.selectedValue) != JSON.stringify(previous.selectedValue)) {
-        this.fire('select', current.selectedValue)
+        if (this.checkSelectedValueForDuplicates()) {
+          this.fire('select', current.selectedValue)
+        }
       }
 
       if (changed.listOpen) {
@@ -340,31 +364,36 @@
           this.removeList();
         }
       }
-
       if (changed.filterText) {
-        if(current.loadOptions) {
-          clearTimeout(this.loadOptionsTimeout);
-          this.set({isWaiting:true});
+        if (current.filterText.length > 0) {
+          if(current.loadOptions) {
+            clearTimeout(this.loadOptionsTimeout);
+            this.set({isWaiting:true});
 
-          this.loadOptionsTimeout = setTimeout(() => {
-            if(current.filterText) {
-              current.loadOptions(current.filterText).then((response) => {
-                this.set({ items: response });
-              });
-            } else {
-              this.set({ items: [] });
-            }
+            this.loadOptionsTimeout = setTimeout(() => {
+                current.loadOptions(current.filterText).then((response) => {
+                  this.setList(response)
+                })
+                .catch(() => {  
+                  this.setList([])
+                });
 
-            this.set({isWaiting:false});
-            this.set({listOpen: true});
-          }, current.loadOptionsInterval);
-        } else {
-          this.loadList();
-          this.set({listOpen: true});
+                this.set({
+                  isWaiting:false,
+                  listOpen: true
+                });  
+            }, current.loadOptionsInterval);
 
-          if (current.isMulti) {
-            this.set({activeSelectedValue: undefined})
+          } else {
+              this.loadList();
+              this.set({listOpen: true});
+
+              if (current.isMulti) {
+                this.set({activeSelectedValue: undefined})
+              }
           }
+        } else {
+          this.setList([])
         }
       }
 
@@ -373,16 +402,41 @@
         if (isFocused) {
           this.handleFocus();
         } else {
-          this.set({filterText: ''})
+          this.set({filterText: ''});
+          if (this.refs.input) this.refs.input.blur();
         }
       }
 
       if (changed.filteredItems && current.list) {
-        current.list.set({items: current.filteredItems})
+        this.setList(current.filteredItems)
       }
     },
 
     methods: {
+      checkSelectedValueForDuplicates() {
+        let noDuplicates = true;
+        const {selectedValue, optionIdentifier} = this.get();
+        if (selectedValue) {
+          const ids = [];
+          const uniqueValues = [];
+          
+          selectedValue.forEach(val => {
+            if (!ids.includes(val[optionIdentifier])) {
+              ids.push(val[optionIdentifier]);
+              uniqueValues.push(val);
+            } else {
+              noDuplicates = false;
+            }
+          })
+
+          this.set({selectedValue: uniqueValues})
+        }
+        return noDuplicates;
+      },
+      setList(items) {
+        const {list} = this.get();
+        if (list) return list.set({items})
+      },
       handleMultiItemClear(i) {
         const {selectedValue} = this.get();
         selectedValue.splice(i, 1);
@@ -395,7 +449,8 @@
         if (!target) return;
         const {top, height, width} = this.refs.container.getBoundingClientRect();
 
-        target.style.width = `${width}px`;
+        target.style['min-width'] = `${width}px`;
+        target.style.width = `auto`;
         target.style.left = '0';
 
         if(listPlacement === 'top') {
@@ -431,9 +486,11 @@
             break;
           case 'Backspace':
             if (!isMulti || filterText.length > 0) return;
-            this.handleMultiItemClear(activeSelectedValue !== undefined ? activeSelectedValue : selectedValue.length - 1);
-            if (activeSelectedValue === 0) break;
-            this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
+            if (isMulti && selectedValue && selectedValue.length > 0) {
+              this.handleMultiItemClear(activeSelectedValue !== undefined ? activeSelectedValue : selectedValue.length - 1);
+              if (activeSelectedValue === 0) break;
+              this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
+            }
             break;
           case 'ArrowLeft':
             if (list) list.set({ hoverItemIndex: -1});  
@@ -494,10 +551,22 @@
         this.fire('clear');
       },
       loadList() {
-        let {target, list, Item, getOptionLabel, optionIdentifier, noOptionsMessage, hideEmptyState, items, selectedValue, filteredItems, isMulti} = this.get();
+        let {
+          target,
+          list, 
+          Item, 
+          getOptionLabel,
+          optionIdentifier,
+          noOptionsMessage, 
+          hideEmptyState,
+          items,
+          selectedValue,
+          filteredItems,
+          isMulti,
+          isVirtualList } = this.get();
         if (target && list) return;
 
-        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState};
+        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isVirtualList};
 
         if (getOptionLabel) {
           data.getOptionLabel = getOptionLabel;
@@ -523,7 +592,7 @@
           list.set({items: filteredItems, selectedValue, isMulti});
         }
 
-        list.on('itemSelected', (newSelection) => {
+        list.on('itemSelected', (newSelection) => {          
           if (newSelection) {
             const item = Object.assign({}, newSelection);
 
