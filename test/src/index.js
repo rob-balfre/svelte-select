@@ -1998,6 +1998,29 @@ test('when isVirtualList then render list', async (t) => {
   select.destroy();
 });
 
+test('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
+  const select = new Select({
+    target,
+    data: {
+      getOptionLabel: (option) => option.name,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',
+      Item: CustomItem,
+      Selection: CustomItem
+    }
+  });
+
+  select.set({filterText: 'Juniper'});
+  await wait(500);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(document.querySelector('.customItem_name').innerHTML === 'Juniper Wheat Beer');
+  select.set({selectedValue: undefined, filterText: '', listOpen: true});
+  t.ok(document.querySelector('.empty'));
+
+  select.destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {

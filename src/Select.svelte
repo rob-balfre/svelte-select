@@ -361,27 +361,35 @@
         }
       }
       if (changed.filterText) {
-        if(current.loadOptions) {
-          clearTimeout(this.loadOptionsTimeout);
-          this.set({isWaiting:true});
+        if (current.filterText.length > 0) {
+          if(current.loadOptions) {
+            clearTimeout(this.loadOptionsTimeout);
+            this.set({isWaiting:true});
 
-          this.loadOptionsTimeout = setTimeout(() => {
-              current.loadOptions(current.filterText).then((response) => {
-                this.set({ items: response });
-              }, () => {
-                this.set({ items: [] });
-              })
-			  .catch(() => {  this.set({ items: [] }); });
-            this.set({isWaiting:false});
-            this.set({listOpen: true});
-          }, current.loadOptionsInterval);
-        } else {
-          this.loadList();
-          this.set({listOpen: true});
+            this.loadOptionsTimeout = setTimeout(() => {
+                current.loadOptions(current.filterText).then((response) => {
+                  this.setList(response)
+                })
+                .catch(() => {  
+                  this.setList([])
+                });
 
-          if (current.isMulti) {
-            this.set({activeSelectedValue: undefined})
+                this.set({
+                  isWaiting:false,
+                  listOpen: true
+                });  
+            }, current.loadOptionsInterval);
+
+          } else {
+              this.loadList();
+              this.set({listOpen: true});
+
+              if (current.isMulti) {
+                this.set({activeSelectedValue: undefined})
+              }
           }
+        } else {
+          this.setList([])
         }
       }
 
@@ -396,11 +404,17 @@
       }
 
       if (changed.filteredItems && current.list) {
-        current.list.set({items: current.filteredItems})
+        this.setList(current.filteredItems)
       }
     },
 
     methods: {
+      setList(items) {
+        const {list} = this.get();
+        if (list) return list.set({items})
+        this.set({ items })
+      },
+
       handleMultiItemClear(i) {
         const {selectedValue} = this.get();
         selectedValue.splice(i, 1);
