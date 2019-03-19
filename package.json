@@ -42,7 +42,5 @@
     "index.js",
     "Select.js"
   ],
-  "dependencies": {
-    "@sveltejs/svelte-virtual-list": "https://github.com/rob-balfre/svelte-virtual-list#master"
-  }
+  "dependencies": {}
 }
