@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@babel/polyfill": "7.0.0",
+    "namey-mcnameface": "^1.0.3",
     "port-authority": "^1.0.5",
     "puppeteer": "^1.9.0",
     "require-nocache": "1.0.0",
@@ -42,7 +43,6 @@
     "Select.js"
   ],
   "dependencies": {
-    "@sveltejs/svelte-virtual-list": "^2.2.1",
-    "namey-mcnameface": "^1.0.3"
+    "@sveltejs/svelte-virtual-list": "https://github.com/rob-balfre/svelte-virtual-list#master"
   }
 }
