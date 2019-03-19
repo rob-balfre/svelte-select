@@ -99,8 +99,7 @@
 </style>
 
 <script>
-  import VirtualList from '@sveltejs/svelte-virtual-list';
-
+  import VirtualList from './VirtualList.svelte';
   import Item from './Item.svelte';
   import VirtualListItem from './VirtualListItem.svelte';
 
