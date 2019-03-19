@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 1.7.1
+
+*  Fix for svelte-virtual-list
+
 ## 1.7.0
 
 *  Multi-select bug fixes
