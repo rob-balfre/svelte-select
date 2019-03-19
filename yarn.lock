@@ -15,10 +15,9 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-0.5.0.tgz#b21510597fd601e5d7c95008b76bf0d254ebfd31"
   integrity sha512-oZLYFEAzUKyi3SKnXvj32ZCEGH6RDnao7COuCVhDydMS9NrCSVXhM79VaKyP5+Zc33m0QXEd2DN3UkU7OsHcfw==
 
-"@sveltejs/svelte-virtual-list@^2.2.1":
+"@sveltejs/svelte-virtual-list@https://github.com/rob-balfre/svelte-virtual-list#master":
   version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@sveltejs/svelte-virtual-list/-/svelte-virtual-list-2.2.1.tgz#384182ae656a1fe0ae33f2712e9cc0a9f51055bd"
-  integrity sha512-k+Qs6NDwr2dpnwHcGarasQy6MxYl4rYKMg1C0i9nP16S/U10EwaH1yGjEw6fe9/zG+evvyDlmHUFCgnKnqLm/w==
+  resolved "https://github.com/rob-balfre/svelte-virtual-list#1411524cd1086c0c16b14fd500e066a89c0a2d36"
 
 "@types/estree@0.0.39":
   version "0.0.39"
