@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 1.7.2
+
+*  Moved svelte-virtual-list into source
+
 ## 1.7.1
 
 *  Fix for svelte-virtual-list
