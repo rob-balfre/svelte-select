@@ -21,9 +21,8 @@
 	export let _props = {};
 	export let itemHeight = 0;
 
-	export let visible;
-	$: {
-		visible = items.slice(start, end).map((data, i) => {
+	export let visible = () => {
+		return items.slice(start, end).map((data, i) => {
 			return { index: i + start, data };
 		});
 	}
@@ -161,7 +160,12 @@
 	}
 </script>
 
-<div bind:this={viewport} on:scroll='{refresh}' style='height: {height};' bind:offsetHeight="{_viewportHeight}">
+<svelte-virtual-list-viewport 
+	bind:this={viewport} 
+	on:scroll='{refresh}'
+	style='height: {height};'
+	bind:offsetHeight="{_viewportHeight}">
+	
 	<div bind:this={container} style='padding-top: {_top}px; padding-bottom: {_bottom}px;'>
 		{#each visible as item (item.index)}
 			<div class='row'>
@@ -169,10 +173,10 @@
 			</div>
 		{/each}
 	</div>
-</div>
+</svelte-virtual-list-viewport>
 
 <style>
-	ref:viewport {
+	svelte-virtual-list-viewport {
 		position: relative;
 		overflow-y: auto;
 		-webkit-overflow-scrolling:touch;

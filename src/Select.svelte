@@ -28,7 +28,10 @@
   export let loadOptions;
   export let hasError = false;
   export let containerStyles;
-  export let getSelectionLabel = (option) => option.label;
+  export let getSelectionLabel = (option) => {
+    console.log(option)
+    return option.label
+  }; 
   export let activeSelectedValue;
   export let isSearchable = true;
   export let inputStyles;
@@ -42,30 +45,24 @@
   export let loadOptionsInterval = 200;
   export let noOptionsMessage = 'No options';
   export let hideEmptyState = false;
-  export let filteredItems;
 
-  export let containerClasses;
+  let containerClasses = '';
+
   $: {
-    let classes = `selectContainer`;
-    classes += isMulti ? ' multiSelect' : '';
-    classes += isDisabled ? ' disabled' : '';
-    classes += isFocused ? ' focused' : '';
-
-    containerClasses = classes;
+    containerClasses = `selectContainer`;
+    containerClasses += isMulti ? ' multiSelect' : '';
+    containerClasses += isDisabled ? ' disabled' : '';
+    containerClasses += isFocused ? ' focused' : '';
   }
 
-  export let showSelectedItem;
-  $: {
-    showSelectedItem = selectedValue && filterText.length === 0;
+  $: showSelectedItem = selectedValue && filterText.length === 0;
+
+  export let placeholderText = () => {
+    return selectedValue ? '' : placeholder
   }
 
-  export let placeholderText;
-  $: {
-    placeholderText = selectedValue ? '' : placeholder
-  }
-
-  export let filteredItems;
-  $: {
+  
+  let filteredItems = () => {
     if (items && items.length > 0 && typeof items[0] !== 'object') {
       items = items.map((item, index) => {
         filteredItems = {

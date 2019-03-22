@@ -108,6 +108,27 @@ yarn dev
 yarn test:browser
 ```
 
+In your favourite browser go to http://localhost:3000 and open devtools and see the console for the test output. When developing its handy to see the component on the page; comment out the `select.destroy();` on the last test in /test/src/index.js or use the `test.only()` to target just one test.
+
+For example: 
+
+```js
+test.only('when getSelectionLabel contains HTML then render the HTML', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      selectedValue: items[0],
+      getSelectionLabel: (option) => `<p>${option.label}</p>`,
+    }
+  });
+
+  t.ok(document.querySelector('.selection').innerHTML === '<p>Chocolate</p>');
+
+  //select.destroy();
+});
+
+```
+
 
 ## Configuring webpack
 
