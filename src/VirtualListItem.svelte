@@ -1,4 +1,37 @@
-<div on:mouseover="handleHover(i)" on:click="handleClick(item, i, event)"
+<script>
+    import { createEventDispatcher, onMount } from 'svelte';
+
+    const dispatch = createEventDispatcher();
+
+    export let i;
+    export let item;
+    export let hoverItemIndex;
+    export let selectedValue;
+    export let getOptionLabel;
+
+    onMount(() => {
+        // console.log('this.get() :', this.get());
+    });
+
+    // [svelte-upgrade suggestion]
+    // review these functions and remove unnecessary 'export' keywords
+    export function handleHover(i) {
+        dispatch('hover', i)
+    }
+
+    export function handleClick(item, i, event) {
+        dispatch('click', { item, i, event })
+    }
+
+    function itemClasses(hoverItemIndex, selectedValue, i, item) {
+        let isActive;
+        if (selectedValue) isActive = selectedValue.value === item.value;
+        const isHover = hoverItemIndex === i;
+        return `${isActive ? 'active' : ''} ${isHover ? 'hover' : ''}`
+    }
+</script>
+
+<div on:mouseover="{() => handleHover(i)}" on:click="{event => handleClick(item, i, event)}"
     class="listItem {itemClasses(hoverItemIndex, selectedValue, i, item)}">
 
     <div class="item">
@@ -35,28 +68,3 @@
         color: #fff;
     }
 </style>
-
-
-<script>
-    export default {
-        oncreate() {
-            // console.log('this.get() :', this.get());
-        },
-        methods: {
-            handleHover(i) {
-                this.fire('hover', i)
-            },
-            handleClick(item, i, event) {
-                this.fire('click', { item, i, event })
-            }
-        },
-        helpers: {
-            itemClasses(hoverItemIndex, selectedValue, i, item) {
-                let isActive;
-                if (selectedValue) isActive = selectedValue.value === item.value;
-                const isHover = hoverItemIndex === i;
-                return `${isActive ? 'active' : ''} ${isHover ? 'hover' : ''}`
-            }
-        },
-    }
-</script>
