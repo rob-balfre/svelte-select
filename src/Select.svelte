@@ -1,10 +1,6 @@
 <script>
   import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
 
-  // [svelte-upgrade suggestion]
-  // manually refactor all references to __this
-  const __this = {};
-
   const dispatch = createEventDispatcher();
 
   export let container;
@@ -127,40 +123,44 @@
   // [svelte-upgrade warning]
   // beforeUpdate and afterUpdate handlers behave
   // differently to their v2 counterparts
+  let prev_selectedValue;
+  let prev_listOpen;
+  let prev_filterText;
+  let prev_isFocused;
+  let prev_filteredItems;
+
   beforeUpdate(() => {
-    if (changed.selectedValue && current.isMulti && current.selectedValue && current.selectedValue.length > 1) {
+    if (isMulti && selectedValue && selectedValue.length > 1) {
       checkSelectedValueForDuplicates();
     }
 
-    if (!previous) return;
 
-    if (!current.isMulti && changed.selectedValue && current.selectedValue) {    
-      if (!previous.selectedValue || JSON.stringify(current.selectedValue[current.optionIdentifier]) != JSON.stringify(previous.selectedValue[current.optionIdentifier])) {
-        dispatch('select', current.selectedValue)
+    if (!isMulti && prev_selectedValue && selectedValue) {    
+      if (!prev_selectedValue || JSON.stringify(selectedValue[optionIdentifier]) != JSON.stringify(prev_selectedValue[optionIdentifier])) {
+        dispatch('select', selectedValue)
       }
     }
 
-    if (current.isMulti && JSON.stringify(current.selectedValue) != JSON.stringify(previous.selectedValue)) {
+    if (isMulti && JSON.stringify(selectedValue) != JSON.stringify(prev_selectedValue)) {
       if (checkSelectedValueForDuplicates()) {
-        dispatch('select', current.selectedValue)
+        dispatch('select', selectedValue)
       }
     }
 
-    if (changed.listOpen) {
-      if (current.listOpen) {
+    if (listOpen !== prev_listOpen) {
+      if (listOpen) {
         loadList();
       } else {
         removeList();
       }
     }
-    if (changed.filterText) {
-      if (current.filterText.length > 0) {
-        if(current.loadOptions) {
-          clearTimeout(__this.loadOptionsTimeout);
-          isWaiting = true;
+    if (filterText !== prev_filterText) {
+      if (filterText.length > 0) {
+        if(loadOptions) {
 
-          __this.loadOptionsTimeout = setTimeout(() => {
-              current.loadOptions(current.filterText).then((response) => {
+          // *** NOT SURE WHAT TO DO HERE ***
+          const loadOptionsTimeout = setTimeout(() => {
+              loadOptions(filterText).then((response) => {
                 setList(response)
               })
               .catch(() => {  
@@ -168,13 +168,15 @@
               });
 
               isWaiting = false, listOpen = true;  
-          }, current.loadOptionsInterval);
+          }, loadOptionsInterval);
 
+          clearTimeout(loadOptionsTimeout);
+          isWaiting = true;
         } else {
             loadList();
             listOpen = true;
 
-            if (current.isMulti) {
+            if (isMulti) {
               activeSelectedValue = undefined
             }
         }
@@ -183,8 +185,7 @@
       }
     }
 
-    if (changed.isFocused) {
-      const {isFocused} = current;
+    if (isFocused !== prev_isFocused) {
       if (isFocused) {
         handleFocus();
       } else {
@@ -193,9 +194,15 @@
       }
     }
 
-    if (changed.filteredItems && current.list) {
-      setList(current.filteredItems)
+    if (prev_filteredItems !== filteredItems && list) {
+      setList(filteredItems)
     }
+
+    prev_selectedValue = selectedValue;
+    prev_listOpen = listOpen;
+    prev_filterText = filterText;
+    prev_isFocused = isFocused;
+    prev_filteredItems = filteredItems;
   });
 
   // [svelte-upgrade suggestion]
@@ -388,8 +395,6 @@
   }
 
   onMount(() => {
-    __this.loadOptionsTimeout = undefined;
-
     if (isFocused) input.focus();
     if (listOpen) loadList();
   });
