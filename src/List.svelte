@@ -1,12 +1,6 @@
 <script>
   import { afterUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
 
-  // [svelte-upgrade suggestion]
-  // manually refactor all references to __this
-  const __this = {
-    get: () => ({ isVirtualList, items, VirtualListItem, getOptionLabel, itemHeight, hoverItemIndex, selectedValue, start, end, optionIdentifier, Item, hideEmptyState, noOptionsMessage, getOptionString })
-  };
-
   const dispatch = createEventDispatcher();
 
   export let container;
@@ -27,23 +21,21 @@
   export let hideEmptyState;
   export let noOptionsMessage = 'No options';
   export let getOptionString = (option) => option;
+  let isScrollingTimer = 0;
+  let isScrolling = true;
 
   onMount(() => {
-    __this.isScrollingTimer = 0;
-
     container.addEventListener('scroll', () => {
-      clearTimeout(__this.isScrollingTimer);
+      clearTimeout(isScrollingTimer);
 
-      isScrolling = true;
-
-      __this.isScrollingTimer = setTimeout(() => {
+      isScrollingTimer = setTimeout(() => {
         isScrolling = false;
       }, 100);
     }, false);
   });
 
   onDestroy(() => {
-    clearTimeout(__this.isScrollingTimer);
+    clearTimeout(isScrollingTimer);
   });
 
   // [svelte-upgrade warning]
@@ -82,7 +74,7 @@
   }
 
   export function handleHover(i) {
-    if(__this.get().isScrolling) return;
+    if(isScrolling) return;
     hoverItemIndex = i;
   }
 
