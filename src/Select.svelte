@@ -207,7 +207,7 @@
 
   // [svelte-upgrade suggestion]
   // review these functions and remove unnecessary 'export' keywords
-  export function checkSelectedValueForDuplicates() {
+  function checkSelectedValueForDuplicates() {
     let noDuplicates = true;
     if (selectedValue) {
       const ids = [];
@@ -227,17 +227,17 @@
     return noDuplicates;
   }
 
-  export function setList(items) {
+  function setList(items) {
     if (list) return list.set({items})
   }
 
-  export function handleMultiItemClear(i) {
+  function handleMultiItemClear(i) {
     selectedValue.splice(i, 1);
     selectedValue = selectedValue.length > 0 ? selectedValue : undefined;
     getPosition();
   }
 
-  export function getPosition() {
+  function getPosition() {
 
     if (!target) return;
     const {top, height, width} = container.getBoundingClientRect();
@@ -262,7 +262,7 @@
     target.style.visibility = '';
   }
 
-  export function handleKeyDown(e) {
+  function handleKeyDown(e) {
     if (!isFocused) return;
 
     switch (e.key) {
@@ -309,12 +309,12 @@
     }
   }
 
-  export function handleFocus() {
+  function handleFocus() {
     isFocused = true;
     if (input) input.focus();
   }
 
-  export function removeList() {
+  function removeList() {
     filterText = '', activeSelectedValue = undefined;
 
     if (!list) return;
@@ -328,26 +328,26 @@
     list = list, target = target;
   }
 
-  export function handleWindowClick(event) {
+  function handleWindowClick(event) {
     if (!container) return;
     if (container.contains(event.target)) return;
     isFocused = false, listOpen = false, activeSelectedValue = undefined;
     if (input) input.blur();
   }
 
-  export function handleClick() {
+  function handleClick() {
     if (isDisabled) return;
     isFocused = true, listOpen = !listOpen;
   }
 
-  export function handleClear(e) {
+  function handleClear(e) {
     e.stopPropagation();
     selectedValue = undefined, listOpen = false;
     handleFocus();
     dispatch('clear');
   }
 
-  export function loadList() {
+  function loadList() {
     if (target && list) return;
 
     const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isVirtualList};
