@@ -41,26 +41,34 @@
   // [svelte-upgrade warning]
   // beforeUpdate and afterUpdate handlers behave
   // differently to their v2 counterparts
+  let prev_items;
+  let prev_activeItemIndex;
+  let prev_selectedValue;
+
   afterUpdate(() => {
-    if (changed.items && current.items.length > 0) {
+    if (items !== prev_items && items.length > 0) {
       hoverItemIndex = 0;
     }
-    if (changed.activeItemIndex && current.activeItemIndex > -1) {
-      hoverItemIndex = current.activeItemIndex;
+    if (prev_activeItemIndex && activeItemIndex > -1) {
+      hoverItemIndex = activeItemIndex;
 
       scrollToActiveItem('active');
     }
-    if (changed.selectedValue && current.selectedValue) {
+    if (prev_selectedValue && selectedValue) {
       scrollToActiveItem('active');
 
-      if (current.items && !current.isMulti) {
-        const hoverItemIndex = current.items.findIndex((item) => item[current.optionIdentifier] === current.selectedValue[current.optionIdentifier]);
+      if (items && !isMulti) {
+        const hoverItemIndex = items.findIndex((item) => item[optionIdentifier] === selectedValue[optionIdentifier]);
 
         if (hoverItemIndex) {
           hoverItemIndex = hoverItemIndex;
         }
       }
     }
+
+    prev_items = items;
+    prev_activeItemIndex = activeItemIndex;
+    prev_selectedValue = selectedValue;
   });
 
   function itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier) {
