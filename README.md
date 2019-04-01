@@ -108,7 +108,7 @@ yarn dev
 yarn test:browser
 ```
 
-In your favourite browser go to http://localhost:3000 and open devtools and see the console for the test output. When developing its handy to see the component on the page; comment out the `select.destroy();` on the last test in /test/src/index.js or use the `test.only()` to target just one test.
+In your favourite browser go to http://localhost:3000 and open devtools and see the console for the test output. When developing its handy to see the component on the page; comment out the `select.$destroy();` on the last test in /test/src/index.js or use the `test.only()` to target just one test.
 
 For example: 
 
@@ -124,7 +124,7 @@ test.only('when getSelectionLabel contains HTML then render the HTML', async (t)
 
   t.ok(document.querySelector('.selection').innerHTML === '<p>Chocolate</p>');
 
-  //select.destroy();
+  //select.$destroy();
 });
 
 ```

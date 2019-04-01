@@ -29,8 +29,7 @@
   export let hasError = false;
   export let containerStyles;
   export let getSelectionLabel = (option) => {
-    console.log(option)
-    return option.label
+    if (option) return option.label
   }; 
   export let activeSelectedValue;
   export let isSearchable = true;
@@ -45,7 +44,7 @@
   export let loadOptionsInterval = 200;
   export let noOptionsMessage = 'No options';
   export let hideEmptyState = false;
-
+  export let filteredItems = [];
   let containerClasses = '';
 
   $: {
@@ -57,15 +56,14 @@
 
   $: showSelectedItem = selectedValue && filterText.length === 0;
 
-  export let placeholderText = () => {
-    return selectedValue ? '' : placeholder
-  }
+  $: placeholderText = selectedValue ? '' : placeholder;
 
-  
-  let filteredItems = () => {
+  $: {
+    let _filteredItems;
+
     if (items && items.length > 0 && typeof items[0] !== 'object') {
       items = items.map((item, index) => {
-        filteredItems = {
+        _filteredItems = {
           index,
           value: item,
           label: item
@@ -73,8 +71,7 @@
       })
     }
 
-
-    const filteredItems = loadOptions ? items : items.filter(item => {
+    _filteredItems = loadOptions ? items : items.filter(item => {
       let keepItem = true;
 
       if (isMulti && selectedValue) {
@@ -91,7 +88,7 @@
       const groupValues = [];
       const groups = {};
 
-      filteredItems.forEach((item) => {
+      _filteredItems.forEach((item) => {
         const groupValue = groupBy(item);
 
         if (!groupValues.includes(groupValue)) {
@@ -111,10 +108,11 @@
         sortedGroupedItems.push(...groups[groupValue]);
       });
 
-      return sortedGroupedItems;
+      filteredItems = sortedGroupedItems;
+      
+    } else {
+      filteredItems = _filteredItems;
     }
-
-    return filteredItems;
   }
 
   // [svelte-upgrade warning]
@@ -126,7 +124,7 @@
   let prev_isFocused;
   let prev_filteredItems;
 
-  beforeUpdate(() => {
+  beforeUpdate(async () => {
     if (isMulti && selectedValue && selectedValue.length > 1) {
       checkSelectedValueForDuplicates();
     }
@@ -144,13 +142,14 @@
       }
     }
 
-    if (listOpen !== prev_listOpen) {
+    if (container && listOpen !== prev_listOpen) {
       if (listOpen) {
         loadList();
       } else {
         removeList();
       }
     }
+
     if (filterText !== prev_filterText) {
       if (filterText.length > 0) {
         if(loadOptions) {
@@ -225,7 +224,7 @@
   }
 
   function setList(items) {
-    if (list) return list.set({items})
+    if (list) return list.$set({items})
   }
 
   function handleMultiItemClear(i) {
@@ -283,7 +282,7 @@
         }
         break;
       case 'ArrowLeft':
-        if (list) list.set({ hoverItemIndex: -1});  
+        if (list) list.$set({ hoverItemIndex: -1});  
         if (!isMulti || filterText.length > 0) return;
 
         if (activeSelectedValue === undefined) {
@@ -294,7 +293,7 @@
         activeSelectedValue = activeSelectedValue;
         break;
       case 'ArrowRight':
-        if (list) list.set({ hoverItemIndex: -1});
+        if (list) list.$set({ hoverItemIndex: -1});
         if (!isMulti || filterText.length > 0 || activeSelectedValue === undefined) return;
         if (activeSelectedValue === selectedValue.length - 1) {
           activeSelectedValue = undefined;
@@ -315,7 +314,7 @@
     filterText = '', activeSelectedValue = undefined;
 
     if (!list) return;
-    list.destroy();
+    list.$destroy();
     list = undefined;
 
     if (!target) return;
@@ -347,7 +346,8 @@
   function loadList() {
     if (target && list) return;
 
-    const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isVirtualList};
+    const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isVirtualList,
+      items: filteredItems, selectedValue, isMulti};
 
     if (getOptionLabel) {
       data.getOptionLabel = getOptionLabel;
@@ -363,19 +363,18 @@
 
     list = list, target = target;
     container.appendChild(target);
+    
 
     list = new List({
       target,
-      data
+      props: data
     });
 
-    if (items) {
-      list.set({items: filteredItems, selectedValue, isMulti});
-    }
+    list.$on('itemSelected', (event) => {         
+      const {detail} = event;
 
-    list.on('itemSelected', (newSelection) => {          
-      if (newSelection) {
-        const item = Object.assign({}, newSelection);
+      if (detail) {
+        const item = Object.assign({}, detail);
 
         if (isMulti) {
           selectedValue = selectedValue ? selectedValue.concat([item]) : [item];

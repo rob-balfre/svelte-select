@@ -1,5 +1,5 @@
 <script>
-  import { afterUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -21,21 +21,26 @@
   export let hideEmptyState;
   export let noOptionsMessage = 'No options';
   export let getOptionString = (option) => option;
+  export let activeItemIndex;
+  export let isMulti;
+  
   let isScrollingTimer = 0;
-  let isScrolling = true;
+  let isScrolling = false;
 
   onMount(() => {
-    container.addEventListener('scroll', () => {
-      clearTimeout(isScrollingTimer);
+    scrollToActiveItem('active');
 
-      isScrollingTimer = setTimeout(() => {
-        isScrolling = false;
-      }, 100);
-    }, false);
+    // container.addEventListener('scroll', () => {
+    //   clearTimeout(isScrollingTimer);
+
+    //   isScrollingTimer = setTimeout(() => {
+    //     isScrolling = false;
+    //   }, 100);
+    // }, false);
   });
 
   onDestroy(() => {
-    clearTimeout(isScrollingTimer);
+    // clearTimeout(isScrollingTimer);
   });
 
   // [svelte-upgrade warning]
@@ -45,26 +50,27 @@
   let prev_activeItemIndex;
   let prev_selectedValue;
 
-  afterUpdate(() => {
-    if (items !== prev_items && items.length > 0) {
-      hoverItemIndex = 0;
-    }
-    if (prev_activeItemIndex && activeItemIndex > -1) {
-      hoverItemIndex = activeItemIndex;
+  beforeUpdate(() => {
+    
+    // if (items !== prev_items && items.length > 0) {
+    //   hoverItemIndex = 0;
+    // }
+    // if (prev_activeItemIndex && activeItemIndex > -1) {
+    //   hoverItemIndex = activeItemIndex;
 
-      scrollToActiveItem('active');
-    }
-    if (prev_selectedValue && selectedValue) {
-      scrollToActiveItem('active');
+    //   scrollToActiveItem('active');
+    // }
+    // if (prev_selectedValue && selectedValue) {
+    //   scrollToActiveItem('active');
 
-      if (items && !isMulti) {
-        const hoverItemIndex = items.findIndex((item) => item[optionIdentifier] === selectedValue[optionIdentifier]);
+    //   if (items && !isMulti) {
+    //     const hoverItemIndex = items.findIndex((item) => item[optionIdentifier] === selectedValue[optionIdentifier]);
 
-        if (hoverItemIndex) {
-          hoverItemIndex = hoverItemIndex;
-        }
-      }
-    }
+    //     if (hoverItemIndex) {
+    //       hoverItemIndex = hoverItemIndex;
+    //     }
+    //   }
+    // }
 
     prev_items = items;
     prev_activeItemIndex = activeItemIndex;
@@ -74,6 +80,8 @@
   function itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier) {
     return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
   }
+
+  // $: itemClasses  = `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
 
   // [svelte-upgrade suggestion]
   // review these functions and remove unnecessary 'export' keywords
@@ -95,7 +103,6 @@
   }
 
   export function updateHoverItem(increment) {
-    
     if (isVirtualList) return;
 
     if (increment > 0 && hoverItemIndex === (items.length - 1)) {
@@ -113,7 +120,6 @@
   }
 
   export function handleKeyDown(e) {
-
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
@@ -139,8 +145,7 @@
     }
   }
 
-  export function scrollToActiveItem(className, increment) {
-    
+  export function scrollToActiveItem(className, increment) {    
     if (isVirtualList) return;
 
     let offsetBounding;
