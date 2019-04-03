@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 1.7.3
+
+*  Fix for isOutOfViewport.js import typo
+
+
 ## 1.7.2
 
 *  Moved svelte-virtual-list into source
