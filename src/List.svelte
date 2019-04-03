@@ -5,10 +5,11 @@
 
   export let container;
 
+  import ItemComponent from './Item.svelte';
   import VirtualList from './VirtualList.svelte';
-  import Item from './Item.svelte';
   import VirtualListItem from './VirtualListItem.svelte';
 
+  export let Item = ItemComponent;
   export let isVirtualList = false;
   export let items = [];
   export let getOptionLabel = (option) => { if (option) return option.label };
@@ -43,18 +44,18 @@
     // clearTimeout(isScrollingTimer);
   });
 
-  // [svelte-upgrade warning]
-  // beforeUpdate and afterUpdate handlers behave
-  // differently to their v2 counterparts
+  
   let prev_items;
   let prev_activeItemIndex;
   let prev_selectedValue;
 
   beforeUpdate(() => {
     
-    // if (items !== prev_items && items.length > 0) {
-    //   hoverItemIndex = 0;
-    // }
+    if (items !== prev_items && items.length > 0) {
+      hoverItemIndex = 0;
+    }
+
+
     // if (prev_activeItemIndex && activeItemIndex > -1) {
     //   hoverItemIndex = activeItemIndex;
 

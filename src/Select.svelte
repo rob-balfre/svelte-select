@@ -7,11 +7,14 @@
   export let input;
 
   import List from './List.svelte';
-  import Item from './Item.svelte';
-  import Selection from './Selection.svelte';
-  import MultiSelection from './MultiSelection.svelte';
+  import ItemComponent from './Item.svelte';
+  import SelectionComponent from './Selection.svelte';
+  import MultiSelectionComponent  from './MultiSelection.svelte';
   import isOutOfViewport from './utils/isOutOfViewport';
 
+  export let Item = ItemComponent;
+  export let Selection = SelectionComponent;
+  export let MultiSelection = MultiSelectionComponent;
   export let isMulti = false;
   export let isDisabled = false;
   export let isFocused;
@@ -45,7 +48,22 @@
   export let noOptionsMessage = 'No options';
   export let hideEmptyState = false;
   export let filteredItems = [];
+  let _items = [];
+  
   let containerClasses = '';
+
+  function wait(ms) {
+   return new Promise(f => setTimeout(f, ms));
+  }
+
+  const getItems = async (arg) => {
+    isWaiting = true;
+    await wait(loadOptionsInterval);
+    const options = await loadOptions(filterText);
+    items = options;
+    isWaiting = false;
+    listOpen = true;
+  }
 
   $: {
     containerClasses = `selectContainer`;
@@ -60,9 +78,10 @@
 
   $: {
     let _filteredItems;
+    let _items = items;
 
     if (items && items.length > 0 && typeof items[0] !== 'object') {
-      items = items.map((item, index) => {
+      _items = items.map((item, index) => {
         _filteredItems = {
           index,
           value: item,
@@ -71,7 +90,11 @@
       })
     }
 
-    _filteredItems = loadOptions ? items : items.filter(item => {
+    console.log('_items :', _items);
+
+    _filteredItems = loadOptions ? _items : _items.filter(item => {
+      console.log('item :', item);
+
       let keepItem = true;
 
       if (isMulti && selectedValue) {
@@ -80,6 +103,7 @@
         });
       }
 
+      console.log('filterText :', filterText);
       if (keepItem && filterText.length < 1) return true;
       return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
     });
@@ -115,9 +139,6 @@
     }
   }
 
-  // [svelte-upgrade warning]
-  // beforeUpdate and afterUpdate handlers behave
-  // differently to their v2 counterparts
   let prev_selectedValue;
   let prev_listOpen;
   let prev_filterText;
@@ -125,18 +146,17 @@
   let prev_filteredItems;
 
   beforeUpdate(async () => {
-    if (isMulti && selectedValue && selectedValue.length > 1) {
+    if (isMulti && selectedValue && selectedValue && selectedValue.length > 1) {
       checkSelectedValueForDuplicates();
     }
 
-
-    if (!isMulti && prev_selectedValue && selectedValue) {    
+    if (!isMulti && selectedValue && prev_selectedValue !== selectedValue) {    
       if (!prev_selectedValue || JSON.stringify(selectedValue[optionIdentifier]) != JSON.stringify(prev_selectedValue[optionIdentifier])) {
         dispatch('select', selectedValue)
       }
     }
 
-    if (isMulti && JSON.stringify(selectedValue) != JSON.stringify(prev_selectedValue)) {
+    if (isMulti && JSON.stringify(selectedValue) !== JSON.stringify(prev_selectedValue)) {
       if (checkSelectedValueForDuplicates()) {
         dispatch('select', selectedValue)
       }
@@ -152,22 +172,9 @@
 
     if (filterText !== prev_filterText) {
       if (filterText.length > 0) {
+
         if(loadOptions) {
-
-          // *** NOT SURE WHAT TO DO HERE ***
-          const loadOptionsTimeout = setTimeout(() => {
-              loadOptions(filterText).then((response) => {
-                setList(response)
-              })
-              .catch(() => {  
-                setList([])
-              });
-
-              isWaiting = false, listOpen = true;  
-          }, loadOptionsInterval);
-
-          clearTimeout(loadOptionsTimeout);
-          isWaiting = true;
+          getItems(loadOptions);          
         } else {
             loadList();
             listOpen = true;
@@ -201,8 +208,6 @@
     prev_filteredItems = filteredItems;
   });
 
-  // [svelte-upgrade suggestion]
-  // review these functions and remove unnecessary 'export' keywords
   function checkSelectedValueForDuplicates() {
     let noDuplicates = true;
     if (selectedValue) {
@@ -234,8 +239,7 @@
   }
 
   function getPosition() {
-
-    if (!target) return;
+    if (!target || !container) return;
     const {top, height, width} = container.getBoundingClientRect();
 
     target.style['min-width'] = `${width}px`;
@@ -318,7 +322,7 @@
     list = undefined;
 
     if (!target) return;
-    target.parentNode.removeChild(target);
+    if (target.parentNode) target.parentNode.removeChild(target);
     target = undefined;
 
     list = list, target = target;
@@ -362,7 +366,7 @@
     });
 
     list = list, target = target;
-    container.appendChild(target);
+    if (container) container.appendChild(target);
     
 
     list = new List({
