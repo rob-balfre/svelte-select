@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 1.7.4
+
+*  Fix for destroy method
+
 ## 1.7.3
 
 *  Fix for isOutOfViewport.js import typo
