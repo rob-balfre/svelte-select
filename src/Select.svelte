@@ -622,7 +622,7 @@
       if (listOpen) this.loadList();
     },
     ondestroy() {
-      this.removeList()
+      if (this.get().list) this.removeList()
     }
   }
 </script>
