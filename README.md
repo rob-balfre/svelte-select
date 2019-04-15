@@ -56,15 +56,14 @@ yarn add svelte-select
 | groupFilter | Function | (groups) => groups | group filter function
 | getOptionLabel | Function | (option) => option.label | get option label function
 | getSelectionLabel | Function | (option) => option.label | get selection label function
-| Item | Component | Item | item component
-| Selection | Component | Selection | selection component
+| Item | Component | Item | [item component](./src/Item.svelte)
+| Selection | Component | Selection | [selection component](./src/Selection.svelte)
 | MultiSelection | Component | MultiSelection | multi selection component
 | loadOptions | Promise | - | Method that returns a Promise that updates items
 | noOptionsMessage | String | 'No options' | Message to display when there are no items  
 | hideEmptyState | Boolean | false | Hide list when no options
 | menuPlacement | String | 'auto' | when 'auto' displays either 'top' or 'bottom' depending on viewport
 | hasError | Boolean | false | show error styles around select input (red border)
-
 
 ## Events
 
