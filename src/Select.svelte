@@ -621,6 +621,9 @@
       if (isFocused) this.refs.input.focus();
       if (listOpen) this.loadList();
     },
+    onupdate({ changed }) {
+      console.log(changed);
+    },
     ondestroy() {
       this.removeList()
     }

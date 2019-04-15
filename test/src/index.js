@@ -233,7 +233,7 @@ test('list scrolls to active item', async (t) => {
 
   const {container} = list.refs;
   let offsetBounding;
-  const focusedElemBounding = container.querySelector('.listItem.active');
+  const focusedElemBounding = container.querySelector('.listItem .active');
   if (focusedElemBounding) {
     offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
   }
@@ -254,8 +254,8 @@ test('hover item updates on keyUp or keyDown', async (t) => {
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   const {container} = list.refs;
-  const focusedElemBounding = container.querySelector('.listItem.hover');
-  t.equal(focusedElemBounding.innerHTML.trim(), `<div class="item">Pizza</div>`);
+  const focusedElemBounding = container.querySelector('.listItem .hover');
+  t.equal(focusedElemBounding.innerHTML.trim(), `Pizza`);
   list.destroy();
 });
 
@@ -849,7 +849,7 @@ test('While filtering, the first item in List should receive hover class', async
   });
 
   select.set({filterText: 'I'});
-  t.ok(document.querySelector('.listItem.hover'));
+  t.ok(document.querySelector('.listItem .hover'));
   select.destroy();
 });
 
@@ -985,8 +985,8 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
     }
   });
 
-  const first = document.querySelector('.listItem');
-  const last = document.querySelector('.listItem:last-child');
+  const first = document.querySelector('.listItem .item');
+  const last = document.querySelector('.listItem:last-child .item');
 
   t.ok(first.scrollWidth > first.clientWidth);
   t.ok(last.scrollWidth === last.clientWidth);
@@ -1034,7 +1034,7 @@ test('if only one item in list it should have hover state', async (t) => {
     }
   });
 
-  t.ok(document.querySelector('.listItem').classList.contains('hover'));
+  t.ok(document.querySelectorAll('.listItem .hover').length === 1);
 
   list.destroy();
 });
@@ -1476,7 +1476,7 @@ test('when isMulti and selectedValue has items and list opens then first item in
   document.querySelector('.selectContainer').click();
   document.querySelector('.listItem').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  t.ok(document.querySelector('.listItem.hover'));
+  t.ok(document.querySelector('.listItem .hover'));
 
   select.destroy();
 });
@@ -1806,9 +1806,9 @@ test('when items in list filter or update then first item in list should highlig
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
 
-  t.ok(document.querySelector('.hover .item').innerHTML === 'Cake');
+  t.ok(document.querySelector('.item.hover').innerHTML === 'Cake');
   select.set({filterText: 'c'});
-  t.ok(document.querySelector('.hover .item').innerHTML === 'Chocolate');
+  t.ok(document.querySelector('.item.hover').innerHTML === 'Chocolate');
 
   select.destroy();
 });
@@ -1937,6 +1937,7 @@ test('when items and loadOptions method are both supplied then fallback to items
   await wait(500);
   t.ok(document.querySelector('.item').innerHTML === 'Juniper Wheat Beer');
   select.set({filterText: ''});
+  console.log(document.querySelector('.item'));
   t.ok(document.querySelector('.item').innerHTML === 'test1');
 
   listener.cancel();
@@ -1998,7 +1999,7 @@ test('when isVirtualList then render list', async (t) => {
   select.destroy();
 });
 
-test('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
+test.only('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
   const select = new Select({
     target,
     data: {
@@ -2018,7 +2019,7 @@ test('when loadOptions method is supplied but filterText is empty then do not ru
   select.set({selectedValue: undefined, filterText: '', listOpen: true});
   t.ok(document.querySelector('.empty'));
 
-  select.destroy();
+  //select.destroy();
 });
 
 test('when isMulti and selectedValue has items then check each item is unique', async (t) => {
@@ -2092,7 +2093,6 @@ test('When isMulti and no selected item then delete should do nothing', async (t
 
   select.destroy();
 });
-
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {

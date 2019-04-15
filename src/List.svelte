@@ -26,9 +26,15 @@
       </div>
     {/if}
 
-    <div on:mouseover="handleHover(i)" on:click="handleClick({item, i, event})"
-        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier)}">
-          <svelte:component this="{Item}" {item} {getOptionLabel}/>
+    <div on:mouseover="handleHover(i)" on:click="handleClick({item, i, event})" class="listItem">
+          <svelte:component
+            this="{Item}"
+            {item}
+            {getOptionLabel}
+            isFirst="{isItemFirst(i)}"
+            isActive="{isItemActive(item, selectedValue, optionIdentifier)}"
+            isHover="{isItemHover(hoverItemIndex, item, i, items)}"
+          />
     </div>
   {:else}
     {#if !hideEmptyState}
@@ -62,33 +68,6 @@
     overflow-x: hidden;
     white-space: nowrap;
     text-transform: uppercase;
-  }
-
-  .listItem {
-    cursor: default;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 20px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  .listItem.hover {
-    background: #e7f2ff;
-  }
-
-  .listItem:active {
-    background: #b9daff;
-  }
-
-  .listItem:first-child {
-    border-radius: 4px 4px 0 0;
-  }
-
-  .listItem.active {
-    background: #007aff;
-    color: #fff;
   }
 
   .empty {
@@ -170,8 +149,14 @@
       }
     },
     helpers: {
-      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier) {
-        return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+      isItemActive(item, selectedValue, optionIdentifier) {
+        return selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]);
+      },
+      isItemFirst(itemIndex) {
+        return itemIndex === 0;
+      },
+      isItemHover(hoverItemIndex, item, itemIndex, items) {
+        return hoverItemIndex === itemIndex || items.length === 1;
       }
     },
     methods: {
@@ -242,7 +227,7 @@
         if (isVirtualList) return;
 
         let offsetBounding;
-        const focusedElemBounding = container.querySelector(`.listItem.${className}`);
+        const focusedElemBounding = container.querySelector(`.listItem .${className}`);
 
         if (focusedElemBounding) {
           offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
