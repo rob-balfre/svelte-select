@@ -3,6 +3,7 @@ import {Store} from 'svelte/store.js';
 import getName from 'namey-mcnameface';
 
 import CustomItem from './CustomItem.html';
+import CustomSelection from './CustomSelection.html';
 import Select from '../../src/Select.svelte';
 import List from '../../src/List.svelte';
 import SelectDefault from './Select/Select--default.html'
@@ -1524,7 +1525,7 @@ test('when loadOptions method is supplied and filterText has length then items s
       loadOptions: getPosts,
       optionIdentifier: 'id',
       Item: CustomItem,
-      Selection: CustomItem
+      Selection: CustomSelection
     }
   });
 
@@ -1638,7 +1639,7 @@ test('when a custom Selection component is supplied then use to display selectio
     target,
     data: {
       Item: CustomItem,
-      Selection: CustomItem,
+      Selection: CustomSelection,
       getOptionLabel: (option) => option.name,
       isFocused: true,
       items: [{
@@ -1650,7 +1651,7 @@ test('when a custom Selection component is supplied then use to display selectio
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-  t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
+  t.ok(document.querySelector('.customSelection_name').innerHTML === 'A Name');
 
   select.destroy();
 });
@@ -1999,7 +2000,7 @@ test('when isVirtualList then render list', async (t) => {
   select.destroy();
 });
 
-test.only('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
+test('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
   const select = new Select({
     target,
     data: {
@@ -2007,7 +2008,7 @@ test.only('when loadOptions method is supplied but filterText is empty then do n
       loadOptions: getPosts,
       optionIdentifier: 'id',
       Item: CustomItem,
-      Selection: CustomItem
+      Selection: CustomSelection
     }
   });
 
@@ -2015,11 +2016,11 @@ test.only('when loadOptions method is supplied but filterText is empty then do n
   await wait(500);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.ok(document.querySelector('.customItem_name').innerHTML === 'Juniper Wheat Beer');
+  t.ok(document.querySelector('.customSelection_name').innerHTML === 'Juniper Wheat Beer');
   select.set({selectedValue: undefined, filterText: '', listOpen: true});
   t.ok(document.querySelector('.empty'));
 
-  //select.destroy();
+  select.destroy();
 });
 
 test('when isMulti and selectedValue has items then check each item is unique', async (t) => {
