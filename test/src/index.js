@@ -2159,7 +2159,7 @@ test('When isCreatable enabled, creator is not displayed when duplicate item val
   select.destroy();
 });
 
-test('When creator selected, created item is set to selected item', async (t) => {
+test('When creator selected, selected item is set to created item', async (t) => {
   const filterText = 'abc';
 
   const select = new Select({
@@ -2177,7 +2177,7 @@ test('When creator selected, created item is set to selected item', async (t) =>
 
   const { selectedValue, createItem } = select.get();
 
-  t.equal(selectedValue, createItem(filterText));
+  t.equal(JSON.stringify(selectedValue), JSON.stringify(createItem(filterText)));
 
   select.destroy();
 });
