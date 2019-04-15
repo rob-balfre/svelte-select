@@ -253,6 +253,7 @@
         isMulti: false,
         isSearchable: true,
         isDisabled: false,
+        isCreatable: false,
         isVirtualList: false,
         optionIdentifier: 'value',
         groupBy: undefined,
@@ -264,6 +265,15 @@
         getOptionLabel: (option) => {
           if (option) return option.label
          },
+        createItem: (filterText) => {
+          return {
+            value: filterText,
+            label: filterText
+          };
+        },
+        getCreateLabel: (filterText) => {
+          return `Create \"${filterText}\"`;
+        },
         getSelectionLabel: (option) => option.label,
         hasError: false
       }
@@ -364,6 +374,7 @@
           this.removeList();
         }
       }
+
       if (changed.filterText) {
         if (current.filterText.length > 0) {
           if(current.loadOptions) {
@@ -395,6 +406,12 @@
         } else {
           this.setList([])
         }
+
+        if(current.list) {
+          current.list.set({
+            filterText: current.filterText
+          });
+        }
       }
 
       if (changed.isFocused) {
@@ -407,8 +424,37 @@
         }
       }
 
-      if (changed.filteredItems && current.list) {
-        this.setList(current.filteredItems)
+      if (changed.filteredItems) {
+        let filteredItems = [...current.filteredItems];
+
+        if (current.isCreatable && current.filterText) {
+          const itemToCreate = current.createItem(current.filterText);
+
+          const existingItemWithFilterValue = filteredItems.find((item) => {
+            return item[current.optionIdentifier] === itemToCreate[current.optionIdentifier];
+          });
+
+          let existingSelectionWithFilterValue;
+
+          if(current.selectedValue) {
+            if(current.isMulti) {
+              existingSelectionWithFilterValue = current.selectedValue.find((selection) => {
+                return selection[current.optionIdentifier] === itemToCreate[current.optionIdentifier];
+              });
+            } else if(current.selectedValue[current.optionIdentifier] === itemToCreate[current.optionIdentifier]) {
+              existingSelectionWithFilterValue = current.selectedValue;
+            }
+          }
+
+          if(!existingItemWithFilterValue && !existingSelectionWithFilterValue) {
+            filteredItems = [...filteredItems, {
+              label: current.getCreateLabel(current.filterText),
+              isCreator: true
+            }];
+          }
+        }
+
+        this.setList(filteredItems);
       }
     },
 
@@ -554,7 +600,8 @@
         let {
           target,
           list, 
-          Item, 
+          Item,
+          filterText,
           getOptionLabel,
           optionIdentifier,
           noOptionsMessage, 
@@ -563,10 +610,12 @@
           selectedValue,
           filteredItems,
           isMulti,
+          isCreatable,
+          createItem,
           isVirtualList } = this.get();
         if (target && list) return;
 
-        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isVirtualList};
+        const data = {Item, filterText, optionIdentifier, noOptionsMessage, hideEmptyState, isCreatable, isVirtualList};
 
         if (getOptionLabel) {
           data.getOptionLabel = getOptionLabel;
@@ -608,6 +657,25 @@
               activeSelectedValue: undefined
             });
           }
+        });
+
+        list.on('itemCreated', (itemValue) => {
+          if(isMulti) {
+            selectedValue = selectedValue || [];
+
+            this.set({
+              selectedValue: [...selectedValue, createItem(itemValue)]
+            });
+          } else {
+            this.set({
+              selectedValue: createItem(itemValue)
+            });
+          }
+
+          this.set({
+            listOpen: false,
+            activeSelectedValue: undefined
+          });
         });
 
         this.set({list, target});

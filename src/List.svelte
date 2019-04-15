@@ -27,7 +27,7 @@
     {/if}
 
     <div on:mouseover="handleHover(i)" on:click="handleClick({item, i, event})"
-        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier)}">
+        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier, isMulti)}">
           <svelte:component this="{Item}" {item} {getOptionLabel}/>
     </div>
   {:else}
@@ -170,8 +170,8 @@
       }
     },
     helpers: {
-      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier) {
-        return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier, isMulti) {
+        return `${selectedValue && !isMulti && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
       }
     },
     methods: {
@@ -185,10 +185,16 @@
       handleClick(args) {
         const {item, i, event} = args;
         event.stopPropagation();
-        const {optionIdentifier, selectedValue} = this.get();
-        if(selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
-        this.set({activeItemIndex: i, hoverItemIndex: i});
-        this.handleSelect(item);
+        const {optionIdentifier, selectedValue, isMulti} = this.get();
+        if(selectedValue && !isMulti && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
+
+        if(item.isCreator) {
+          const { filterText } = this.get();
+          this.fire('itemCreated', filterText);
+        } else {
+          this.set({activeItemIndex: i, hoverItemIndex: i});
+          this.handleSelect(item);
+        }
       },
       updateHoverItem(increment) {
         let {items, hoverItemIndex, isVirtualList} = this.get();
@@ -209,7 +215,7 @@
         this.scrollToActiveItem('hover', increment);
       },
       handleKeyDown(e) {
-        const {items, hoverItemIndex, optionIdentifier, selectedValue} = this.get();
+        const {items, hoverItemIndex, optionIdentifier, selectedValue, isMulti} = this.get();
 
         switch (e.key) {
           case 'ArrowDown':
@@ -222,10 +228,20 @@
             break;
           case 'Enter':
             e.preventDefault();
+            const hoverItem = items[hoverItemIndex];
+
             if (items.length === 0) break;
-            if(selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
-            this.set({activeItemIndex: hoverItemIndex});
-            this.handleSelect(items[hoverItemIndex]);
+
+            if(selectedValue && !isMulti && selectedValue[optionIdentifier] === hoverItem[optionIdentifier]) break;
+
+            if(hoverItem.isCreator) {
+              const { filterText } = this.get();
+              this.fire('itemCreated', filterText);
+            } else {
+              this.set({activeItemIndex: hoverItemIndex});
+              this.handleSelect(items[hoverItemIndex]);
+            }
+
             break;
           case 'Tab':
             e.preventDefault();

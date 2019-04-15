@@ -2080,7 +2080,7 @@ test('When isMulti and no selected item then delete should do nothing', async (t
   const select = new Select({
     target,
     data: {
-      isMulti: true,
+      isMulit: true,
       items,
       isFocused: true,
       listOpen: true
@@ -2089,6 +2089,152 @@ test('When isMulti and no selected item then delete should do nothing', async (t
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Backspace'}));
   t.ok(select.get().listOpen === true);
+
+  select.destroy();
+});
+
+test('When isCreatable disabled, creator is not displayed', async (t) => {
+  const filterText = 'abc';
+  
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isFocused: true,
+      listOpen: true
+    }
+  });
+
+  select.set({ filterText });
+
+  t.ok(document.querySelector('.listContainer > .empty'));
+
+  select.destroy();
+});
+
+test('When isCreatable enabled, creator displays getCreatorLabel label', async (t) => {
+  const filterText = 'abc_XXXX';
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isCreatable: true,
+      isFocused: true,
+      listOpen: true
+    }
+  });
+
+  select.set({ filterText });
+
+  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  const { getCreateLabel } = select.get();
+
+  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, getCreateLabel(filterText));
+
+  select.destroy();
+});
+
+test('When isCreatable enabled, creator is not displayed when duplicate item value in item list', async (t) => {
+  const dupeValueForCheck = 'xxxxxx';
+  const item = {
+    value: dupeValueForCheck,
+    label: dupeValueForCheck
+  };
+
+  const select = new Select({
+    target,
+    data: {
+      items: [item],
+      isCreatable: true
+    }
+  });
+
+  select.set({ filterText: dupeValueForCheck });
+
+  const listItems = document.querySelectorAll('.listContainer > .listItem');
+
+  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, dupeValueForCheck);
+
+  select.destroy();
+});
+
+test('When creator selected, created item is set to selected item', async (t) => {
+  const filterText = 'abc';
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isCreatable: true,
+      isFocused: true,
+      listOpen: true
+    }
+  });
+
+  select.set({ filterText });
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  const { selectedValue, createItem } = select.get();
+
+  t.equal(selectedValue, createItem(filterText));
+
+  select.destroy();
+});
+
+test('When creator is selected, created item it added to multi selection', async (t) => {
+  const filterText = 'abc';
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isCreatable: true,
+      isFocused: true,
+      listOpen: true,
+      isMulti: true
+    }
+  });
+
+  select.set({ filterText });
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  const { selectedValue, createItem } = select.get();
+
+  t.equal(JSON.stringify(selectedValue[selectedValue.length - 1]), JSON.stringify(createItem(filterText)));
+
+  select.destroy();
+});
+
+test('When creator is selected multiple times, items are all added to multi selection', async (t) => {
+  const filterTextForItem1 = 'abc';
+  const filterTextForItem2 = 'def';
+
+  const select = new Select({
+    target,
+    data: {
+      items,
+      isCreatable: true,
+      isFocused: true,
+      listOpen: true,
+      isMulti: true
+    }
+  });
+
+  let selectedValue;
+  const { createItem } = select.get();
+
+  select.set({ filterText: filterTextForItem1 });
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  selectedValue = select.get().selectedValue;
+  t.equal(JSON.stringify(selectedValue[selectedValue.length - 1]), JSON.stringify(createItem(filterTextForItem1)));
+
+  select.set({ filterText: filterTextForItem2 });
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  selectedValue = select.get().selectedValue;
+  t.equal(JSON.stringify(selectedValue[selectedValue.length - 1]), JSON.stringify(createItem(filterTextForItem2)));
 
   select.destroy();
 });
