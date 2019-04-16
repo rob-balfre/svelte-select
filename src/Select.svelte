@@ -293,8 +293,7 @@
             }
           })
         }
-
-
+        
         const filteredItems = loadOptions ? items : items.filter(item => {
           let keepItem = true;
 
@@ -620,9 +619,6 @@
 
       if (isFocused) this.refs.input.focus();
       if (listOpen) this.loadList();
-    },
-    onupdate({ changed }) {
-      console.log(changed);
     },
     ondestroy() {
       this.removeList()
