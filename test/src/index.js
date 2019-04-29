@@ -251,47 +251,45 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   list.$destroy();
 });
 
-// test('on enter active item fires a itemSelected event', async (t) => {
-//   const list = new List({
-//     target,
-//     props: {
-//       items: itemsWithIndex
-//     }
-//   });
+test('on enter active item fires a itemSelected event', async (t) => {
+  const list = new List({
+    target,
+    props: {
+      items: itemsWithIndex
+    }
+  });
 
-//   let selectedValue = undefined;
-//   list.$on('itemSelected', event => {
-//     selectedValue = event;
-//   });
+  let selectedValue = undefined;
+  list.$on('itemSelected', event => {
+    selectedValue = event;
+  });
 
-//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.equal(JSON.stringify(selectedValue.detail), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
+  list.$destroy();
+});
 
-//   t.equal(JSON.stringify(selectedValue), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
-//   // list.$destroy();
-// });
+test('on tab active item fires a itemSelected event', async (t) => {
+  const list = new List({
+    target,
+    props: {
+      items: itemsWithIndex
+    }
+  });
 
-// test('on tab active item fires a itemSelected event', async (t) => {
-//   const list = new List({
-//     target,
-//     props: {
-//       items: itemsWithIndex
-//     }
-//   });
+  let selectedValue = undefined;
+  list.$on('itemSelected', event => {
+    selectedValue = event;
+  });
 
-//   let selectedValue = undefined;
-//   list.$on('itemSelected', event => {
-//     selectedValue = event;
-//   });
-
-//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
-
-//   t.equal(JSON.stringify(selectedValue), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
-//   list.$destroy();
-// });
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
+  t.equal(JSON.stringify(selectedValue.detail), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
+  list.$destroy();
+});
 
 test('on selected of current active item does not fire a itemSelected event', async (t) => {
   const list = new List({
@@ -513,6 +511,7 @@ test('clicking Select with selected item should open list with item listed as ac
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
   document.querySelector('.selectContainer').click();
   await wait(0);
   t.ok(document.querySelector('.listItem.hover .item').innerHTML === 'Cake');
@@ -1819,7 +1818,7 @@ test('when isFocused turns to false then check Select is no longer in focus', as
   select.$destroy();
 });
 
-test.only('when items and loadOptions method are both supplied then fallback to items until filterText changes', async (t) => {
+test('when items and loadOptions method are both supplied then fallback to items until filterText changes', async (t) => {
   const items = [{name: 'test1', id: 0}, {name: 'test2', id: 1}, {name: 'test3', id: 2}];
 
   const select = new Select({
@@ -1848,9 +1847,9 @@ test.only('when items and loadOptions method are both supplied then fallback to 
   await wait(500);
   t.ok(document.querySelector('.item').innerHTML === 'Juniper Wheat Beer');
   await handleSet(select, {filterText: ''});
-  // t.ok(document.querySelector('.item').innerHTML === 'test1');
+  t.ok(document.querySelector('.item').innerHTML === 'test1');
 
-  // select.$destroy();
+  select.$destroy();
 });
 
 test('when items is just an array of strings then render list', async (t) => {
@@ -1903,6 +1902,7 @@ test('when isVirtualList then render list', async (t) => {
     }
   });
 
+  await wait(0);
   t.ok(document.querySelector('.listItem'));
 
   select.$destroy();
@@ -1926,6 +1926,7 @@ test('when loadOptions method is supplied but filterText is empty then do not ru
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.ok(document.querySelector('.customItem_name').innerHTML === 'Juniper Wheat Beer');
   select.$set({selectedValue: undefined, filterText: '', listOpen: true});
+  await wait(0);
   t.ok(document.querySelector('.empty'));
 
   select.$destroy();

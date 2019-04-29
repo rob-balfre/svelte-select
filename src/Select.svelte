@@ -1,17 +1,14 @@
 <script>
   import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
-
-  const dispatch = createEventDispatcher();
-
-  export let container;
-  export let input;
-
   import List from './List.svelte';
   import ItemComponent from './Item.svelte';
   import SelectionComponent from './Selection.svelte';
-  import MultiSelectionComponent  from './MultiSelection.svelte';
+  import MultiSelectionComponent from './MultiSelection.svelte';
   import isOutOfViewport from './utils/isOutOfViewport';
 
+  const dispatch = createEventDispatcher();
+  export let container;
+  export let input;
   export let Item = ItemComponent;
   export let Selection = SelectionComponent;
   export let MultiSelection = MultiSelectionComponent;
@@ -26,14 +23,14 @@
   export let groupFilter = (groups) => groups;
   export let getOptionLabel = (option) => {
     if (option) return option.label
-   };
+  };
   export let optionIdentifier = 'value';
   export let loadOptions;
   export let hasError = false;
   export let containerStyles;
   export let getSelectionLabel = (option) => {
     if (option) return option.label
-  }; 
+  };
   export let activeSelectedValue;
   export let isSearchable = true;
   export let inputStyles;
@@ -48,12 +45,18 @@
   export let noOptionsMessage = 'No options';
   export let hideEmptyState = false;
   export let filteredItems = [];
+
   let _items = [];
-  
+  let originalItemsClone;
   let containerClasses = '';
+  let prev_selectedValue;
+  let prev_listOpen;
+  let prev_filterText;
+  let prev_isFocused;
+  let prev_filteredItems;
 
   function wait(ms) {
-   return new Promise(f => setTimeout(f, ms));
+    return new Promise(f => setTimeout(f, ms));
   }
 
   const getItems = async (arg) => {
@@ -82,7 +85,7 @@
 
     if (items && items.length > 0 && typeof items[0] !== 'object') {
       _items = items.map((item, index) => {
-        _filteredItems = {
+        return {
           index,
           value: item,
           label: item
@@ -90,23 +93,25 @@
       })
     }
 
-    console.log('_items :', _items);
+    if (loadOptions && filterText.length === 0 && originalItemsClone) {
+      _filteredItems = JSON.parse(originalItemsClone);
+      _items = JSON.parse(originalItemsClone);
+    } else {
+      _filteredItems = loadOptions ? _items : _items.filter(item => {
 
-    _filteredItems = loadOptions ? _items : _items.filter(item => {
-      console.log('item :', item);
+        let keepItem = true;
 
-      let keepItem = true;
+        if (isMulti && selectedValue) {
+          keepItem = !selectedValue.find(({ value }) => {
+            return value === item[optionIdentifier]
+          });
+        }
 
-      if (isMulti && selectedValue) {
-        keepItem = !selectedValue.find(({value}) => {
-          return value === item[optionIdentifier]
-        });
-      }
+        if (keepItem && filterText.length < 1) return true;
+        return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
+      });
 
-      console.log('filterText :', filterText);
-      if (keepItem && filterText.length < 1) return true;
-      return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
-    });
+    }
 
     if (groupBy) {
       const groupValues = [];
@@ -118,7 +123,7 @@
         if (!groupValues.includes(groupValue)) {
           groupValues.push(groupValue);
           groups[groupValue] = [];
-          groups[groupValue].push(Object.assign({groupValue}, item));
+          groups[groupValue].push(Object.assign({ groupValue }, item));
         } else {
           groups[groupValue].push(Object.assign({}, item));
         }
@@ -133,24 +138,18 @@
       });
 
       filteredItems = sortedGroupedItems;
-      
+
     } else {
       filteredItems = _filteredItems;
     }
   }
-
-  let prev_selectedValue;
-  let prev_listOpen;
-  let prev_filterText;
-  let prev_isFocused;
-  let prev_filteredItems;
 
   beforeUpdate(async () => {
     if (isMulti && selectedValue && selectedValue && selectedValue.length > 1) {
       checkSelectedValueForDuplicates();
     }
 
-    if (!isMulti && selectedValue && prev_selectedValue !== selectedValue) {    
+    if (!isMulti && selectedValue && prev_selectedValue !== selectedValue) {
       if (!prev_selectedValue || JSON.stringify(selectedValue[optionIdentifier]) != JSON.stringify(prev_selectedValue[optionIdentifier])) {
         dispatch('select', selectedValue)
       }
@@ -173,15 +172,15 @@
     if (filterText !== prev_filterText) {
       if (filterText.length > 0) {
 
-        if(loadOptions) {
-          getItems(loadOptions);          
+        if (loadOptions) {
+          getItems(loadOptions);
         } else {
-            loadList();
-            listOpen = true;
+          loadList();
+          listOpen = true;
 
-            if (isMulti) {
-              activeSelectedValue = undefined
-            }
+          if (isMulti) {
+            activeSelectedValue = undefined
+          }
         }
       } else {
         setList([])
@@ -213,7 +212,7 @@
     if (selectedValue) {
       const ids = [];
       const uniqueValues = [];
-      
+
       selectedValue.forEach(val => {
         if (!ids.includes(val[optionIdentifier])) {
           ids.push(val[optionIdentifier]);
@@ -229,7 +228,7 @@
   }
 
   function setList(items) {
-    if (list) return list.$set({items})
+    if (list) return list.$set({ items })
   }
 
   function handleMultiItemClear(i) {
@@ -240,13 +239,13 @@
 
   function getPosition() {
     if (!target || !container) return;
-    const {top, height, width} = container.getBoundingClientRect();
+    const { top, height, width } = container.getBoundingClientRect();
 
     target.style['min-width'] = `${width}px`;
     target.style.width = `auto`;
     target.style.left = '0';
 
-    if(listPlacement === 'top') {
+    if (listPlacement === 'top') {
       target.style.bottom = `${height + 5}px`;
     } else {
       target.style.top = `${height + 5}px`;
@@ -254,7 +253,7 @@
 
     target = target;
 
-    if(listPlacement === 'auto' && isOutOfViewport(target).bottom) {
+    if (listPlacement === 'auto' && isOutOfViewport(target).bottom) {
       target.style.top = ``;
       target.style.bottom = `${height + 5}px`;
     }
@@ -286,7 +285,7 @@
         }
         break;
       case 'ArrowLeft':
-        if (list) list.$set({ hoverItemIndex: -1});  
+        if (list) list.$set({ hoverItemIndex: -1 });
         if (!isMulti || filterText.length > 0) return;
 
         if (activeSelectedValue === undefined) {
@@ -297,7 +296,7 @@
         activeSelectedValue = activeSelectedValue;
         break;
       case 'ArrowRight':
-        if (list) list.$set({ hoverItemIndex: -1});
+        if (list) list.$set({ hoverItemIndex: -1 });
         if (!isMulti || filterText.length > 0 || activeSelectedValue === undefined) return;
         if (activeSelectedValue === selectedValue.length - 1) {
           activeSelectedValue = undefined;
@@ -350,8 +349,16 @@
   function loadList() {
     if (target && list) return;
 
-    const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isVirtualList,
-      items: filteredItems, selectedValue, isMulti};
+    const data = {
+      Item,
+      optionIdentifier,
+      noOptionsMessage,
+      hideEmptyState,
+      isVirtualList,
+      selectedValue,
+      isMulti,
+      items: filteredItems
+    };
 
     if (getOptionLabel) {
       data.getOptionLabel = getOptionLabel;
@@ -367,15 +374,14 @@
 
     list = list, target = target;
     if (container) container.appendChild(target);
-    
 
     list = new List({
       target,
       props: data
     });
 
-    list.$on('itemSelected', (event) => {         
-      const {detail} = event;
+    list.$on('itemSelected', (event) => {
+      const { detail } = event;
 
       if (detail) {
         const item = Object.assign({}, detail);
@@ -397,6 +403,10 @@
   onMount(() => {
     if (isFocused) input.focus();
     if (listOpen) loadList();
+
+    if (items && items.length > 0) {
+      originalItemsClone = JSON.stringify(items);
+    }
   });
 
   onDestroy(() => {
@@ -404,16 +414,9 @@
   });
 </script>
 
-<svelte:window
-  on:click="{handleWindowClick}"
-  on:keydown="{handleKeyDown}"
-  on:resize="{getPosition}"
-/>
+<svelte:window on:click="{handleWindowClick}" on:keydown="{handleKeyDown}" on:resize="{getPosition}" />
 
-<div
-  class="{containerClasses} {hasError ? 'hasError' : ''}"
-  style="{containerStyles}"
-  on:click="{handleClick}"
+<div class="{containerClasses} {hasError ? 'hasError' : ''}" style="{containerStyles}" on:click="{handleClick}"
   bind:this={container}>
 
   {#if isMulti && selectedValue && selectedValue.length > 0}

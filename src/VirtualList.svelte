@@ -1,188 +1,165 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 
-	// [svelte-upgrade suggestion]
-	// manually refactor all references to __this
-	const __this = {
-		get: () => ({ items, start, end, height, _viewportHeight, _top, _bottom, component, _props, itemHeight })
-	};
-
-	export let viewport;
-	export let container;
-
+	// props
 	export let items;
+	export let height = '100%';
+	export let itemHeight;
+	export let hoverItemIndex;
+
+	let foo;
+
+	// read-only, but visible to consumers via bind:start
 	export let start = 0;
 	export let end = 0;
-	export let height = '100%';
-	export let _viewportHeight = 0;
-	export let _top = 0;
-	export let _bottom = 0;
-	export let component;
-	export let _props = {};
-	export let itemHeight = 0;
 
-	export let visible = () => {
-		return items.slice(start, end).map((data, i) => {
-			return { index: i + start, data };
-		});
-	}
+	// local state
+	let height_map = [];
+	let rows;
+	let viewport;
+	let contents;
+	let viewport_height = 0;
+	let visible;
+	let mounted;
 
-	onMount(() => {
+	let top = 0;
+	let bottom = 0;
+	let average_height;
 
-		const keys = Object.keys(__this.options.data).filter(key => key !== 'items' && key !== 'component' && key !== 'height' && key !== 'itemHeight');
-		if (keys.length) {
-			const state = __this.get();
-			keys.forEach(key => {
-				_props[key] = state[key];
-			});
-			_props = _props;
-		}
-
-		__this.heightMap = [];
-		__this.rows = container.getElementsByClassName('row');
-
-		if (items.length > 0) {
-			initialise();
-		}
-
-		__this.on('state', ({ changed, previous, current }) => {
-			if (changed.items || changed.height || changed.itemHeight || changed._viewportHeight) {
-				if (current.itemHeight && (changed.itemHeight || current.items.length > __this.heightMap.length)) {
-					__this.heightMap = current.items.map(() => current.itemHeight);
-				}
-
-				else if (current.items.length > __this.heightMap.length) {
-					if (__this.heightMap.length === 0) {
-						initialise();
-					} else {
-						let height = 0;
-						let i = 0;
-						for (; i < __this.heightMap.length; i += 1) height += __this.heightMap[i];
-						const avg = height / __this.heightMap.length;
-						for (; i < current.items.length; i += 1) __this.heightMap[i] = avg;
-					}
-				}
-
-				refresh();
-			}
-
-			if (keys.some(key => changed[key])) {
-				const _props = {};
-				keys.forEach(key => {
-					_props[key] = current[key];
-				});
-				_props = _props;
-			}
-		});
+	$: visible = items.slice(start, end).map((data, i) => {
+		return { index: i + start, data };
 	});
 
-	// [svelte-upgrade suggestion]
-	// review these functions and remove unnecessary 'export' keywords
-	export function initialise() {
+	// whenever `items` changes, invalidate the current heightmap
+	$: if (mounted) refresh(items, viewport_height, itemHeight);
 
-		if (itemHeight) {
-			__this.heightMap = items.map(item => itemHeight);
-			end = Math.min(items.length, Math.ceil(_viewportHeight / itemHeight)), _bottom = items.length * itemHeight;
-		} else {
-			let height = 0;
-			let i = 0;
-
-			while (height < _viewportHeight && i < items.length) {
-				end += 1;
-				
-				if (__this.rows.length === 0) return;
-
-				const rowHeight = __this.heightMap[i] = __this.rows[i].offsetHeight;
-				height += rowHeight;
-
-				i += 1;
-			}
-
-			const end = i;
-			const avg = Math.round(height / i);
-
-			for (; i < items.length; i += 1) __this.heightMap[i] = avg;
-
-			_bottom = (items.length - end) * avg;
-		}
-	}
-
-	export function refresh() {
+	async function refresh(items, viewport_height, itemHeight) {
 		const { scrollTop } = viewport;
 
-		let paddingTop = 0;
-		let offset = 0;
-		let i = 0;
+		await tick(); // wait until the DOM is up to date
 
-		if (!itemHeight) {
-			for (let v = 0; v < __this.rows.length; v += 1) {
-				__this.heightMap[start + v] = __this.rows[v].offsetHeight;
-			}
-		}
+		let content_height = top - scrollTop;
+		let i = start;
 
-		for (; i < items.length; i += 1) {
-			if (!(i in __this.heightMap)) break;
+		while (content_height < viewport_height && i < items.length) {
+			let row = rows[i - start];
 
-			offset += __this.heightMap[i];
-			if (offset > scrollTop) break;
-
-			paddingTop = offset;
-		}
-
-		const newStart = i++;
-
-		for (; i < items.length; i += 1) {
-			if (offset >= scrollTop + _viewportHeight) break;
-			offset += __this.heightMap[i];
-		}
-
-		const newEnd = i;
-
-		if (newStart === start && newEnd === end) return;
-
-		let paddingBottom = 0;
-		for (; i < items.length; i += 1) paddingBottom += __this.heightMap[i];
-
-		_top = paddingTop, _bottom = paddingBottom, start = newStart, end = newEnd;
-
-		if (newStart < start) {
-			let d = 0;
-
-			for (let i = newStart; i < start; i += 1) {
-				const expectedHeight = __this.heightMap[i];
-				const actualHeight = __this.rows[i - newStart].offsetHeight;
-
-				d += actualHeight - expectedHeight;
+			if (!row) {
+				end = i + 1;
+				await tick(); // render the newly visible row
+				row = rows[i - start];
 			}
 
-			viewport.scrollTo(0, viewport.scrollTop + d);
+			const row_height = height_map[i] = itemHeight || row.offsetHeight;
+			content_height += row_height;
+			i += 1;
 		}
+
+		end = i;
+
+		const remaining = items.length - end;
+		average_height = (top + content_height) / end;
+
+		bottom = remaining * average_height;
+		height_map.length = items.length;
+
 	}
-</script>
 
-<svelte-virtual-list-viewport 
-	bind:this={viewport} 
-	on:scroll='{refresh}'
-	style='height: {height};'
-	bind:offsetHeight="{_viewportHeight}">
-	
-	<div bind:this={container} style='padding-top: {_top}px; padding-bottom: {_bottom}px;'>
-		{#each visible as item (item.index)}
-			<div class='row'>
-				<svelte:component this={component} {..._props} {...item.data} item={item.data} {items} i={item.index} on:hover on:click />
-			</div>
-		{/each}
-	</div>
-</svelte-virtual-list-viewport>
+	async function handle_scroll() {
+		const { scrollTop } = viewport;
+
+		const old_start = start;
+
+		for (let v = 0; v < rows.length; v += 1) {
+			height_map[start + v] = itemHeight || rows[v].offsetHeight;
+		}
+
+		let i = 0;
+		let y = 0;
+
+		while (i < items.length) {
+			const row_height = height_map[i] || average_height;
+			if (y + row_height > scrollTop) {
+				start = i;
+				top = y;
+
+				break;
+			}
+
+			y += row_height;
+			i += 1;
+		}
+
+		while (i < items.length) {
+			y += height_map[i] || average_height;
+			i += 1;
+
+			if (y > scrollTop + viewport_height) break;
+		}
+
+		end = i;
+
+		const remaining = items.length - end;
+		average_height = y / end;
+
+		while (i < items.length) height_map[i++] = average_height;
+		bottom = remaining * average_height;
+
+		// prevent jumping if we scrolled up into unknown territory
+		if (start < old_start) {
+			await tick();
+
+			let expected_height = 0;
+			let actual_height = 0;
+
+			for (let i = start; i < old_start; i += 1) {
+				if (rows[i - start]) {
+					expected_height += height_map[i];
+					actual_height += itemHeight || rows[i - start].offsetHeight;
+				}
+			}
+
+			const d = actual_height - expected_height;
+			viewport.scrollTo(0, scrollTop + d);
+		}
+
+		// TODO if we overestimated the space these
+		// rows would occupy we may need to add some
+		// more. maybe we can just call handle_scroll again?
+	}
+
+	// trigger initial refresh
+	onMount(() => {
+		rows = contents.getElementsByTagName('svelte-virtual-list-row');
+		mounted = true;
+	});
+</script>
 
 <style>
 	svelte-virtual-list-viewport {
 		position: relative;
 		overflow-y: auto;
-		-webkit-overflow-scrolling:touch;
+		-webkit-overflow-scrolling: touch;
+		display: block;
 	}
 
-	.row {
+	svelte-virtual-list-contents,
+	svelte-virtual-list-row {
+		display: block;
+	}
+
+	svelte-virtual-list-row {
 		overflow: hidden;
 	}
 </style>
+
+<svelte-virtual-list-viewport bind:this={viewport} bind:offsetHeight={viewport_height} on:scroll={handle_scroll}
+	style="height: {height};">
+	<svelte-virtual-list-contents bind:this={contents} style="padding-top: {top}px; padding-bottom: {bottom}px;">
+		{#each visible as row (row.index)}
+			<svelte-virtual-list-row>
+				<slot item={row.data} i={row.index} {hoverItemIndex}>Missing template</slot>
+			</svelte-virtual-list-row>
+		{/each}
+	</svelte-virtual-list-contents>
+</svelte-virtual-list-viewport>

@@ -7,7 +7,6 @@
 
   import ItemComponent from './Item.svelte';
   import VirtualList from './VirtualList.svelte';
-  import VirtualListItem from './VirtualListItem.svelte';
 
   export let Item = ItemComponent;
   export let isVirtualList = false;
@@ -24,33 +23,40 @@
   export let getOptionString = (option) => option;
   export let activeItemIndex;
   export let isMulti;
-  
+
   let isScrollingTimer = 0;
   let isScrolling = false;
+  let prev_items;
+  let prev_activeItemIndex;
+  let prev_selectedValue;
 
   onMount(() => {
+    if (items.length > 0 && !isMulti && selectedValue) {
+      const _hoverItemIndex = items.findIndex((item) => item[optionIdentifier] === selectedValue[optionIdentifier]);
+
+      if (_hoverItemIndex) {
+        hoverItemIndex = _hoverItemIndex;
+      }
+    }
+
     scrollToActiveItem('active');
 
-    // container.addEventListener('scroll', () => {
-    //   clearTimeout(isScrollingTimer);
 
-    //   isScrollingTimer = setTimeout(() => {
-    //     isScrolling = false;
-    //   }, 100);
-    // }, false);
+    container.addEventListener('scroll', () => {
+      clearTimeout(isScrollingTimer);
+
+      isScrollingTimer = setTimeout(() => {
+        isScrolling = false;
+      }, 100);
+    }, false);
   });
 
   onDestroy(() => {
     // clearTimeout(isScrollingTimer);
   });
 
-  
-  let prev_items;
-  let prev_activeItemIndex;
-  let prev_selectedValue;
-
   beforeUpdate(() => {
-    
+
     if (items !== prev_items && items.length > 0) {
       hoverItemIndex = 0;
     }
@@ -82,28 +88,24 @@
     return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
   }
 
-  // $: itemClasses  = `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
-
-  // [svelte-upgrade suggestion]
-  // review these functions and remove unnecessary 'export' keywords
-  export function handleSelect(item) {
+  function handleSelect(item) {
     dispatch('itemSelected', item);
   }
 
-  export function handleHover(i) {
-    if(isScrolling) return;
+  function handleHover(i) {
+    if (isScrolling) return;
     hoverItemIndex = i;
   }
 
-  export function handleClick(args) {
-    const {item, i, event} = args;
+  function handleClick(args) {
+    const { item, i, event } = args;
     event.stopPropagation();
-    if(selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
+    if (selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
     activeItemIndex = i, hoverItemIndex = i;
     handleSelect(item);
   }
 
-  export function updateHoverItem(increment) {
+  function updateHoverItem(increment) {
     if (isVirtualList) return;
 
     if (increment > 0 && hoverItemIndex === (items.length - 1)) {
@@ -120,7 +122,7 @@
     scrollToActiveItem('hover', increment);
   }
 
-  export function handleKeyDown(e) {
+  function handleKeyDown(e) {
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
@@ -131,22 +133,17 @@
         items.length && updateHoverItem(-1);
         break;
       case 'Enter':
-        e.preventDefault();
-        if (items.length === 0) break;
-        if(selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
-        activeItemIndex = hoverItemIndex;
-        handleSelect(items[hoverItemIndex]);
-        break;
       case 'Tab':
         e.preventDefault();
-
+        if (items.length === 0) break;
+        if (selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
         activeItemIndex = hoverItemIndex;
         handleSelect(items[hoverItemIndex]);
         break;
     }
   }
 
-  export function scrollToActiveItem(className, increment) {    
+  function scrollToActiveItem(className, increment) {
     if (isVirtualList) return;
 
     let offsetBounding;
@@ -157,64 +154,29 @@
     }
 
     container.scrollTop -= offsetBounding;
-
-    // isVirtualList and scrollToActiveItem WIP...
-    // if (isVirtualList & !focusedElemBounding) {
-    //   const virtualContainer = container.querySelector('div').querySelector('div');
-
-    //   if (increment > 0 && end < items.length ) {
-    //     start += 1;
-    //     end = start + 5;
-    //   }
-
-    //   if (end > hoverItemIndex && increment === -1) {
-    //     start -= 1;
-    //     end = start + 5;
-    //   }
-
-    //   if (end < hoverItemIndex && increment === -1) {
-    //     start = items.length - 5;
-    //     end = items.length;
-    //   }
-
-    //   if (hoverItemIndex === 0) {
-    //     start = 0;
-    //     end = 5;
-    //   }
-
-    //   this.set({
-    //     start,
-    //     end
-    //   })
-    // } else {
-    //  container.scrollTop -= offsetBounding;
-    // }
   }
 </script>
 
-<svelte:window on:keydown="{handleKeyDown}"/>
+<svelte:window on:keydown="{handleKeyDown}" />
 
 {#if isVirtualList}
 <div class="listContainer virtualList" bind:this={container}>
-  <VirtualList 
-    {items} 
-    component={VirtualListItem} 
-    {getOptionLabel}
-    {itemHeight}
-    on:hover="{handleHover}"
-    on:click="{handleClick}"
-    {hoverItemIndex}
-    {selectedValue}
-    bind:start 
-    bind:end
-  />
+
+  <VirtualList {items} {itemHeight} let:item let:i>
+  
+    <div on:mouseover="{() => handleHover(i)}" on:click="{event => handleClick({item, i, event})}"
+        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier)}">
+          <svelte:component this="{Item}" {item} {getOptionLabel}/>
+    </div>
+  
+</VirtualList>
 </div>
 {/if}
 
 {#if !isVirtualList}
 <div class="listContainer" bind:this={container}>
   {#each items as item, i}
-    {#if item.groupValue}
+    {#if item && item.groupValue}
       <div class="listGroupTitle">
         {item.groupValue}
       </div>
