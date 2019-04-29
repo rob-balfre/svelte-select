@@ -4,19 +4,10 @@ import CustomItem from './CustomItem.svelte';
 import Select from '../../src/Select.svelte';
 import List from '../../src/List.svelte';
 import SelectDefault from './Select/Select--default.html'
-import SelectFocus from './Select/Select--focus.html'
-import SelectItemSelected from './Select/Select--itemSelected.html'
 import SelectMultiSelected from './Select/Select--multiSelected.html'
-import SelectMultiEmpty from './Select/Select--multiSelectEmpty.html'
 import ListDefault from './List/List--default.html'
-import ListEmpty from './List/List--empty.html'
-import ListGrouped from './List/List--grouped.html'
-import ListGroupedFiltered from './List/List--groupedFiltered.html'
-import ListGroupedReversed from './List/List--groupedReversed.html'
-import ListActiveItem from './List/List--activeItem.html'
 import ParentContainer from './Select/ParentContainer.html'
 import {assert, test, done} from 'tape-modern';
-
 
 function querySelectorClick(selector) {
   document.querySelector(selector).click();
@@ -2002,6 +1993,30 @@ test('When isMulti and no selected item then delete should do nothing', async (t
   t.ok(select.$$.ctx.listOpen === true);
 
   select.$destroy();
+});
+
+test.only('...', async (t) => {
+  function fill(len, fn) {
+    return Array(len).fill().map((_, i) => fn(i));
+  };
+  
+  const items = fill(100, (i) => {
+    const name = getName();
+    return name
+  });
+
+  const select = new Select({
+    target,
+    props: {
+     
+      items,
+      
+    }
+  });
+
+
+
+  // select.$destroy();
 });
 
 
