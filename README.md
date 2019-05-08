@@ -12,27 +12,19 @@ yarn add svelte-select
 ## Usage
 
 ```html
-<Select {items}></Select>
-
 <script>
   import Select from 'svelte-select';
 
-  export default {
-    components: { Select },
-
-    data() {
-      return {
-         items: [
-          {value: 'chocolate', label: 'Chocolate'},
-          {value: 'pizza', label: 'Pizza'},
-          {value: 'cake', label: 'Cake'},
-          {value: 'chips', label: 'Chips'},
-          {value: 'ice-cream', label: 'Ice Cream'},
-        ]
-      };
-    }
-  };
+  let items = [
+    {value: 'chocolate', label: 'Chocolate'},
+    {value: 'pizza', label: 'Pizza'},
+    {value: 'cake', label: 'Cake'},
+    {value: 'chips', label: 'Chips'},
+    {value: 'ice-cream', label: 'Ice Cream'},
+  ];
 </script>
+
+<Select {items}></Select>
 ```
 
 
@@ -74,30 +66,20 @@ yarn add svelte-select
 | clear | - | fires when clear all is invoked
 
 ```html
-<Select {items} on:select="handleSelect(event)" on:clear="handleClear()"></Select>
-
 <script>
   import Select from 'svelte-select';
 
-  export default {
-    components: { Select },
-
-    data() {
-      return {
-         items: [...]
-      };
-    },
-    methods: {
-      handleSelect(selectedVal) {
-        ...
-      },
-      onClear() {
-        ...
-      }
-    }
-  };
+  let items = [...];
+  function handleSelect(selectedVal) {
+    ...
+  }
+  function onClear() {
+    ...
+  }
 </script>
-```
+
+<Select {items} on:select={handleSelect} on:clear={handleClear()}></Select>
+``
 
 ## Development
 
