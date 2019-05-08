@@ -2,6 +2,8 @@
 
 A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
 
+V3 is still WIP but mostly stable, use with caution :)
+
 ## Installation
 
 ```bash
