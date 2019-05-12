@@ -110,6 +110,7 @@
 
   .selectContainer.focused {
     border-color: #006FE8;
+    color: #C1C6CC;
   }
 
   .selectContainer.disabled {
