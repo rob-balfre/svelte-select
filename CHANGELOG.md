@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 1.7.5
+
+*  Disabled colour values updated
+
+
 ## 1.7.4
 
 *  Fix for destroy method
