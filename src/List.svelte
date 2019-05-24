@@ -145,7 +145,7 @@
   }
 
   function scrollToActiveItem(className) {
-    if (isVirtualList) return;
+    if (isVirtualList || !container) return;
 
     let offsetBounding;
     const focusedElemBounding = container.querySelector(`.listItem.${className}`);
