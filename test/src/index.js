@@ -1,4 +1,5 @@
 import getName from 'namey-mcnameface';
+import normalizeHtml from '../utils/normalizeHtml';
 
 import CustomItem from './CustomItem.svelte';
 import Select from '../../src/Select.svelte';
@@ -15,7 +16,7 @@ function querySelectorClick(selector) {
 }
 
 function handleKeyboard(key) {
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': key}))
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': key}));
   return new Promise(f => setTimeout(f, 0));
 }
 
@@ -50,71 +51,12 @@ const itemsWithIndex = [
   {value: 'ice-cream', label: 'Ice Cream', index: 4},
 ];
 
-function indent(node, spaces) {
-  if (node.childNodes.length === 0) return;
-
-  if (node.childNodes.length > 1 || node.childNodes[0].nodeType !== 3) {
-    const first = node.childNodes[0];
-    const last = node.childNodes[node.childNodes.length - 1];
-
-    const head = `\n${spaces}  `;
-    const tail = `\n${spaces}`;
-
-    if (first.nodeType === 3) {
-      first.data = `${head}${first.data}`;
-    } else {
-      node.insertBefore(document.createTextNode(head), first);
-    }
-
-    if (last.nodeType === 3) {
-      last.data = `${last.data}${tail}`;
-    } else {
-      node.appendChild(document.createTextNode(tail));
-    }
-
-    let lastType = null;
-    for (let i = 0; i < node.childNodes.length; i += 1) {
-      const child = node.childNodes[i];
-      if (child.nodeType === 1) {
-        indent(node.childNodes[i], `${spaces}  `);
-
-        if (lastType === 1) {
-          node.insertBefore(document.createTextNode(head), child);
-          i += 1;
-        }
-      }
-
-      lastType = child.nodeType;
-    }
-  }
-}
-
-function normalize(html) {
-  const div = document.createElement('div');
-  div.innerHTML = html
-    .replace(/<link.+\/?>/g, '')
-    .replace(/<!--.+?-->/g, '')
-    .replace(/<!---->/g, '')
-    .replace(/<object.+\/object>/g, '')
-    .replace(/svelte-ref-\w+/g, '')
-    .replace(/\s*svelte-\w+\s*/g, '')
-    .replace(/class=""/g, '')
-    .replace(/style=""/g, '')
-    .replace(/>\s+/g, '>')
-    .replace(/\s+</g, '<');
-
-  indent(div, '');
-
-  div.normalize();
-  return div.innerHTML;
-}
-
 function wait(ms) {
   return new Promise(f => setTimeout(f, ms));
 }
 
-assert.htmlEqual = (a, b, msg) => {
-  assert.equal(normalize(a), normalize(b));
+assert.htmlEqual = (a, b) => {
+  assert.equal(normalizeHtml(a), normalizeHtml(b));
 };
 
 // tests
@@ -224,6 +166,40 @@ test('list scrolls to active item', async (t) => {
 
   t.equal(offsetBounding, 0);
   list.$destroy();
+});
+
+test.only('list scrolls to hovered item when navigating with keys', async (t) => {
+  const extras = [
+    {value: 'chicken-schnitzel', label: 'Chicken Schnitzel', index: 5},
+    {value: 'fried-chicken', label: 'Fried Chicken', index: 6},
+    {value: 'sunday-roast', label: 'Sunday Roast', index: 7},
+  ];
+  const list = new List({
+    target,
+    props: {
+      items: itemsWithIndex.concat(extras)
+    }
+  });
+
+  const container = target.querySelector('.listContainer');
+  const totalListItems = container.querySelectorAll('.listItem').length;
+  let selectedItemsAreWithinBounds = true;
+  let loopCount = 1;
+
+  do {
+    await handleKeyboard('ArrowDown');
+
+    const hoveredItem = container.querySelector('.listItem.hover');
+    const isInViewport = container.getBoundingClientRect().bottom - hoveredItem.getBoundingClientRect().bottom >= 0;
+
+    selectedItemsAreWithinBounds = selectedItemsAreWithinBounds && isInViewport;
+
+    loopCount += 1;
+  } while (loopCount < totalListItems);
+
+
+  t.ok(selectedItemsAreWithinBounds);
+  //list.$destroy();
 });
 
 test('hover item updates on keyUp or keyDown', async (t) => {
@@ -1995,7 +1971,7 @@ test('When isMulti and no selected item then delete should do nothing', async (t
   select.$destroy();
 });
 
-test.only('...', async (t) => {
+test('...', async (t) => {
   function fill(len, fn) {
     return Array(len).fill().map((_, i) => fn(i));
   };
@@ -2014,9 +1990,7 @@ test.only('...', async (t) => {
     }
   });
 
-
-
-  // select.$destroy();
+  select.$destroy();
 });
 
 

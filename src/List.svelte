@@ -1,5 +1,5 @@
 <script>
-  import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { beforeUpdate, createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -105,7 +105,7 @@
     handleSelect(item);
   }
 
-  function updateHoverItem(increment) {
+  async function updateHoverItem(increment) {
     if (isVirtualList) return;
 
     if (increment > 0 && hoverItemIndex === (items.length - 1)) {
@@ -118,8 +118,9 @@
       hoverItemIndex = hoverItemIndex + increment;
     }
 
-    hoverItemIndex = hoverItemIndex;
-    scrollToActiveItem('hover', increment);
+    await tick();
+
+    scrollToActiveItem('hover');
   }
 
   function handleKeyDown(e) {
@@ -143,7 +144,7 @@
     }
   }
 
-  function scrollToActiveItem(className, increment) {
+  function scrollToActiveItem(className) {
     if (isVirtualList) return;
 
     let offsetBounding;

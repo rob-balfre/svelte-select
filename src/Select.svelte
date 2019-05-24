@@ -267,11 +267,13 @@
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        listOpen = true, activeSelectedValue = undefined;
+        listOpen = true;
+        activeSelectedValue = undefined;
         break;
       case 'ArrowUp':
         e.preventDefault();
-        listOpen = true, activeSelectedValue = undefined;
+        listOpen = true;
+        activeSelectedValue = undefined;
         break;
       case 'Tab':
         if (!listOpen) isFocused = false;
@@ -293,7 +295,6 @@
         } else if (selectedValue.length > activeSelectedValue && activeSelectedValue !== 0) {
           activeSelectedValue -= 1
         }
-        activeSelectedValue = activeSelectedValue;
         break;
       case 'ArrowRight':
         if (list) list.$set({ hoverItemIndex: -1 });
@@ -303,7 +304,6 @@
         } else if (activeSelectedValue < selectedValue.length - 1) {
           activeSelectedValue += 1;
         }
-        activeSelectedValue = activeSelectedValue;
         break;
     }
   }
