@@ -168,7 +168,7 @@ test('list scrolls to active item', async (t) => {
   list.$destroy();
 });
 
-test.only('list scrolls to hovered item when navigating with keys', async (t) => {
+test('list scrolls to hovered item when navigating with keys', async (t) => {
   const extras = [
     {value: 'chicken-schnitzel', label: 'Chicken Schnitzel', index: 5},
     {value: 'fried-chicken', label: 'Fried Chicken', index: 6},
@@ -199,7 +199,7 @@ test.only('list scrolls to hovered item when navigating with keys', async (t) =>
 
 
   t.ok(selectedItemsAreWithinBounds);
-  //list.$destroy();
+  list.$destroy();
 });
 
 test('hover item updates on keyUp or keyDown', async (t) => {
