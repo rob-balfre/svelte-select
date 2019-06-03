@@ -3,14 +3,12 @@
 
   const dispatch = createEventDispatcher();
 
-  export let selectedValue;
-  export let activeSelectedValue;
-  export let isDisabled;
-  export let getSelectionLabel;
+  export let selectedValue = [];
+  export let activeSelectedValue = undefined;
+  export let isDisabled = false;
+  export let getSelectionLabel = undefined;
 
-  // [svelte-upgrade suggestion]
-  // review these functions and remove unnecessary 'export' keywords
-  export function handleClear(i, event) {
+  function handleClear(i, event) {
     event.stopPropagation();
     dispatch('multiItemClear', {i});
   }

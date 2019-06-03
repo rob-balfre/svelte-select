@@ -1,6 +1,6 @@
 <script>
-  export let getSelectionLabel;
-  export let item;
+  export let getSelectionLabel = undefined;
+  export let item = undefined;
 </script>
 
 <div class="selection">

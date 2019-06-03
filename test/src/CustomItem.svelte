@@ -1,5 +1,8 @@
 <script>
-  export let item;
+  export let getOptionLabel = undefined;
+  export let getSelectionLabel = undefined;
+  export let item = undefined;
+  
 </script>
 
 <div class="customItem">

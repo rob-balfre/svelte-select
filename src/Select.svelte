@@ -7,45 +7,45 @@
   import isOutOfViewport from './utils/isOutOfViewport';
 
   const dispatch = createEventDispatcher();
-  export let container;
-  export let input;
+  export let container = undefined;
+  export let input = undefined;
   export let Item = ItemComponent;
   export let Selection = SelectionComponent;
   export let MultiSelection = MultiSelectionComponent;
   export let isMulti = false;
   export let isDisabled = false;
-  export let isFocused;
-  export let selectedValue;
+  export let isFocused = false;
+  export let selectedValue = undefined;
   export let filterText = '';
   export let placeholder = 'Select...';
   export let items = [];
-  export let groupBy;
+  export let groupBy = undefined;
   export let groupFilter = (groups) => groups;
   export let getOptionLabel = (option) => {
     if (option) return option.label
   };
   export let optionIdentifier = 'value';
-  export let loadOptions;
+  export let loadOptions = undefined;
   export let hasError = false;
-  export let containerStyles;
+  export let containerStyles = '';
   export let getSelectionLabel = (option) => {
     if (option) return option.label
   };
-  export let activeSelectedValue;
   export let isSearchable = true;
-  export let inputStyles;
+  export let inputStyles = '';
   export let isClearable = true;
-  export let isWaiting;
+  export let isWaiting = false; 
   export let listPlacement = 'auto';
   export let listOpen = false;
-  export let list;
-  export let target;
+  export let list = undefined;
   export let isVirtualList = false;
   export let loadOptionsInterval = 200;
   export let noOptionsMessage = 'No options';
   export let hideEmptyState = false;
   export let filteredItems = [];
 
+  let target;
+  let activeSelectedValue;
   let _items = [];
   let originalItemsClone;
   let containerClasses = '';

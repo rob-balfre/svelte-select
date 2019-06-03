@@ -1,6 +1,6 @@
 <script>
-  export let getOptionLabel;
-  export let item;
+  export let getOptionLabel = undefined;
+  export let item = undefined;
 </script>
 
 <div class="item">

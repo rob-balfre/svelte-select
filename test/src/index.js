@@ -133,8 +133,7 @@ test('should highlight active list item', async (t) => {
     target,
     props: {
       items: itemsWithIndex,
-      selectedValue: {value: 'pizza', label: 'Pizza', index: 1},
-      activeItemIndex: 1,
+      selectedValue: {value: 'pizza', label: 'Pizza', index: 1}
     }
   });
 
@@ -207,7 +206,6 @@ test('hover item updates on keyUp or keyDown', async (t) => {
     target,
     props: {
       items: items,
-      activeItem: {value: 'chocolate', label: 'Chocolate'},
       activeItemIndex: 0,
     }
   });
@@ -263,8 +261,7 @@ test('on selected of current active item does not fire a itemSelected event', as
     target,
     props: {
       items: itemsWithIndex,
-      selectedValue: { value: 'chocolate', label: 'Chocolate', index: 0 },
-      isFocused: true
+      selectedValue: { value: 'chocolate', label: 'Chocolate', index: 0 }
     }
   });
 
@@ -366,7 +363,6 @@ test('List starts with first item in hover state', async (t) => {
     target,
     props: {
       items,
-      activeItemIndex: 1,
     }
   });
 
@@ -688,7 +684,6 @@ test('Select input placeholder wipes while item is selected', async (t) => {
     props: {
       items,
       selectedValue: {name: 'Item #2'},
-      activeItemIndex: 1,
     }
   });
 
@@ -780,7 +775,6 @@ test('Select container styles can be overridden', async (t) => {
     props: {
       items,
       selectedValue: {name: 'Item #2'},
-      activeItemIndex: 1,
       containerStyles: `padding-left: 40px;`
     }
   });
@@ -1086,7 +1080,6 @@ test('inputStyles prop applies css to select input', async (t) => {
     props: {
       items,
       selectedValue: {value: 'pizza', label: 'Pizza'},
-      activeItemIndex: 1,
       inputStyles: `padding-left: 40px;`
     }
   });

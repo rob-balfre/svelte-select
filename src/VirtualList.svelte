@@ -2,12 +2,10 @@
 	import { onMount, tick } from 'svelte';
 
 	// props
-	export let items;
+	export let items = undefined;
 	export let height = '100%';
-	export let itemHeight;
-	export let hoverItemIndex;
-
-	let foo;
+	export let itemHeight = 40;
+	export let hoverItemIndex = 0;
 
 	// read-only, but visible to consumers via bind:start
 	export let start = 0;
