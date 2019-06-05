@@ -1994,6 +1994,21 @@ test('When list is open, filterText applied and Enter/Tab key pressed should sel
   select.$destroy();
 });
 
+
+test('When inputAttributes is supplied each attribute is placed on the Select input field', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      inputAttributes: { id: 'testId' }
+    }
+  });
+
+  t.ok(document.getElementById('testId'));
+
+  select.$destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {

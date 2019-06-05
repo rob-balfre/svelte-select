@@ -43,7 +43,8 @@
   export let noOptionsMessage = 'No options';
   export let hideEmptyState = false;
   export let filteredItems = [];
-
+  export let inputAttributes = {};
+  
   let target;
   let activeSelectedValue;
   let _items = [];
@@ -78,6 +79,19 @@
   $: showSelectedItem = selectedValue && filterText.length === 0;
 
   $: placeholderText = selectedValue ? '' : placeholder;
+
+  let _inputAttributes = {};
+  $: { 
+    _inputAttributes = Object.assign(inputAttributes, { 
+      autocomplete: 'off',
+      autocorrect: 'off',
+      spellcheck: false
+    })
+
+    if (!isSearchable) {
+      _inputAttributes.readonly = true;
+    }
+  }
 
   $: {
     let _filteredItems;
@@ -435,13 +449,10 @@
   {/if}
 
   <input
+    {..._inputAttributes}
     bind:this={input}
-    readonly="{!isSearchable}"
     on:focus="{handleFocus}"
-    bind:value="{filterText}"
-    autocomplete="off"
-    autocorrect="off"
-    spellcheck="false"
+    bind:value="{filterText}"    
     placeholder="{placeholderText}"
     disabled="{isDisabled}"
     style="{inputStyles}"
