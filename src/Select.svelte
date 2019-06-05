@@ -1,5 +1,5 @@
 <script>
-  import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { beforeUpdate, createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
   import List from './List.svelte';
   import ItemComponent from './Item.svelte';
   import SelectionComponent from './Selection.svelte';
@@ -144,7 +144,7 @@
     }
   }
 
-  beforeUpdate(async () => {
+  beforeUpdate(() => {
     if (isMulti && selectedValue && selectedValue && selectedValue.length > 1) {
       checkSelectedValueForDuplicates();
     }
@@ -188,7 +188,7 @@
     }
 
     if (isFocused !== prev_isFocused) {
-      if (isFocused) {
+      if (isFocused || listOpen) {
         handleFocus();
       } else {
         filterText = '';
@@ -237,7 +237,8 @@
     getPosition();
   }
 
-  function getPosition() {
+  async function getPosition() {
+    await tick();
     if (!target || !container) return;
     const { top, height, width } = container.getBoundingClientRect();
 
@@ -346,7 +347,8 @@
     dispatch('clear');
   }
 
-  function loadList() {
+  async function loadList() {
+    await tick();
     if (target && list) return;
 
     const data = {
@@ -392,6 +394,7 @@
           selectedValue = item;
         }
 
+        filterText = '';
         selectedValue = selectedValue, listOpen = false, activeSelectedValue = undefined;
       }
     });

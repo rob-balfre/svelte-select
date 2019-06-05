@@ -308,6 +308,7 @@ test('clear wipes selectedValue and updates view', async (t) => {
     }
   });
 
+  await wait(0);
   await handleSet(select, {selectedValue: undefined});
   t.ok(!target.querySelector('.selectedItem .selection'));
 
@@ -399,6 +400,7 @@ test('when listPosition is set to top list should be above the input', async (t)
     }
   });
 
+  await wait(0);
   const distanceOfListBottomFromViewportTop = document.querySelector('.listContainer').getBoundingClientRect().bottom;
   const distanceOfInputTopFromViewportTop = document.querySelector('.selectContainer').getBoundingClientRect().top;
 
@@ -417,6 +419,7 @@ test('when listPlacement is set to bottom the list should be below the input', a
     }
   });
 
+  await wait(0);
   const distanceOfListTopFromViewportTop = document.querySelector('.listContainer').getBoundingClientRect().top;
   const distanceOfInputBottomFromViewportTop = document.querySelector('.selectContainer').getBoundingClientRect().bottom;
 
@@ -702,6 +705,7 @@ test('Select listOpen state controls List', async (t) => {
     }
   });
 
+  await wait(0);
   t.ok(document.querySelector('.listContainer'));
   await handleSet(select, {listOpen: false})
   t.ok(!document.querySelector('.listContainer'));
@@ -1219,6 +1223,7 @@ test('when isMulti is true both selectedValue and filterText filters List', asyn
   const select = new Select({
     target,
     props: {
+      listOpen: true,
       isMulti: true,
       items,
       filterText: 'Pizza',
@@ -1802,6 +1807,7 @@ test('when items and loadOptions method are both supplied then fallback to items
     }
   });
 
+  await wait(0);
   t.ok(document.querySelector('.item').innerHTML === 'test1');
   await handleSet(select, {filterText: 'Juniper'});
   await wait(500);
@@ -1823,6 +1829,7 @@ test('when items is just an array of strings then render list', async (t) => {
     }
   });
 
+  await wait(0);
   t.ok(document.querySelector('.item').innerHTML === 'one');
 
   select.$destroy();
@@ -1923,6 +1930,7 @@ test('when isMulti and textFilter has length then enter should select item', asy
     }
   });
 
+  await(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.ok(select.$$.ctx.selectedValue[0].value === 'pizza');
 
@@ -1958,34 +1966,33 @@ test('When isMulti and no selected item then delete should do nothing', async (t
     }
   });
 
+  await(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Backspace'}));
   t.ok(select.$$.ctx.listOpen === true);
 
   select.$destroy();
 });
 
-test('...', async (t) => {
-  function fill(len, fn) {
-    return Array(len).fill().map((_, i) => fn(i));
-  };
-  
-  const items = fill(100, (i) => {
-    const name = getName();
-    return name
-  });
-
+test('When list is open, filterText applied and Enter/Tab key pressed should select and show highlighted value', async (t) => {
   const select = new Select({
     target,
     props: {
-     
-      items,
-      
+      listOpen: true,
+      isFocused: true,
+      filterText: 'A5',
+      items: ['A5', 'test string', 'something else']
     }
   });
 
+  await(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.equal(select.$$.ctx.selectedValue.value, 'A5');
+  await(0);
+  t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'A5');
+
   select.$destroy();
 });
-
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
