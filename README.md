@@ -1,4 +1,6 @@
-# svelte-select ([demo](https://stackblitz.com/edit/svelte-rhbzxj))
+[v3 version can be found here.](https://github.com/rob-balfre/svelte-select/tree/feature/upgrade_to_svelte.v3)
+
+# svelte-select for svelte v2 ([demo](https://stackblitz.com/edit/svelte-rhbzxj))
 
 A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
 
