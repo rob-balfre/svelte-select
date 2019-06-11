@@ -24,7 +24,7 @@
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-html": "^0.2.1",
     "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-svelte": "^4.3.2",
+    "rollup-plugin-svelte": "^5.1.0",
     "sirv": "^0.2.2",
     "svelte": "^2.13.5",
     "tap-diff": "^0.1.1",
