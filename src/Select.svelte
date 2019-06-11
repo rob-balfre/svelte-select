@@ -294,7 +294,6 @@
           })
         }
 
-
         const filteredItems = loadOptions ? items : items.filter(item => {
           let keepItem = true;
 
@@ -345,7 +344,7 @@
 
       if (!previous) return;
 
-      if (!current.isMulti && changed.selectedValue && current.selectedValue) {    
+      if (!current.isMulti && changed.selectedValue && current.selectedValue) {
         if (!previous.selectedValue || JSON.stringify(current.selectedValue[current.optionIdentifier]) != JSON.stringify(previous.selectedValue[current.optionIdentifier])) {
           this.fire('select', current.selectedValue)
         }
@@ -364,6 +363,7 @@
           this.removeList();
         }
       }
+
       if (changed.filterText) {
         if (current.filterText.length > 0) {
           if(current.loadOptions) {
@@ -371,17 +371,17 @@
             this.set({isWaiting:true});
 
             this.loadOptionsTimeout = setTimeout(() => {
-                current.loadOptions(current.filterText).then((response) => {
-                  this.setList(response)
-                })
-                .catch(() => {  
-                  this.setList([])
-                });
+              current.loadOptions(current.filterText).then((response) => {
+                this.setList(response)
+              })
+              .catch(() => {
+                this.setList([])
+              });
 
-                this.set({
-                  isWaiting:false,
-                  listOpen: true
-                });  
+              this.set({
+                isWaiting:false,
+                listOpen: true
+              });
             }, current.loadOptionsInterval);
 
           } else {
@@ -407,7 +407,7 @@
         }
       }
 
-      if (changed.filteredItems && current.list) {
+      if (changed.filteredItems && current.list && !current.loadOptions) {
         this.setList(current.filteredItems)
       }
     },
