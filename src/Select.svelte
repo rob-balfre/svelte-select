@@ -372,15 +372,18 @@
 
             this.loadOptionsTimeout = setTimeout(() => {
               current.loadOptions(current.filterText).then((response) => {
+                this.set({
+                  isWaiting:false,
+                  listOpen: true
+                });
                 this.setList(response)
               })
               .catch(() => {
-                this.setList([])
-              });
-
-              this.set({
-                isWaiting:false,
-                listOpen: true
+                this.set({
+                  isWaiting:false,
+                  listOpen: true
+                });
+                this.setList(current.items)
               });
             }, current.loadOptionsInterval);
 
@@ -393,7 +396,7 @@
               }
           }
         } else {
-          this.setList([])
+          this.setList(current.items)
         }
       }
 
