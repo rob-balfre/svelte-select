@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 1.7.6
+
+*  Fix for Async loading
+*  Security patch
+
 ## 1.7.5
 
 *  Disabled colour values updated
