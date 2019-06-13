@@ -81,7 +81,7 @@ yarn add svelte-select
   }
 </script>
 
-<Select {items} on:select={handleSelect} on:clear={handleClear()}></Select>
+<Select {items} on:select={handleSelect} on:clear={handleClear}></Select>
 ```
 
 ## Development
