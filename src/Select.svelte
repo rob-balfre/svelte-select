@@ -424,6 +424,22 @@
     if (items && items.length > 0) {
       originalItemsClone = JSON.stringify(items);
     }
+
+    if (selectedValue) {
+      if (isMulti) {
+        selectedValue = selectedValue.map(item => {
+          if (typeof item === 'string') {
+            return { value: item, label: item }
+          } else {
+            return item;
+          }
+        })
+      } else {
+        if (typeof selectedValue === 'string') {
+          selectedValue = { value: selectedValue, label: selectedValue }
+        }
+      }
+    }
   });
 
   onDestroy(() => {

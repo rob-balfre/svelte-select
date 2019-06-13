@@ -2009,6 +2009,35 @@ test('When inputAttributes is supplied each attribute is placed on the Select in
   select.$destroy();
 });
 
+test('when items and selectedValue supplied as just strings then selectedValue should render correctly', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: ['Pizza', 'Chocolate', 'Crisps'],
+      selectedValue: 'Pizza'
+    }
+  });
+
+  t.equal(document.querySelector('.selectedItem .selection').innerHTML, 'Pizza');
+
+  select.$destroy();
+});
+
+test('when isMulti with items and selectedValue supplied as just strings then selectedValue should render correctly', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items: ['Pizza', 'Chocolate', 'Crisps'],
+      selectedValue: ['Pizza']
+    }
+  });
+
+  t.equal(document.querySelector('.multiSelectItem_label').innerHTML, 'Pizza');
+
+  select.$destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
