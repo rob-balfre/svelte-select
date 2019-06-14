@@ -116,15 +116,14 @@
         let keepItem = true;
 
         if (isMulti && selectedValue) {
-          keepItem = !selectedValue.find(({ value }) => {
-            return value === item[optionIdentifier]
+          keepItem = !selectedValue.find((value) => {
+            return value[optionIdentifier] === item[optionIdentifier]
           });
         }
 
         if (keepItem && filterText.length < 1) return true;
         return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
       });
-
     }
 
     if (groupBy) {
@@ -297,7 +296,7 @@
         if (!isMulti || filterText.length > 0) return;
         if (isMulti && selectedValue && selectedValue.length > 0) {
           handleMultiItemClear(activeSelectedValue !== undefined ? activeSelectedValue : selectedValue.length - 1);
-          if (activeSelectedValue === 0) break;
+          if (activeSelectedValue === 0 || activeSelectedValue === undefined) break;
           activeSelectedValue = selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined;
         }
         break;

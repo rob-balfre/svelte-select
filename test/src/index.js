@@ -2038,6 +2038,36 @@ test('when isMulti with items and selectedValue supplied as just strings then se
   select.$destroy();
 });
 
+test('when isMulti, groupBy and selectedValue are supplied then list should be filtered', async (t) => {
+  let _items = [
+    { id: 1, name: "Foo", group: "first" },
+    { id: 2, name: "Bar", group: "second" },
+    { id: 3, name: "Baz", group: "second" },
+    { id: 4, name: "Qux", group: "first" }
+  ];
+
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items: _items,
+      groupBy: (item) => item.group,
+      optionIdentifier: 'id',
+      getSelectionLabel: (item) => item.name, 
+      getOptionLabel: (item) => item.name,  
+      selectedValue: [{ id: 2, name: "Bar", group: "second" }],
+      listOpen: true
+    }
+  });
+
+  t.equal(JSON.stringify(select.$$.ctx.filteredItems), JSON.stringify([
+    { groupValue: "first", id: 1, name: "Foo", group: "first" },
+    { id: 4, name: "Qux", group: "first" },
+    { groupValue: "second", id: 3, name: "Baz", group: "second" }]));
+
+  select.$destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
