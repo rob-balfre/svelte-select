@@ -7,7 +7,7 @@ V3 is still WIP but mostly stable, use with caution :)
 ## Installation
 
 ```bash
-yarn add svelte-select
+yarn add rob-balfre/svelte-select#feature/upgrade_to_svelte.v3
 ```
 
 
