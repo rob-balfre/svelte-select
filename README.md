@@ -2,12 +2,10 @@
 
 A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
 
-V3 is still WIP but mostly stable, use with caution :)
-
 ## Installation
 
 ```bash
-yarn add rob-balfre/svelte-select#feature/upgrade_to_svelte.v3
+yarn add svelte-select
 ```
 
 
