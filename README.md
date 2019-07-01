@@ -1,4 +1,4 @@
-# svelte-select
+# svelte-select ([Demo](https://svelte.dev/repl/f3bc0fd6b6f74ea499e5ecb26911bf28?version=3.6.2))
 
 A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
 
