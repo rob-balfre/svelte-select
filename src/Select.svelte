@@ -68,6 +68,11 @@
   let prev_isFocused;
   let prev_filteredItems;
 
+  async function resetFilter() {
+    await tick();
+    filterText = '';
+  }
+
   function wait(ms) {
     return new Promise(f => setTimeout(f, ms));
   }
@@ -76,8 +81,9 @@
     isWaiting = true;
     await wait(loadOptionsInterval);
     const options = await loadOptions(filterText);
-    items = options;
+    items = options;    
     isWaiting = false;
+    isFocused = true;
     listOpen = true;
   }
 
@@ -196,6 +202,8 @@
 
     if (filterText !== prev_filterText) {
       if (filterText.length > 0) {
+        isFocused = true;
+        listOpen = true;
 
         if (loadOptions) {
           getItems(loadOptions);
@@ -222,7 +230,7 @@
       if (isFocused || listOpen) {
         handleFocus();
       } else {
-        filterText = '';
+        resetFilter();
         if (input) input.blur();
       }
     }
@@ -289,6 +297,7 @@
   async function setList(items) {
     await tick();
     if (list) return list.$set({ items })
+    if (loadOptions && items.length > 0) loadList();
   }
 
   function handleMultiItemClear(event) {
@@ -382,7 +391,8 @@
   }
 
   function removeList() {
-    filterText = '', activeSelectedValue = undefined;
+    resetFilter();
+    activeSelectedValue = undefined;
 
     if (!list) return;
     list.$destroy();
@@ -463,7 +473,7 @@
           selectedValue = item;
         }
 
-        filterText = '';
+        resetFilter();
         selectedValue = selectedValue, listOpen = false, activeSelectedValue = undefined;
       }
     });
@@ -477,9 +487,9 @@
         selectedValue = createItem(detail)
       }
 
-      filterText = '';
       listOpen = false;
       activeSelectedValue = undefined;
+      resetFilter();
     });
 
     list = list,
@@ -583,7 +593,7 @@
   .selectContainer {
     border: 1px solid #D8DBDF;
     border-radius: 3px;
-    height: 44px;
+    height: 42px;
     position: relative;
     display: flex;
     padding: 0 16px;
@@ -722,6 +732,7 @@
   .selectContainer.multiSelect input {
     padding: 0;
     position: relative;
+    margin: 0;
   }
 
   .hasError {
@@ -734,4 +745,3 @@
     }
   }
 </style>
- 
