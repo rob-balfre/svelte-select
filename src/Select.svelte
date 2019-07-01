@@ -583,7 +583,7 @@
   .selectContainer {
     border: 1px solid #D8DBDF;
     border-radius: 3px;
-    height: 44px;
+    height: 42px;
     position: relative;
     display: flex;
     padding: 0 16px;
