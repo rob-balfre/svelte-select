@@ -1,7 +1,7 @@
 {
   "name": "svelte-select",
   "version": "1.7.6",
-  "repository": "https://bob-bea-fre@github.com/bob-bea-fre/svelte-select.git",
+  "repository": "https://rob-balfre@github.com/rob-balfre/svelte-select.git",
   "description": "A <Select> component for Svelte apps",
   "svelte": "src/Select.svelte",
   "module": "index.mjs",
@@ -23,10 +23,10 @@
     "rollup": "^0.66.6",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-html": "^0.2.1",
-    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.1.0",
     "sirv": "^0.2.2",
-    "svelte": "^2.13.5",
+    "svelte": "^3.4.4",
     "tap-diff": "^0.1.1",
     "tap-dot": "^2.0.0",
     "tape-modern": "^1.1.1"

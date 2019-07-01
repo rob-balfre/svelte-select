@@ -1,33 +1,211 @@
-<svelte:window on:keydown="handleKeyDown(event)"/>
+<script>
+  import { beforeUpdate, createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  export let container = undefined;
+
+  import ItemComponent from './Item.svelte';
+  import VirtualList from './VirtualList.svelte';
+
+  export let Item = ItemComponent;
+  export let isVirtualList = false;
+  export let items = [];
+  export let getOptionLabel = (option) => { if (option) return option.label };
+  export let itemHeight = 40;
+  export let hoverItemIndex = 0;
+  export let selectedValue = undefined;
+  export let start = 0;
+  export let end = 0;
+  export let optionIdentifier = 'value';
+  export let hideEmptyState = false;
+  export let noOptionsMessage = 'No options';
+  export let getOptionString = (option) => option;
+  export let isMulti = false;
+  export let activeItemIndex = 0;
+  export let filterText = '';
+  export let isCreatable = false;
+
+  let isScrollingTimer = 0;
+  let isScrolling = false;
+  let prev_items;
+  let prev_activeItemIndex;
+  let prev_selectedValue;
+
+  onMount(() => {
+    if (items.length > 0 && !isMulti && selectedValue) {
+      const _hoverItemIndex = items.findIndex((item) => item[optionIdentifier] === selectedValue[optionIdentifier]);
+
+      if (_hoverItemIndex) {
+        hoverItemIndex = _hoverItemIndex;
+      }
+    }
+
+    scrollToActiveItem('active');
+
+
+    container.addEventListener('scroll', () => {
+      clearTimeout(isScrollingTimer);
+
+      isScrollingTimer = setTimeout(() => {
+        isScrolling = false;
+      }, 100);
+    }, false);
+  });
+
+  onDestroy(() => {
+    // clearTimeout(isScrollingTimer);
+  });
+
+  beforeUpdate(() => {
+
+    if (items !== prev_items && items.length > 0) {
+      hoverItemIndex = 0;
+    }
+
+
+    // if (prev_activeItemIndex && activeItemIndex > -1) {
+    //   hoverItemIndex = activeItemIndex;
+
+    //   scrollToActiveItem('active');
+    // }
+    // if (prev_selectedValue && selectedValue) {
+    //   scrollToActiveItem('active');
+
+    //   if (items && !isMulti) {
+    //     const hoverItemIndex = items.findIndex((item) => item[optionIdentifier] === selectedValue[optionIdentifier]);
+
+    //     if (hoverItemIndex) {
+    //       hoverItemIndex = hoverItemIndex;
+    //     }
+    //   }
+    // }
+
+    prev_items = items;
+    prev_activeItemIndex = activeItemIndex;
+    prev_selectedValue = selectedValue;
+  });
+
+  function itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier, isMulti) {
+    return `${selectedValue && !isMulti && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
+  }
+
+  function handleSelect(item) {
+    if (item.isCreator) return;
+    dispatch('itemSelected', item);
+  }
+
+  function handleHover(i) {
+    if (isScrolling) return;
+    hoverItemIndex = i;
+  }
+
+  function handleClick(args) {
+    const { item, i, event } = args;
+    event.stopPropagation();
+
+    if (selectedValue && !isMulti && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
+
+    if (item.isCreator) {
+      dispatch('itemCreated', filterText);
+    } else {
+      activeItemIndex = i
+      hoverItemIndex = i;
+      handleSelect(item);
+    }
+  }
+
+  async function updateHoverItem(increment) {
+    if (isVirtualList) return;
+
+    if (increment > 0 && hoverItemIndex === (items.length - 1)) {
+      hoverItemIndex = 0;
+    }
+    else if (increment < 0 && hoverItemIndex === 0) {
+      hoverItemIndex = items.length - 1;
+    }
+    else {
+      hoverItemIndex = hoverItemIndex + increment;
+    }
+
+    await tick();
+
+    scrollToActiveItem('hover');
+  }
+
+  function handleKeyDown(e) {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        items.length && updateHoverItem(1);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        items.length && updateHoverItem(-1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (items.length === 0) break;
+        const hoverItem = items[hoverItemIndex];
+        if (selectedValue && !isMulti && selectedValue[optionIdentifier] === hoverItem[optionIdentifier]) break;
+
+        if (hoverItem.isCreator) {
+          dispatch('itemCreated', filterText);
+        } else {
+          activeItemIndex = hoverItemIndex;
+          handleSelect(items[hoverItemIndex]);
+        }
+      case 'Tab':
+        e.preventDefault();
+        if (items.length === 0) break;
+        if (selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
+        activeItemIndex = hoverItemIndex;
+        handleSelect(items[hoverItemIndex]);
+        break;
+    }
+  }
+
+  function scrollToActiveItem(className) {
+    if (isVirtualList || !container) return;
+
+    let offsetBounding;
+    const focusedElemBounding = container.querySelector(`.listItem.${className}`);
+
+    if (focusedElemBounding) {
+      offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
+    }
+
+    container.scrollTop -= offsetBounding;
+  }
+</script>
+
+<svelte:window on:keydown="{handleKeyDown}" />
 
 {#if isVirtualList}
-<div class="listContainer virtualList" ref:container>
-  <VirtualList 
-    {items} 
-    component={VirtualListItem} 
-    {getOptionLabel}
-    {itemHeight}
-    on:hover="handleHover(event)"
-    on:click="handleClick(event)"
-    {hoverItemIndex}
-    {selectedValue}
-    bind:start 
-    bind:end
-  />
+<div class="listContainer virtualList" bind:this={container}>
+
+  <VirtualList {items} {itemHeight} let:item let:i>
+  
+    <div on:mouseover="{() => handleHover(i)}" on:click="{event => handleClick({item, i, event})}"
+        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier, isMulti)}">
+          <svelte:component this="{Item}" {item} {getOptionLabel}/>
+    </div>
+  
+</VirtualList>
 </div>
 {/if}
 
 {#if !isVirtualList}
-<div class="listContainer" ref:container>
+<div class="listContainer" bind:this={container}>
   {#each items as item, i}
-    {#if item.groupValue}
+    {#if item && item.groupValue}
       <div class="listGroupTitle">
         {item.groupValue}
       </div>
     {/if}
 
-    <div on:mouseover="handleHover(i)" on:click="handleClick({item, i, event})"
-        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier)}">
+    <div on:mouseover="{() => handleHover(i)}" on:click="{event => handleClick({item, i, event})}"
+        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier, isMulti)}">
           <svelte:component this="{Item}" {item} {getOptionLabel}/>
     </div>
   {:else}
@@ -97,191 +275,3 @@
     color: #78848F;
   }
 </style>
-
-<script>
-  import VirtualList from './VirtualList.svelte';
-  import Item from './Item.svelte';
-  import VirtualListItem from './VirtualListItem.svelte';
-
-  export default {
-    components: {
-      VirtualList
-    },
-    data() {
-      return {
-        isVirtualList: false,
-        hoverItemIndex: 0,
-        optionIdentifier: 'value',
-        items: [],
-        Item,
-        VirtualListItem,
-        selectedValue: undefined,
-        getOptionLabel: (option) => { if (option) return option.label },
-        noOptionsMessage: 'No options',
-        getOptionString: (option) => option,
-        itemHeight: 40,
-        start: 0,
-        end: 0,
-      }
-    },
-    oncreate() {
-      this.isScrollingTimer = 0;
-
-      this.refs.container.addEventListener('scroll', () => {
-        clearTimeout(this.isScrollingTimer);
-
-        this.set({
-          isScrolling: true
-        });
-
-        this.isScrollingTimer = setTimeout(() => {
-          this.set({
-            isScrolling: false
-          });
-        }, 100);
-      }, false);
-    },
-    ondestroy() {
-      clearTimeout(this.isScrollingTimer);
-    },
-    onupdate({changed, current}) {
-      if (changed.items && current.items.length > 0) {
-        this.set({
-            hoverItemIndex: 0
-        });
-      }
-      if (changed.activeItemIndex && current.activeItemIndex > -1) {
-        this.set({
-          hoverItemIndex: current.activeItemIndex,
-        });
-
-        this.scrollToActiveItem('active');
-      }
-      if (changed.selectedValue && current.selectedValue) {
-        this.scrollToActiveItem('active');
-
-        if (current.items && !current.isMulti) {
-          const hoverItemIndex = current.items.findIndex((item) => item[current.optionIdentifier] === current.selectedValue[current.optionIdentifier]);
-
-          if (hoverItemIndex) {
-            this.set({hoverItemIndex});
-          }
-        }
-      }
-    },
-    helpers: {
-      itemClasses(hoverItemIndex, item, itemIndex, items, selectedValue, optionIdentifier) {
-        return `${selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]) ? 'active ' : ''}${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
-      }
-    },
-    methods: {
-      handleSelect(item) {
-        this.fire('itemSelected', item);
-      },
-      handleHover(i) {
-        if(this.get().isScrolling) return;
-        this.set({hoverItemIndex: i});
-      },
-      handleClick(args) {
-        const {item, i, event} = args;
-        event.stopPropagation();
-        const {optionIdentifier, selectedValue} = this.get();
-        if(selectedValue && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
-        this.set({activeItemIndex: i, hoverItemIndex: i});
-        this.handleSelect(item);
-      },
-      updateHoverItem(increment) {
-        let {items, hoverItemIndex, isVirtualList} = this.get();
-        
-        if (isVirtualList) return;
-
-        if (increment > 0 && hoverItemIndex === (items.length - 1)) {
-          hoverItemIndex = 0;
-        }
-        else if (increment < 0 && hoverItemIndex === 0) {
-          hoverItemIndex = items.length - 1;
-        }
-        else {
-          hoverItemIndex = hoverItemIndex + increment;
-        }
-
-        this.set({hoverItemIndex});
-        this.scrollToActiveItem('hover', increment);
-      },
-      handleKeyDown(e) {
-        const {items, hoverItemIndex, optionIdentifier, selectedValue} = this.get();
-
-        switch (e.key) {
-          case 'ArrowDown':
-            e.preventDefault();
-            items.length && this.updateHoverItem(1);
-            break;
-          case 'ArrowUp':
-            e.preventDefault();
-            items.length && this.updateHoverItem(-1);
-            break;
-          case 'Enter':
-            e.preventDefault();
-            if (items.length === 0) break;
-            if(selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
-            this.set({activeItemIndex: hoverItemIndex});
-            this.handleSelect(items[hoverItemIndex]);
-            break;
-          case 'Tab':
-            e.preventDefault();
-
-            this.set({activeItemIndex: hoverItemIndex});
-            this.handleSelect(items[hoverItemIndex]);
-            break;
-        }
-      },
-      scrollToActiveItem(className, increment) {
-        const {container} = this.refs;
-        let {isVirtualList, start, end, hoverItemIndex, items} = this.get();
-        
-        if (isVirtualList) return;
-
-        let offsetBounding;
-        const focusedElemBounding = container.querySelector(`.listItem.${className}`);
-
-        if (focusedElemBounding) {
-          offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
-        }
-
-        container.scrollTop -= offsetBounding;
-
-        // isVirtualList and scrollToActiveItem WIP...
-        // if (isVirtualList & !focusedElemBounding) {
-        //   const virtualContainer = container.querySelector('div').querySelector('div');
-
-        //   if (increment > 0 && end < items.length ) {
-        //     start += 1;
-        //     end = start + 5;
-        //   }
-
-        //   if (end > hoverItemIndex && increment === -1) {
-        //     start -= 1;
-        //     end = start + 5;
-        //   }
-
-        //   if (end < hoverItemIndex && increment === -1) {
-        //     start = items.length - 5;
-        //     end = items.length;
-        //   }
-
-        //   if (hoverItemIndex === 0) {
-        //     start = 0;
-        //     end = 5;
-        //   }
-
-        //   this.set({
-        //     start,
-        //     end
-        //   })
-        // } else {
-        //  container.scrollTop -= offsetBounding;
-        // }
-      }
-    }
-  }
-</script>
