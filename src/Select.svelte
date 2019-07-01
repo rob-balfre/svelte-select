@@ -14,6 +14,7 @@
   export let MultiSelection = MultiSelectionComponent;
   export let isMulti = false;
   export let isDisabled = false;
+  export let isCreatable = false;
   export let isFocused = false;
   export let selectedValue = undefined;
   export let filterText = '';
@@ -31,10 +32,21 @@
   export let getSelectionLabel = (option) => {
     if (option) return option.label
   };
+
+  export let createItem = (filterText) => {
+    return {
+      value: filterText,
+      label: filterText
+    };
+  };
+
+  export let getCreateLabel = (filterText) => {
+    return `Create \"${filterText}\"`;
+  };
   export let isSearchable = true;
   export let inputStyles = '';
   export let isClearable = true;
-  export let isWaiting = false; 
+  export let isWaiting = false;
   export let listPlacement = 'auto';
   export let listOpen = false;
   export let list = undefined;
@@ -44,7 +56,7 @@
   export let hideEmptyState = false;
   export let filteredItems = [];
   export let inputAttributes = {};
-  
+
   let target;
   let activeSelectedValue;
   let _items = [];
@@ -81,8 +93,8 @@
   $: placeholderText = selectedValue ? '' : placeholder;
 
   let _inputAttributes = {};
-  $: { 
-    _inputAttributes = Object.assign(inputAttributes, { 
+  $: {
+    _inputAttributes = Object.assign(inputAttributes, {
       autocomplete: 'off',
       autocorrect: 'off',
       spellcheck: false
@@ -198,6 +210,12 @@
       } else {
         setList([])
       }
+
+      if (list) {
+        list.$set({
+          filterText
+        });
+      }
     }
 
     if (isFocused !== prev_isFocused) {
@@ -209,8 +227,36 @@
       }
     }
 
-    if (prev_filteredItems !== filteredItems && list) {
-      setList(filteredItems)
+    if (prev_filteredItems !== filteredItems) {
+      let _filteredItems = [...filteredItems];
+
+      if (isCreatable && filterText) {
+        const itemToCreate = createItem(filterText);
+        const existingItemWithFilterValue = _filteredItems.find((item) => {
+          return item[optionIdentifier] === itemToCreate[optionIdentifier];
+        });
+
+        let existingSelectionWithFilterValue;
+
+        if (selectedValue) {
+          if (isMulti) {
+            existingSelectionWithFilterValue = selectedValue.find((selection) => {
+              return selection[optionIdentifier] === itemToCreate[optionIdentifier];
+            });
+          } else if (selectedValue[optionIdentifier] === itemToCreate[optionIdentifier]) {
+            existingSelectionWithFilterValue = selectedValue;
+          }
+        }
+
+        if (!existingItemWithFilterValue && !existingSelectionWithFilterValue) {
+          _filteredItems = [..._filteredItems, {
+            label: getCreateLabel(filterText),
+            isCreator: true
+          }];
+        }
+      }
+
+      setList(_filteredItems);
     }
 
     prev_selectedValue = selectedValue;
@@ -240,13 +286,21 @@
     return noDuplicates;
   }
 
-  function setList(items) {
+  async function setList(items) {
+    await tick();
     if (list) return list.$set({ items })
   }
 
-  function handleMultiItemClear(i) {
-    selectedValue.splice(i, 1);
-    selectedValue = selectedValue.length > 0 ? selectedValue : undefined;
+  function handleMultiItemClear(event) {
+    const {detail} = event;
+
+    if (selectedValue.length === 1) {
+      selectedValue = undefined;
+    } else {
+      selectedValue.splice(detail.i, 1);
+      selectedValue = selectedValue;
+    }
+    
     getPosition();
   }
 
@@ -366,9 +420,11 @@
 
     const data = {
       Item,
+      filterText,
       optionIdentifier,
       noOptionsMessage,
       hideEmptyState,
+      isCreatable,
       isVirtualList,
       selectedValue,
       isMulti,
@@ -412,7 +468,22 @@
       }
     });
 
-    list = list, target = target;
+    list.$on('itemCreated', (event) => {
+      const { detail } = event;
+      if (isMulti) {
+        selectedValue = selectedValue || [];
+        selectedValue = [...selectedValue, createItem(detail)]
+      } else {
+        selectedValue = createItem(detail)
+      }
+
+      filterText = '';
+      listOpen = false;
+      activeSelectedValue = undefined;
+    });
+
+    list = list,
+    target = target;
     getPosition();
   }
 
@@ -458,7 +529,7 @@
     {getSelectionLabel}
     {activeSelectedValue}
     {isDisabled}
-    on:multiItemClear="{event => handleMultiItemClear(event.i)}"
+    on:multiItemClear="{handleMultiItemClear}"
     on:focus="{handleFocus}"
   />
   {/if}

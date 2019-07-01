@@ -41,11 +41,14 @@ yarn add svelte-select
 | selectedValue | - | - | Selected value(s)
 | groupBy | Function | - | Function to group list items
 | isClearable | Boolean | true | Enable clearing selected items
+| isCreatable | Boolean | false | Enable creating selected items
 | isDisabled | Boolean | false | Disable select
 | isMulti | Boolean | false | Enable multi select
 | isSearchable | Boolean | true | Disable search/filtering
 | isVirtualList | Boolean | false | Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental)
 | groupFilter | Function | (groups) => groups | Group filter function
+| createItem | Function | (filterText) => { label:filterText, value:filterText } | create item function
+| getCreateLabel | Function | (filterText) => \`Create"${filterText}"\` | get creator label function
 | getOptionLabel | Function | (option) => option.label | Get option label function
 | getSelectionLabel | Function | (option) => option.label | Get selection label function
 | Item | Component | Item | Item component

@@ -1930,7 +1930,7 @@ test('when isMulti and textFilter has length then enter should select item', asy
     }
   });
 
-  await(0);
+  await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.ok(select.$$.ctx.selectedValue[0].value === 'pizza');
 
@@ -1966,7 +1966,7 @@ test('When isMulti and no selected item then delete should do nothing', async (t
     }
   });
 
-  await(0);
+  await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Backspace'}));
   t.ok(select.$$.ctx.listOpen === true);
 
@@ -1984,11 +1984,11 @@ test('When list is open, filterText applied and Enter/Tab key pressed should sel
     }
   });
 
-  await(0);
+  await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.equal(select.$$.ctx.selectedValue.value, 'A5');
-  await(0);
+  await wait(0);
   t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'A5');
 
   select.$destroy();
@@ -2064,6 +2064,179 @@ test('when isMulti, groupBy and selectedValue are supplied then list should be f
     { groupValue: "first", id: 1, name: "Foo", group: "first" },
     { id: 4, name: "Qux", group: "first" },
     { groupValue: "second", id: 3, name: "Baz", group: "second" }]));
+
+  select.$destroy();
+});
+
+test('When isCreatable disabled, creator is not displayed', async (t) => {
+  const filterText = 'abc';
+
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isFocused: true,
+      listOpen: true
+    }
+  });
+
+  select.$set({ filterText });
+
+  await wait(0);
+
+  t.ok(document.querySelector('.listContainer > .empty'));
+
+  select.$destroy();
+});
+
+test('When isCreatable enabled, creator displays getCreatorLabel label', async (t) => {
+  const filterText = 'abc_XXXX';
+
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isCreatable: true,
+      isFocused: true,
+      listOpen: true
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText });
+  await wait(0);
+  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  const { getCreateLabel } = select.$$.ctx;
+  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, getCreateLabel(filterText));
+
+  select.$destroy();
+});
+
+test('When isCreatable enabled, creator is not displayed when duplicate item value in item list', async (t) => {
+  const dupeValueForCheck = 'xxxxxx';
+  const item = {
+    value: dupeValueForCheck,
+    label: dupeValueForCheck
+  };
+
+  const select = new Select({
+    target,
+    props: {
+      items: [item],
+      isCreatable: true,
+      listOpen: true
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText: dupeValueForCheck });
+  await wait(0);
+
+  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, dupeValueForCheck);
+
+  select.$destroy(); 
+});
+
+test('When creator selected, selected item is set to created item', async (t) => {
+  const filterText = 'abc';
+
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isCreatable: true,
+      isFocused: true,
+      listOpen: true
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText });
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  const { selectedValue } = select.$$.ctx;
+  t.ok(selectedValue.value === 'abc');
+  t.ok(selectedValue.label === 'abc');
+
+  select.$destroy();
+});
+
+test('When creator is selected, created item it added to multi selection', async (t) => {
+  const filterText = 'abc';
+
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isCreatable: true,
+      isFocused: true,
+      listOpen: true,
+      isMulti: true
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText });
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  const { selectedValue } = select.$$.ctx;
+  t.ok(selectedValue[0].value === 'abc');
+  t.ok(selectedValue[0].label === 'abc');
+
+  select.$destroy();
+});
+
+test('When creator is selected multiple times, items are all added to multi selection', async (t) => {
+  const filterTextForItem1 = 'abc';
+  const filterTextForItem2 = 'def';
+
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isCreatable: true,
+      isFocused: true,
+      listOpen: true,
+      isMulti: true
+    }
+  });
+  
+  select.$set({ filterText: filterTextForItem1 });
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+  t.ok(select.$$.ctx.selectedValue[0].value === 'abc');
+
+  select.$set({ filterText: filterTextForItem2 });
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+  t.ok(select.$$.ctx.selectedValue[1].value === 'def');
+
+  select.$destroy();
+});
+
+test('When isMulti and an items remove icon is clicked then item should be removed from selectedValue', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isCreatable: true,
+      selectedValue: [
+        {value: 'pizza', label: 'Pizza'},
+        {value: 'cake', label: 'Cake'},
+      ],
+      isMulti: true
+    }
+  });
+
+  await querySelectorClick('.multiSelectItem_clear'); 
+  t.ok(select.$$.ctx.selectedValue[0].value === 'cake')
+  await querySelectorClick('.multiSelectItem_clear');
+  t.ok(select.$$.ctx.selectedValue === undefined);
 
   select.$destroy();
 });
