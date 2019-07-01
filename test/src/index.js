@@ -738,8 +738,9 @@ test('Select filter text filters list', async (t) => {
     }
   });
 
+  await wait(0);
   t.ok(select.$$.ctx.filteredItems.length === 5);
-  await handleSet(select, {filterText: 'Ice Cream'})
+  await handleSet(select, {filterText: 'Ice'})
   t.ok(select.$$.ctx.filteredItems.length === 1);
 
   select.$destroy();
@@ -1550,6 +1551,7 @@ test('when loadOptions method is supplied, isMulti is true and filterText has le
     }
   });
 
+  await wait(0);
   await handleSet(select, {filterText: 'Juniper'});
   await wait(600);
   await handleKeyboard('ArrowDown');
@@ -1887,6 +1889,7 @@ test('when loadOptions method is supplied but filterText is empty then do not ru
     }
   });
 
+  await wait(0);
   select.$set({filterText: 'Juniper'});
   await wait(500);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
