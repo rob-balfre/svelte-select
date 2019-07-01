@@ -622,8 +622,8 @@
   }
 
   .selectContainer.disabled {
-    background: #F6F7F8;
-    border-color: #F6F7F8;
+    background: #EBEDEF;
+    border-color: #EBEDEF;
     color: #C1C6CC;
   }
 
@@ -734,3 +734,4 @@
     }
   }
 </style>
+ 
