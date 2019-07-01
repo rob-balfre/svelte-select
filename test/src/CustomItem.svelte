@@ -1,3 +1,10 @@
+<script>
+  export let getOptionLabel = undefined;
+  export let getSelectionLabel = undefined;
+  export let item = undefined;
+  
+</script>
+
 <div class="customItem">
   <img src="{item.image_url}" alt="{item.name}">
   <div class="customItem_title">

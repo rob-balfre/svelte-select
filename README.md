@@ -1,6 +1,4 @@
-[v3 version can be found here.](https://github.com/rob-balfre/svelte-select/tree/feature/upgrade_to_svelte.v3)
-
-# svelte-select for svelte v2 ([demo](https://stackblitz.com/edit/svelte-rhbzxj))
+# svelte-select
 
 A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
 
@@ -14,27 +12,19 @@ yarn add svelte-select
 ## Usage
 
 ```html
-<Select {items}></Select>
-
 <script>
   import Select from 'svelte-select';
 
-  export default {
-    components: { Select },
-
-    data() {
-      return {
-         items: [
-          {value: 'chocolate', label: 'Chocolate'},
-          {value: 'pizza', label: 'Pizza'},
-          {value: 'cake', label: 'Cake'},
-          {value: 'chips', label: 'Chips'},
-          {value: 'ice-cream', label: 'Ice Cream'},
-        ]
-      };
-    }
-  };
+  let items = [
+    {value: 'chocolate', label: 'Chocolate'},
+    {value: 'pizza', label: 'Pizza'},
+    {value: 'cake', label: 'Cake'},
+    {value: 'chips', label: 'Chips'},
+    {value: 'ice-cream', label: 'Ice Cream'},
+  ];
 </script>
+
+<Select {items}></Select>
 ```
 
 
@@ -42,30 +32,34 @@ yarn add svelte-select
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| items | String | - | array of items
-| filterText | String | - | text to filter list labels by
-| placeholder | String | - | placeholder text
-| optionIdentifier | String | 'value' | override default identifier
-| listOpen | Boolean | false | open/close list
-| containerStyles | String | - | add/override container styles 
+| items | String | - | Array of items
+| filterText | String | - | Text to filter list labels by
+| placeholder | String | - | Placeholder text
+| optionIdentifier | String | 'value' | Override default identifier
+| listOpen | Boolean | false | Open/close list
+| containerStyles | String | - | Add/override container styles 
 | selectedValue | - | - | Selected value(s)
 | groupBy | Function | - | Function to group list items
 | isClearable | Boolean | true | Enable clearing selected items
+| isCreatable | Boolean | false | Enable creating selected items
 | isDisabled | Boolean | false | Disable select
 | isMulti | Boolean | false | Enable multi select
 | isSearchable | Boolean | true | Disable search/filtering
 | isVirtualList | Boolean | false | Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental)
-| groupFilter | Function | (groups) => groups | group filter function
-| getOptionLabel | Function | (option) => option.label | get option label function
-| getSelectionLabel | Function | (option) => option.label | get selection label function
-| Item | Component | Item | item component
-| Selection | Component | Selection | selection component
-| MultiSelection | Component | MultiSelection | multi selection component
+| groupFilter | Function | (groups) => groups | Group filter function
+| createItem | Function | (filterText) => { label:filterText, value:filterText } | create item function
+| getCreateLabel | Function | (filterText) => \`Create"${filterText}"\` | get creator label function
+| getOptionLabel | Function | (option) => option.label | Get option label function
+| getSelectionLabel | Function | (option) => option.label | Get selection label function
+| Item | Component | Item | Item component
+| Selection | Component | Selection | Selection component
+| MultiSelection | Component | MultiSelection | Multi selection component
 | loadOptions | Promise | - | Method that returns a Promise that updates items
 | noOptionsMessage | String | 'No options' | Message to display when there are no items  
 | hideEmptyState | Boolean | false | Hide list when no options
-| menuPlacement | String | 'auto' | when 'auto' displays either 'top' or 'bottom' depending on viewport
-| hasError | Boolean | false | show error styles around select input (red border)
+| menuPlacement | String | 'auto' | When 'auto' displays either 'top' or 'bottom' depending on viewport
+| hasError | Boolean | false | Show error styles around select input (red border)
+| inputAttributes | Object | - | Pass in attributes like 'id' to the Select input, for example {id: 'Food Selection', foo: 'something'}
 
 
 ## Events
@@ -76,29 +70,19 @@ yarn add svelte-select
 | clear | - | fires when clear all is invoked
 
 ```html
-<Select {items} on:select="handleSelect(event)" on:clear="handleClear()"></Select>
-
 <script>
   import Select from 'svelte-select';
 
-  export default {
-    components: { Select },
-
-    data() {
-      return {
-         items: [...]
-      };
-    },
-    methods: {
-      handleSelect(selectedVal) {
-        ...
-      },
-      onClear() {
-        ...
-      }
-    }
-  };
+  let items = [...];
+  function handleSelect(selectedVal) {
+    ...
+  }
+  function onClear() {
+    ...
+  }
 </script>
+
+<Select {items} on:select={handleSelect} on:clear={handleClear}></Select>
 ```
 
 ## Development
@@ -108,6 +92,27 @@ yarn global add serve@8
 yarn
 yarn dev
 yarn test:browser
+```
+
+In your favourite browser go to http://localhost:3000 and open devtools and see the console for the test output. When developing its handy to see the component on the page; comment out the `select.$destroy();` on the last test in /test/src/index.js or use the `test.only()` to target just one test.
+
+For example: 
+
+```js
+test.only('when getSelectionLabel contains HTML then render the HTML', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      selectedValue: items[0],
+      getSelectionLabel: (option) => `<p>${option.label}</p>`,
+    }
+  });
+
+  t.ok(document.querySelector('.selection').innerHTML === '<p>Chocolate</p>');
+
+  //select.$destroy();
+});
+
 ```
 
 

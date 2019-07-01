@@ -1,14 +1,526 @@
-<svelte:window
-  on:click="handleWindowClick(event)"
-  on:keydown="handleKeyDown(event)"
-  on:resize="getPosition()"
-/>
+<script>
+  import { beforeUpdate, createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+  import List from './List.svelte';
+  import ItemComponent from './Item.svelte';
+  import SelectionComponent from './Selection.svelte';
+  import MultiSelectionComponent from './MultiSelection.svelte';
+  import isOutOfViewport from './utils/isOutOfViewport';
 
-<div
-  class="{containerClasses} {hasError ? 'hasError' : ''}"
-  style="{containerStyles}"
-  on:click="handleClick()"
-  ref:container>
+  const dispatch = createEventDispatcher();
+  export let container = undefined;
+  export let input = undefined;
+  export let Item = ItemComponent;
+  export let Selection = SelectionComponent;
+  export let MultiSelection = MultiSelectionComponent;
+  export let isMulti = false;
+  export let isDisabled = false;
+  export let isCreatable = false;
+  export let isFocused = false;
+  export let selectedValue = undefined;
+  export let filterText = '';
+  export let placeholder = 'Select...';
+  export let items = [];
+  export let groupBy = undefined;
+  export let groupFilter = (groups) => groups;
+  export let getOptionLabel = (option) => {
+    if (option) return option.label
+  };
+  export let optionIdentifier = 'value';
+  export let loadOptions = undefined;
+  export let hasError = false;
+  export let containerStyles = '';
+  export let getSelectionLabel = (option) => {
+    if (option) return option.label
+  };
+
+  export let createItem = (filterText) => {
+    return {
+      value: filterText,
+      label: filterText
+    };
+  };
+
+  export let getCreateLabel = (filterText) => {
+    return `Create \"${filterText}\"`;
+  };
+  export let isSearchable = true;
+  export let inputStyles = '';
+  export let isClearable = true;
+  export let isWaiting = false;
+  export let listPlacement = 'auto';
+  export let listOpen = false;
+  export let list = undefined;
+  export let isVirtualList = false;
+  export let loadOptionsInterval = 200;
+  export let noOptionsMessage = 'No options';
+  export let hideEmptyState = false;
+  export let filteredItems = [];
+  export let inputAttributes = {};
+
+  let target;
+  let activeSelectedValue;
+  let _items = [];
+  let originalItemsClone;
+  let containerClasses = '';
+  let prev_selectedValue;
+  let prev_listOpen;
+  let prev_filterText;
+  let prev_isFocused;
+  let prev_filteredItems;
+
+  function wait(ms) {
+    return new Promise(f => setTimeout(f, ms));
+  }
+
+  const getItems = async (arg) => {
+    isWaiting = true;
+    await wait(loadOptionsInterval);
+    const options = await loadOptions(filterText);
+    items = options;
+    isWaiting = false;
+    listOpen = true;
+  }
+
+  $: {
+    containerClasses = `selectContainer`;
+    containerClasses += isMulti ? ' multiSelect' : '';
+    containerClasses += isDisabled ? ' disabled' : '';
+    containerClasses += isFocused ? ' focused' : '';
+  }
+
+  $: showSelectedItem = selectedValue && filterText.length === 0;
+
+  $: placeholderText = selectedValue ? '' : placeholder;
+
+  let _inputAttributes = {};
+  $: {
+    _inputAttributes = Object.assign(inputAttributes, {
+      autocomplete: 'off',
+      autocorrect: 'off',
+      spellcheck: false
+    })
+
+    if (!isSearchable) {
+      _inputAttributes.readonly = true;
+    }
+  }
+
+  $: {
+    let _filteredItems;
+    let _items = items;
+
+    if (items && items.length > 0 && typeof items[0] !== 'object') {
+      _items = items.map((item, index) => {
+        return {
+          index,
+          value: item,
+          label: item
+        }
+      })
+    }
+
+    if (loadOptions && filterText.length === 0 && originalItemsClone) {
+      _filteredItems = JSON.parse(originalItemsClone);
+      _items = JSON.parse(originalItemsClone);
+    } else {
+      _filteredItems = loadOptions ? _items : _items.filter(item => {
+
+        let keepItem = true;
+
+        if (isMulti && selectedValue) {
+          keepItem = !selectedValue.find((value) => {
+            return value[optionIdentifier] === item[optionIdentifier]
+          });
+        }
+
+        if (keepItem && filterText.length < 1) return true;
+        return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
+      });
+    }
+
+    if (groupBy) {
+      const groupValues = [];
+      const groups = {};
+
+      _filteredItems.forEach((item) => {
+        const groupValue = groupBy(item);
+
+        if (!groupValues.includes(groupValue)) {
+          groupValues.push(groupValue);
+          groups[groupValue] = [];
+          groups[groupValue].push(Object.assign({ groupValue }, item));
+        } else {
+          groups[groupValue].push(Object.assign({}, item));
+        }
+
+        groups[groupValue].push();
+      });
+
+      const sortedGroupedItems = [];
+
+      groupFilter(groupValues).forEach((groupValue) => {
+        sortedGroupedItems.push(...groups[groupValue]);
+      });
+
+      filteredItems = sortedGroupedItems;
+
+    } else {
+      filteredItems = _filteredItems;
+    }
+  }
+
+  beforeUpdate(() => {
+    if (isMulti && selectedValue && selectedValue && selectedValue.length > 1) {
+      checkSelectedValueForDuplicates();
+    }
+
+    if (!isMulti && selectedValue && prev_selectedValue !== selectedValue) {
+      if (!prev_selectedValue || JSON.stringify(selectedValue[optionIdentifier]) != JSON.stringify(prev_selectedValue[optionIdentifier])) {
+        dispatch('select', selectedValue)
+      }
+    }
+
+    if (isMulti && JSON.stringify(selectedValue) !== JSON.stringify(prev_selectedValue)) {
+      if (checkSelectedValueForDuplicates()) {
+        dispatch('select', selectedValue)
+      }
+    }
+
+    if (container && listOpen !== prev_listOpen) {
+      if (listOpen) {
+        loadList();
+      } else {
+        removeList();
+      }
+    }
+
+    if (filterText !== prev_filterText) {
+      if (filterText.length > 0) {
+
+        if (loadOptions) {
+          getItems(loadOptions);
+        } else {
+          loadList();
+          listOpen = true;
+
+          if (isMulti) {
+            activeSelectedValue = undefined
+          }
+        }
+      } else {
+        setList([])
+      }
+
+      if (list) {
+        list.$set({
+          filterText
+        });
+      }
+    }
+
+    if (isFocused !== prev_isFocused) {
+      if (isFocused || listOpen) {
+        handleFocus();
+      } else {
+        filterText = '';
+        if (input) input.blur();
+      }
+    }
+
+    if (prev_filteredItems !== filteredItems) {
+      let _filteredItems = [...filteredItems];
+
+      if (isCreatable && filterText) {
+        const itemToCreate = createItem(filterText);
+        const existingItemWithFilterValue = _filteredItems.find((item) => {
+          return item[optionIdentifier] === itemToCreate[optionIdentifier];
+        });
+
+        let existingSelectionWithFilterValue;
+
+        if (selectedValue) {
+          if (isMulti) {
+            existingSelectionWithFilterValue = selectedValue.find((selection) => {
+              return selection[optionIdentifier] === itemToCreate[optionIdentifier];
+            });
+          } else if (selectedValue[optionIdentifier] === itemToCreate[optionIdentifier]) {
+            existingSelectionWithFilterValue = selectedValue;
+          }
+        }
+
+        if (!existingItemWithFilterValue && !existingSelectionWithFilterValue) {
+          _filteredItems = [..._filteredItems, {
+            label: getCreateLabel(filterText),
+            isCreator: true
+          }];
+        }
+      }
+
+      setList(_filteredItems);
+    }
+
+    prev_selectedValue = selectedValue;
+    prev_listOpen = listOpen;
+    prev_filterText = filterText;
+    prev_isFocused = isFocused;
+    prev_filteredItems = filteredItems;
+  });
+
+  function checkSelectedValueForDuplicates() {
+    let noDuplicates = true;
+    if (selectedValue) {
+      const ids = [];
+      const uniqueValues = [];
+
+      selectedValue.forEach(val => {
+        if (!ids.includes(val[optionIdentifier])) {
+          ids.push(val[optionIdentifier]);
+          uniqueValues.push(val);
+        } else {
+          noDuplicates = false;
+        }
+      })
+
+      selectedValue = uniqueValues
+    }
+    return noDuplicates;
+  }
+
+  async function setList(items) {
+    await tick();
+    if (list) return list.$set({ items })
+  }
+
+  function handleMultiItemClear(event) {
+    const {detail} = event;
+
+    if (selectedValue.length === 1) {
+      selectedValue = undefined;
+    } else {
+      selectedValue.splice(detail.i, 1);
+      selectedValue = selectedValue;
+    }
+    
+    getPosition();
+  }
+
+  async function getPosition() {
+    await tick();
+    if (!target || !container) return;
+    const { top, height, width } = container.getBoundingClientRect();
+
+    target.style['min-width'] = `${width}px`;
+    target.style.width = `auto`;
+    target.style.left = '0';
+
+    if (listPlacement === 'top') {
+      target.style.bottom = `${height + 5}px`;
+    } else {
+      target.style.top = `${height + 5}px`;
+    }
+
+    target = target;
+
+    if (listPlacement === 'auto' && isOutOfViewport(target).bottom) {
+      target.style.top = ``;
+      target.style.bottom = `${height + 5}px`;
+    }
+
+    target.style.visibility = '';
+  }
+
+  function handleKeyDown(e) {
+    if (!isFocused) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        listOpen = true;
+        activeSelectedValue = undefined;
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        listOpen = true;
+        activeSelectedValue = undefined;
+        break;
+      case 'Tab':
+        if (!listOpen) isFocused = false;
+        break;
+      case 'Backspace':
+        if (!isMulti || filterText.length > 0) return;
+        if (isMulti && selectedValue && selectedValue.length > 0) {
+          handleMultiItemClear(activeSelectedValue !== undefined ? activeSelectedValue : selectedValue.length - 1);
+          if (activeSelectedValue === 0 || activeSelectedValue === undefined) break;
+          activeSelectedValue = selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined;
+        }
+        break;
+      case 'ArrowLeft':
+        if (list) list.$set({ hoverItemIndex: -1 });
+        if (!isMulti || filterText.length > 0) return;
+
+        if (activeSelectedValue === undefined) {
+          activeSelectedValue = selectedValue.length - 1;
+        } else if (selectedValue.length > activeSelectedValue && activeSelectedValue !== 0) {
+          activeSelectedValue -= 1
+        }
+        break;
+      case 'ArrowRight':
+        if (list) list.$set({ hoverItemIndex: -1 });
+        if (!isMulti || filterText.length > 0 || activeSelectedValue === undefined) return;
+        if (activeSelectedValue === selectedValue.length - 1) {
+          activeSelectedValue = undefined;
+        } else if (activeSelectedValue < selectedValue.length - 1) {
+          activeSelectedValue += 1;
+        }
+        break;
+    }
+  }
+
+  function handleFocus() {
+    isFocused = true;
+    if (input) input.focus();
+  }
+
+  function removeList() {
+    filterText = '', activeSelectedValue = undefined;
+
+    if (!list) return;
+    list.$destroy();
+    list = undefined;
+
+    if (!target) return;
+    if (target.parentNode) target.parentNode.removeChild(target);
+    target = undefined;
+
+    list = list, target = target;
+  }
+
+  function handleWindowClick(event) {
+    if (!container) return;
+    if (container.contains(event.target)) return;
+    isFocused = false, listOpen = false, activeSelectedValue = undefined;
+    if (input) input.blur();
+  }
+
+  function handleClick() {
+    if (isDisabled) return;
+    isFocused = true, listOpen = !listOpen;
+  }
+
+  function handleClear(e) {
+    e.stopPropagation();
+    selectedValue = undefined, listOpen = false;
+    handleFocus();
+    dispatch('clear');
+  }
+
+  async function loadList() {
+    await tick();
+    if (target && list) return;
+
+    const data = {
+      Item,
+      filterText,
+      optionIdentifier,
+      noOptionsMessage,
+      hideEmptyState,
+      isCreatable,
+      isVirtualList,
+      selectedValue,
+      isMulti,
+      items: filteredItems
+    };
+
+    if (getOptionLabel) {
+      data.getOptionLabel = getOptionLabel;
+    }
+
+    target = document.createElement('div');
+
+    Object.assign(target.style, {
+      position: 'absolute',
+      'z-index': 2,
+      'visibility': 'hidden'
+    });
+
+    list = list, target = target;
+    if (container) container.appendChild(target);
+
+    list = new List({
+      target,
+      props: data
+    });
+
+    list.$on('itemSelected', (event) => {
+      const { detail } = event;
+
+      if (detail) {
+        const item = Object.assign({}, detail);
+
+        if (isMulti) {
+          selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
+        } else {
+          selectedValue = item;
+        }
+
+        filterText = '';
+        selectedValue = selectedValue, listOpen = false, activeSelectedValue = undefined;
+      }
+    });
+
+    list.$on('itemCreated', (event) => {
+      const { detail } = event;
+      if (isMulti) {
+        selectedValue = selectedValue || [];
+        selectedValue = [...selectedValue, createItem(detail)]
+      } else {
+        selectedValue = createItem(detail)
+      }
+
+      filterText = '';
+      listOpen = false;
+      activeSelectedValue = undefined;
+    });
+
+    list = list,
+    target = target;
+    getPosition();
+  }
+
+  onMount(() => {
+    if (isFocused) input.focus();
+    if (listOpen) loadList();
+
+    if (items && items.length > 0) {
+      originalItemsClone = JSON.stringify(items);
+    }
+
+    if (selectedValue) {
+      if (isMulti) {
+        selectedValue = selectedValue.map(item => {
+          if (typeof item === 'string') {
+            return { value: item, label: item }
+          } else {
+            return item;
+          }
+        })
+      } else {
+        if (typeof selectedValue === 'string') {
+          selectedValue = { value: selectedValue, label: selectedValue }
+        }
+      }
+    }
+  });
+
+  onDestroy(() => {
+    removeList()
+  });
+</script>
+
+<svelte:window on:click="{handleWindowClick}" on:keydown="{handleKeyDown}" on:resize="{getPosition}" />
+
+<div class="{containerClasses} {hasError ? 'hasError' : ''}" style="{containerStyles}" on:click="{handleClick}"
+  bind:this={container}>
 
   {#if isMulti && selectedValue && selectedValue.length > 0}
   <svelte:component
@@ -17,32 +529,29 @@
     {getSelectionLabel}
     {activeSelectedValue}
     {isDisabled}
-    on:multiItemClear="handleMultiItemClear(event.i)"
-    on:focus="handleFocus()"
+    on:multiItemClear="{handleMultiItemClear}"
+    on:focus="{handleFocus}"
   />
   {/if}
 
   <input
-    ref:input
-    readonly="{!isSearchable}"
-    on:focus="handleFocus()"
-    bind:value="filterText"
-    autocomplete="off"
-    autocorrect="off"
-    spellcheck="false"
+    {..._inputAttributes}
+    bind:this={input}
+    on:focus="{handleFocus}"
+    bind:value="{filterText}"    
     placeholder="{placeholderText}"
     disabled="{isDisabled}"
     style="{inputStyles}"
   >
 
   {#if !isMulti && showSelectedItem }
-  <div class="selectedItem" on:focus="handleFocus()">
+  <div class="selectedItem" on:focus="{handleFocus}">
     <svelte:component this="{Selection}" item={selectedValue} {getSelectionLabel}/>
   </div>
   {/if}
 
   {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
-  <div class="clearSelect" on:click="handleClear(event)">
+  <div class="clearSelect" on:click="{handleClear}">
     <svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
          role="presentation">
       <path fill="currentColor"
@@ -225,407 +734,4 @@
     }
   }
 </style>
-
-<script>
-  import List from './List.svelte';
-  import Item from './Item.svelte';
-  import Selection from './Selection.svelte';
-  import MultiSelection from './MultiSelection.svelte';
-  import isOutOfViewport from './utils/isOutOfViewport';
-
-  export default {
-    data() {
-      return {
-        containerStyles: undefined,
-        Item,
-        Selection,
-        MultiSelection,
-        items: [],
-        filterText: '',
-        placeholder: 'Select...',
-        listPlacement: 'auto',
-        listOpen: false,
-        list: undefined,
-        target: undefined,
-        selectedValue: undefined,
-        activeSelectedValue: undefined,
-        isClearable: true,
-        isMulti: false,
-        isSearchable: true,
-        isDisabled: false,
-        isVirtualList: false,
-        optionIdentifier: 'value',
-        groupBy: undefined,
-        loadOptions: undefined,
-        loadOptionsInterval: 200,
-        noOptionsMessage: 'No options',
-        hideEmptyState: false,
-        groupFilter: (groups) => groups,
-        getOptionLabel: (option) => {
-          if (option) return option.label
-         },
-        getSelectionLabel: (option) => option.label,
-        hasError: false
-      }
-    },
-    computed: {
-      containerClasses({isMulti, isDisabled, isFocused}) {
-        let classes = `selectContainer`;
-        classes += isMulti ? ' multiSelect' : '';
-        classes += isDisabled ? ' disabled' : '';
-        classes += isFocused ? ' focused' : '';
-
-        return classes;
-      },
-      showSelectedItem({selectedValue, filterText}) {
-        return selectedValue && filterText.length === 0;
-      },
-      placeholderText({selectedValue, placeholder}) {
-        return selectedValue ? '' : placeholder
-      },
-      filteredItems({items, filterText, groupBy, groupFilter, getOptionLabel, isMulti, selectedValue, optionIdentifier, loadOptions}) {
-        if (items && items.length > 0 && typeof items[0] !== 'object') {
-          items = items.map((item, index) => {
-            return {
-              index,
-              value: item,
-              label: item
-            }
-          })
-        }
-
-        const filteredItems = loadOptions ? items : items.filter(item => {
-          let keepItem = true;
-
-          if (isMulti && selectedValue) {
-            keepItem = !selectedValue.find(({value}) => {
-              return value === item[optionIdentifier]
-            });
-          }
-
-          if (keepItem && filterText.length < 1) return true;
-          return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
-        });
-
-        if (groupBy) {
-          const groupValues = [];
-          const groups = {};
-
-          filteredItems.forEach((item) => {
-            const groupValue = groupBy(item);
-
-            if (!groupValues.includes(groupValue)) {
-              groupValues.push(groupValue);
-              groups[groupValue] = [];
-              groups[groupValue].push(Object.assign({groupValue}, item));
-            } else {
-              groups[groupValue].push(Object.assign({}, item));
-            }
-
-            groups[groupValue].push();
-          });
-
-          const sortedGroupedItems = [];
-
-          groupFilter(groupValues).forEach((groupValue) => {
-            sortedGroupedItems.push(...groups[groupValue]);
-          });
-
-          return sortedGroupedItems;
-        }
-
-        return filteredItems;
-      }
-    },
-    onstate({changed, current, previous}) {
-      if (changed.selectedValue && current.isMulti && current.selectedValue && current.selectedValue.length > 1) {
-        this.checkSelectedValueForDuplicates();
-      }
-
-      if (!previous) return;
-
-      if (!current.isMulti && changed.selectedValue && current.selectedValue) {
-        if (!previous.selectedValue || JSON.stringify(current.selectedValue[current.optionIdentifier]) != JSON.stringify(previous.selectedValue[current.optionIdentifier])) {
-          this.fire('select', current.selectedValue)
-        }
-      }
-
-      if (current.isMulti && JSON.stringify(current.selectedValue) != JSON.stringify(previous.selectedValue)) {
-        if (this.checkSelectedValueForDuplicates()) {
-          this.fire('select', current.selectedValue)
-        }
-      }
-
-      if (changed.listOpen) {
-        if (current.listOpen) {
-          this.loadList();
-        } else {
-          this.removeList();
-        }
-      }
-
-      if (changed.filterText) {
-        if (current.filterText.length > 0) {
-          if(current.loadOptions) {
-            clearTimeout(this.loadOptionsTimeout);
-            this.set({isWaiting:true});
-
-            this.loadOptionsTimeout = setTimeout(() => {
-              current.loadOptions(current.filterText).then((response) => {
-                this.set({
-                  isWaiting:false,
-                  listOpen: true
-                });
-                this.setList(response)
-              })
-              .catch(() => {
-                this.set({
-                  isWaiting:false,
-                  listOpen: true
-                });
-                this.setList(current.items)
-              });
-            }, current.loadOptionsInterval);
-
-          } else {
-              this.loadList();
-              this.set({listOpen: true});
-
-              if (current.isMulti) {
-                this.set({activeSelectedValue: undefined})
-              }
-          }
-        } else {
-          this.setList(current.items)
-        }
-      }
-
-      if (changed.isFocused) {
-        const {isFocused} = current;
-        if (isFocused) {
-          this.handleFocus();
-        } else {
-          this.set({filterText: ''});
-          if (this.refs.input) this.refs.input.blur();
-        }
-      }
-
-      if (changed.filteredItems && current.list && !current.loadOptions) {
-        this.setList(current.filteredItems)
-      }
-    },
-
-    methods: {
-      checkSelectedValueForDuplicates() {
-        let noDuplicates = true;
-        const {selectedValue, optionIdentifier} = this.get();
-        if (selectedValue) {
-          const ids = [];
-          const uniqueValues = [];
-          
-          selectedValue.forEach(val => {
-            if (!ids.includes(val[optionIdentifier])) {
-              ids.push(val[optionIdentifier]);
-              uniqueValues.push(val);
-            } else {
-              noDuplicates = false;
-            }
-          })
-
-          this.set({selectedValue: uniqueValues})
-        }
-        return noDuplicates;
-      },
-      setList(items) {
-        const {list} = this.get();
-        if (list) return list.set({items})
-      },
-      handleMultiItemClear(i) {
-        const {selectedValue} = this.get();
-        selectedValue.splice(i, 1);
-        this.set({selectedValue: selectedValue.length > 0 ? selectedValue : undefined});
-        this.getPosition();
-      },
-      getPosition() {
-        const {listPlacement, target} = this.get();
-
-        if (!target) return;
-        const {top, height, width} = this.refs.container.getBoundingClientRect();
-
-        target.style['min-width'] = `${width}px`;
-        target.style.width = `auto`;
-        target.style.left = '0';
-
-        if(listPlacement === 'top') {
-          target.style.bottom = `${height + 5}px`;
-        } else {
-          target.style.top = `${height + 5}px`;
-        }
-
-        this.set({target});
-
-        if(listPlacement === 'auto' && isOutOfViewport(target).bottom) {
-          target.style.top = ``;
-          target.style.bottom = `${height + 5}px`;
-        }
-
-        target.style.visibility = '';
-      },
-      handleKeyDown(e) {
-        let {isFocused, listOpen, selectedValue, filterText, isMulti, activeSelectedValue, list} = this.get();
-        if (!isFocused) return;
-
-        switch (e.key) {
-          case 'ArrowDown':
-            e.preventDefault();
-            this.set({listOpen: true, activeSelectedValue: undefined});
-            break;
-          case 'ArrowUp':
-            e.preventDefault();
-            this.set({listOpen: true, activeSelectedValue: undefined});
-            break;
-          case 'Tab':
-            if (!listOpen) this.set({isFocused: false});
-            break;
-          case 'Backspace':
-            if (!isMulti || filterText.length > 0) return;
-            if (isMulti && selectedValue && selectedValue.length > 0) {
-              this.handleMultiItemClear(activeSelectedValue !== undefined ? activeSelectedValue : selectedValue.length - 1);
-              if (activeSelectedValue === 0) break;
-              this.set({activeSelectedValue: selectedValue.length > activeSelectedValue ? activeSelectedValue - 1 : undefined });
-            }
-            break;
-          case 'ArrowLeft':
-            if (list) list.set({ hoverItemIndex: -1});  
-            if (!isMulti || filterText.length > 0) return;
-
-            if (activeSelectedValue === undefined) {
-              activeSelectedValue = selectedValue.length - 1;
-            } else if (selectedValue.length > activeSelectedValue && activeSelectedValue !== 0) {
-              activeSelectedValue -= 1
-            }
-            this.set({activeSelectedValue});
-            break;
-          case 'ArrowRight':
-            if (list) list.set({ hoverItemIndex: -1});
-            if (!isMulti || filterText.length > 0 || activeSelectedValue === undefined) return;
-            if (activeSelectedValue === selectedValue.length - 1) {
-              activeSelectedValue = undefined;
-            } else if (activeSelectedValue < selectedValue.length - 1) {
-              activeSelectedValue += 1;
-            }
-            this.set({activeSelectedValue});
-            break;
-        }
-      },
-      handleFocus() {
-        this.set({isFocused: true});
-        if (this.refs.input) this.refs.input.focus();
-      },
-      removeList() {
-        let {list, target} = this.get();
-        this.set({filterText: '', activeSelectedValue: undefined});
-
-        if (!list) return;
-        list.destroy();
-        list = undefined;
-
-        if (!target) return;
-        target.parentNode.removeChild(target);
-        target = undefined;
-
-        this.set({list, target});
-      },
-      handleWindowClick(event) {
-        if (!this.refs.container) return;
-        if (this.refs.container.contains(event.target)) return;
-        this.set({isFocused: false, listOpen: false, activeSelectedValue: undefined});
-        if (this.refs.input) this.refs.input.blur();
-      },
-      handleClick() {
-        const {isDisabled, listOpen} = this.get();
-        if (isDisabled) return;
-        this.set({isFocused: true, listOpen: !listOpen});
-      },
-      handleClear(e) {
-        e.stopPropagation();
-        this.set({selectedValue: undefined, listOpen: false});
-        this.handleFocus();
-        this.fire('clear');
-      },
-      loadList() {
-        let {
-          target,
-          list, 
-          Item, 
-          getOptionLabel,
-          optionIdentifier,
-          noOptionsMessage, 
-          hideEmptyState,
-          items,
-          selectedValue,
-          filteredItems,
-          isMulti,
-          isVirtualList } = this.get();
-        if (target && list) return;
-
-        const data = {Item, optionIdentifier, noOptionsMessage, hideEmptyState, isVirtualList};
-
-        if (getOptionLabel) {
-          data.getOptionLabel = getOptionLabel;
-        }
-
-        target = document.createElement('div');
-
-        Object.assign(target.style, {
-          position: 'absolute',
-          'z-index': 2,
-          'visibility': 'hidden'
-        });
-
-        this.set({list, target});
-        this.refs.container.appendChild(target);
-
-        list = new List({
-          target,
-          data
-        });
-
-        if (items) {
-          list.set({items: filteredItems, selectedValue, isMulti});
-        }
-
-        list.on('itemSelected', (newSelection) => {          
-          if (newSelection) {
-            const item = Object.assign({}, newSelection);
-
-            if (isMulti) {
-              selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
-            } else {
-              selectedValue = item;
-            }
-
-            this.set({
-              selectedValue,
-              listOpen: false,
-              activeSelectedValue: undefined
-            });
-          }
-        });
-
-        this.set({list, target});
-        this.getPosition();
-      }
-    },
-    oncreate() {
-      const {isFocused,listOpen} = this.get();
-      this.loadOptionsTimeout = undefined;
-
-      if (isFocused) this.refs.input.focus();
-      if (listOpen) this.loadList();
-    },
-    ondestroy() {
-      if (this.get().list) this.removeList()
-    }
-  }
-</script>
+ 
