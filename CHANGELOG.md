@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 2.0.1
+
+*  Nothing, just npm being weird!
+
 ## 2.0.0
 
 *  Upgrade to Svelte v3
