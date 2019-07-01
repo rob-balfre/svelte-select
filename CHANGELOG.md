@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 2.0.3
+
+*  allow html content in multi selection
+
 ## 2.0.2
 
 *  CSS height bug fix
