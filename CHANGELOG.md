@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 2.0.0
+
+*  Upgrade to Svelte v3
+*  Added isCreatable
+
 ## 1.7.6
 
 *  Fix for Async loading
