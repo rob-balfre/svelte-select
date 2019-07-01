@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 2.0.2
+
+*  CSS height bug fix
+*  Fix for Async loading (again)
+
 ## 2.0.1
 
 *  Nothing, just npm being weird!
