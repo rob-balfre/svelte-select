@@ -17,7 +17,7 @@
 {#each selectedValue as value, i}
 <div class="multiSelectItem {activeSelectedValue === i ? 'active' : ''} {isDisabled ? 'disabled' : ''}">
   <div class="multiSelectItem_label">
-    {getSelectionLabel(value)}
+    {@html getSelectionLabel(value)}
   </div>
   {#if !isDisabled}
   <div class="multiSelectItem_clear" on:click="{event => handleClear(i, event)}">
