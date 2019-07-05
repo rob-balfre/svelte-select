@@ -137,7 +137,7 @@ test('should highlight active list item', async (t) => {
     }
   });
 
-  t.ok(target.querySelector('.listItem.active .item').innerHTML === 'Pizza');
+  t.ok(target.querySelector('.listItem .active').innerHTML === 'Pizza');
 
   list.$destroy();
 });
@@ -158,7 +158,7 @@ test('list scrolls to active item', async (t) => {
 
   let offsetBounding;
   const container = target.querySelector('.listContainer');
-  const focusedElemBounding = container.querySelector('.listItem.active');
+  const focusedElemBounding = container.querySelector('.listItem .active');
   if (focusedElemBounding) {
     offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
   }
@@ -188,7 +188,7 @@ test('list scrolls to hovered item when navigating with keys', async (t) => {
   do {
     await handleKeyboard('ArrowDown');
 
-    const hoveredItem = container.querySelector('.listItem.hover');
+    const hoveredItem = container.querySelector('.listItem .hover');
     const isInViewport = container.getBoundingClientRect().bottom - hoveredItem.getBoundingClientRect().bottom >= 0;
 
     selectedItemsAreWithinBounds = selectedItemsAreWithinBounds && isInViewport;
@@ -211,8 +211,8 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   });
 
   await handleKeyboard('ArrowDown');
-  const focusedElemBounding = target.querySelector('.listItem.hover');
-  t.equal(focusedElemBounding.innerHTML.trim(), `<div class="item">Pizza</div>`);
+  const focusedElemBounding = target.querySelector('.listItem .hover');
+  t.equal(focusedElemBounding.innerHTML.trim(), `Pizza`);
   list.$destroy();
 });
 
@@ -350,7 +350,7 @@ test('List starts with first item in hover state', async (t) => {
   });
 
   await querySelectorClick('.selectContainer');
-  t.ok(target.querySelector('.listItem.hover .item').innerHTML === 'Chocolate');
+  t.ok(target.querySelector('.listItem .hover').innerHTML === 'Chocolate');
 
   select.$destroy();
 });
@@ -480,7 +480,7 @@ test('clicking Select with selected item should open list with item listed as ac
   await wait(0);
   document.querySelector('.selectContainer').click();
   await wait(0);
-  t.ok(document.querySelector('.listItem.hover .item').innerHTML === 'Cake');
+  t.ok(document.querySelector('.listItem .hover').innerHTML === 'Cake');
   select.$destroy();
 });
 
@@ -770,7 +770,7 @@ test('While filtering, the first item in List should receive hover class', async
   });
 
   await handleSet(select, {filterText: 'I'})
-  t.ok(document.querySelector('.listItem.hover'));
+  t.ok(document.querySelector('.listItem .hover'));
   select.$destroy();
 });
 
@@ -905,8 +905,8 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
     }
   });
 
-  const first = document.querySelector('.listItem');
-  const last = document.querySelector('.listItem:last-child');
+  const first = document.querySelector('.listItem:first-child .item');
+  const last = document.querySelector('.listItem:last-child .item');
 
   t.ok(first.scrollWidth > first.clientWidth);
   t.ok(last.scrollWidth === last.clientWidth);
@@ -954,7 +954,7 @@ test('if only one item in list it should have hover state', async (t) => {
     }
   });
 
-  t.ok(document.querySelector('.listItem').classList.contains('hover'));
+  t.ok(document.querySelector('.listItem .item').classList.contains('hover'));
 
   list.$destroy();
 });
@@ -1125,7 +1125,7 @@ test('groups should be filtered by expression', async (t) => {
   await querySelectorClick('.selectContainer');
 
   t.ok(target.querySelector('.listGroupTitle').innerHTML === 'Savory');
-  t.ok(target.querySelector('.listItem.hover .item').innerHTML === 'Pizza');
+  t.ok(target.querySelector('.listItem .hover').innerHTML === 'Pizza');
 
   select.$destroy();
 });
@@ -1142,7 +1142,7 @@ test('groups should be sorted by expression', async (t) => {
 
   await querySelectorClick('.selectContainer');
   t.ok(target.querySelector('.listGroupTitle').innerHTML === 'Savory');
-  t.ok(target.querySelector('.listItem.hover .item').innerHTML === 'Pizza');
+  t.ok(target.querySelector('.listItem .hover').innerHTML === 'Pizza');
   
   select.$destroy();
 });
@@ -1373,7 +1373,7 @@ test('when isMulti and selectedValue has items and list opens then first item in
   await querySelectorClick('.listItem');
   await handleKeyboard('ArrowDown');
 
-  t.ok(document.querySelector('.listItem.hover'));
+  t.ok(document.querySelector('.listItem .hover'));
 
   select.$destroy();
 });
@@ -1688,9 +1688,9 @@ test('when items in list filter or update then first item in list should highlig
   await handleKeyboard('ArrowDown');
   await handleKeyboard('ArrowDown');
   
-  t.ok(document.querySelector('.hover .item').innerHTML === 'Cake');
+  t.ok(document.querySelector('.hover').innerHTML === 'Cake');
   await handleSet(select, {filterText: 'c'});
-  t.ok(document.querySelector('.hover .item').innerHTML === 'Chocolate');
+  t.ok(document.querySelector('.hover').innerHTML === 'Chocolate');
 
   select.$destroy();
 });

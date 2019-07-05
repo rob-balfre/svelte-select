@@ -1,8 +1,52 @@
 <script>
+  export let isActive = false;
+  export let isFirst = false;
+  export let isHover = false;
   export let getOptionLabel = undefined;
   export let item = undefined;
+
+  let itemClasses = '';
+
+  $: {
+    const classes = [];
+    if (isActive) { classes.push('active'); }
+    if (isFirst) { classes.push('first'); }
+    if (isHover) { classes.push('hover'); }
+    itemClasses = classes.join(' ');
+  }
 </script>
 
-<div class="item">
+<style>
+  .item {
+    cursor: default;
+    height: var(--height, 42px);
+    line-height: var(--height, 42px);
+    padding: var(--itemPadding, 0 20px);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .item:active {
+    background: var(--itemActiveBackground, #b9daff);
+  }
+
+  .item.active {
+    background: var(--itemIsActiveBG, #007aff);
+    color: var(--itemIsActiveColor, #fff);
+  }
+
+  .item.first {
+    border-radius: var(--itemFirstBorderRadius, 4px 4px 0 0);
+  }
+
+  .item.hover:not(.active) {
+    background: var(--itemHoverBG, #e7f2ff);
+  }
+</style>
+
+
+
+<div class="item {itemClasses}">
   {@html getOptionLabel(item)}
 </div>

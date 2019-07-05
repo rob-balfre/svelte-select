@@ -591,32 +591,32 @@
 
 <style>
   .selectContainer {
-    border: 1px solid #D8DBDF;
-    border-radius: 3px;
-    height: 42px;
+    border: var(--border, 1px solid #D8DBDF);
+    border-radius: var(--borderRadius, 3px);
+    height: var(--height, 42px);
     position: relative;
     display: flex;
-    padding: 0 16px;
-    background: #fff;
+    padding: var(--padding, 0 16px);
+    background: var(--background, #fff);
   }
 
   .selectContainer input {
     cursor: default;
     border: none;
-    color: #3F4F5F;
-    height: 42px;
-    line-height: 42px;
-    padding: 0 16px;
+    color: var(--inputColor, #3F4F5F);
+    height: var(--height, 42px);
+    line-height: var(--height, 42px);
+    padding: var(--padding, 0 16px);
     width: 100%;
     background: transparent;
-    font-size: 14px;
-    letter-spacing: -0.08px;
+    font-size: var(--inputFontSize, 14px);
+    letter-spacing: var(--inputLetterSpacing, -0.08px);
     position: absolute;
     left: 0;
   }
 
   .selectContainer input::placeholder {
-    color: #78848F;
+    color: var(--placeholderColor, #78848F);
   }
 
   .selectContainer input:focus {
@@ -624,30 +624,30 @@
   }
 
   .selectContainer:hover {
-    border-color: #b2b8bf;
+    border-color: var(--borderHoverColor, #b2b8bf);
   }
 
   .selectContainer.focused {
-    border-color: #006FE8;
+    border-color: var(--borderFocusColor, #006FE8);
   }
 
   .selectContainer.disabled {
-    background: #EBEDEF;
-    border-color: #EBEDEF;
-    color: #C1C6CC;
+    background: var(--disabledBackground, #EBEDEF);
+    border-color: var(--disabledBorderColor, #EBEDEF);
+    color: var(--disabledColor, #C1C6CC);
   }
 
   .selectContainer.disabled input::placeholder {
-    color: #C1C6CC;
+    color: var(--disabledPlaceholderColor, #C1C6CC);
   }
 
   .selectedItem {
-    line-height: 42px;
-    height: 42px;
+    line-height: var(--height, 42px);
+    height: var(--height, 42px);
     text-overflow: ellipsis;
     overflow-x: hidden;
     white-space: nowrap;
-    padding-right: 20px;
+    padding: var(--selectedItemPadding, 0 20px 0 0);
   }
 
   .selectedItem:focus {
@@ -656,47 +656,47 @@
 
   .clearSelect {
     position: absolute;
-    right: 10px;
-    top: 11px;
-    bottom: 11px;
-    width: 20px;
-    color: #c5cacf;
+    right: var(--clearSelectRight, 10px);
+    top: var(--clearSelectTop, 11px);
+    bottom: var(--clearSelectBottom, 11px);
+    width: var(--clearSelectWidth, 20px);
+    color: var(--clearSelectColor, #c5cacf);
     flex: none !important;
   }
 
   .clearSelect:hover {
-    color: #2c3e50;
+    color: var(--clearSelectHoverColor, #2c3e50);
   }
 
   .selectContainer.focused .clearSelect {
-    color: #3F4F5F;
+    color: var(--clearSelectFocusColor, #3F4F5F)
   }
 
   .indicator {
     position: absolute;
-    right: 10px;
-    top: 11px;
-    width: 20px;
-    height: 20px;
-    color: #c5cacf;
+    right: var(--indicatorRight, 10px);
+    top: var(--indicatorTop, 11px);
+    width: var(--indicatorWidth, 20px);
+    height: var(--indicatorHeight, 20px);
+    color: var(--indicatorColor, #c5cacf);
   }
 
   .indicator svg {
     display: inline-block;
-    fill: currentcolor;
+    fill: var(--indicatorFill, currentcolor);
     line-height: 1;
-    stroke: currentcolor;
+    stroke: var(--indicatorStroke, currentcolor);
     stroke-width: 0;
   }
 
   .spinner {
     position: absolute;
-    right: 10px;
-    top: 11px;
-    width: 20px;
-    height: 20px;
-    color: #51ce6c;
-    animation: rotate 0.75s linear infinite;
+    right: var(--spinnerRight, 10px);
+    top: var(--spinnerLeft, 11px);
+    width: var(--spinnerWidth, 20px);
+    height: var(--spinnerHeight, 20px);
+    color: var(--spinnerColor, #51ce6c);
+    animation: var(--spinnerAnimation, rotate 0.75s linear infinite);
   }
 
   .spinner_icon {
@@ -720,7 +720,7 @@
 
   .multiSelect {
     display: flex;
-    padding: 0 35px 0 16px;
+    padding: var(--multiSelectPadding, 0 35px 0 16px);
     height: auto;
     flex-wrap: wrap;
   }
@@ -730,13 +730,13 @@
   }
 
   .selectContainer.multiSelect input {
-    padding: 0;
+    padding: var(--multiSelectInputPadding, 0);
     position: relative;
-    margin: 0;
+    margin: var(--multiSelectInputMargin, 0);
   }
 
   .hasError {
-    border: 1px solid #FF2D55;
+    border: var(--errorBorder, 1px solid #FF2D55);
   }
 
   @keyframes rotate {
