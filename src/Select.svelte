@@ -5,6 +5,7 @@
   import SelectionComponent from './Selection.svelte';
   import MultiSelectionComponent from './MultiSelection.svelte';
   import isOutOfViewport from './utils/isOutOfViewport';
+  import debounce from './utils/debounce';
 
   const dispatch = createEventDispatcher();
   export let container = undefined;
@@ -43,6 +44,7 @@
   export let getCreateLabel = (filterText) => {
     return `Create \"${filterText}\"`;
   };
+
   export let isSearchable = true;
   export let inputStyles = '';
   export let isClearable = true;
@@ -51,11 +53,12 @@
   export let listOpen = false;
   export let list = undefined;
   export let isVirtualList = false;
-  export let loadOptionsInterval = 200;
+  export let loadOptionsInterval = 300;
   export let noOptionsMessage = 'No options';
   export let hideEmptyState = false;
   export let filteredItems = [];
   export let inputAttributes = {};
+  
 
   let target;
   let activeSelectedValue;
@@ -73,19 +76,15 @@
     filterText = '';
   }
 
-  function wait(ms) {
-    return new Promise(f => setTimeout(f, ms));
-  }
-
-  const getItems = async (arg) => {
+  const getItems = debounce(async () => {
     isWaiting = true;
-    await wait(loadOptionsInterval);
-    const options = await loadOptions(filterText);
-    items = options;    
+    
+    items = await loadOptions(filterText);
+  
     isWaiting = false;
     isFocused = true;
     listOpen = true;
-  }
+  }, loadOptionsInterval);
 
   $: {
     containerClasses = `selectContainer`;
@@ -140,6 +139,7 @@
         }
 
         if (keepItem && filterText.length < 1) return true;
+
         return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
       });
     }
@@ -158,8 +158,6 @@
         } else {
           groups[groupValue].push(Object.assign({}, item));
         }
-
-        groups[groupValue].push();
       });
 
       const sortedGroupedItems = [];
@@ -169,7 +167,6 @@
       });
 
       filteredItems = sortedGroupedItems;
-
     } else {
       filteredItems = _filteredItems;
     }
