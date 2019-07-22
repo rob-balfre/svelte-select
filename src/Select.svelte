@@ -696,7 +696,7 @@
     width: var(--spinnerWidth, 20px);
     height: var(--spinnerHeight, 20px);
     color: var(--spinnerColor, #51ce6c);
-    animation: var(--spinnerAnimation, rotate 0.75s linear infinite);
+    animation: rotate 0.75s linear infinite;
   }
 
   .spinner_icon {
