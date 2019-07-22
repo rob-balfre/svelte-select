@@ -155,6 +155,7 @@
           activeItemIndex = hoverItemIndex;
           handleSelect(items[hoverItemIndex]);
         }
+        break;
       case 'Tab':
         e.preventDefault();
         if (items.length === 0) break;
