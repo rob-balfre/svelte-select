@@ -418,7 +418,6 @@
   }
 
   function handleClear(e) {
-    e.stopPropagation();
     selectedValue = undefined, listOpen = false;
     handleFocus();
     dispatch('clear');
@@ -561,7 +560,7 @@
   {/if}
 
   {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
-  <div class="clearSelect" on:click="{handleClear}">
+  <div class="clearSelect" on:click|preventDefault="{handleClear}">
     <svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
          role="presentation">
       <path fill="currentColor"
