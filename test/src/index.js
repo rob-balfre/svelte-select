@@ -587,9 +587,7 @@ test('clearing selected item closes List if open', async (t) => {
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  await wait(0);
-  document.querySelector('.clearSelect').click();
+  select.handleClear();
   await wait(0);
   t.ok(!document.querySelector('.listContainer'));
 

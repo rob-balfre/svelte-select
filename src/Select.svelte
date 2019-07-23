@@ -399,23 +399,28 @@
     if (target.parentNode) target.parentNode.removeChild(target);
     target = undefined;
 
-    list = list, target = target;
+    list = list;
+    target = target;
   }
 
   function handleWindowClick(event) {
     if (!container) return;
     if (container.contains(event.target)) return;
-    isFocused = false, listOpen = false, activeSelectedValue = undefined;
+    isFocused = false;
+    listOpen = false;
+    activeSelectedValue = undefined;
     if (input) input.blur();
   }
 
   function handleClick() {
     if (isDisabled) return;
-    isFocused = true, listOpen = !listOpen;
+    isFocused = true;
+    listOpen = !listOpen;
   }
 
-  function handleClear(e) {
-    selectedValue = undefined, listOpen = false;
+  export function handleClear() {
+    selectedValue = undefined;
+    listOpen = false;
     handleFocus();
     dispatch('clear');
   }
@@ -449,7 +454,8 @@
       'visibility': 'hidden'
     });
 
-    list = list, target = target;
+    list = list;
+    target = target;
     if (container) container.appendChild(target);
 
     list = new List({
@@ -470,7 +476,9 @@
         }
 
         resetFilter();
-        selectedValue = selectedValue, listOpen = false, activeSelectedValue = undefined;
+        selectedValue = selectedValue;
+        listOpen = false;
+        activeSelectedValue = undefined;
       }
     });
 

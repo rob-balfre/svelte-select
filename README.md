@@ -51,6 +51,7 @@ yarn add svelte-select
 | getCreateLabel | Function | (filterText) => \`Create"${filterText}"\` | get creator label function
 | getOptionLabel | Function | (option) => option.label | Get option label function
 | getSelectionLabel | Function | (option) => option.label | Get selection label function
+| handleClear | Function | - | Clears selection, closes list and dispatches event
 | Item | Component | Item | Item component
 | Selection | Component | Selection | Selection component
 | MultiSelection | Component | MultiSelection | Multi selection component
