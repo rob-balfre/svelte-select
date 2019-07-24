@@ -1751,7 +1751,7 @@ test('when selectedValue is cleared the clear event is fired', async (t) => {
   select.$destroy();
 });
 
-test.only('when multi item is cleared the clear event is fired with removed item', async (t) => {
+test('when multi item is cleared the clear event is fired with removed item', async (t) => {
   const itemToRemove = items[0];
 
   const select = new Select({
