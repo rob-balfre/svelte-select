@@ -1,5 +1,12 @@
 # svelte-select changelog
 
+## 2.1.0
+
+*  CSS vars for theme control
+*  Clear event improved for multi-select support
+*  Grouping improvements
+*  Svelte v3 upgrade bug fixes
+
 ## 2.0.3
 
 *  allow html content in multi selection
