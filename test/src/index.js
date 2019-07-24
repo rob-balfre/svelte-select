@@ -1095,35 +1095,111 @@ test('items should be grouped by groupBy expression', async (t) => {
   const select = new Select({
     target,
     props: {
+      listOpen: true,
+      items: itemsWithGroup,
+      groupBy
+    }
+  });
+
+  function groupBy(item) {
+    return item.group;
+  }
+
+  await wait(0);
+
+  const groupedListItems = select.list.items;
+
+  groupedListItems.forEach((item, itemIndex) => {
+    if(itemIndex > 0) {
+      const prevItem = groupedListItems[itemIndex - 1];
+      const prevItemIsHeaderOrInSameGroup = item.group === (prevItem.isGroupHeader ? prevItem.value : prevItem.group);
+      t.ok(item.isGroupHeader || prevItemIsHeaderOrInSameGroup);
+    }
+  });
+  
+  select.$destroy();
+});
+
+
+test('clicking group header should not make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group
     }
   });
+  
+  await wait(0);
+  await querySelectorClick('.listGroupTitle');
 
-  await querySelectorClick('.selectContainer');
-  t.ok(target.querySelector('.listGroupTitle'));
+  t.equal(select.selectedValue, undefined);
 
   select.$destroy();
 });
 
-test('groups should be filtered by expression', async (t) => {  
+test('when isGroupHeaderSelectable clicking group header should select createGroupHeaderItem(groupValue,item)', async (t) => {
   const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithGroup,
-      groupBy: (item) => item.group,
-      groupFilter: (groups) => {
-        return groups.filter((group) => {
-          return group !== 'Sweet';
-        });
-      }
+      isGroupHeaderSelectable: true,
+      groupBy,
+      createGroupHeaderItem
     }
   });
 
+  function groupBy(item) {
+    return item.group;
+  }
+
+  function createGroupHeaderItem(groupValue, item) {
+    return {
+      label: `XXX ${groupValue} XXX ${item.label}`
+    };
+  }
+
   await querySelectorClick('.selectContainer');
 
-  t.ok(target.querySelector('.listGroupTitle').innerHTML === 'Savory');
-  t.ok(target.querySelector('.listItem .hover').innerHTML === 'Pizza');
+  const groupHeaderItem = select.list.items[0];
+  const groupItem = select.list.items.find((item) => {
+    return item.group === groupHeaderItem.id;
+  });
+
+  await querySelectorClick('.listItem');
+
+  t.ok(select.selectedValue.isGroupHeader);
+  t.equal(select.selectedValue.label, createGroupHeaderItem(groupBy(groupItem), groupItem).label);
+
+  select.$destroy();
+});
+
+test('group headers label should be created by getGroupHeaderLabel(item)', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithGroup,
+      groupBy,
+      getGroupHeaderLabel
+    }
+  });
+
+  function groupBy(item) {
+    return item.group;
+  }
+
+  function getGroupHeaderLabel(item) {
+    return `Group label is ${item.id}`;
+  }
+
+  await querySelectorClick('.selectContainer');
+
+  const groupHeaderItem = select.list.items[0];
+
+  t.equal(target.querySelector('.listGroupTitle').textContent, getGroupHeaderLabel(groupHeaderItem));
 
   select.$destroy();
 });
@@ -1132,16 +1208,18 @@ test('groups should be sorted by expression', async (t) => {
   const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group,
       groupFilter: (groups) => groups.reverse()
     }
   });
 
-  await querySelectorClick('.selectContainer');
-  t.ok(target.querySelector('.listGroupTitle').innerHTML === 'Savory');
-  t.ok(target.querySelector('.listItem .hover').innerHTML === 'Pizza');
-  
+  await wait();
+
+  t.ok(target.querySelector('.listGroupTitle').textContent.trim() === 'Savory');
+  t.ok(target.querySelector('.listItem').textContent.trim() === 'Pizza');
+
   select.$destroy();
 });
 
@@ -1297,7 +1375,7 @@ test('when isMulti and groupBy is active then items should be selectable', async
   target.style.maxWidth = '400px';
   await querySelectorClick('.selectContainer');
   await querySelectorClick('.listItem');
-  t.equal(JSON.stringify(select.$$.ctx.selectedValue), JSON.stringify([{groupValue: 'Sweet', value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
+  t.equal(JSON.stringify(select.selectedValue), JSON.stringify([{"isGroupItem":true,"value":"chocolate","label":"Chocolate","group":"Sweet"}]));
 
   select.$destroy();
 });
@@ -1875,7 +1953,7 @@ test('when isVirtualList then render list', async (t) => {
   select.$destroy();
 });
 
-test('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
+test.only('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1890,14 +1968,15 @@ test('when loadOptions method is supplied but filterText is empty then do not ru
   await wait(0);
   select.$set({filterText: 'Juniper'});
   await wait(500);
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.ok(document.querySelector('.customItem_name').innerHTML === 'Juniper Wheat Beer');
-  select.$set({selectedValue: undefined, filterText: '', listOpen: true});
+  select.$set({selectedValue: undefined, filterText: ''});  
+  await wait(0);
+  select.$set({listOpen: true});
   await wait(0);
   t.ok(document.querySelector('.empty'));
 
-  select.$destroy();
+  //select.$destroy();
 });
 
 test('when isMulti and selectedValue has items then check each item is unique', async (t) => {
@@ -2061,10 +2140,13 @@ test('when isMulti, groupBy and selectedValue are supplied then list should be f
     }
   });
 
-  t.equal(JSON.stringify(select.$$.ctx.filteredItems), JSON.stringify([
-    { groupValue: "first", id: 1, name: "Foo", group: "first" },
-    { id: 4, name: "Qux", group: "first" },
-    { groupValue: "second", id: 3, name: "Baz", group: "second" }]));
+  t.equal(JSON.stringify(select.filteredItems), JSON.stringify([
+    {"value":"first","label":"first","id":"first","isGroupHeader":true,"isSelectable":false},
+    {"isGroupItem":true,id: 1, name: "Foo", group: "first" },
+    {"isGroupItem":true,id: 4, name: "Qux", group: "first" },
+    {"value":"second","label":"second","id":"second","isGroupHeader":true,"isSelectable":false},
+    {"isGroupItem":true, id: 3, name: "Baz", group: "second" }
+  ]));
 
   select.$destroy();
 });

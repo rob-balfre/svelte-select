@@ -27,7 +27,8 @@ export default [
 			resolve(),
 			commonjs(),
 			svelte({
-				dev:true
+        dev:true,
+        accessors: true
 			}),
 		]
 	}

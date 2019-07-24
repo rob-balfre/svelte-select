@@ -23,6 +23,10 @@
   export let items = [];
   export let groupBy = undefined;
   export let groupFilter = (groups) => groups;
+  export let isGroupHeaderSelectable = false;
+  export let getGroupHeaderLabel = (option) => {
+    if (option) return option.label
+  };
   export let getOptionLabel = (option) => {
     if (option) return option.label
   };
@@ -32,6 +36,13 @@
   export let containerStyles = '';
   export let getSelectionLabel = (option) => {
     if (option) return option.label
+  };
+
+  export let createGroupHeaderItem = (groupValue) => {
+    return {
+      value: groupValue,
+      label: groupValue
+    }
   };
 
   export let createItem = (filterText) => {
@@ -128,7 +139,7 @@
       _filteredItems = JSON.parse(originalItemsClone);
       _items = JSON.parse(originalItemsClone);
     } else {
-      _filteredItems = loadOptions ? _items : _items.filter(item => {
+      _filteredItems = loadOptions ? filterText.length === 0 ? [] : _items : _items.filter(item => {
 
         let keepItem = true;
 
@@ -154,10 +165,20 @@
         if (!groupValues.includes(groupValue)) {
           groupValues.push(groupValue);
           groups[groupValue] = [];
-          groups[groupValue].push(Object.assign({ groupValue }, item));
-        } else {
-          groups[groupValue].push(Object.assign({}, item));
+
+          if(groupValue) {
+            groups[groupValue].push(Object.assign(
+              createGroupHeaderItem(groupValue, item), 
+              { 
+                id: groupValue, 
+                isGroupHeader: true, 
+                isSelectable: isGroupHeaderSelectable
+              }
+            ));
+          }
         }
+        
+        groups[groupValue].push(Object.assign({ isGroupItem: !!groupValue }, item));
       });
 
       const sortedGroupedItems = [];
@@ -178,14 +199,14 @@
     }
 
     if (!isMulti && selectedValue && prev_selectedValue !== selectedValue) {
-      if (!prev_selectedValue || JSON.stringify(selectedValue[optionIdentifier]) != JSON.stringify(prev_selectedValue[optionIdentifier])) {
-        dispatch('select', selectedValue)
+      if (!prev_selectedValue || JSON.stringify(selectedValue[optionIdentifier]) !== JSON.stringify(prev_selectedValue[optionIdentifier])) {
+        dispatch('select', selectedValue);
       }
     }
 
     if (isMulti && JSON.stringify(selectedValue) !== JSON.stringify(prev_selectedValue)) {
       if (checkSelectedValueForDuplicates()) {
-        dispatch('select', selectedValue)
+        dispatch('select', selectedValue);
       }
     }
 
@@ -203,7 +224,7 @@
         listOpen = true;
 
         if (loadOptions) {
-          getItems(loadOptions);
+          getItems();
         } else {
           loadList();
           listOpen = true;
@@ -439,6 +460,7 @@
       isVirtualList,
       selectedValue,
       isMulti,
+      getGroupHeaderLabel,
       items: filteredItems
     };
 
@@ -477,8 +499,11 @@
 
         resetFilter();
         selectedValue = selectedValue;
-        listOpen = false;
-        activeSelectedValue = undefined;
+
+        setTimeout(() => {
+          listOpen = false;
+          activeSelectedValue = undefined;
+        });
       }
     });
 

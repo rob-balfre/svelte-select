@@ -12,6 +12,7 @@
   export let isVirtualList = false;
   export let items = [];
   export let getOptionLabel = (option) => { if (option) return option.label };
+  export let getGroupHeaderLabel = (option) => { return option.label };
   export let itemHeight = 40;
   export let hoverItemIndex = 0;
   export let selectedValue = undefined;
@@ -109,7 +110,7 @@
     if (item.isCreator) {
       dispatch('itemCreated', filterText);
     } else {
-      activeItemIndex = i
+      activeItemIndex = i;
       hoverItemIndex = i;
       handleSelect(item);
     }
@@ -118,14 +119,20 @@
   async function updateHoverItem(increment) {
     if (isVirtualList) return;
 
-    if (increment > 0 && hoverItemIndex === (items.length - 1)) {
-      hoverItemIndex = 0;
-    }
-    else if (increment < 0 && hoverItemIndex === 0) {
-      hoverItemIndex = items.length - 1;
-    }
-    else {
-      hoverItemIndex = hoverItemIndex + increment;
+    let isNonSelectableItem = true;
+
+    while (isNonSelectableItem) {
+      if (increment > 0 && hoverItemIndex === (items.length - 1)) {
+        hoverItemIndex = 0;
+      }
+      else if (increment < 0 && hoverItemIndex === 0) {
+        hoverItemIndex = items.length - 1;
+      }
+      else {
+        hoverItemIndex = hoverItemIndex + increment;
+      }
+
+      isNonSelectableItem = items[hoverItemIndex].isGroupHeader && !items[hoverItemIndex].isSelectable;
     }
 
     await tick();
@@ -209,7 +216,7 @@
             isFirst="{isItemFirst(i)}"
             isActive="{isItemActive(item, selectedValue, optionIdentifier)}"
             isHover="{isItemHover(hoverItemIndex, item, i, items)}"
-            />
+          />
     </div>
   
 </VirtualList>
@@ -219,23 +226,24 @@
 {#if !isVirtualList}
 <div class="listContainer" bind:this={container}>
   {#each items as item, i}
-    {#if item && item.groupValue}
-      <div class="listGroupTitle">
-        {item.groupValue}
-      </div>
-    {/if}
-
-    <div on:mouseover="{() => handleHover(i)}" on:click="{event => handleClick({item, i, event})}"
-        class="listItem">
-          <svelte:component 
-            this="{Item}"
-            {item}
-            {getOptionLabel}
-            isFirst="{isItemFirst(i)}"
-            isActive="{isItemActive(item, selectedValue, optionIdentifier)}"
-            isHover="{isItemHover(hoverItemIndex, item, i, items)}"
-            />
+    {#if item.isGroupHeader && !item.isSelectable}
+      <div class="listGroupTitle">{getGroupHeaderLabel(item)}</div>
+    { :else }
+    <div 
+      on:mouseover="{() => handleHover(i)}" 
+      on:click="{event => handleClick({item, i, event})}"
+      class="listItem"
+    >
+      <svelte:component 
+        this="{Item}"
+        {item}
+        {getOptionLabel}
+        isFirst="{isItemFirst(i)}"
+        isActive="{isItemActive(item, selectedValue, optionIdentifier)}"
+        isHover="{isItemHover(hoverItemIndex, item, i, items)}"
+      />
     </div>
+    {/if}
   {:else}
     {#if !hideEmptyState}
       <div class="empty">{noOptionsMessage}</div>

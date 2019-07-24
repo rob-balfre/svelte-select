@@ -12,6 +12,8 @@
     if (isActive) { classes.push('active'); }
     if (isFirst) { classes.push('first'); }
     if (isHover) { classes.push('hover'); }
+    if (item.isGroupHeader) { classes.push('groupHeader'); }
+    if (item.isGroupItem) { classes.push('groupItem'); }
     itemClasses = classes.join(' ');
   }
 </script>
@@ -25,6 +27,14 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+  }
+
+  .groupHeader {
+    text-transform: var(--groupTitleTextTransform, uppercase);
+  }
+
+  .groupItem {
+    padding-left: 40px;
   }
 
   .item:active {
