@@ -34,61 +34,54 @@
 
 <style>
   .multiSelectItem {
-    background: #EBEDEF;
-    margin-right: 5px;
-    border-radius: 16px;
-    line-height: 32px;
+    background: var(--multiItemBG, #EBEDEF);
+    margin: var(--multiItemMargin, 5px 5px 0 0);
+    border-radius: var(--multiItemBorderRadius, 16px);
+    height: var(--multiItemHeight, 32px);
+    line-height: var(--multiItemHeight, 32px);
     display: flex;
     cursor: default;
-    height: 32px;
-    margin-top: 5px;
-    padding: 0 10px 0 15px;
+    padding: var(--multiItemPadding, 0 10px 0 15px);
   }
 
   .multiSelectItem_label {
-    margin-right: 5px;
-  }
-
-  .multiSelectItem_clear {
-    border-radius: 0 4px 4px 0;
-    width: 20px;
-    text-align: center;
+    margin: var(--multiLabelMargin, 0 5px 0 0);
   }
 
   .multiSelectItem:hover,
   .multiSelectItem.active {
-    background-color: #006FFF;
-    color: #fff;
+    background-color: var(--multiItemActiveBG, #006FFF);
+    color: var(--multiItemActiveColor, #fff);
   }
 
   .multiSelectItem.disabled:hover {
-    background: #EBEDEF;
-    color: #C1C6CC;
+    background: var(--multiItemDisabledHoverBg, #EBEDEF);
+    color: var(--multiItemDisabledHoverColor, #C1C6CC);
   }
 
   .multiSelectItem_clear {
-    border-radius: 50%;
-    background: #52616F;
-    width: 16px;
-    height: 16px;
+    border-radius: var(--multiClearRadius, 50%);
+    background: var(--multiClearBG, #52616F);
+    width: var(--multiClearWidth, 16px);
+    height: var(--multiClearHeight, 16px);
     position: relative;
-    top: 8px;
-    text-align: center;
-    padding: 1px;
+    top: var(--multiClearTop, 8px);
+    text-align: var(--multiClearTextAlign, center);
+    padding: var(--multiClearPadding, 1px);
   }
 
   .multiSelectItem_clear:hover,
   .active .multiSelectItem_clear {
-    background: #fff;
+    background: var(--multiClearHoverBG, #fff);
   }
 
   .multiSelectItem_clear:hover svg,
   .active .multiSelectItem_clear svg {
-    fill: #006FFF;
+    fill: var(--multiClearHoverFill, #006FFF);
   }
 
   .multiSelectItem_clear svg {
-    fill: #EBEDEF;
+    fill: var(--multiClearFill, #EBEDEF);
     vertical-align: top;
   }
 </style>

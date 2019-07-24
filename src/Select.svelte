@@ -5,6 +5,7 @@
   import SelectionComponent from './Selection.svelte';
   import MultiSelectionComponent from './MultiSelection.svelte';
   import isOutOfViewport from './utils/isOutOfViewport';
+  import debounce from './utils/debounce';
 
   const dispatch = createEventDispatcher();
   export let container = undefined;
@@ -22,6 +23,10 @@
   export let items = [];
   export let groupBy = undefined;
   export let groupFilter = (groups) => groups;
+  export let isGroupHeaderSelectable = false;
+  export let getGroupHeaderLabel = (option) => {
+    if (option) return option.label
+  };
   export let getOptionLabel = (option) => {
     if (option) return option.label
   };
@@ -31,6 +36,13 @@
   export let containerStyles = '';
   export let getSelectionLabel = (option) => {
     if (option) return option.label
+  };
+
+  export let createGroupHeaderItem = (groupValue) => {
+    return {
+      value: groupValue,
+      label: groupValue
+    }
   };
 
   export let createItem = (filterText) => {
@@ -43,6 +55,7 @@
   export let getCreateLabel = (filterText) => {
     return `Create \"${filterText}\"`;
   };
+
   export let isSearchable = true;
   export let inputStyles = '';
   export let isClearable = true;
@@ -51,11 +64,12 @@
   export let listOpen = false;
   export let list = undefined;
   export let isVirtualList = false;
-  export let loadOptionsInterval = 200;
+  export let loadOptionsInterval = 300;
   export let noOptionsMessage = 'No options';
   export let hideEmptyState = false;
   export let filteredItems = [];
   export let inputAttributes = {};
+  
 
   let target;
   let activeSelectedValue;
@@ -73,19 +87,15 @@
     filterText = '';
   }
 
-  function wait(ms) {
-    return new Promise(f => setTimeout(f, ms));
-  }
-
-  const getItems = async (arg) => {
+  const getItems = debounce(async () => {
     isWaiting = true;
-    await wait(loadOptionsInterval);
-    const options = await loadOptions(filterText);
-    items = options;    
+    
+    items = await loadOptions(filterText);
+  
     isWaiting = false;
     isFocused = true;
     listOpen = true;
-  }
+  }, loadOptionsInterval);
 
   $: {
     containerClasses = `selectContainer`;
@@ -129,7 +139,7 @@
       _filteredItems = JSON.parse(originalItemsClone);
       _items = JSON.parse(originalItemsClone);
     } else {
-      _filteredItems = loadOptions ? _items : _items.filter(item => {
+      _filteredItems = loadOptions ? filterText.length === 0 ? [] : _items : _items.filter(item => {
 
         let keepItem = true;
 
@@ -140,6 +150,7 @@
         }
 
         if (keepItem && filterText.length < 1) return true;
+
         return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
       });
     }
@@ -154,12 +165,20 @@
         if (!groupValues.includes(groupValue)) {
           groupValues.push(groupValue);
           groups[groupValue] = [];
-          groups[groupValue].push(Object.assign({ groupValue }, item));
-        } else {
-          groups[groupValue].push(Object.assign({}, item));
-        }
 
-        groups[groupValue].push();
+          if(groupValue) {
+            groups[groupValue].push(Object.assign(
+              createGroupHeaderItem(groupValue, item), 
+              { 
+                id: groupValue, 
+                isGroupHeader: true, 
+                isSelectable: isGroupHeaderSelectable
+              }
+            ));
+          }
+        }
+        
+        groups[groupValue].push(Object.assign({ isGroupItem: !!groupValue }, item));
       });
 
       const sortedGroupedItems = [];
@@ -169,7 +188,6 @@
       });
 
       filteredItems = sortedGroupedItems;
-
     } else {
       filteredItems = _filteredItems;
     }
@@ -181,14 +199,14 @@
     }
 
     if (!isMulti && selectedValue && prev_selectedValue !== selectedValue) {
-      if (!prev_selectedValue || JSON.stringify(selectedValue[optionIdentifier]) != JSON.stringify(prev_selectedValue[optionIdentifier])) {
-        dispatch('select', selectedValue)
+      if (!prev_selectedValue || JSON.stringify(selectedValue[optionIdentifier]) !== JSON.stringify(prev_selectedValue[optionIdentifier])) {
+        dispatch('select', selectedValue);
       }
     }
 
     if (isMulti && JSON.stringify(selectedValue) !== JSON.stringify(prev_selectedValue)) {
       if (checkSelectedValueForDuplicates()) {
-        dispatch('select', selectedValue)
+        dispatch('select', selectedValue);
       }
     }
 
@@ -206,7 +224,7 @@
         listOpen = true;
 
         if (loadOptions) {
-          getItems(loadOptions);
+          getItems();
         } else {
           loadList();
           listOpen = true;
@@ -301,14 +319,18 @@
   }
 
   function handleMultiItemClear(event) {
-    const {detail} = event;
+    const { detail } = event;
+    const itemToRemove = selectedValue[detail ? detail.i : selectedValue.length - 1];
 
     if (selectedValue.length === 1) {
       selectedValue = undefined;
     } else {
-      selectedValue.splice(detail.i, 1);
-      selectedValue = selectedValue;
+      selectedValue = selectedValue.filter((item) => {
+        return item !== itemToRemove;
+      });
     }
+
+    dispatch('clear', itemToRemove);
     
     getPosition();
   }
@@ -402,26 +424,30 @@
     if (target.parentNode) target.parentNode.removeChild(target);
     target = undefined;
 
-    list = list, target = target;
+    list = list;
+    target = target;
   }
 
   function handleWindowClick(event) {
     if (!container) return;
     if (container.contains(event.target)) return;
-    isFocused = false, listOpen = false, activeSelectedValue = undefined;
+    isFocused = false;
+    listOpen = false;
+    activeSelectedValue = undefined;
     if (input) input.blur();
   }
 
   function handleClick() {
     if (isDisabled) return;
-    isFocused = true, listOpen = !listOpen;
+    isFocused = true;
+    listOpen = !listOpen;
   }
 
-  function handleClear(e) {
-    e.stopPropagation();
-    selectedValue = undefined, listOpen = false;
+  export function handleClear() {
+    dispatch('clear', selectedValue);
+    selectedValue = undefined;
+    listOpen = false;
     handleFocus();
-    dispatch('clear');
   }
 
   async function loadList() {
@@ -438,6 +464,7 @@
       isVirtualList,
       selectedValue,
       isMulti,
+      getGroupHeaderLabel,
       items: filteredItems
     };
 
@@ -453,7 +480,8 @@
       'visibility': 'hidden'
     });
 
-    list = list, target = target;
+    list = list;
+    target = target;
     if (container) container.appendChild(target);
 
     list = new List({
@@ -474,7 +502,12 @@
         }
 
         resetFilter();
-        selectedValue = selectedValue, listOpen = false, activeSelectedValue = undefined;
+        selectedValue = selectedValue;
+
+        setTimeout(() => {
+          listOpen = false;
+          activeSelectedValue = undefined;
+        });
       }
     });
 
@@ -561,7 +594,7 @@
   {/if}
 
   {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
-  <div class="clearSelect" on:click="{handleClear}">
+  <div class="clearSelect" on:click|preventDefault="{handleClear}">
     <svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false"
          role="presentation">
       <path fill="currentColor"
@@ -591,32 +624,32 @@
 
 <style>
   .selectContainer {
-    border: 1px solid #D8DBDF;
-    border-radius: 3px;
-    height: 42px;
+    border: var(--border, 1px solid #D8DBDF);
+    border-radius: var(--borderRadius, 3px);
+    height: var(--height, 42px);
     position: relative;
     display: flex;
-    padding: 0 16px;
-    background: #fff;
+    padding: var(--padding, 0 16px);
+    background: var(--background, #fff);
   }
 
   .selectContainer input {
     cursor: default;
     border: none;
-    color: #3F4F5F;
-    height: 42px;
-    line-height: 42px;
-    padding: 0 16px;
+    color: var(--inputColor, #3F4F5F);
+    height: var(--height, 42px);
+    line-height: var(--height, 42px);
+    padding: var(--padding, 0 16px);
     width: 100%;
     background: transparent;
-    font-size: 14px;
-    letter-spacing: -0.08px;
+    font-size: var(--inputFontSize, 14px);
+    letter-spacing: var(--inputLetterSpacing, -0.08px);
     position: absolute;
     left: 0;
   }
 
   .selectContainer input::placeholder {
-    color: #78848F;
+    color: var(--placeholderColor, #78848F);
   }
 
   .selectContainer input:focus {
@@ -624,30 +657,30 @@
   }
 
   .selectContainer:hover {
-    border-color: #b2b8bf;
+    border-color: var(--borderHoverColor, #b2b8bf);
   }
 
   .selectContainer.focused {
-    border-color: #006FE8;
+    border-color: var(--borderFocusColor, #006FE8);
   }
 
   .selectContainer.disabled {
-    background: #EBEDEF;
-    border-color: #EBEDEF;
-    color: #C1C6CC;
+    background: var(--disabledBackground, #EBEDEF);
+    border-color: var(--disabledBorderColor, #EBEDEF);
+    color: var(--disabledColor, #C1C6CC);
   }
 
   .selectContainer.disabled input::placeholder {
-    color: #C1C6CC;
+    color: var(--disabledPlaceholderColor, #C1C6CC);
   }
 
   .selectedItem {
-    line-height: 42px;
-    height: 42px;
+    line-height: var(--height, 42px);
+    height: var(--height, 42px);
     text-overflow: ellipsis;
     overflow-x: hidden;
     white-space: nowrap;
-    padding-right: 20px;
+    padding: var(--selectedItemPadding, 0 20px 0 0);
   }
 
   .selectedItem:focus {
@@ -656,46 +689,46 @@
 
   .clearSelect {
     position: absolute;
-    right: 10px;
-    top: 11px;
-    bottom: 11px;
-    width: 20px;
-    color: #c5cacf;
+    right: var(--clearSelectRight, 10px);
+    top: var(--clearSelectTop, 11px);
+    bottom: var(--clearSelectBottom, 11px);
+    width: var(--clearSelectWidth, 20px);
+    color: var(--clearSelectColor, #c5cacf);
     flex: none !important;
   }
 
   .clearSelect:hover {
-    color: #2c3e50;
+    color: var(--clearSelectHoverColor, #2c3e50);
   }
 
   .selectContainer.focused .clearSelect {
-    color: #3F4F5F;
+    color: var(--clearSelectFocusColor, #3F4F5F)
   }
 
   .indicator {
     position: absolute;
-    right: 10px;
-    top: 11px;
-    width: 20px;
-    height: 20px;
-    color: #c5cacf;
+    right: var(--indicatorRight, 10px);
+    top: var(--indicatorTop, 11px);
+    width: var(--indicatorWidth, 20px);
+    height: var(--indicatorHeight, 20px);
+    color: var(--indicatorColor, #c5cacf);
   }
 
   .indicator svg {
     display: inline-block;
-    fill: currentcolor;
+    fill: var(--indicatorFill, currentcolor);
     line-height: 1;
-    stroke: currentcolor;
+    stroke: var(--indicatorStroke, currentcolor);
     stroke-width: 0;
   }
 
   .spinner {
     position: absolute;
-    right: 10px;
-    top: 11px;
-    width: 20px;
-    height: 20px;
-    color: #51ce6c;
+    right: var(--spinnerRight, 10px);
+    top: var(--spinnerLeft, 11px);
+    width: var(--spinnerWidth, 20px);
+    height: var(--spinnerHeight, 20px);
+    color: var(--spinnerColor, #51ce6c);
     animation: rotate 0.75s linear infinite;
   }
 
@@ -720,7 +753,7 @@
 
   .multiSelect {
     display: flex;
-    padding: 0 35px 0 16px;
+    padding: var(--multiSelectPadding, 0 35px 0 16px);
     height: auto;
     flex-wrap: wrap;
   }
@@ -730,13 +763,13 @@
   }
 
   .selectContainer.multiSelect input {
-    padding: 0;
+    padding: var(--multiSelectInputPadding, 0);
     position: relative;
-    margin: 0;
+    margin: var(--multiSelectInputMargin, 0);
   }
 
   .hasError {
-    border: 1px solid #FF2D55;
+    border: var(--errorBorder, 1px solid #FF2D55);
   }
 
   @keyframes rotate {

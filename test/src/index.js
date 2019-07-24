@@ -137,7 +137,7 @@ test('should highlight active list item', async (t) => {
     }
   });
 
-  t.ok(target.querySelector('.listItem.active .item').innerHTML === 'Pizza');
+  t.ok(target.querySelector('.listItem .active').innerHTML === 'Pizza');
 
   list.$destroy();
 });
@@ -158,7 +158,7 @@ test('list scrolls to active item', async (t) => {
 
   let offsetBounding;
   const container = target.querySelector('.listContainer');
-  const focusedElemBounding = container.querySelector('.listItem.active');
+  const focusedElemBounding = container.querySelector('.listItem .active');
   if (focusedElemBounding) {
     offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
   }
@@ -188,7 +188,7 @@ test('list scrolls to hovered item when navigating with keys', async (t) => {
   do {
     await handleKeyboard('ArrowDown');
 
-    const hoveredItem = container.querySelector('.listItem.hover');
+    const hoveredItem = container.querySelector('.listItem .hover');
     const isInViewport = container.getBoundingClientRect().bottom - hoveredItem.getBoundingClientRect().bottom >= 0;
 
     selectedItemsAreWithinBounds = selectedItemsAreWithinBounds && isInViewport;
@@ -211,8 +211,8 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   });
 
   await handleKeyboard('ArrowDown');
-  const focusedElemBounding = target.querySelector('.listItem.hover');
-  t.equal(focusedElemBounding.innerHTML.trim(), `<div class="item">Pizza</div>`);
+  const focusedElemBounding = target.querySelector('.listItem .hover');
+  t.equal(focusedElemBounding.innerHTML.trim(), `Pizza`);
   list.$destroy();
 });
 
@@ -350,7 +350,7 @@ test('List starts with first item in hover state', async (t) => {
   });
 
   await querySelectorClick('.selectContainer');
-  t.ok(target.querySelector('.listItem.hover .item').innerHTML === 'Chocolate');
+  t.ok(target.querySelector('.listItem .hover').innerHTML === 'Chocolate');
 
   select.$destroy();
 });
@@ -480,7 +480,7 @@ test('clicking Select with selected item should open list with item listed as ac
   await wait(0);
   document.querySelector('.selectContainer').click();
   await wait(0);
-  t.ok(document.querySelector('.listItem.hover .item').innerHTML === 'Cake');
+  t.ok(document.querySelector('.listItem .hover').innerHTML === 'Cake');
   select.$destroy();
 });
 
@@ -587,9 +587,7 @@ test('clearing selected item closes List if open', async (t) => {
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  await wait(0);
-  document.querySelector('.clearSelect').click();
+  select.handleClear();
   await wait(0);
   t.ok(!document.querySelector('.listContainer'));
 
@@ -770,7 +768,7 @@ test('While filtering, the first item in List should receive hover class', async
   });
 
   await handleSet(select, {filterText: 'I'})
-  t.ok(document.querySelector('.listItem.hover'));
+  t.ok(document.querySelector('.listItem .hover'));
   select.$destroy();
 });
 
@@ -905,8 +903,8 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
     }
   });
 
-  const first = document.querySelector('.listItem');
-  const last = document.querySelector('.listItem:last-child');
+  const first = document.querySelector('.listItem:first-child .item');
+  const last = document.querySelector('.listItem:last-child .item');
 
   t.ok(first.scrollWidth > first.clientWidth);
   t.ok(last.scrollWidth === last.clientWidth);
@@ -954,7 +952,7 @@ test('if only one item in list it should have hover state', async (t) => {
     }
   });
 
-  t.ok(document.querySelector('.listItem').classList.contains('hover'));
+  t.ok(document.querySelector('.listItem .item').classList.contains('hover'));
 
   list.$destroy();
 });
@@ -1097,35 +1095,111 @@ test('items should be grouped by groupBy expression', async (t) => {
   const select = new Select({
     target,
     props: {
+      listOpen: true,
+      items: itemsWithGroup,
+      groupBy
+    }
+  });
+
+  function groupBy(item) {
+    return item.group;
+  }
+
+  await wait(0);
+
+  const groupedListItems = select.list.items;
+
+  groupedListItems.forEach((item, itemIndex) => {
+    if(itemIndex > 0) {
+      const prevItem = groupedListItems[itemIndex - 1];
+      const prevItemIsHeaderOrInSameGroup = item.group === (prevItem.isGroupHeader ? prevItem.value : prevItem.group);
+      t.ok(item.isGroupHeader || prevItemIsHeaderOrInSameGroup);
+    }
+  });
+  
+  select.$destroy();
+});
+
+
+test('clicking group header should not make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group
     }
   });
+  
+  await wait(0);
+  await querySelectorClick('.listGroupTitle');
 
-  await querySelectorClick('.selectContainer');
-  t.ok(target.querySelector('.listGroupTitle'));
+  t.equal(select.selectedValue, undefined);
 
   select.$destroy();
 });
 
-test('groups should be filtered by expression', async (t) => {  
+test('when isGroupHeaderSelectable clicking group header should select createGroupHeaderItem(groupValue,item)', async (t) => {
   const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithGroup,
-      groupBy: (item) => item.group,
-      groupFilter: (groups) => {
-        return groups.filter((group) => {
-          return group !== 'Sweet';
-        });
-      }
+      isGroupHeaderSelectable: true,
+      groupBy,
+      createGroupHeaderItem
     }
   });
 
+  function groupBy(item) {
+    return item.group;
+  }
+
+  function createGroupHeaderItem(groupValue, item) {
+    return {
+      label: `XXX ${groupValue} XXX ${item.label}`
+    };
+  }
+
   await querySelectorClick('.selectContainer');
 
-  t.ok(target.querySelector('.listGroupTitle').innerHTML === 'Savory');
-  t.ok(target.querySelector('.listItem.hover .item').innerHTML === 'Pizza');
+  const groupHeaderItem = select.list.items[0];
+  const groupItem = select.list.items.find((item) => {
+    return item.group === groupHeaderItem.id;
+  });
+
+  await querySelectorClick('.listItem');
+
+  t.ok(select.selectedValue.isGroupHeader);
+  t.equal(select.selectedValue.label, createGroupHeaderItem(groupBy(groupItem), groupItem).label);
+
+  select.$destroy();
+});
+
+test('group headers label should be created by getGroupHeaderLabel(item)', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithGroup,
+      groupBy,
+      getGroupHeaderLabel
+    }
+  });
+
+  function groupBy(item) {
+    return item.group;
+  }
+
+  function getGroupHeaderLabel(item) {
+    return `Group label is ${item.id}`;
+  }
+
+  await querySelectorClick('.selectContainer');
+
+  const groupHeaderItem = select.list.items[0];
+
+  t.equal(target.querySelector('.listGroupTitle').textContent, getGroupHeaderLabel(groupHeaderItem));
 
   select.$destroy();
 });
@@ -1134,16 +1208,18 @@ test('groups should be sorted by expression', async (t) => {
   const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group,
       groupFilter: (groups) => groups.reverse()
     }
   });
 
-  await querySelectorClick('.selectContainer');
-  t.ok(target.querySelector('.listGroupTitle').innerHTML === 'Savory');
-  t.ok(target.querySelector('.listItem.hover .item').innerHTML === 'Pizza');
-  
+  await wait();
+
+  t.ok(target.querySelector('.listGroupTitle').textContent.trim() === 'Savory');
+  t.ok(target.querySelector('.listItem').textContent.trim() === 'Pizza');
+
   select.$destroy();
 });
 
@@ -1299,7 +1375,7 @@ test('when isMulti and groupBy is active then items should be selectable', async
   target.style.maxWidth = '400px';
   await querySelectorClick('.selectContainer');
   await querySelectorClick('.listItem');
-  t.equal(JSON.stringify(select.$$.ctx.selectedValue), JSON.stringify([{groupValue: 'Sweet', value: 'chocolate', label: 'Chocolate', group: 'Sweet'}]));
+  t.equal(JSON.stringify(select.selectedValue), JSON.stringify([{"isGroupItem":true,"value":"chocolate","label":"Chocolate","group":"Sweet"}]));
 
   select.$destroy();
 });
@@ -1373,7 +1449,7 @@ test('when isMulti and selectedValue has items and list opens then first item in
   await querySelectorClick('.listItem');
   await handleKeyboard('ArrowDown');
 
-  t.ok(document.querySelector('.listItem.hover'));
+  t.ok(document.querySelector('.listItem .hover'));
 
   select.$destroy();
 });
@@ -1655,7 +1731,7 @@ test('when selectedValue changes then select event should fire', async (t) => {
   select.$destroy();
 });
 
-test('when selectedValue is cleared then clear event from fire select event', async (t) => {
+test('when selectedValue is cleared the clear event is fired', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1675,6 +1751,30 @@ test('when selectedValue is cleared then clear event from fire select event', as
   select.$destroy();
 });
 
+test('when multi item is cleared the clear event is fired with removed item', async (t) => {
+  const itemToRemove = items[0];
+
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items,
+      selectedValue: [itemToRemove]
+    }
+  });
+
+  let removedItem;
+
+  select.$on('clear', (event) => {
+    removedItem = event.detail;
+  });
+
+  document.querySelector('.multiSelectItem_clear').click();
+  t.equal(JSON.stringify(removedItem), JSON.stringify(itemToRemove));
+
+  select.$destroy();
+});
+
 test('when items in list filter or update then first item in list should highlight', async (t) => {
   const select = new Select({
     target,
@@ -1688,9 +1788,9 @@ test('when items in list filter or update then first item in list should highlig
   await handleKeyboard('ArrowDown');
   await handleKeyboard('ArrowDown');
   
-  t.ok(document.querySelector('.hover .item').innerHTML === 'Cake');
+  t.ok(document.querySelector('.hover').innerHTML === 'Cake');
   await handleSet(select, {filterText: 'c'});
-  t.ok(document.querySelector('.hover .item').innerHTML === 'Chocolate');
+  t.ok(document.querySelector('.hover').innerHTML === 'Chocolate');
 
   select.$destroy();
 });
@@ -1892,10 +1992,11 @@ test('when loadOptions method is supplied but filterText is empty then do not ru
   await wait(0);
   select.$set({filterText: 'Juniper'});
   await wait(500);
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.ok(document.querySelector('.customItem_name').innerHTML === 'Juniper Wheat Beer');
-  select.$set({selectedValue: undefined, filterText: '', listOpen: true});
+  select.$set({selectedValue: undefined, filterText: ''});  
+  await wait(0);
+  select.$set({listOpen: true});
   await wait(0);
   t.ok(document.querySelector('.empty'));
 
@@ -2063,10 +2164,13 @@ test('when isMulti, groupBy and selectedValue are supplied then list should be f
     }
   });
 
-  t.equal(JSON.stringify(select.$$.ctx.filteredItems), JSON.stringify([
-    { groupValue: "first", id: 1, name: "Foo", group: "first" },
-    { id: 4, name: "Qux", group: "first" },
-    { groupValue: "second", id: 3, name: "Baz", group: "second" }]));
+  t.equal(JSON.stringify(select.filteredItems), JSON.stringify([
+    {"value":"first","label":"first","id":"first","isGroupHeader":true,"isSelectable":false},
+    {"isGroupItem":true,id: 1, name: "Foo", group: "first" },
+    {"isGroupItem":true,id: 4, name: "Qux", group: "first" },
+    {"value":"second","label":"second","id":"second","isGroupHeader":true,"isSelectable":false},
+    {"isGroupItem":true, id: 3, name: "Baz", group: "second" }
+  ]));
 
   select.$destroy();
 });

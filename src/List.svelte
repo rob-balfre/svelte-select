@@ -12,6 +12,7 @@
   export let isVirtualList = false;
   export let items = [];
   export let getOptionLabel = (option) => { if (option) return option.label };
+  export let getGroupHeaderLabel = (option) => { return option.label };
   export let itemHeight = 40;
   export let hoverItemIndex = 0;
   export let selectedValue = undefined;
@@ -109,7 +110,7 @@
     if (item.isCreator) {
       dispatch('itemCreated', filterText);
     } else {
-      activeItemIndex = i
+      activeItemIndex = i;
       hoverItemIndex = i;
       handleSelect(item);
     }
@@ -118,14 +119,20 @@
   async function updateHoverItem(increment) {
     if (isVirtualList) return;
 
-    if (increment > 0 && hoverItemIndex === (items.length - 1)) {
-      hoverItemIndex = 0;
-    }
-    else if (increment < 0 && hoverItemIndex === 0) {
-      hoverItemIndex = items.length - 1;
-    }
-    else {
-      hoverItemIndex = hoverItemIndex + increment;
+    let isNonSelectableItem = true;
+
+    while (isNonSelectableItem) {
+      if (increment > 0 && hoverItemIndex === (items.length - 1)) {
+        hoverItemIndex = 0;
+      }
+      else if (increment < 0 && hoverItemIndex === 0) {
+        hoverItemIndex = items.length - 1;
+      }
+      else {
+        hoverItemIndex = hoverItemIndex + increment;
+      }
+
+      isNonSelectableItem = items[hoverItemIndex].isGroupHeader && !items[hoverItemIndex].isSelectable;
     }
 
     await tick();
@@ -155,6 +162,7 @@
           activeItemIndex = hoverItemIndex;
           handleSelect(items[hoverItemIndex]);
         }
+        break;
       case 'Tab':
         e.preventDefault();
         if (items.length === 0) break;
@@ -169,7 +177,7 @@
     if (isVirtualList || !container) return;
 
     let offsetBounding;
-    const focusedElemBounding = container.querySelector(`.listItem.${className}`);
+    const focusedElemBounding = container.querySelector(`.listItem .${className}`);
 
     if (focusedElemBounding) {
       offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
@@ -177,6 +185,19 @@
 
     container.scrollTop -= offsetBounding;
   }
+
+  function isItemActive(item, selectedValue, optionIdentifier) {
+    return selectedValue && (selectedValue[optionIdentifier] === item[optionIdentifier]);
+  };
+
+  function isItemFirst(itemIndex) {
+    return itemIndex === 0;
+  };
+
+  function isItemHover(hoverItemIndex, item, itemIndex, items) {
+    return hoverItemIndex === itemIndex || items.length === 1;
+  }
+
 </script>
 
 <svelte:window on:keydown="{handleKeyDown}" />
@@ -187,8 +208,15 @@
   <VirtualList {items} {itemHeight} let:item let:i>
   
     <div on:mouseover="{() => handleHover(i)}" on:click="{event => handleClick({item, i, event})}"
-        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier, isMulti)}">
-          <svelte:component this="{Item}" {item} {getOptionLabel}/>
+        class="listItem">
+          <svelte:component 
+            this="{Item}"
+            {item}
+            {getOptionLabel}
+            isFirst="{isItemFirst(i)}"
+            isActive="{isItemActive(item, selectedValue, optionIdentifier)}"
+            isHover="{isItemHover(hoverItemIndex, item, i, items)}"
+          />
     </div>
   
 </VirtualList>
@@ -198,16 +226,24 @@
 {#if !isVirtualList}
 <div class="listContainer" bind:this={container}>
   {#each items as item, i}
-    {#if item && item.groupValue}
-      <div class="listGroupTitle">
-        {item.groupValue}
-      </div>
-    {/if}
-
-    <div on:mouseover="{() => handleHover(i)}" on:click="{event => handleClick({item, i, event})}"
-        class="listItem {itemClasses(hoverItemIndex, item, i, items, selectedValue, optionIdentifier, isMulti)}">
-          <svelte:component this="{Item}" {item} {getOptionLabel}/>
+    {#if item.isGroupHeader && !item.isSelectable}
+      <div class="listGroupTitle">{getGroupHeaderLabel(item)}</div>
+    { :else }
+    <div 
+      on:mouseover="{() => handleHover(i)}" 
+      on:click="{event => handleClick({item, i, event})}"
+      class="listItem"
+    >
+      <svelte:component 
+        this="{Item}"
+        {item}
+        {getOptionLabel}
+        isFirst="{isItemFirst(i)}"
+        isActive="{isItemActive(item, selectedValue, optionIdentifier)}"
+        isHover="{isItemHover(hoverItemIndex, item, i, items)}"
+      />
     </div>
+    {/if}
   {:else}
     {#if !hideEmptyState}
       <div class="empty">{noOptionsMessage}</div>
@@ -218,60 +254,33 @@
 
 <style>
   .listContainer {
-    box-shadow: 0 2px 3px 0 rgba(44, 62, 80, 0.24);
-    border-radius: 4px;
-    max-height: 250px;
+    box-shadow: var(--listShadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
+    border-radius: var(--listBorderRadius, 4px);
+    max-height: var(--listMaxHeight, 250px);
     overflow-y: auto;
-    background: #fff;
+    background: var(--listBackground, #fff);
   }
 
   .virtualList {
-    height: 200px;
+    height: var(--virtualListHeight, 200px);
   }
 
   .listGroupTitle {
-    color: #8f8f8f;
+    color: var(--groupTitleColor, #8f8f8f);
     cursor: default;
-    font-size: 12px;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 20px;
+    font-size: var(--groupTitleFontSize, 12px);
+    height: var(--height, 42px);
+    line-height: var(--height, 42px);
+    padding: var(--groupTitlePadding, 0 20px);
     text-overflow: ellipsis;
     overflow-x: hidden;
     white-space: nowrap;
-    text-transform: uppercase;
-  }
-
-  .listItem {
-    cursor: default;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 20px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  .listItem.hover {
-    background: #e7f2ff;
-  }
-
-  .listItem:active {
-    background: #b9daff;
-  }
-
-  .listItem:first-child {
-    border-radius: 4px 4px 0 0;
-  }
-
-  .listItem.active {
-    background: #007aff;
-    color: #fff;
+    text-transform: var(--groupTitleTextTransform, uppercase);
   }
 
   .empty {
-    text-align: center;
-    padding: 20px 0;
-    color: #78848F;
+    text-align: var(--listEmptyTextAlign, center);
+    padding: var(--listEmptyPadding, 20px 0);
+    color: var(--listEmptyColor, #78848F);
   }
 </style>
