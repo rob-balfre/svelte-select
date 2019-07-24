@@ -1731,7 +1731,7 @@ test('when selectedValue changes then select event should fire', async (t) => {
   select.$destroy();
 });
 
-test('when selectedValue is cleared then clear event from fire select event', async (t) => {
+test('when selectedValue is cleared the clear event is fired', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1747,6 +1747,30 @@ test('when selectedValue is cleared then clear event from fire select event', as
 
   document.querySelector('.clearSelect').click();
   t.ok(clearEvent);
+
+  select.$destroy();
+});
+
+test.only('when multi item is cleared the clear event is fired with removed item', async (t) => {
+  const itemToRemove = items[0];
+
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items,
+      selectedValue: [itemToRemove]
+    }
+  });
+
+  let removedItem;
+
+  select.$on('clear', (event) => {
+    removedItem = event.detail;
+  });
+
+  document.querySelector('.multiSelectItem_clear').click();
+  t.equal(JSON.stringify(removedItem), JSON.stringify(itemToRemove));
 
   select.$destroy();
 });
@@ -1953,7 +1977,7 @@ test('when isVirtualList then render list', async (t) => {
   select.$destroy();
 });
 
-test.only('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
+test('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1976,7 +2000,7 @@ test.only('when loadOptions method is supplied but filterText is empty then do n
   await wait(0);
   t.ok(document.querySelector('.empty'));
 
-  //select.$destroy();
+  select.$destroy();
 });
 
 test('when isMulti and selectedValue has items then check each item is unique', async (t) => {

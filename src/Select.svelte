@@ -319,14 +319,18 @@
   }
 
   function handleMultiItemClear(event) {
-    const {detail} = event;
+    const { detail } = event;
+    const itemToRemove = selectedValue[detail ? detail.i : selectedValue.length - 1];
 
     if (selectedValue.length === 1) {
       selectedValue = undefined;
     } else {
-      selectedValue.splice(detail.i, 1);
-      selectedValue = selectedValue;
+      selectedValue = selectedValue.filter((item) => {
+        return item !== itemToRemove;
+      });
     }
+
+    dispatch('clear', itemToRemove);
     
     getPosition();
   }
@@ -440,10 +444,10 @@
   }
 
   export function handleClear() {
+    dispatch('clear', selectedValue);
     selectedValue = undefined;
     listOpen = false;
     handleFocus();
-    dispatch('clear');
   }
 
   async function loadList() {
