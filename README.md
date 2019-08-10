@@ -67,7 +67,7 @@ yarn add svelte-select
 
 ### Styling
 
-Svelte-select lets you style components by exposing a number of CSS variables that you can overwrite.
+You can style a component by overriding [the available CSS variables](/docs/theming_variables.md).
 
 ```html
 <script>
@@ -77,10 +77,6 @@ Svelte-select lets you style components by exposing a number of CSS variables th
 </script>
 
 <style>
-  /*   CSS variables can be used to control theming.
-      https://github.com/rob-balfre/svelte-select/blob/master/test/public/index.html#L33 
-  */
-  
   .themed {
     --border: 3px solid blue;
     --borderRadius: 10px;
@@ -93,8 +89,6 @@ Svelte-select lets you style components by exposing a number of CSS variables th
   <Select {items}></Select>  
 </div>
 ```
-
-Also, see [the complete list of exposed variables](/docs/theming_variables.md)
 
 ## Events
 
