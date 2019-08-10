@@ -2,6 +2,7 @@
 
 The following variables can be overriden to style a Select component. 
 
+<!-- List start -->
 - `--background`
 - `--border`
 - `--borderFocusColor`
@@ -64,7 +65,6 @@ The following variables can be overriden to style a Select component.
 - `--multiItemDisabledHoverBg`
 - `--multiItemDisabledHoverColor`
 - `--multiItemHeight`
-- `--multiItemHeight`
 - `--multiItemMargin`
 - `--multiItemPadding`
 - `--multiLabelMargin`
@@ -80,3 +80,4 @@ The following variables can be overriden to style a Select component.
 - `--spinnerRight`
 - `--spinnerWidth`
 - `--virtualListHeight`
+<!-- List end -->
