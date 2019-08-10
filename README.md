@@ -65,6 +65,36 @@ yarn add svelte-select
 | hasError | Boolean | false | Show error styles around select input (red border)
 | inputAttributes | Object | - | Pass in attributes like 'id' to the Select input, for example {id: 'Food Selection', foo: 'something'}
 
+### Styling
+
+Svelte-select lets you style components by exposing a number of CSS variables that you can overwrite.
+
+```html
+<script>
+  import Select from 'svelte-select';
+  
+  const items = ['One', 'Two', 'Three'];
+</script>
+
+<style>
+  /*   CSS variables can be used to control theming.
+      https://github.com/rob-balfre/svelte-select/blob/master/test/public/index.html#L33 
+  */
+  
+  .themed {
+    --border: 3px solid blue;
+    --borderRadius: 10px;
+    --placeholderColor: blue;
+  }
+</style>
+
+<div class="themed">
+  <h2>Theming</h2>
+  <Select {items}></Select>  
+</div>
+```
+
+Also, see [the complete list of exposed variables](/docs/theming_variables.md)
 
 ## Events
 
