@@ -1,6 +1,6 @@
 # Theming variables
 
-The following variables can be overriden to style a Select component. 
+You can override the following variables to style a Select component. 
 
 <!-- List start -->
 - `--background`
