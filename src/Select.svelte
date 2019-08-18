@@ -276,7 +276,7 @@
 
         if (!existingItemWithFilterValue && !existingSelectionWithFilterValue) {
           _filteredItems = [..._filteredItems, {
-            label: getCreateLabel(filterText),
+            [optionIdentifier]: getCreateLabel(filterText),
             isCreator: true
           }];
         }
