@@ -47,7 +47,7 @@
 
   export let createItem = (filterText) => {
     return {
-      value: filterText,
+      [optionIdentifier]: filterText,
       label: filterText
     };
   };

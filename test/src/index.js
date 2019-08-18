@@ -2348,6 +2348,70 @@ test('When isMulti and an items remove icon is clicked then item should be remov
   select.$destroy();
 });
 
+
+test('When isCreatable and isMulti and optionIdentifier is supplied creator displays getCreatorLabel label', async (t) => {
+  const filterText = 'abc';
+  const _items = [
+    {foo: 'chocolate', label: 'Chocolate'},
+    {foo: 'pizza', label: 'Pizza'}
+  ];
+
+  const select = new Select({
+    target,
+    props: {
+      optionIdentifier: 'foo',
+      isMulti: true,
+      items: _items,
+      isCreatable: true
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText });
+  await wait(0);
+  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  const { getCreateLabel } = select.$$.ctx;
+  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, getCreateLabel(filterText));
+
+  select.$destroy();
+});
+
+test('When isCreatable and isMulti and optionIdentifier is supplied multiple creatable items can be added', async (t) => {
+  const filterText = 'foo';
+  const filterText2 = 'bar';
+
+  const _items = [
+    {foo: 'chocolate', label: 'Chocolate'},
+    {foo: 'pizza', label: 'Pizza'}
+  ];
+
+  const select = new Select({
+    target,
+    props: {
+      optionIdentifier: 'foo',
+      isMulti: true,
+      items: _items,
+      isCreatable: true
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText });
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+  select.$set({ filterText: filterText2 });
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+
+  t.ok(select.selectedValue.length === 2);
+  t.ok(select.selectedValue[0].foo);
+
+  select.$destroy();
+});
+
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
