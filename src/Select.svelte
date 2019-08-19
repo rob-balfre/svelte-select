@@ -45,10 +45,10 @@
     }
   };
 
-  export let createItem = (filterText) => {
+  export let createItem = (filterText, isCreator) => {
     return {
       value: filterText,
-      label: filterText
+      label: isCreator ? `Create ${filterText}` : filterText
     };
   };
 
@@ -276,7 +276,7 @@
 
         if (!existingItemWithFilterValue && !existingSelectionWithFilterValue) {
           _filteredItems = [..._filteredItems, {
-            label: getCreateLabel(filterText),
+            ...createItem(filterText, true),
             isCreator: true
           }];
         }
