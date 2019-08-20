@@ -35,7 +35,8 @@ yarn add svelte-select
 | items | String | - | Array of items
 | filterText | String | - | Text to filter list labels by
 | placeholder | String | - | Placeholder text
-| optionIdentifier | String | 'value' | Override default identifier
+| optionIdentifier | String | 'value' | Override default option identifier
+| labelIdentifier | String | 'label' | Override default label identifier
 | listOpen | Boolean | false | Open/close list
 | containerStyles | String | - | Add/override container styles 
 | selectedValue | - | - | Selected value(s)

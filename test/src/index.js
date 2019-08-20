@@ -2142,7 +2142,7 @@ test('when isMulti with items and selectedValue supplied as just strings then se
   select.$destroy();
 });
 
-test('when isMulti, groupBy and selectedValue are supplied then list should be filtered', async (t) => {
+test.only('when isMulti, groupBy and selectedValue are supplied then list should be filtered', async (t) => {
   let _items = [
     { id: 1, name: "Foo", group: "first" },
     { id: 2, name: "Bar", group: "second" },
@@ -2164,13 +2164,7 @@ test('when isMulti, groupBy and selectedValue are supplied then list should be f
     }
   });
 
-  t.equal(JSON.stringify(select.filteredItems), JSON.stringify([
-    {"value":"first","label":"first","id":"first","isGroupHeader":true,"isSelectable":false},
-    {"isGroupItem":true,id: 1, name: "Foo", group: "first" },
-    {"isGroupItem":true,id: 4, name: "Qux", group: "first" },
-    {"value":"second","label":"second","id":"second","isGroupHeader":true,"isSelectable":false},
-    {"isGroupItem":true, id: 3, name: "Baz", group: "second" }
-  ]));
+  t.ok(!select.filteredItems.find(item => item.name === 'Bar'));
 
   select.$destroy();
 });
@@ -2381,17 +2375,30 @@ test('When isCreatable and isMulti and optionIdentifier is supplied multiple cre
   const filterText2 = 'bar';
 
   const _items = [
-    {foo: 'chocolate', label: 'Chocolate'},
-    {foo: 'pizza', label: 'Pizza'}
+    {id: 1, tag_name: 'Banana'},
+    {id: 5, tag_name: 'Orange'},
+    {id: 4, tag_name: 'Tree'},
+    {id: 3, tag_name: 'Guns'},
+    {id: 2, tag_name: 'Cars'},
   ];
+
+  const optionIdentifier = 'tag_name';
+  const labelIdentifier = 'tag_name';
+  const getOptionLabel = (option) => option.tag_name;
+  const getSelectionLabel = (option) => option.tag_name;
+  const createItem = (filterText) => ({id:undefined, tag_name:filterText});
 
   const select = new Select({
     target,
     props: {
-      optionIdentifier: 'foo',
+      labelIdentifier,
+      optionIdentifier,
       isMulti: true,
       items: _items,
-      isCreatable: true
+      isCreatable: true,
+      getOptionLabel,
+      getSelectionLabel,
+      createItem,
     }
   });
 
@@ -2405,8 +2412,10 @@ test('When isCreatable and isMulti and optionIdentifier is supplied multiple cre
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
 
+  console.log('select.selectedValue :', select.selectedValue);
+
   t.ok(select.selectedValue.length === 2);
-  t.ok(select.selectedValue[0].foo);
+  t.ok(select.selectedValue[0].tag_name);
 
   select.$destroy();
 });
