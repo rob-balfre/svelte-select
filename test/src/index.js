@@ -2342,6 +2342,97 @@ test('When isMulti and an items remove icon is clicked then item should be remov
   select.$destroy();
 });
 
+test('When isCreatable item creator displays getCreatorLabel label (1)', async (t) => {
+  const _items = [
+    {country: 'Italy', food: 'Pizza'},
+    {country: 'Australia', food: 'Meat Pie'},
+    {country: 'China', food: 'Fried Rice'}
+  ];
+
+  const filterText = 'Fried Chicken Roll';
+
+  function itemDisplay(item) {
+    return `${item.food} (${item.country})`;
+  }
+
+  function getCreateLabel(filterText) {
+    return `Do you want to create ${filterText} as an added food?`;
+  }
+
+  const select = new Select({
+    target,
+    props: {
+      optionIdentifier: 'food',
+      getOptionLabel: itemDisplay,
+      getSelectionLabel: itemDisplay,
+      getCreateLabel,
+      items: _items,
+      isCreatable: true,
+      createItem(filterText) {
+        return {
+          food: filterText,
+          country: 'Added'
+        };
+      }
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText });
+  await wait(0);
+  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, getCreateLabel(filterText));
+
+  select.$destroy();
+});
+
+test('When isCreatable item creator displays getCreatorLabel label (2)', async (t) => {
+  // Not sure why you would need an option identifier, just showing that using it still doesn't work
+
+  const _items = [
+    {country: 'Italy', food: 'Pizza'},
+    {country: 'Australia', food: 'Meat Pie'},
+    {country: 'China', food: 'Fried Rice'}
+  ];
+
+  const filterText = 'Fried Chicken Roll';
+
+  function itemDisplay(item) {
+    return `${item.food} (${item.country})`;
+  }
+
+  function getCreateLabel(filterText) {
+    return `Do you want to create ${filterText} as an added food?`;
+  }
+
+  const select = new Select({
+    target,
+    props: {
+      optionIdentifier: 'food',
+      labelIdentifier: 'food',
+      getOptionLabel: itemDisplay,
+      getSelectionLabel: itemDisplay,
+      getCreateLabel,
+      items: _items,
+      isCreatable: true,
+      createItem(filterText) {
+        return {
+          food: filterText,
+          country: 'Added'
+        };
+      }
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText });
+  await wait(0);
+  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, getCreateLabel(filterText));
+
+  select.$destroy();
+});
+
 
 test('When isCreatable and isMulti and optionIdentifier is supplied creator displays getCreatorLabel label', async (t) => {
   const filterText = 'abc';
