@@ -45,10 +45,12 @@
     }
   };
 
-  export let createItem = (filterText, isCreator) => {
+  export let createItem = (filterText, isCreator, getCreateLabel) => {
+    const itemText = isCreator ? getCreateLabel(filterText) : filterText;
+
     return {
-      value: filterText,
-      label: isCreator ? `Create ${filterText}` : filterText
+      value: itemText,
+      label: itemText
     };
   };
 
