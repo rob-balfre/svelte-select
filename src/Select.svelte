@@ -45,17 +45,17 @@
     }
   };
 
-  export let createItem = (filterText, isCreator, getCreateLabel) => {
-    const itemText = isCreator ? getCreateLabel(filterText) : filterText;
+  export let getCreateLabel = (filterText) => {
+    return `Create \"${filterText}\"`;
+  };
+
+  export let createItem = (filterText, getCreateLabel) => {
+    const itemText = getCreateLabel ? getCreateLabel(filterText) : filterText;
 
     return {
       value: itemText,
       label: itemText
     };
-  };
-
-  export let getCreateLabel = (filterText) => {
-    return `Create \"${filterText}\"`;
   };
 
   export let isSearchable = true;
@@ -278,7 +278,7 @@
 
         if (!existingItemWithFilterValue && !existingSelectionWithFilterValue) {
           _filteredItems = [..._filteredItems, {
-            ...createItem(filterText, true),
+            ...createItem(filterText, getCreateLabel),
             isCreator: true
           }];
         }
