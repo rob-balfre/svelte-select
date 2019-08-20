@@ -25,30 +25,31 @@
   export let groupFilter = (groups) => groups;
   export let isGroupHeaderSelectable = false;
   export let getGroupHeaderLabel = (option) => {
-    if (option) return option.label
+    if (option) return option[labelIdentifier]
   };
   export let getOptionLabel = (option) => {
-    if (option) return option.label
+    if (option) return option[labelIdentifier]
   };
   export let optionIdentifier = 'value';
   export let loadOptions = undefined;
   export let hasError = false;
   export let containerStyles = '';
   export let getSelectionLabel = (option) => {
-    if (option) return option.label
+    if (option) return option[labelIdentifier]
   };
+  export let labelIdentifier = 'label';
 
   export let createGroupHeaderItem = (groupValue) => {
     return {
-      value: groupValue,
-      label: groupValue
+      [optionIdentifier]: groupValue,
+      [labelIdentifier]: groupValue
     }
   };
 
   export let createItem = (filterText) => {
     return {
       [optionIdentifier]: filterText,
-      label: filterText
+      [labelIdentifier]: filterText
     };
   };
 
@@ -129,8 +130,8 @@
       _items = items.map((item, index) => {
         return {
           index,
-          value: item,
-          label: item
+          [optionIdentifier]: item,
+          [labelIdentifier]: item
         }
       })
     }
@@ -258,6 +259,7 @@
 
       if (isCreatable && filterText) {
         const itemToCreate = createItem(filterText);
+        itemToCreate[labelIdentifier] = getCreateLabel(filterText);
         const existingItemWithFilterValue = _filteredItems.find((item) => {
           return item[optionIdentifier] === itemToCreate[optionIdentifier];
         });
@@ -275,10 +277,8 @@
         }
 
         if (!existingItemWithFilterValue && !existingSelectionWithFilterValue) {
-          _filteredItems = [..._filteredItems, {
-            label: getCreateLabel(filterText),
-            isCreator: true
-          }];
+          itemToCreate.isCreator = true;
+          _filteredItems = [..._filteredItems, itemToCreate];
         }
       }
 
@@ -458,6 +458,7 @@
       Item,
       filterText,
       optionIdentifier,
+      labelIdentifier,
       noOptionsMessage,
       hideEmptyState,
       isCreatable,
@@ -542,14 +543,14 @@
       if (isMulti) {
         selectedValue = selectedValue.map(item => {
           if (typeof item === 'string') {
-            return { value: item, label: item }
+            return { [optionIdentifier]: item, [labelIdentifier]: item }
           } else {
             return item;
           }
         })
       } else {
         if (typeof selectedValue === 'string') {
-          selectedValue = { value: selectedValue, label: selectedValue }
+          selectedValue = { [optionIdentifier]: selectedValue, [labelIdentifier]: selectedValue }
         }
       }
     }
