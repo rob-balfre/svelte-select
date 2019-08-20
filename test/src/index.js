@@ -2142,7 +2142,7 @@ test('when isMulti with items and selectedValue supplied as just strings then se
   select.$destroy();
 });
 
-test.only('when isMulti, groupBy and selectedValue are supplied then list should be filtered', async (t) => {
+test('when isMulti, groupBy and selectedValue are supplied then list should be filtered', async (t) => {
   let _items = [
     { id: 1, name: "Foo", group: "first" },
     { id: 2, name: "Bar", group: "second" },
