@@ -50,8 +50,7 @@ yarn add svelte-select
 | isGroupHeaderSelectable | Boolean | false | Enable selectable group headers
 | createGroupHeaderItem | Function | (groupValue) => { label:groupValue, value:groupValue  } | create item for group headers
 | createItem | Function | (filterText) => { label:filterText, value:filterText } | create item function
-| getCreateLabel | Function | (filterText) => \`Create"${filterText}"\` | get creator label function
-| getOptionLabel | Function | (option) => option.label | Get option label function
+| getOptionLabel | Function | (option, filterText) => option.isCreator ? \`Create "${filterText}"\` : option.label | Get option label function
 | getSelectionLabel | Function | (option) => option.label | Get selection label function
 | getGroupHeaderLabel | Function | (option) => option.label | Get group header label function
 | handleClear | Function | - | Clears selection, closes list and dispatches event

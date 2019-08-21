@@ -11,7 +11,9 @@
   export let Item = ItemComponent;
   export let isVirtualList = false;
   export let items = [];
-  export let getOptionLabel = (option) => { if (option) return option.label };
+  export let getOptionLabel = (option, filterText) => {
+    if (option) return option.isCreator ? `Create \"${filterText}\"` : option.label;
+  };
   export let getGroupHeaderLabel = (option) => { return option.label };
   export let itemHeight = 40;
   export let hoverItemIndex = 0;
@@ -212,6 +214,7 @@
           <svelte:component 
             this="{Item}"
             {item}
+            {filterText}
             {getOptionLabel}
             isFirst="{isItemFirst(i)}"
             isActive="{isItemActive(item, selectedValue, optionIdentifier)}"
@@ -237,6 +240,7 @@
       <svelte:component 
         this="{Item}"
         {item}
+        {filterText}
         {getOptionLabel}
         isFirst="{isItemFirst(i)}"
         isActive="{isItemActive(item, selectedValue, optionIdentifier)}"

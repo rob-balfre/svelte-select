@@ -4,6 +4,7 @@
   export let isHover = false;
   export let getOptionLabel = undefined;
   export let item = undefined;
+  export let filterText = '';
 
   let itemClasses = '';
 
@@ -58,5 +59,5 @@
 
 
 <div class="item {itemClasses}">
-  {@html getOptionLabel(item)}
+  {@html getOptionLabel(item, filterText)}
 </div>
