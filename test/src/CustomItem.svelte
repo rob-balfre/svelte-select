@@ -5,6 +5,7 @@
   export let getOptionLabel = undefined;
   export let getSelectionLabel = undefined;
   export let item = undefined;
+  export let filterText = '';
 
   let itemClasses = '';
 

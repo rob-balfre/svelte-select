@@ -25,10 +25,10 @@
   export let groupFilter = (groups) => groups;
   export let isGroupHeaderSelectable = false;
   export let getGroupHeaderLabel = (option) => {
-    if (option) return option.label
+    return option.label
   };
-  export let getOptionLabel = (option) => {
-    if (option) return option.label
+  export let getOptionLabel = (option, filterText) => {
+    return option.isCreator ? `Create \"${filterText}\"` : option.label;
   };
   export let optionIdentifier = 'value';
   export let loadOptions = undefined;
@@ -45,16 +45,10 @@
     }
   };
 
-  export let getCreateLabel = (filterText) => {
-    return `Create \"${filterText}\"`;
-  };
-
-  export let createItem = (filterText, getCreateLabel) => {
-    const itemText = getCreateLabel ? getCreateLabel(filterText) : filterText;
-
+  export let createItem = (filterText) => {
     return {
-      value: itemText,
-      label: itemText
+      value: filterText,
+      label: filterText
     };
   };
 
@@ -153,7 +147,7 @@
 
         if (keepItem && filterText.length < 1) return true;
 
-        return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
+        return keepItem && getOptionLabel(item, filterText).toLowerCase().includes(filterText.toLowerCase());
       });
     }
 
@@ -259,7 +253,11 @@
       let _filteredItems = [...filteredItems];
 
       if (isCreatable && filterText) {
-        const itemToCreate = createItem(filterText);
+        const itemToCreate = {
+          ...createItem(filterText),
+          isCreator: true
+        };
+
         const existingItemWithFilterValue = _filteredItems.find((item) => {
           return item[optionIdentifier] === itemToCreate[optionIdentifier];
         });
@@ -277,10 +275,7 @@
         }
 
         if (!existingItemWithFilterValue && !existingSelectionWithFilterValue) {
-          _filteredItems = [..._filteredItems, {
-            ...createItem(filterText, getCreateLabel),
-            isCreator: true
-          }];
+          _filteredItems = [..._filteredItems, itemToCreate];
         }
       }
 

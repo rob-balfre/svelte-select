@@ -2164,13 +2164,7 @@ test('when isMulti, groupBy and selectedValue are supplied then list should be f
     }
   });
 
-  t.equal(JSON.stringify(select.filteredItems), JSON.stringify([
-    {"value":"first","label":"first","id":"first","isGroupHeader":true,"isSelectable":false},
-    {"isGroupItem":true,id: 1, name: "Foo", group: "first" },
-    {"isGroupItem":true,id: 4, name: "Qux", group: "first" },
-    {"value":"second","label":"second","id":"second","isGroupHeader":true,"isSelectable":false},
-    {"isGroupItem":true, id: 3, name: "Baz", group: "second" }
-  ]));
+  t.ok(!select.filteredItems.find(item => item.name === 'Bar'));
 
   select.$destroy();
 });
@@ -2196,8 +2190,14 @@ test('When isCreatable disabled, creator is not displayed', async (t) => {
   select.$destroy();
 });
 
-test('When isCreatable enabled, creator displays getCreatorLabel label', async (t) => {
+test('When isCreatable enabled, creator displays getOptionLabel for isCreator', async (t) => {
   const filterText = 'abc_XXXX';
+
+  function getOptionLabel(item, filterText) {
+    return item.isCreator ? `Wanna add ${filterText}?`: item.label;
+  }
+
+  const creatorItem = { label: filterText, value: filterText, isCreator: true };
 
   const select = new Select({
     target,
@@ -2205,7 +2205,8 @@ test('When isCreatable enabled, creator displays getCreatorLabel label', async (
       items,
       isCreatable: true,
       isFocused: true,
-      listOpen: true
+      listOpen: true,
+      getOptionLabel
     }
   });
 
@@ -2213,8 +2214,7 @@ test('When isCreatable enabled, creator displays getCreatorLabel label', async (
   select.$set({ filterText });
   await wait(0);
   const listItems = document.querySelectorAll('.listContainer > .listItem');
-  const { getCreateLabel } = select.$$.ctx;
-  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, getCreateLabel(filterText));
+  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, getOptionLabel(creatorItem, filterText));
 
   select.$destroy();
 });
@@ -2347,6 +2347,124 @@ test('When isMulti and an items remove icon is clicked then item should be remov
 
   select.$destroy();
 });
+
+test('When isCreatable with non-default item structure, item creator displays getCreatorLabel label for isCreator', async (t) => {
+  const _items = [
+    {country: 'Italy', food: 'Pizza'},
+    {country: 'Australia', food: 'Meat Pie'},
+    {country: 'China', food: 'Fried Rice'}
+  ];
+
+  const filterText = 'Fried Chicken Roll';
+
+  function creatorLabel(filterText) {
+    return `Do you want to create ${ filterText } as an added food?`;
+  }
+
+  function itemDisplay(item, filterText) {
+    return item.isCreator ? creatorLabel(filterText) : `${item.food} (${item.country})`;
+  }
+
+  const select = new Select({
+    target,
+    props: {
+      optionIdentifier: 'food',
+      getOptionLabel: itemDisplay,
+      getSelectionLabel: itemDisplay,
+      items: _items,
+      isCreatable: true,
+      createItem(filterText) {
+        return {
+          food: filterText,
+          country: 'Added'
+        };
+      }
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText });
+  await wait(0);
+  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, creatorLabel(filterText));
+
+  select.$destroy();
+});
+
+test('When isCreatable and isMulti and optionIdentifier is supplied creator displays getCreatorLabel label', async (t) => {
+  const filterText = 'abc';
+  const _items = [
+    {foo: 'chocolate', label: 'Chocolate'},
+    {foo: 'pizza', label: 'Pizza'}
+  ];
+
+  const select = new Select({
+    target,
+    props: {
+      optionIdentifier: 'foo',
+      isMulti: true,
+      items: _items,
+      isCreatable: true
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText });
+  await wait(0);
+  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, `Create \"${ filterText }\"`);
+
+  select.$destroy();
+});
+
+test('When isCreatable and isMulti and optionIdentifier is supplied multiple creatable items can be added', async (t) => {
+  const filterText = 'foo';
+  const filterText2 = 'bar';
+
+  const _items = [
+    {id: 1, tag_name: 'Banana'},
+    {id: 5, tag_name: 'Orange'},
+    {id: 4, tag_name: 'Tree'},
+    {id: 3, tag_name: 'Guns'},
+    {id: 2, tag_name: 'Cars'},
+  ];
+
+  const optionIdentifier = 'tag_name';
+  const getOptionLabel = (option) => option.tag_name;
+  const getSelectionLabel = (option) => option.tag_name;
+  const createItem = (filterText) => ({id:undefined, tag_name:filterText});
+
+  const select = new Select({
+    target,
+    props: {
+      optionIdentifier,
+      isMulti: true,
+      items: _items,
+      isCreatable: true,
+      getOptionLabel,
+      getSelectionLabel,
+      createItem,
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText });
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+  select.$set({ filterText: filterText2 });
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+
+  console.log('select.selectedValue :', select.selectedValue);
+
+  t.ok(select.selectedValue.length === 2);
+  t.ok(select.selectedValue[0].tag_name);
+
+  select.$destroy();
+});
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
