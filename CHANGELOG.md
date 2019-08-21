@@ -1,5 +1,11 @@
 # svelte-select changelog
 
+## 3.0.0
+
+*  Breaking change: isCreatable refactor
+*  getCreateLabel has been removed
+*  If using isCreatable and custom list or item components would need to implement filterText prop
+
 ## 2.1.0
 
 *  CSS vars for theme control
