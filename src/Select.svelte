@@ -25,10 +25,10 @@
   export let groupFilter = (groups) => groups;
   export let isGroupHeaderSelectable = false;
   export let getGroupHeaderLabel = (option) => {
-    if (option) return option.label
+    return option.label
   };
-  export let getOptionLabel = (option) => {
-    if (option) return option.label
+  export let getOptionLabel = (option, filterText) => {
+    return option.isCreator ? `Create \"${filterText}\"` : option.label;
   };
   export let optionIdentifier = 'value';
   export let loadOptions = undefined;
@@ -50,10 +50,6 @@
       value: filterText,
       label: filterText
     };
-  };
-
-  export let getCreateLabel = (filterText) => {
-    return `Create \"${filterText}\"`;
   };
 
   export let isSearchable = true;
@@ -151,7 +147,7 @@
 
         if (keepItem && filterText.length < 1) return true;
 
-        return keepItem && getOptionLabel(item).toLowerCase().includes(filterText.toLowerCase());
+        return keepItem && getOptionLabel(item, filterText).toLowerCase().includes(filterText.toLowerCase());
       });
     }
 
@@ -257,7 +253,11 @@
       let _filteredItems = [...filteredItems];
 
       if (isCreatable && filterText) {
-        const itemToCreate = createItem(filterText);
+        const itemToCreate = {
+          ...createItem(filterText),
+          isCreator: true
+        };
+
         const existingItemWithFilterValue = _filteredItems.find((item) => {
           return item[optionIdentifier] === itemToCreate[optionIdentifier];
         });
@@ -275,10 +275,7 @@
         }
 
         if (!existingItemWithFilterValue && !existingSelectionWithFilterValue) {
-          _filteredItems = [..._filteredItems, {
-            label: getCreateLabel(filterText),
-            isCreator: true
-          }];
+          _filteredItems = [..._filteredItems, itemToCreate];
         }
       }
 
