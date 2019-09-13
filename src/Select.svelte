@@ -441,9 +441,9 @@
   }
 
   export function handleClear() {
-    dispatch('clear', selectedValue);
     selectedValue = undefined;
     listOpen = false;
+    dispatch('clear', selectedValue);
     handleFocus();
   }
 
