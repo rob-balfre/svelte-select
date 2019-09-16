@@ -2465,6 +2465,36 @@ test('When isCreatable and isMulti and optionIdentifier is supplied multiple cre
   select.$destroy();
 });
 
+test('When isCreatable and item is created then createItem method should only run once', async (t) => {
+  let createItemRun = 0;
+  const createItem = (filterText) => {
+    createItemRun += 1;
+    return {
+      value: filterText,
+      label: filterText
+    };
+  };
+
+  const select = new Select({
+    target,
+    props: {
+      isCreatable: true,
+      items,
+      createItem
+    }
+  });
+
+  await wait(0);
+  select.$set({ filterText: 'foo' });
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+  t.ok(createItemRun === 2);
+
+  select.$destroy();
+});
+
+
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
