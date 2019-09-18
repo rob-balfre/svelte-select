@@ -517,6 +517,7 @@
         selectedValue = createItem(detail)
       }
 
+      filterText = '';
       listOpen = false;
       activeSelectedValue = undefined;
       resetFilter();
