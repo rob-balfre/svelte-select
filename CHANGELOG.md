@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 3.0.1
+
+*  Item created bug fix
+*  Virtual list scroll fix
+
 ## 3.0.0
 
 *  Breaking change: isCreatable refactor
