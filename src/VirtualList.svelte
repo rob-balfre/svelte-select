@@ -61,6 +61,7 @@
 		bottom = remaining * average_height;
 		height_map.length = items.length;
 
+		viewport.scrollTop = 0;
 	}
 
 	async function handle_scroll() {
