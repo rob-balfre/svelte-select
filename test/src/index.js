@@ -1977,6 +1977,39 @@ test('when isVirtualList then render list', async (t) => {
   select.$destroy();
 });
 
+test('when isVirtualList and filterText changes then rendered list scrolls to top', async (t) => {
+  function fill(len, fn) {
+    return Array(len).fill().map((_, i) => fn(i));
+  }
+
+  const items = fill(10000, (i) => {
+      const name = getName();
+      return name
+  });
+
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isVirtualList: true,
+      listOpen: true
+    }
+  });
+
+  await wait(0);
+  const virtual = document.querySelector('svelte-virtual-list-viewport');
+  virtual.scrollTop = 120000;
+
+  select.$set({
+    filterText: 'swift'
+  });
+
+  await wait(0);
+  t.ok(virtual.scrollTop === 0);
+
+  select.$destroy();
+});
+
 test('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
   const select = new Select({
     target,
@@ -2456,8 +2489,6 @@ test('When isCreatable and isMulti and optionIdentifier is supplied multiple cre
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
-
-  console.log('select.selectedValue :', select.selectedValue);
 
   t.ok(select.selectedValue.length === 2);
   t.ok(select.selectedValue[0].tag_name);
