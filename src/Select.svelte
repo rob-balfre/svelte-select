@@ -190,7 +190,7 @@
   }
 
   beforeUpdate(() => {
-    if (isMulti && selectedValue && selectedValue && selectedValue.length > 1) {
+    if (isMulti && selectedValue && selectedValue.length > 1) {
       checkSelectedValueForDuplicates();
     }
 
