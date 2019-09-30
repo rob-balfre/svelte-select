@@ -1,6 +1,12 @@
-# svelte-select ([Demo](https://svelte.dev/repl/f3bc0fd6b6f74ea499e5ecb26911bf28?version=3.6.8))
+# svelte-select
 
 A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
+
+## Demos
+
+[🌱 Simple demo](https://svelte.dev/repl/a859c2ba7d1744af9c95037c48989193?version=3.12.1)
+
+[🌻 Advanced demo](https://svelte.dev/repl/f3bc0fd6b6f74ea499e5ecb26911bf28?version=3.12.1)
 
 ## Installation
 
@@ -22,9 +28,11 @@ yarn add svelte-select
     {value: 'chips', label: 'Chips'},
     {value: 'ice-cream', label: 'Ice Cream'},
   ];
+  
+  let selectedValue = undefined;
 </script>
 
-<Select {items}></Select>
+<Select {items} bind:selectedValue></Select>
 ```
 
 
