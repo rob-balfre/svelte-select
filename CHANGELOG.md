@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 3.0.2
+
+*  selectedValue that are strings now look-up and set correct value
+*  README / demo updates
+
 ## 3.0.1
 
 *  Item created bug fix
