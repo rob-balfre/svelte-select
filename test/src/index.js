@@ -2525,6 +2525,23 @@ test('When isCreatable and item is created then createItem method should only ru
   select.$destroy();
 });
 
+test('When items are collection and selectedValue a string then lookup item using optionIdentifier and update value to match', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      selectedValue: 'cake'
+    }
+  });
+
+  await wait(0);
+  t.ok(select.selectedValue.value === 'cake');
+  select.$set({ selectedValue: 'pizza' });
+  await wait(0);
+  t.ok(select.selectedValue.value === 'pizza');
+  select.$destroy();
+});
+
 
 
 function focus(element, setFocus) {

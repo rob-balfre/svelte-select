@@ -100,6 +100,12 @@
     containerClasses += isFocused ? ' focused' : '';
   }
 
+  $: {
+    if (typeof selectedValue === 'string') {
+      selectedValue = { [optionIdentifier]: selectedValue, label: selectedValue }
+    }
+  }
+
   $: showSelectedItem = selectedValue && filterText.length === 0;
 
   $: placeholderText = selectedValue ? '' : placeholder;
@@ -545,10 +551,6 @@
             return item;
           }
         })
-      } else {
-        if (typeof selectedValue === 'string') {
-          selectedValue = { value: selectedValue, label: selectedValue }
-        }
       }
     }
   });
