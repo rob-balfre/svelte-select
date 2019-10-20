@@ -261,6 +261,7 @@
     box-shadow: var(--listShadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
     border-radius: var(--listBorderRadius, 4px);
     max-height: var(--listMaxHeight, 250px);
+    max-width: var(--listMaxWidth, inherit);
     overflow-y: auto;
     background: var(--listBackground, #fff);
   }
