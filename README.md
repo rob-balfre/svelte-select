@@ -71,6 +71,7 @@ yarn add svelte-select
 | menuPlacement | String | 'auto' | When 'auto' displays either 'top' or 'bottom' depending on viewport
 | hasError | Boolean | false | Show error styles around select input (red border)
 | inputAttributes | Object | - | Pass in attributes like 'id' to the Select input, for example {id: 'Food Selection', foo: 'something'}
+| listAutoWidth | Boolean | true | List width will grow wider than the Select container (depending on list item content length)
 
 ### Styling
 
