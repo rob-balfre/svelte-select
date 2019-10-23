@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 3.1.0
+
+*  added prop listAutoWidth - List width will grow wider than the Select container (depending on list item content length)
+*  README updated
+
 ## 3.0.2
 
 *  selectedValue that are strings now look-up and set correct value
