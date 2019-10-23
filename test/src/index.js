@@ -2542,6 +2542,21 @@ test('When items are collection and selectedValue a string then lookup item usin
   select.$destroy();
 });
 
+test('When listAutoWidth is set to false list container should have style of width:100%', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      listAutoWidth: false,
+      listOpen: true
+    }
+  });
+
+  await wait(0);
+  const listWidth = document.querySelectorAll('.selectContainer > div')[0].style.width;
+  t.ok(listWidth === '100%');
+  select.$destroy();
+});
 
 
 function focus(element, setFocus) {
