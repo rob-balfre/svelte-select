@@ -65,6 +65,7 @@
   export let hideEmptyState = false;
   export let filteredItems = [];
   export let inputAttributes = {};
+  export let listAutoWidth = true;
   
 
   let target;
@@ -344,7 +345,7 @@
     const { top, height, width } = container.getBoundingClientRect();
 
     target.style['min-width'] = `${width}px`;
-    target.style.width = `auto`;
+    target.style.width = `${listAutoWidth ? 'auto' : '100%'}`;
     target.style.left = '0';
 
     if (listPlacement === 'top') {
@@ -677,9 +678,7 @@
   .selectedItem {
     line-height: var(--height, 42px);
     height: var(--height, 42px);
-    text-overflow: ellipsis;
     overflow-x: hidden;
-    white-space: nowrap;
     padding: var(--selectedItemPadding, 0 20px 0 0);
   }
 
