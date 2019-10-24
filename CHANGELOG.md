@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.1.1
+
+*  README updated for Sapper SSR
+
 ## 3.1.0
 
 *  added prop listAutoWidth - List width will grow wider than the Select container (depending on list item content length)
