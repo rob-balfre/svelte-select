@@ -14,6 +14,8 @@ A select/autocomplete component for Svelte apps.  With support for grouping, fil
 yarn add svelte-select
 ```
 
+**Note:** Install as a dev dependency (yarn add svelte-select --dev) if using [Sapper](https://sapper.svelte.dev/) to avoid a SSR error.
+
 
 ## Usage
 
