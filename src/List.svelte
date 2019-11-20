@@ -18,16 +18,12 @@
   export let itemHeight = 40;
   export let hoverItemIndex = 0;
   export let selectedValue = undefined;
-  export let start = 0;
-  export let end = 0;
   export let optionIdentifier = 'value';
   export let hideEmptyState = false;
   export let noOptionsMessage = 'No options';
-  export let getOptionString = (option) => option;
   export let isMulti = false;
   export let activeItemIndex = 0;
   export let filterText = '';
-  export let isCreatable = false;
 
   let isScrollingTimer = 0;
   let isScrolling = false;
