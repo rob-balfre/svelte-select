@@ -1,5 +1,11 @@
 # svelte-select changelog
 
+## 3.1.2
+
+*  Thanks to @dimfeld for these updates...
+*  Removing unused properties from List.svelte
+*  Fix handling of console message type "warning"
+
 ## 3.1.1
 
 *  README updated for Sapper SSR
