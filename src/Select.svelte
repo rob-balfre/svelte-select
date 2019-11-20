@@ -464,7 +464,6 @@
       optionIdentifier,
       noOptionsMessage,
       hideEmptyState,
-      isCreatable,
       isVirtualList,
       selectedValue,
       isMulti,

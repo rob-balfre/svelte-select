@@ -19,7 +19,11 @@ async function go() {
   page = await browser.newPage();
 
   page.on('console', msg => {
-    console[msg.type()](msg.text());
+    let logType = msg.type();
+    if(logType === 'warning') {
+      logType = 'warn';
+    }
+    console[logType](msg.text());
   });
 
   await page.goto(`http://localhost:${port}`);
