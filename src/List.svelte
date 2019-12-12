@@ -103,7 +103,7 @@
     const { item, i, event } = args;
     event.stopPropagation();
 
-    if (selectedValue && !isMulti && selectedValue[optionIdentifier] === item[optionIdentifier]) return;
+    if (selectedValue && !isMulti && selectedValue[optionIdentifier] === item[optionIdentifier]) return closeList();
 
     if (item.isCreator) {
       dispatch('itemCreated', filterText);
@@ -112,6 +112,10 @@
       hoverItemIndex = i;
       handleSelect(item);
     }
+  }
+
+  function closeList() {
+    dispatch('closeList');
   }
 
   async function updateHoverItem(increment) {
@@ -152,7 +156,10 @@
         e.preventDefault();
         if (items.length === 0) break;
         const hoverItem = items[hoverItemIndex];
-        if (selectedValue && !isMulti && selectedValue[optionIdentifier] === hoverItem[optionIdentifier]) break;
+        if (selectedValue && !isMulti && selectedValue[optionIdentifier] === hoverItem[optionIdentifier]) {
+          closeList();
+          break;
+        }
 
         if (hoverItem.isCreator) {
           dispatch('itemCreated', filterText);
@@ -164,7 +171,7 @@
       case 'Tab':
         e.preventDefault();
         if (items.length === 0) break;
-        if (selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return;
+        if (selectedValue && selectedValue[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return closeList();
         activeItemIndex = hoverItemIndex;
         handleSelect(items[hoverItemIndex]);
         break;
