@@ -2559,6 +2559,23 @@ test('When listAutoWidth is set to false list container should have style of wid
 });
 
 
+test('When item is already active and is selected from list then close list', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      listOpen: true,
+      selectedValue: 'pizza'
+    }
+  });
+
+  await wait(0);
+  await querySelectorClick('.listContainer > .listItem > .item.active');
+  await wait(0);
+  t.ok(select.selectedValue.value === 'pizza');
+  select.$destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
