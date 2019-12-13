@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.2.0
+
+*  List will now close if active item gets selected
+
 ## 3.1.2
 
 *  Thanks to @dimfeld for these updates...
