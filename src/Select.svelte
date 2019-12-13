@@ -528,7 +528,11 @@
       activeSelectedValue = undefined;
       resetFilter();
     });
-
+    
+    list.$on('closeList', () => {
+      listOpen = false;
+    });
+  
     list = list,
     target = target;
     getPosition();
