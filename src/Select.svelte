@@ -21,6 +21,7 @@
   export let filterText = '';
   export let placeholder = 'Select...';
   export let items = [];
+  export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
   export let groupBy = undefined;
   export let groupFilter = (groups) => groups;
   export let isGroupHeaderSelectable = false;
@@ -152,9 +153,9 @@
           });
         }
 
-        if (keepItem && filterText.length < 1) return true;
-
-        return keepItem && getOptionLabel(item, filterText).toLowerCase().includes(filterText.toLowerCase());
+        if (!keepItem) return false;
+        if (filterText.length < 1) return true;
+        return itemFilter(getOptionLabel(item, filterText), filterText, item);
       });
     }
 
