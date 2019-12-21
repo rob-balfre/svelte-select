@@ -744,6 +744,23 @@ test('Select filter text filters list', async (t) => {
   select.$destroy();
 });
 
+test('Select filter text filters list with itemFilter', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      itemFilter: (label, filterText, option) => label === 'Ice Cream'
+    }
+  });
+
+  await wait(0);
+  t.ok(select.$$.ctx.filteredItems.length === 5);
+  await handleSet(select, {filterText: 'cream ice'})
+  t.ok(select.$$.ctx.filteredItems.length === 1);
+
+  select.$destroy();
+});
+
 test('Typing in the Select filter opens List', async (t) => {
   const select = new Select({
     target,

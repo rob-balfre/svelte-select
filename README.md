@@ -55,6 +55,7 @@ yarn add svelte-select
 | isMulti | Boolean | false | Enable multi select
 | isSearchable | Boolean | true | Disable search/filtering
 | isVirtualList | Boolean | false | Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental)
+| itemFilter | Function | (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase()) | Item filter function
 | groupBy | Function | - | Function to group list items
 | groupFilter | Function | (groups) => groups | Group filter function
 | isGroupHeaderSelectable | Boolean | false | Enable selectable group headers
