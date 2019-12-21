@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.3.0
+
+*  Thanks to @jackc for this update... Added itemFilter method
+
 ## 3.2.0
 
 *  List will now close if active item gets selected
