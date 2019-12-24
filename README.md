@@ -71,7 +71,7 @@ yarn add svelte-select
 | loadOptions | Promise | - | Method that returns a Promise that updates items
 | noOptionsMessage | String | 'No options' | Message to display when there are no items  
 | hideEmptyState | Boolean | false | Hide list when no options
-| menuPlacement | String | 'auto' | When 'auto' displays either 'top' or 'bottom' depending on viewport
+| listPlacement | String | 'auto' | When 'auto' displays either 'top' or 'bottom' depending on viewport
 | hasError | Boolean | false | Show error styles around select input (red border)
 | inputAttributes | Object | - | Pass in attributes like 'id' to the Select input, for example {id: 'Food Selection', foo: 'something'}
 | listAutoWidth | Boolean | true | List width will grow wider than the Select container (depending on list item content length)
