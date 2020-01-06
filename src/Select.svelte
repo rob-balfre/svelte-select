@@ -590,7 +590,6 @@
     on:focus="{handleFocus}"
     bind:value="{filterText}"    
     placeholder="{placeholderText}"
-    disabled
     style="{inputStyles}"
     {disabled}
   >
