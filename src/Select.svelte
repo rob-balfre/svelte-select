@@ -95,6 +95,8 @@
     listOpen = true;
   }, loadOptionsInterval);
 
+  $:disabled = isDisabled;
+
   $: {
     containerClasses = `selectContainer`;
     containerClasses += isMulti ? ' multiSelect' : '';
@@ -582,27 +584,16 @@
   />
   {/if}
 
-  {#if isDisabled} 
-    <input
-      {..._inputAttributes}
-      bind:this={input}
-      on:focus="{handleFocus}"
-      bind:value="{filterText}"    
-      placeholder="{placeholderText}"
-      disabled
-      style="{inputStyles}"
-    >
-  {:else}
-    <input
-      {..._inputAttributes}
-      bind:this={input}
-      on:focus="{handleFocus}"
-      bind:value="{filterText}"    
-      placeholder="{placeholderText}"
-      style="{inputStyles}"
-    >
-  {/if}
-
+  <input
+    {..._inputAttributes}
+    bind:this={input}
+    on:focus="{handleFocus}"
+    bind:value="{filterText}"    
+    placeholder="{placeholderText}"
+    disabled
+    style="{inputStyles}"
+    {disabled}
+  >
 
   {#if !isMulti && showSelectedItem }
   <div class="selectedItem" on:focus="{handleFocus}">
