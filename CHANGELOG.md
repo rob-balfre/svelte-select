@@ -1,6 +1,6 @@
 # svelte-select changelog
 
-## 3.3.1
+## 3.3.2
 
 *  IE11 disable input fix
 
