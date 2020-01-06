@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.3.1
+
+*  IE11 disable input fix
+
 ## 3.3.0
 
 *  Thanks to @jackc for this update... Added itemFilter method
