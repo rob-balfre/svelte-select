@@ -582,15 +582,27 @@
   />
   {/if}
 
-  <input
-    {..._inputAttributes}
-    bind:this={input}
-    on:focus="{handleFocus}"
-    bind:value="{filterText}"    
-    placeholder="{placeholderText}"
-    disabled="{isDisabled}"
-    style="{inputStyles}"
-  >
+  {#if isDisabled} 
+    <input
+      {..._inputAttributes}
+      bind:this={input}
+      on:focus="{handleFocus}"
+      bind:value="{filterText}"    
+      placeholder="{placeholderText}"
+      disabled
+      style="{inputStyles}"
+    >
+  {:else}
+    <input
+      {..._inputAttributes}
+      bind:this={input}
+      on:focus="{handleFocus}"
+      bind:value="{filterText}"    
+      placeholder="{placeholderText}"
+      style="{inputStyles}"
+    >
+  {/if}
+
 
   {#if !isMulti && showSelectedItem }
   <div class="selectedItem" on:focus="{handleFocus}">
