@@ -263,10 +263,8 @@
       let _filteredItems = [...filteredItems];
 
       if (isCreatable && filterText) {
-        const itemToCreate = {
-          ...createItem(filterText),
-          isCreator: true
-        };
+        const itemToCreate = createItem(filterText);
+        itemToCreate.isCreator = true;
 
         const existingItemWithFilterValue = _filteredItems.find((item) => {
           return item[optionIdentifier] === itemToCreate[optionIdentifier];
