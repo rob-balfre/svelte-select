@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.3.5
+
+*  MS Edge fix: Replaced object literal spreading
+
 ## 3.3.4
 
 *  Fix for fix for a fix for IE11 disable input fix 😿
