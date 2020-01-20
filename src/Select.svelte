@@ -435,7 +435,8 @@
 
   function handleWindowClick(event) {
     if (!container) return;
-    if (container.contains(event.target)) return;
+    const eventTarget = event.path && (event.path.length > 0) ? event.path[0] : event.target
+    if (container.contains(eventTarget)) return;
     isFocused = false;
     listOpen = false;
     activeSelectedValue = undefined;
