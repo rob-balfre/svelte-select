@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.3.6
+
+*  Thanks for @jpz for this update... Fix input blurring issue when within shadow DOM
+
 ## 3.3.5
 
 *  MS Edge fix: Replaced object literal spreading
