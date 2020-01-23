@@ -67,6 +67,7 @@
   export let filteredItems = [];
   export let inputAttributes = {};
   export let listAutoWidth = true;
+  export let itemHeight = 40;
   
 
   let target;
@@ -470,7 +471,8 @@
       selectedValue,
       isMulti,
       getGroupHeaderLabel,
-      items: filteredItems
+      items: filteredItems,
+      itemHeight
     };
 
     if (getOptionLabel) {
