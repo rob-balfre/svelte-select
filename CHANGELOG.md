@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.3.7
+
+* Virtual list height fix
+
 ## 3.3.6
 
 *  Thanks for @jpz for this update... Fix input blurring issue when within shadow DOM
