@@ -669,6 +669,8 @@
   }
 
   .selectContainer input::placeholder {
+    font-family: inherit;
+    font-family: var(--placeholderFontFamily);
     color: var(--placeholderColor, #78848F);
   }
 
