@@ -100,7 +100,7 @@ test('when isFocused changes to true input should focus', async (t) => {
     select.$set({isFocused: true});
   };
 
-  const hasFocused = await focus(select.$$.ctx.input, setFocus);
+  const hasFocused = await focus(select.input, setFocus);
   t.ok(hasFocused);
   select.$destroy();
 });
@@ -493,7 +493,7 @@ test('focus on Select input updates focus state', async (t) => {
   });
 
   document.querySelector('.selectContainer input').focus();
-  t.ok(select.$$.ctx.isFocused);
+  t.ok(select.isFocused);
   select.$destroy();
 });
 
@@ -507,7 +507,7 @@ test('key up and down when Select focused opens list', async (t) => {
 
   document.querySelector('.selectContainer input').focus();
   await wait(0);
-  t.ok(select.$$.ctx.isFocused);
+  t.ok(select.isFocused);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
   t.ok(document.querySelector('.listContainer'));
@@ -737,9 +737,9 @@ test('Select filter text filters list', async (t) => {
   });
 
   await wait(0);
-  t.ok(select.$$.ctx.filteredItems.length === 5);
+  t.ok(select.filteredItems.length === 5);
   await handleSet(select, {filterText: 'Ice'})
-  t.ok(select.$$.ctx.filteredItems.length === 1);
+  t.ok(select.filteredItems.length === 1);
 
   select.$destroy();
 });
@@ -754,9 +754,9 @@ test('Select filter text filters list with itemFilter', async (t) => {
   });
 
   await wait(0);
-  t.ok(select.$$.ctx.filteredItems.length === 5);
+  t.ok(select.filteredItems.length === 5);
   await handleSet(select, {filterText: 'cream ice'})
-  t.ok(select.$$.ctx.filteredItems.length === 1);
+  t.ok(select.filteredItems.length === 1);
 
   select.$destroy();
 });
@@ -949,10 +949,10 @@ test('clicking between Selects should close and blur other Select', async (t) =>
   });
 
   await querySelectorClick('.selectContainer');
-  t.ok(select.$$.ctx.list);
+  t.ok(select.list);
   await querySelectorClick('#extra .selectContainer');
-  t.ok(!select.$$.ctx.list);
-  t.ok(other.$$.ctx.list);
+  t.ok(!select.list);
+  t.ok(other.list);
 
   select.$destroy();
   other.$destroy();
@@ -1002,7 +1002,7 @@ test(`data shouldn't be stripped from item - currently only saves name`, async (
 
   await querySelectorClick('.selectContainer');
   await querySelectorClick('.listItem');
-  t.equal(JSON.stringify(select.$$.ctx.selectedValue), JSON.stringify({value: 'chocolate', label: 'Chocolate'}));
+  t.equal(JSON.stringify(select.selectedValue), JSON.stringify({value: 'chocolate', label: 'Chocolate'}));
 
   select.$destroy();
 });
@@ -1288,7 +1288,7 @@ test('when isMulti is true clicking item in List will populate selectedValue', a
   await querySelectorClick('.selectContainer');
   await querySelectorClick('.listItem');
 
-  t.equal(JSON.stringify(select.$$.ctx.selectedValue), JSON.stringify([{value: 'chocolate', label: 'Chocolate'}]));
+  t.equal(JSON.stringify(select.selectedValue), JSON.stringify([{value: 'chocolate', label: 'Chocolate'}]));
 
   select.$destroy();
 });
@@ -1303,7 +1303,7 @@ test('when isMulti is true items in selectedValue will not appear in List', asyn
     }
   });
 
-  t.equal(JSON.stringify(select.$$.ctx.filteredItems), JSON.stringify([
+  t.equal(JSON.stringify(select.filteredItems), JSON.stringify([
     {value: 'pizza', label: 'Pizza'},
     {value: 'cake', label: 'Cake'},
     {value: 'chips', label: 'Chips'},
@@ -1325,7 +1325,7 @@ test('when isMulti is true both selectedValue and filterText filters List', asyn
     }
   });
 
-  t.equal(JSON.stringify(select.$$.ctx.filteredItems), JSON.stringify([
+  t.equal(JSON.stringify(select.filteredItems), JSON.stringify([
     {value: 'pizza', label: 'Pizza'}
   ]));
 
@@ -1343,7 +1343,7 @@ test('when isMulti is true clicking X on a selected item will remove it from sel
   });
 
   document.querySelector('.multiSelectItem_clear').click();
-  t.equal(JSON.stringify(select.$$.ctx.selectedValue), JSON.stringify([{value: 'pizza', label: 'Pizza'}]));
+  t.equal(JSON.stringify(select.selectedValue), JSON.stringify([{value: 'pizza', label: 'Pizza'}]));
 
   select.$destroy();
 });
@@ -1374,7 +1374,7 @@ test('when isMulti is true and items are selected then clear all should wipe all
   });
 
   document.querySelector('.clearSelect').click();
-  t.equal(select.$$.ctx.selectedValue, undefined);
+  t.equal(select.selectedValue, undefined);
 
   select.$destroy();
 });
@@ -1427,7 +1427,7 @@ test('when isMulti and selectedValue is populated then navigating with LeftArrow
   target.style.maxWidth = '100%';
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
-  t.ok(select.$$.ctx.activeSelectedValue === 1)
+  t.ok(select.$capture_state().activeSelectedValue === 1);
 
   select.$destroy();
 });
@@ -1447,7 +1447,7 @@ test('when isMulti and selectedValue is populated then navigating with ArrowRigh
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowRight'}));
-  t.ok(select.$$.ctx.activeSelectedValue === 1);
+  t.ok(select.$capture_state().activeSelectedValue === 1);
 
   select.$destroy();
 });
@@ -1497,11 +1497,11 @@ test('when getValue method is set should use that key to update selectedValue', 
     }
   });
 
-  t.ok(select.$$.ctx.selectedValue.id === 0);
+  t.ok(select.selectedValue.id === 0);
   await querySelectorClick('.selectContainer');
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.ok(select.$$.ctx.selectedValue.id === 1);
+  t.ok(select.selectedValue.id === 1);
 
   select.$destroy();
 });
@@ -1895,8 +1895,8 @@ test('when isFocused turns to false then check Select is no longer in focus', as
 
   await wait(0);
 
-  t.ok(selectSecond.$$.ctx.isFocused);
-  t.ok(!select.$$.ctx.isFocused);  
+  t.ok(selectSecond.isFocused);
+  t.ok(!select.isFocused);  
 
   selectSecond.$destroy();
   select.$destroy();
@@ -2067,7 +2067,7 @@ test('when isMulti and selectedValue has items then check each item is unique', 
     }
   });
 
-  t.ok(select.$$.ctx.selectedValue.length === 2);
+  t.ok(select.selectedValue.length === 2);
 
   select.$destroy();
 });
@@ -2086,7 +2086,7 @@ test('when isMulti and textFilter has length then enter should select item', asy
 
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.ok(select.$$.ctx.selectedValue[0].value === 'pizza');
+  t.ok(select.selectedValue[0].value === 'pizza');
 
   select.$destroy();
 });
@@ -2104,7 +2104,7 @@ test('when isMulti and textFilter has length and no items in list then enter sho
   });
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.ok(select.$$.ctx.selectedValue === undefined);
+  t.ok(select.selectedValue === undefined);
 
   select.$destroy();
 });
@@ -2122,7 +2122,7 @@ test('When isMulti and no selected item then delete should do nothing', async (t
 
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Backspace'}));
-  t.ok(select.$$.ctx.listOpen === true);
+  t.ok(select.listOpen === true);
 
   select.$destroy();
 });
@@ -2141,7 +2141,7 @@ test('When list is open, filterText applied and Enter/Tab key pressed should sel
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.equal(select.$$.ctx.selectedValue.value, 'A5');
+  t.equal(select.selectedValue.value, 'A5');
   await wait(0);
   t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'A5');
 
@@ -2313,7 +2313,7 @@ test('When creator selected, selected item is set to created item', async (t) =>
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-  const { selectedValue } = select.$$.ctx;
+  const { selectedValue } = select;
   t.ok(selectedValue.value === 'abc');
   t.ok(selectedValue.label === 'abc');
 
@@ -2339,7 +2339,7 @@ test('When creator is selected, created item it added to multi selection', async
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-  const { selectedValue } = select.$$.ctx;
+  const { selectedValue } = select;
   t.ok(selectedValue[0].value === 'abc');
   t.ok(selectedValue[0].label === 'abc');
 
@@ -2365,13 +2365,13 @@ test('When creator is selected multiple times, items are all added to multi sele
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
-  t.ok(select.$$.ctx.selectedValue[0].value === 'abc');
+  t.ok(select.selectedValue[0].value === 'abc');
 
   select.$set({ filterText: filterTextForItem2 });
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
-  t.ok(select.$$.ctx.selectedValue[1].value === 'def');
+  t.ok(select.selectedValue[1].value === 'def');
 
   select.$destroy();
 });
@@ -2391,9 +2391,9 @@ test('When isMulti and an items remove icon is clicked then item should be remov
   });
 
   await querySelectorClick('.multiSelectItem_clear'); 
-  t.ok(select.$$.ctx.selectedValue[0].value === 'cake')
+  t.ok(select.selectedValue[0].value === 'cake')
   await querySelectorClick('.multiSelectItem_clear');
-  t.ok(select.$$.ctx.selectedValue === undefined);
+  t.ok(select.selectedValue === undefined);
 
   select.$destroy();
 });
