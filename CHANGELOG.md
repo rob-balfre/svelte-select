@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.4.0
+
+* Bumped version of Svelte to 3.19.1 and fixed up some tests
+
 ## 3.3.7
 
 * Virtual list height fix
