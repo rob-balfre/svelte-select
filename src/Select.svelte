@@ -633,13 +633,13 @@
     color: var(--inputColor, #3f4f5f);
     height: var(--height, 42px);
     line-height: var(--height, 42px);
-    padding: var(--padding, 0 16px);
+    padding: var(--inputPadding, --padding);
     width: 100%;
     background: transparent;
     font-size: var(--inputFontSize, 14px);
     letter-spacing: var(--inputLetterSpacing, -0.08px);
     position: absolute;
-    left: 0;
+    left: var(--inputLeft, 0);
   }
 
   .selectContainer input::placeholder {
