@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.6.2
+
+* CSS vars padding default fix
+
 ## 3.6.1
 
 * CSS vars typo fix
