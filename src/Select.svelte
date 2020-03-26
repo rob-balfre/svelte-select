@@ -617,13 +617,15 @@
 
 <style>
   .selectContainer {
+    --padding: 0 16px;
+    
     border: var(--border, 1px solid #d8dbdf);
     border-radius: var(--borderRadius, 3px);
     height: var(--height, 42px);
     position: relative;
     display: flex;
     align-items: center;
-    padding: var(--padding, 0 16px);
+    padding: var(--padding);
     background: var(--background, #fff);
   }
 
