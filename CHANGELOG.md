@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.6.0
+
+* Added CSS vars for input padding and left
+
 ## 3.5.0
 
 * Added Icon and showChevron props
