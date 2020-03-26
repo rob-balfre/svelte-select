@@ -4,6 +4,7 @@ import normalizeHtml from '../utils/normalizeHtml';
 import CustomItem from './CustomItem.svelte';
 import Select from '../../src/Select.svelte';
 import List from '../../src/List.svelte';
+import TestIcon from './TestIcon.svelte';
 import SelectDefault from './Select/Select--default.html'
 import SelectMultiSelected from './Select/Select--multiSelected.html'
 import ListDefault from './List/List--default.html'
@@ -2590,6 +2591,35 @@ test('When item is already active and is selected from list then close list', as
   await querySelectorClick('.listContainer > .listItem > .item.active');
   await wait(0);
   t.ok(select.selectedValue.value === 'pizza');
+  select.$destroy();
+});
+
+
+test('When Icon prop is supplied then render on Select', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      Icon: TestIcon
+    }
+  });
+
+  t.ok(document.querySelectorAll('#testIcon')[0]);
+
+  select.$destroy();
+});
+
+test('When showChevron prop is true always show chevron on Select', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      showChevron: true
+    }
+  });
+
+  t.ok(document.querySelectorAll('.indicator')[0]);
+
   select.$destroy();
 });
 

@@ -75,6 +75,8 @@
   export let inputAttributes = {};
   export let listAutoWidth = true;
   export let itemHeight = 40;
+  export let Icon = undefined;
+  export let showChevron = false;
 
   let target;
   let activeSelectedValue;
@@ -620,6 +622,7 @@
     height: var(--height, 42px);
     position: relative;
     display: flex;
+    align-items: center;
     padding: var(--padding, 0 16px);
     background: var(--background, #fff);
   }
@@ -780,6 +783,10 @@
   on:click={handleClick}
   bind:this={container}>
 
+  {#if Icon}
+    <svelte:component this={Icon} />
+  {/if}
+
   {#if isMulti && selectedValue && selectedValue.length > 0}
     <svelte:component
       this={MultiSelection}
@@ -835,7 +842,7 @@
     </div>
   {/if}
 
-  {#if !isSearchable && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem)}
+  {#if showChevron && !selectedValue || (!isSearchable && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem))}
     <div class="indicator">
       <svg
         width="100%"
