@@ -633,7 +633,7 @@
     color: var(--inputColor, #3f4f5f);
     height: var(--height, 42px);
     line-height: var(--height, 42px);
-    padding: var(--inputPadding, --padding);
+    padding: var(--inputPadding, var(--padding));
     width: 100%;
     background: transparent;
     font-size: var(--inputFontSize, 14px);
