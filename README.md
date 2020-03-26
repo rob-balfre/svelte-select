@@ -6,7 +6,7 @@ A select/autocomplete component for Svelte apps.  With support for grouping, fil
 
 [🌱 Simple demo](https://svelte.dev/repl/a859c2ba7d1744af9c95037c48989193?version=3.12.1)
 
-[🌻 Advanced demo](https://svelte.dev/repl/f3bc0fd6b6f74ea499e5ecb26911bf28?version=3.12.1)
+[🌻 Advanced demo](https://svelte.dev/repl/3e032a58c3974d07b7818c0f817a06a3?version=3.20.1)
 
 ## Installation
 
