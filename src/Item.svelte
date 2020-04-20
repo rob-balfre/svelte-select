@@ -34,9 +34,11 @@
     text-transform: var(--groupTitleTextTransform, uppercase);
   }
 
-  .groupItem {
+/* remove this for centre alignment */
+
+  /* .groupItem {
     padding-left: 40px;
-  }
+  } */
 
   .item:active {
     background: var(--itemActiveBackground, #b9daff);
