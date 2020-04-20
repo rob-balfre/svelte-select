@@ -25,7 +25,7 @@
     height: var(--height, 42px);
     line-height: var(--height, 42px);
     padding: var(--itemPadding, 0 20px);
-    color: var(--itemColor, #000000);
+    color: var(--itemColor, inherit);
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
