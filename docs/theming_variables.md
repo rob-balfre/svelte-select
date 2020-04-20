@@ -24,7 +24,8 @@ You can override the following variables to style a Select component.
 - `--groupTitleFontSize`
 - `--groupTitlePadding`
 - `--groupTitleTextTransform`
-- `groupTitleFontWeight`
+- `--groupTitleFontWeight`
+- `--groupItemPaddingLeft`
 - `--height`
 - `--indicatorColor`
 - `--indicatorFill`

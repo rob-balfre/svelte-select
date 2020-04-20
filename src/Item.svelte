@@ -35,7 +35,7 @@
   }
 
   .groupItem {
-    padding-left: 40px;
+    padding-left: var(--groupItemPaddingLeft, 40px);
   }
 
   .item:active {
