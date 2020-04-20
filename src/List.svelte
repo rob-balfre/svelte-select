@@ -276,7 +276,7 @@
     color: var(--groupTitleColor, #8f8f8f);
     cursor: default;
     font-size: var(--groupTitleFontSize, 12px);
-    font-weight: 600;
+    font-weight: var(--groupTitleFontWeight, 600);
     height: var(--height, 42px);
     line-height: var(--height, 42px);
     padding: var(--groupTitlePadding, 0 20px);
