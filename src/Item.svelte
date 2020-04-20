@@ -33,7 +33,7 @@
   /* Change default groupheaders */
 
   .groupHeader {
-    /* text-transform: var(--groupTitleTextTransform, uppercase); */
+    text-transform: var(--groupTitleTextTransform, uppercase);
     font-weight: 700;
   }
 
