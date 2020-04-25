@@ -101,6 +101,18 @@ You can style a component by overriding [the available CSS variables](/docs/them
 </div>
 ```
 
+You can also use the `inputStyles` prop to write in any override styles needed for the input.
+
+```html
+<script>
+  import Select from 'svelte-select';
+  
+  const items = ['One', 'Two', 'Three'];
+</script>
+
+<Select {items} inputStyles="box-sizing: border-box;"></Select> 
+```
+
 ## Events
 
 | Event Name | Callback | Description |
