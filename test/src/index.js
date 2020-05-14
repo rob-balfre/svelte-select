@@ -1721,6 +1721,8 @@ test('when hideEmptyState true then do not show "no options" div ', async (t) =>
     }
   });
 
+  await wait(0);
+
   t.ok(!document.querySelector('.empty'));
 
   select.$destroy();
