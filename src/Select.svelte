@@ -550,19 +550,22 @@
       if (detail) {
         const item = Object.assign({}, detail);
 
-        if (isMulti) {
-          selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
-        } else {
-          selectedValue = item;
+        if (!item.isGroupHeader || item.isSelectable) {
+
+          if (isMulti) {
+            selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
+          } else {
+            selectedValue = item;
+          }
+
+          resetFilter();
+          selectedValue = selectedValue;
+
+          setTimeout(() => {
+            listOpen = false;
+            activeSelectedValue = undefined;
+          });
         }
-
-        resetFilter();
-        selectedValue = selectedValue;
-
-        setTimeout(() => {
-          listOpen = false;
-          activeSelectedValue = undefined;
-        });
       }
     });
 
@@ -618,7 +621,7 @@
 <style>
   .selectContainer {
     --padding: 0 16px;
-    
+
     border: var(--border, 1px solid #d8dbdf);
     border-radius: var(--borderRadius, 3px);
     height: var(--height, 42px);
