@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.7.1
+
+* Fix for groupHeader selection on enter - thanks to @KiwiJuicer
+
 ## 3.7.0
 
 * Added new CSS vars for groupTitleFontWeight, groupItemPaddingLeft and itemColor - thanks to @john-trieu-nguyen
