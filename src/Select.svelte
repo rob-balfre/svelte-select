@@ -621,7 +621,7 @@
 <style>
   .selectContainer {
     --padding: 0 16px;
-
+    
     border: var(--border, 1px solid #d8dbdf);
     border-radius: var(--borderRadius, 3px);
     height: var(--height, 42px);
