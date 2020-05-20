@@ -1157,6 +1157,24 @@ test('clicking group header should not make a selected', async (t) => {
   select.$destroy();
 });
 
+test('when groupBy, no active item and keydown enter is fired then list should close without selecting item', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithGroup,
+      groupBy: (item) => item.group
+    }
+  });
+  
+  await wait(0);
+  await querySelectorClick('.selectContainer');
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.equal(select.selectedValue, undefined);
+
+  select.$destroy();
+});
+
 test('when isGroupHeaderSelectable clicking group header should select createGroupHeaderItem(groupValue,item)', async (t) => {
   const select = new Select({
     target,

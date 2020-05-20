@@ -550,19 +550,22 @@
       if (detail) {
         const item = Object.assign({}, detail);
 
-        if (isMulti) {
-          selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
-        } else {
-          selectedValue = item;
+        if (!item.isGroupHeader || item.isSelectable) {
+
+          if (isMulti) {
+            selectedValue = selectedValue ? selectedValue.concat([item]) : [item];
+          } else {
+            selectedValue = item;
+          }
+
+          resetFilter();
+          selectedValue = selectedValue;
+
+          setTimeout(() => {
+            listOpen = false;
+            activeSelectedValue = undefined;
+          });
         }
-
-        resetFilter();
-        selectedValue = selectedValue;
-
-        setTimeout(() => {
-          listOpen = false;
-          activeSelectedValue = undefined;
-        });
       }
     });
 
