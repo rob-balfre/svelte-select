@@ -94,7 +94,9 @@
     filterText = "";
   }
 
+  let getItemsHasInvoked = false;
   const getItems = debounce(async () => {
+    getItemsHasInvoked = true;
     isWaiting = true;
 
     items = await loadOptions(filterText);
@@ -351,7 +353,7 @@
   async function setList(items) {
     await tick();
     if (list) return list.$set({ items });
-    if (loadOptions && items.length > 0) loadList();
+    if (loadOptions && getItemsHasInvoked && items.length > 0) loadList();
   }
 
   function handleMultiItemClear(event) {

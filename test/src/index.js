@@ -2643,6 +2643,27 @@ test('When showChevron prop is true always show chevron on Select', async (t) =>
   select.$destroy();
 });
 
+test('When items and loadItems then listOpen should be false', async (t) => {
+  const select = new Select({
+    target,
+    props: {      
+      getSelectionLabel: (option) => option.name,
+      getOptionLabel: (option) => option.name,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',
+      items: [{
+        id: 1,
+        name: 'Initial Items #1'
+      }]
+      
+    }
+  });
+
+  t.ok(select.listOpen === false);
+
+  select.$destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
