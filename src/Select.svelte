@@ -77,12 +77,12 @@
   export let itemHeight = 40;
   export let Icon = undefined;
   export let showChevron = false;
+  export let containerClasses = "";
 
   let target;
   let activeSelectedValue;
   let _items = [];
   let originalItemsClone;
-  let containerClasses = "";
   let prev_selectedValue;
   let prev_listOpen;
   let prev_filterText;
@@ -109,7 +109,8 @@
   $: disabled = isDisabled;
 
   $: {
-    containerClasses = `selectContainer`;
+    containerClasses = containerClasses
+    containerClasses += ` selectContainer`;
     containerClasses += isMulti ? " multiSelect" : "";
     containerClasses += isDisabled ? " disabled" : "";
     containerClasses += isFocused ? " focused" : "";
@@ -623,7 +624,7 @@
 <style>
   .selectContainer {
     --padding: 0 16px;
-    
+
     border: var(--border, 1px solid #d8dbdf);
     border-radius: var(--borderRadius, 3px);
     height: var(--height, 42px);
