@@ -114,6 +114,7 @@
     containerClasses += isMulti ? " multiSelect" : "";
     containerClasses += isDisabled ? " disabled" : "";
     containerClasses += isFocused ? " focused" : "";
+    containerClasses = containerClasses.trim();
   }
 
   $: {
