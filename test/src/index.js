@@ -2664,6 +2664,22 @@ test('When items and loadItems then listOpen should be false', async (t) => {
   select.$destroy();
 });
 
+test('Select container classes can be injected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      selectedValue: { name: 'Item #2' },
+      containerClasses: 'testclass',
+    },
+  });
+
+  t.ok(
+    document.querySelector('.selectContainer').classList.contains('testclass')
+  );
+  select.$destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {

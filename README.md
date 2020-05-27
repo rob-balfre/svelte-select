@@ -47,6 +47,7 @@ yarn add svelte-select
 | placeholder | String | - | Placeholder text
 | optionIdentifier | String | 'value' | Override default identifier
 | listOpen | Boolean | false | Open/close list
+| containerClasses | String | 'selectContainer' | Add extra container classes, for example 'global-x local-y'
 | containerStyles | String | - | Add/override container styles 
 | selectedValue | - | - | Selected value(s)
 | isClearable | Boolean | true | Enable clearing selected items
