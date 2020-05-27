@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.8.0
+
+* Added containerClasses prop - thanks to @0xCAP
+
 ## 3.7.2
 
 * Fix for loadOptions with items opening list by default
