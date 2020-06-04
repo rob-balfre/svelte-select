@@ -109,15 +109,6 @@
   $: disabled = isDisabled;
 
   $: {
-    containerClasses = containerClasses
-    containerClasses += ` selectContainer`;
-    containerClasses += isMulti ? " multiSelect" : "";
-    containerClasses += isDisabled ? " disabled" : "";
-    containerClasses += isFocused ? " focused" : "";
-    containerClasses = containerClasses.trim();
-  }
-
-  $: {
     if (typeof selectedValue === "string") {
       selectedValue = {
         [optionIdentifier]: selectedValue,
@@ -786,8 +777,11 @@
   on:resize={getPosition} />
 
 <div
-  class="{containerClasses}
-  {hasError ? 'hasError' : ''}"
+  class="selectContainer {containerClasses}"
+  class:hasError
+  class:multiSelect={isMulti}
+  class:disabled={isDisabled}
+  class:focused={isFocused}
   style={containerStyles}
   on:click={handleClick}
   bind:this={container}>
