@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.8.1
+
+* Fix for containerClasses repeating
+
 ## 3.8.0
 
 * Added containerClasses prop - thanks to @0xCAP
