@@ -160,7 +160,7 @@
             let keepItem = true;
 
             if (isMulti && selectedValue) {
-              keepItem = !selectedValue.find(value => {
+              keepItem = !selectedValue.some(value => {
                 return value[optionIdentifier] === item[optionIdentifier];
               });
             }
