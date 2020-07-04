@@ -2629,12 +2629,42 @@ test('When Icon prop is supplied then render on Select', async (t) => {
   select.$destroy();
 });
 
-test('When showChevron prop is true always show chevron on Select', async (t) => {
+test('When showChevron prop is true only show chevron when there is no selectedValue on Select', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      selectedValue: {value: 'chocolate', label: 'Chocolate'},
+      showChevron: true
+    }
+  });
+
+  t.ok(document.querySelectorAll('.indicator').length === 0);
+
+  select.$destroy();
+});
+
+test('When showChevron prop is true and no selectedValue show chevron on Select', async (t) => {
   const select = new Select({
     target,
     props: {
       items,
       showChevron: true
+    }
+  });
+
+  t.ok(document.querySelectorAll('.indicator')[0]);
+
+  select.$destroy();
+});
+
+test('When showIndicator prop is true always show chevron on Select', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      selectedValue: {value: 'chocolate', label: 'Chocolate'},
+      showIndicator: true
     }
   });
 
