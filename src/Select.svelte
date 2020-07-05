@@ -77,6 +77,7 @@
   export let itemHeight = 40;
   export let Icon = undefined;
   export let showChevron = false;
+  export let showIndicator = false;
   export let containerClasses = "";
 
   let target;
@@ -845,7 +846,7 @@
     </div>
   {/if}
 
-  {#if showChevron && !selectedValue || (!isSearchable && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem))}
+  {#if showIndicator || (showChevron && !selectedValue || (!isSearchable && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem)))}
     <div class="indicator">
       <svg
         width="100%"
