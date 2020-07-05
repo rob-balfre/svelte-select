@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.9.0
+
+* Added showIndicator prop - thanks to @oharsta
+
 ## 3.8.1
 
 * Fix for containerClasses repeating
