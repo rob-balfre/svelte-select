@@ -1506,6 +1506,24 @@ test('when isMulti, isDisabled, and selectedValue has items then items should be
   select.$destroy();
 });
 
+test('when isMulti is true show each item in selectedValue if simple arrays are used', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      test: true,
+      items: ['pizza', 'chips', 'chocolate'],
+      selectedValue: ['pizza', 'chocolate']
+    }
+  });
+
+  const all = target.querySelectorAll('.multiSelectItem .multiSelectItem_label');
+  t.ok(all[0].innerHTML === 'pizza');
+  t.ok(all[1].innerHTML === 'chocolate');
+
+  select.$destroy();
+});
+
 test('when getValue method is set should use that key to update selectedValue', async (t) => {
   const select = new Select({
     target,
