@@ -77,6 +77,7 @@ yarn add svelte-select
 | inputAttributes | Object | - | Pass in attributes like 'id' to the Select input, for example {id: 'Food Selection', foo: 'something'}
 | listAutoWidth | Boolean | true | List width will grow wider than the Select container (depending on list item content length)
 | showIndicator | Boolean | false | If true, the chevron indicator is always shown
+| indicatorSvg | @html | - | Override default SVG chevron indicator
 
 ### Styling
 
