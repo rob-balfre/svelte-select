@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.10.0
+
+* Added indicatorSvg prop - thanks to @oharsta (again!)
+
 ## 3.9.0
 
 * Added showIndicator prop - thanks to @oharsta
