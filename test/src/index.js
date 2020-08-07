@@ -2728,6 +2728,35 @@ test('Select container classes can be injected', async (t) => {
   select.$destroy();
 });
 
+
+test('When noOptionsMessage is changed after List component has been created then propagate update', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      getOptionLabel: (option) => option.name,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',
+      Item: CustomItem,
+      Selection: CustomItem,
+      noOptionsMessage: 'FIRST'
+    },
+  });
+
+  await wait(0);
+  select.$set({listOpen: true});
+  await wait(0);
+  t.ok(document.querySelector('.empty').innerHTML === 'FIRST');
+  select.$set({noOptionsMessage: 'SECOND'});
+  await wait(0);
+  t.ok(document.querySelector('.empty').innerHTML === 'SECOND');
+  select.$set({filterText: 'sdfsf ssdfsdfs fs'});
+  select.$set({noOptionsMessage: 'THIRD'});
+  await wait(0);
+  t.ok(document.querySelector('.empty').innerHTML === 'THIRD');
+  
+  select.$destroy();
+});
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
@@ -2759,6 +2788,8 @@ function getPosts(filterText) {
     };
   });
 }
+
+
 
 // this allows us to close puppeteer once tests have completed
 window.done = done;

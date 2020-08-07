@@ -121,6 +121,10 @@
     }
   }
 
+  $: {
+    if (noOptionsMessage && list) list.$set({ noOptionsMessage });
+  }
+
   $: showSelectedItem = selectedValue && filterText.length === 0;
 
   $: placeholderText = selectedValue ? "" : placeholder;
