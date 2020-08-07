@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.10.1
+
+* Fix for noOptionsMessage not updating when changed - thanks to @frederikhors
+
 ## 3.10.0
 
 * Added indicatorSvg prop - thanks to @oharsta (again!)
