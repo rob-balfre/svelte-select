@@ -40,11 +40,13 @@ yarn add svelte-select
 
 ## API
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| items | String | - | Array of items
-| filterText | String | - | Text to filter list labels by
-| placeholder | String | - | Placeholder text
+- `items: Array` Default: `[]`. The list of selectable items that appear in the dropdown.
+- `filterText: String` Default: `''`. Text to filter `items` by.
+- `placeholder: String` Default: `Select...`. Placeholder text.
+- `optionIdentifier: String` Default: `value`. Override default identifier.
+
+
+
 | optionIdentifier | String | 'value' | Override default identifier
 | listOpen | Boolean | false | Open/close list
 | containerClasses | String | 'selectContainer' | Add extra container classes, for example 'global-x local-y'
