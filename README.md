@@ -40,21 +40,19 @@ yarn add svelte-select
 
 ## API
 
-- `items: Array` Default: `[]`. The list of selectable items that appear in the dropdown.
+- `items: Array` Default: `[]`. List of selectable items that appear in the dropdown.
+- `selectedValue: Any` Default: `undefined`. Selected item or items
 - `filterText: String` Default: `''`. Text to filter `items` by.
-- `placeholder: String` Default: `Select...`. Placeholder text.
-- `optionIdentifier: String` Default: `value`. Override default identifier.
+- `placeholder: String` Default: `'Select...'`. Placeholder text.
+- `optionIdentifier: String` Default: `'value;`. Override default identifier.
+- `listOpen: Boolean` Default: `false`. Open/close list.
+- `containerClasses: String` Default: `''`. Add extra container classes, for example 'global-x local-y'.
+- `containerStyles: String` Default: `''`. Add inline styles to container.
+- `isClearable: Boolean` Default: `true`. Enable clearing of selected items.
+- `isCreatable: Boolean` Default: `false`. Can create new item(s) to be added to `selectedValue`.
+- `isDisabled: Boolean` Default: `false`. Disable select.
 
 
-
-| optionIdentifier | String | 'value' | Override default identifier
-| listOpen | Boolean | false | Open/close list
-| containerClasses | String | 'selectContainer' | Add extra container classes, for example 'global-x local-y'
-| containerStyles | String | - | Add/override container styles 
-| selectedValue | - | - | Selected value(s)
-| isClearable | Boolean | true | Enable clearing selected items
-| isCreatable | Boolean | false | Enable creating selected items
-| isDisabled | Boolean | false | Disable select
 | isMulti | Boolean | false | Enable multi select
 | isSearchable | Boolean | true | Disable search/filtering
 | isVirtualList | Boolean | false | Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental)
