@@ -44,40 +44,45 @@ yarn add svelte-select
 - `selectedValue: Any` Default: `undefined`. Selected item or items
 - `filterText: String` Default: `''`. Text to filter `items` by.
 - `placeholder: String` Default: `'Select...'`. Placeholder text.
+- `noOptionsMessage: String` Default: `'No options'`. Message to display in list when there are no `items`.
 - `optionIdentifier: String` Default: `'value;`. Override default identifier.
 - `listOpen: Boolean` Default: `false`. Open/close list.
+- `hideEmptyState: Boolean` Default: `false`. Hide list and don't show `noOptionsMessage` when there are no `items`.
 - `containerClasses: String` Default: `''`. Add extra container classes, for example 'global-x local-y'.
 - `containerStyles: String` Default: `''`. Add inline styles to container.
 - `isClearable: Boolean` Default: `true`. Enable clearing of selected items.
 - `isCreatable: Boolean` Default: `false`. Can create new item(s) to be added to `selectedValue`.
 - `isDisabled: Boolean` Default: `false`. Disable select.
+- `isMulti: Boolean` Default: `false`. Enable multi-select, `selectedValue` becomes an array of selected items.
+- `isSearchable: Boolean` Default: `true`. Enable search/filtering of `items` via `filterText`.
+- `isGroupHeaderSelectable: Boolean` Default: `false`. Enable selectable group headers in `items` (see adv demo).
+- `listPlacement: String` Default: `'auto'`. When `'auto'` displays either `'top'` or `'bottom'` depending on viewport.
+- `hasError: Boolean` Default: `false`. Show/hide error styles around select input (red border by default).
+- `listAutoWidth: Boolean` Default: `true`. List width will grow wider than the Select container (depending on list item content length).
+- `showIndicator: Boolean` Default: `false`. If true, the chevron indicator is always shown.
+- `inputAttributes: Object` Default: `{}`. Useful for passing in HTML attributes like `'id'` to the Select input.
 
 
-| isMulti | Boolean | false | Enable multi select
-| isSearchable | Boolean | true | Disable search/filtering
-| isVirtualList | Boolean | false | Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental)
+| Item | Component | Item | Item component
+| Selection | Component | Selection | Selection component
+| MultiSelection | Component | MultiSelection | Multi selection component
+
+
 | itemFilter | Function | (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase()) | Item filter function
 | groupBy | Function | - | Function to group list items
 | groupFilter | Function | (groups) => groups | Group filter function
-| isGroupHeaderSelectable | Boolean | false | Enable selectable group headers
 | createGroupHeaderItem | Function | (groupValue) => { label:groupValue, value:groupValue  } | create item for group headers
 | createItem | Function | (filterText) => { label:filterText, value:filterText } | create item function
 | getOptionLabel | Function | (option, filterText) => option.isCreator ? \`Create "${filterText}"\` : option.label | Get option label function
 | getSelectionLabel | Function | (option) => option.label | Get selection label function
 | getGroupHeaderLabel | Function | (option) => option.label | Get group header label function
 | handleClear | Function | - | Clears selection, closes list and dispatches event
-| Item | Component | Item | Item component
-| Selection | Component | Selection | Selection component
-| MultiSelection | Component | MultiSelection | Multi selection component
 | loadOptions | Promise | - | Method that returns a Promise that updates items
-| noOptionsMessage | String | 'No options' | Message to display when there are no items  
-| hideEmptyState | Boolean | false | Hide list when no options
-| listPlacement | String | 'auto' | When 'auto' displays either 'top' or 'bottom' depending on viewport
-| hasError | Boolean | false | Show error styles around select input (red border)
-| inputAttributes | Object | - | Pass in attributes like 'id' to the Select input, for example {id: 'Food Selection', foo: 'something'}
-| listAutoWidth | Boolean | true | List width will grow wider than the Select container (depending on list item content length)
-| showIndicator | Boolean | false | If true, the chevron indicator is always shown
+
 | indicatorSvg | @html | - | Override default SVG chevron indicator
+
+| isVirtualList | Boolean | false | Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental)
+
 
 ### Styling
 
