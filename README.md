@@ -143,7 +143,7 @@ export function handleClear() {
 export let loadOptions = undefined; // if used must return a Promise that updates 'items'
 ```
 
-### Styling
+## Styling
 
 You can style a component by overriding [the available CSS variables](/docs/theming_variables.md).
 
