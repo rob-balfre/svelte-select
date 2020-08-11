@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 3.11.0
+
+* README reformatted
+* iconProps added for Icon component - thanks to @stephenlrandall
+
 ## 3.10.1
 
 * Fix for noOptionsMessage not updating when changed - thanks to @frederikhors
