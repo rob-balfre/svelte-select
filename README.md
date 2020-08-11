@@ -66,15 +66,19 @@ yarn add svelte-select
 - `Selection: Component` Default: `Selection`. Selection component.
 - `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
 
+- `indicatorSvg: @html` Default: `undefined`. Override default SVG chevron indicator.
+
+- `isVirtualList: Boolean` Default: `false`. Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental).
+
 ### Exposed methods
+If you really want to get your hand dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
 
 ```js 
 export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
 ```
 
 ```js 
-// see adv demo for example
-export let groupBy = undefined;
+export let groupBy = undefined; // see adv demo for example
 ```
 
 ```js 
@@ -99,16 +103,45 @@ export let createItem = filterText => {
 };
 ```
 
-| getOptionLabel | Function | (option, filterText) => option.isCreator ? \`Create "${filterText}"\` : option.label | Get option label function
-| getSelectionLabel | Function | (option) => option.label | Get selection label function
-| getGroupHeaderLabel | Function | (option) => option.label | Get group header label function
-| handleClear | Function | - | Clears selection, closes list and dispatches event
-| loadOptions | Promise | - | Method that returns a Promise that updates items
+```js 
+export let getOptionLabel = (option, filterText) => {
+  return option.isCreator ? `Create \"${filterText}\"` : option.label;
+};
+```
 
-| indicatorSvg | @html | - | Override default SVG chevron indicator
+```js 
+export let getSelectionLabel = option => {
+  if (option) return option.label;
+};
+```
 
-| isVirtualList | Boolean | false | Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental)
+```js 
+export let getGroupHeaderLabel = option => {
+  return option.label;
+};
+```
 
+```js 
+export function handleClear() {
+  selectedValue = undefined;
+  listOpen = false;
+  dispatch("clear", selectedValue);
+  handleFocus();
+}
+```
+
+```js 
+export function handleClear() {
+  selectedValue = undefined;
+  listOpen = false;
+  dispatch("clear", selectedValue);
+  handleFocus();
+}
+```
+
+```js 
+export let loadOptions = undefined; // if used must return a Promise that updates 'items'
+```
 
 ### Styling
 
