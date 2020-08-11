@@ -4,9 +4,9 @@ A select/autocomplete component for Svelte apps.  With support for grouping, fil
 
 ## Demos
 
-[🌱 Simple demo](https://svelte.dev/repl/a859c2ba7d1744af9c95037c48989193?version=3.12.1)
+🌱 [Simple demo](https://svelte.dev/repl/a859c2ba7d1744af9c95037c48989193?version=3.12.1)
 
-[🌻 Advanced demo](https://svelte.dev/repl/3e032a58c3974d07b7818c0f817a06a3?version=3.20.1)
+🌻 [Advanced demo](https://svelte.dev/repl/3e032a58c3974d07b7818c0f817a06a3?version=3.20.1)
 
 ## Installation
 
@@ -40,46 +40,110 @@ yarn add svelte-select
 
 ## API
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| items | String | - | Array of items
-| filterText | String | - | Text to filter list labels by
-| placeholder | String | - | Placeholder text
-| optionIdentifier | String | 'value' | Override default identifier
-| listOpen | Boolean | false | Open/close list
-| containerClasses | String | 'selectContainer' | Add extra container classes, for example 'global-x local-y'
-| containerStyles | String | - | Add/override container styles 
-| selectedValue | - | - | Selected value(s)
-| isClearable | Boolean | true | Enable clearing selected items
-| isCreatable | Boolean | false | Enable creating selected items
-| isDisabled | Boolean | false | Disable select
-| isMulti | Boolean | false | Enable multi select
-| isSearchable | Boolean | true | Disable search/filtering
-| isVirtualList | Boolean | false | Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental)
-| itemFilter | Function | (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase()) | Item filter function
-| groupBy | Function | - | Function to group list items
-| groupFilter | Function | (groups) => groups | Group filter function
-| isGroupHeaderSelectable | Boolean | false | Enable selectable group headers
-| createGroupHeaderItem | Function | (groupValue) => { label:groupValue, value:groupValue  } | create item for group headers
-| createItem | Function | (filterText) => { label:filterText, value:filterText } | create item function
-| getOptionLabel | Function | (option, filterText) => option.isCreator ? \`Create "${filterText}"\` : option.label | Get option label function
-| getSelectionLabel | Function | (option) => option.label | Get selection label function
-| getGroupHeaderLabel | Function | (option) => option.label | Get group header label function
-| handleClear | Function | - | Clears selection, closes list and dispatches event
-| Item | Component | Item | Item component
-| Selection | Component | Selection | Selection component
-| MultiSelection | Component | MultiSelection | Multi selection component
-| loadOptions | Promise | - | Method that returns a Promise that updates items
-| noOptionsMessage | String | 'No options' | Message to display when there are no items  
-| hideEmptyState | Boolean | false | Hide list when no options
-| listPlacement | String | 'auto' | When 'auto' displays either 'top' or 'bottom' depending on viewport
-| hasError | Boolean | false | Show error styles around select input (red border)
-| inputAttributes | Object | - | Pass in attributes like 'id' to the Select input, for example {id: 'Food Selection', foo: 'something'}
-| listAutoWidth | Boolean | true | List width will grow wider than the Select container (depending on list item content length)
-| showIndicator | Boolean | false | If true, the chevron indicator is always shown
-| indicatorSvg | @html | - | Override default SVG chevron indicator
+- `items: Array` Default: `[]`. List of selectable items that appear in the dropdown.
+- `selectedValue: Any` Default: `undefined`. Selected item or items
+- `filterText: String` Default: `''`. Text to filter `items` by.
+- `placeholder: String` Default: `'Select...'`. Placeholder text.
+- `noOptionsMessage: String` Default: `'No options'`. Message to display in list when there are no `items`.
+- `optionIdentifier: String` Default: `'value;`. Override default identifier.
+- `listOpen: Boolean` Default: `false`. Open/close list.
+- `hideEmptyState: Boolean` Default: `false`. Hide list and don't show `noOptionsMessage` when there are no `items`.
+- `containerClasses: String` Default: `''`. Add extra container classes, for example 'global-x local-y'.
+- `containerStyles: String` Default: `''`. Add inline styles to container.
+- `isClearable: Boolean` Default: `true`. Enable clearing of selected items.
+- `isCreatable: Boolean` Default: `false`. Can create new item(s) to be added to `selectedValue`.
+- `isDisabled: Boolean` Default: `false`. Disable select.
+- `isMulti: Boolean` Default: `false`. Enable multi-select, `selectedValue` becomes an array of selected items.
+- `isSearchable: Boolean` Default: `true`. Enable search/filtering of `items` via `filterText`.
+- `isGroupHeaderSelectable: Boolean` Default: `false`. Enable selectable group headers in `items` (see adv demo).
+- `listPlacement: String` Default: `'auto'`. When `'auto'` displays either `'top'` or `'bottom'` depending on viewport.
+- `hasError: Boolean` Default: `false`. Show/hide error styles around select input (red border by default).
+- `listAutoWidth: Boolean` Default: `true`. List width will grow wider than the Select container (depending on list item content length).
+- `showIndicator: Boolean` Default: `false`. If true, the chevron indicator is always shown.
+- `inputAttributes: Object` Default: `{}`. Useful for passing in HTML attributes like `'id'` to the Select input.
 
-### Styling
+- `Item: Component` Default: `Item`. Item component.
+- `Selection: Component` Default: `Selection`. Selection component.
+- `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
+
+- `indicatorSvg: @html` Default: `undefined`. Override default SVG chevron indicator.
+
+- `isVirtualList: Boolean` Default: `false`. Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental).
+
+### Exposed methods
+If you really want to get your hands dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
+
+```js 
+export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
+```
+
+```js 
+export let groupBy = undefined; // see adv demo for example
+```
+
+```js 
+export let groupFilter = groups => groups;
+```
+
+```js 
+export let createGroupHeaderItem = groupValue => {
+  return {
+    value: groupValue,
+    label: groupValue
+  };
+};
+```
+
+```js 
+export let createItem = filterText => {
+  return {
+    value: filterText,
+    label: filterText
+  };
+};
+```
+
+```js 
+export let getOptionLabel = (option, filterText) => {
+  return option.isCreator ? `Create \"${filterText}\"` : option.label;
+};
+```
+
+```js 
+export let getSelectionLabel = option => {
+  if (option) return option.label;
+};
+```
+
+```js 
+export let getGroupHeaderLabel = option => {
+  return option.label;
+};
+```
+
+```js 
+export function handleClear() {
+  selectedValue = undefined;
+  listOpen = false;
+  dispatch("clear", selectedValue);
+  handleFocus();
+}
+```
+
+```js 
+export function handleClear() {
+  selectedValue = undefined;
+  listOpen = false;
+  dispatch("clear", selectedValue);
+  handleFocus();
+}
+```
+
+```js 
+export let loadOptions = undefined; // if used must return a Promise that updates 'items'
+```
+
+## Styling
 
 You can style a component by overriding [the available CSS variables](/docs/theming_variables.md).
 
