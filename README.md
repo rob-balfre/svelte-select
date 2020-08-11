@@ -4,9 +4,9 @@ A select/autocomplete component for Svelte apps.  With support for grouping, fil
 
 ## Demos
 
-[🌱 Simple demo](https://svelte.dev/repl/a859c2ba7d1744af9c95037c48989193?version=3.12.1)
+[🌱 Simple demo](https://svelte.dev/repl/a859c2ba7d1744af9c95037c48989193?version=3.12.1)
 
-[🌻 Advanced demo](https://svelte.dev/repl/3e032a58c3974d07b7818c0f817a06a3?version=3.20.1)
+[🌻 Advanced demo](https://svelte.dev/repl/3e032a58c3974d07b7818c0f817a06a3?version=3.20.1)
 
 ## Installation
 
