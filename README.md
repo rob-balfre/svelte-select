@@ -68,24 +68,37 @@ yarn add svelte-select
 
 ### Exposed methods
 
-**itemFilter**: `items` filter.
 ```js 
 export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
 ```
 
-**groupBy**: Group `items` together.
 ```js 
-  export let groupBy = undefined;
+// see adv demo for example
+export let groupBy = undefined;
 ```
 
-**groupFilter**: Group filter.
 ```js 
-  groups => groups
+export let groupFilter = groups => groups;
 ```
 
+```js 
+export let createGroupHeaderItem = groupValue => {
+  return {
+    value: groupValue,
+    label: groupValue
+  };
+};
+```
 
-| createGroupHeaderItem | Function | (groupValue) => { label:groupValue, value:groupValue  } | create item for group headers
-| createItem | Function | (filterText) => { label:filterText, value:filterText } | create item function
+```js 
+export let createItem = filterText => {
+  return {
+    value: filterText,
+    label: filterText
+  };
+};
+```
+
 | getOptionLabel | Function | (option, filterText) => option.isCreator ? \`Create "${filterText}"\` : option.label | Get option label function
 | getSelectionLabel | Function | (option) => option.label | Get selection label function
 | getGroupHeaderLabel | Function | (option) => option.label | Get group header label function
