@@ -76,6 +76,7 @@
   export let listAutoWidth = true;
   export let itemHeight = 40;
   export let Icon = undefined;
+  export let iconProps = {};
   export let showChevron = false;
   export let showIndicator = false;
   export let containerClasses = "";
@@ -783,7 +784,7 @@
   bind:this={container}>
 
   {#if Icon}
-    <svelte:component this={Icon} />
+    <svelte:component this={Icon} {...iconProps} />
   {/if}
 
   {#if isMulti && selectedValue && selectedValue.length > 0}
