@@ -65,6 +65,8 @@ yarn add svelte-select
 - `Item: Component` Default: `Item`. Item component.
 - `Selection: Component` Default: `Selection`. Selection component.
 - `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
+- `Icon: Component` Default: `Icon`. Icon component.
+- `iconProps: Object` Default: `{}`. Icon props.
 
 - `indicatorSvg: @html` Default: `undefined`. Override default SVG chevron indicator.
 
