@@ -68,23 +68,21 @@ yarn add svelte-select
 
 ### Exposed methods
 
-`itemFilter`:  `items` filter
-
-Default:
+**itemFilter**: `items` filter.
 ```js 
-(label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase())
+export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
 ```
 
-`groupBy`:  Group `items` together
-
-Default: `undefined`
-
-`groupFilter`: Group filter
-
-Default:
-```js
-groups => groups
+**groupBy**: Group `items` together.
+```js 
+  export let groupBy = undefined;
 ```
+
+**groupFilter**: Group filter.
+```js 
+  groups => groups
+```
+
 
 | createGroupHeaderItem | Function | (groupValue) => { label:groupValue, value:groupValue  } | create item for group headers
 | createItem | Function | (filterText) => { label:filterText, value:filterText } | create item function
