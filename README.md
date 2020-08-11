@@ -62,15 +62,30 @@ yarn add svelte-select
 - `showIndicator: Boolean` Default: `false`. If true, the chevron indicator is always shown.
 - `inputAttributes: Object` Default: `{}`. Useful for passing in HTML attributes like `'id'` to the Select input.
 
+- `Item: Component` Default: `Item`. Item component.
+- `Selection: Component` Default: `Selection`. Selection component.
+- `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
 
-| Item | Component | Item | Item component
-| Selection | Component | Selection | Selection component
-| MultiSelection | Component | MultiSelection | Multi selection component
+### Exposed methods
 
+`itemFilter`:  `items` filter
 
-| itemFilter | Function | (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase()) | Item filter function
-| groupBy | Function | - | Function to group list items
-| groupFilter | Function | (groups) => groups | Group filter function
+Default:
+```js 
+(label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase())
+```
+
+`groupBy`:  Group `items` together
+
+Default: `undefined`
+
+`groupFilter`: Group filter
+
+Default:
+```js
+groups => groups
+```
+
 | createGroupHeaderItem | Function | (groupValue) => { label:groupValue, value:groupValue  } | create item for group headers
 | createItem | Function | (filterText) => { label:filterText, value:filterText } | create item function
 | getOptionLabel | Function | (option, filterText) => option.isCreator ? \`Create "${filterText}"\` : option.label | Get option label function
