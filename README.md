@@ -71,7 +71,7 @@ yarn add svelte-select
 - `isVirtualList: Boolean` Default: `false`. Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental).
 
 ### Exposed methods
-If you really want to get your hand dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
+If you really want to get your hands dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
 
 ```js 
 export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
