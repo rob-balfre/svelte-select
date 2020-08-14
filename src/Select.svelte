@@ -347,7 +347,8 @@
         }
       });
 
-      selectedValue = uniqueValues;
+      if (!noDuplicates)
+        selectedValue = uniqueValues;
     }
     return noDuplicates;
   }
