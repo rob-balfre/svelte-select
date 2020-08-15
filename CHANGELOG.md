@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+
+## 3.11.1
+
+* Fix to prevent multiple updates on focus events - thanks to @stephenlrandall
+
 ## 3.11.0
 
 * README reformatted
