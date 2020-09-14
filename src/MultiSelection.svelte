@@ -42,10 +42,14 @@
     display: flex;
     cursor: default;
     padding: var(--multiItemPadding, 0 10px 0 15px);
+    max-width: 100%;
   }
 
   .multiSelectItem_label {
     margin: var(--multiLabelMargin, 0 5px 0 0);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .multiSelectItem:hover,
@@ -62,7 +66,8 @@
   .multiSelectItem_clear {
     border-radius: var(--multiClearRadius, 50%);
     background: var(--multiClearBG, #52616F);
-    width: var(--multiClearWidth, 16px);
+    min-width: var(--multiClearWidth, 16px);
+    max-width: var(--multiClearWidth, 16px);
     height: var(--multiClearHeight, 16px);
     position: relative;
     top: var(--multiClearTop, 8px);
