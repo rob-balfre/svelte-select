@@ -770,6 +770,7 @@
 
   .hasError {
     border: var(--errorBorder, 1px solid #ff2d55);
+    background: var(--errorBackground, #fff);
   }
 
   @keyframes rotate {
