@@ -2757,6 +2757,33 @@ test('When noOptionsMessage is changed after List component has been created the
   select.$destroy();
 });
 
+
+test('When loadOptions promise is rejected then dispatch error', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      loadOptions: rejectPromise,      
+    },
+  });
+  
+  let eventData = undefined;
+  const off = select.$on('error', event => {
+    eventData = event;
+  });
+
+  await wait(0);
+  select.$set({listOpen: true});
+  await wait(0);
+  select.$set({filterText: 'test'});
+  await wait(500);
+  t.ok(eventData.detail.type === 'loadOptions');
+  t.ok(eventData.detail.details === 'error 123');
+
+  off()
+  select.$destroy();
+});
+
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
@@ -2788,6 +2815,13 @@ function getPosts(filterText) {
     };
   });
 }
+
+function rejectPromise() {
+  return new Promise((resolve, reject) => {
+    reject('error 123');
+  })
+}
+
 
 
 

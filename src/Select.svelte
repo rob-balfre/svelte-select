@@ -102,7 +102,16 @@
     getItemsHasInvoked = true;
     isWaiting = true;
 
-    items = await loadOptions(filterText);
+    let res = await loadOptions(filterText).catch(err => {
+      console.warn('svelte-select loadOptions error :>> ', err);
+      dispatch("error", { type: 'loadOptions', details: err });
+    });
+
+    if (res) { 
+      items = [...res];
+    } else {
+      items = [];
+    }
 
     isWaiting = false;
     isFocused = true;
