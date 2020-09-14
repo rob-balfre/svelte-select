@@ -1,5 +1,11 @@
 # svelte-select changelog
 
+## 3.12.0
+
+* new event 'error' is dispatched on caught errors
+* loadOptions now catches errors
+* new CSS custom prop '--errorBackground' added
+* CSS fix for long multi items wrapping text
 
 ## 3.11.1
 
