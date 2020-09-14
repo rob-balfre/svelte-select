@@ -746,6 +746,7 @@
     padding: var(--multiSelectPadding, 0 35px 0 16px);
     height: auto;
     flex-wrap: wrap;
+    align-items: stretch;
   }
 
   .multiSelect > * {
