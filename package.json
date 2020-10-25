@@ -42,6 +42,7 @@
     "src",
     "index.mjs",
     "index.js",
+    "index.d.ts",
     "Select.js"
   ],
   "dependencies": {}
