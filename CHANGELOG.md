@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.13.0
+
+* Added TypeScript declaration file - thanks to @singingwolfboy
+
 ## 3.12.0
 
 * new event 'error' is dispatched on caught errors
