@@ -109,6 +109,7 @@
 
     if (res) {
       items = [...res];
+      dispatch("loaded", { items });
     } else {
       items = [];
     }

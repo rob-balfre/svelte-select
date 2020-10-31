@@ -60,6 +60,13 @@ assert.htmlEqual = (a, b) => {
   assert.equal(normalizeHtml(a), normalizeHtml(b));
 };
 
+assert.arrayEqual = (a, b) => {
+  assert.ok(Array.isArray(a));
+  assert.ok(Array.isArray(b));
+  assert.equal(a.length, b.length);
+  assert.ok(a.every((val, i) => val === b[i]));
+};
+
 // tests
 test('with no data creates default elements', async (t) => {
   const testTemplate = new SelectDefault({
@@ -2758,6 +2765,36 @@ test('When noOptionsMessage is changed after List component has been created the
 });
 
 
+test('When loadOptions promise is resolved then dispatch loaded', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      loadOptions: resolvePromise,
+    },
+  });
+
+  let loadedEventData = undefined;
+  const loadedOff = select.$on('loaded', event => {
+    loadedEventData = event;
+  });
+  let errorEventData = undefined;
+  const errorOff = select.$on('error', event => {
+    errorEventData = event;
+  })
+
+  await wait(0);
+  select.$set({listOpen: true});
+  await wait(0);
+  select.$set({filterText: 'test'});
+  await wait(500);
+  t.arrayEqual(loadedEventData.detail.items, ['a', 'b', 'c']);
+  t.equal(errorEventData, undefined);
+
+  loadedOff();
+  errorOff();
+  select.$destroy();
+});
+
 test('When loadOptions promise is rejected then dispatch error', async (t) => {
   const select = new Select({
     target,
@@ -2766,9 +2803,13 @@ test('When loadOptions promise is rejected then dispatch error', async (t) => {
     },
   });
 
-  let eventData = undefined;
-  const off = select.$on('error', event => {
-    eventData = event;
+  let loadedEventData = undefined;
+  const loadedOff = select.$on('loaded', event => {
+    loadedEventData = event;
+  });
+  let errorEventData = undefined;
+  const errorOff = select.$on('error', event => {
+    errorEventData = event;
   });
 
   await wait(0);
@@ -2776,10 +2817,12 @@ test('When loadOptions promise is rejected then dispatch error', async (t) => {
   await wait(0);
   select.$set({filterText: 'test'});
   await wait(500);
-  t.ok(eventData.detail.type === 'loadOptions');
-  t.ok(eventData.detail.details === 'error 123');
+  t.equal(loadedEventData, undefined);
+  t.equal(errorEventData.detail.type, 'loadOptions');
+  t.equal(errorEventData.detail.details, 'error 123');
 
-  off()
+  loadedOff();
+  errorOff();
   select.$destroy();
 });
 
@@ -2814,6 +2857,12 @@ function getPosts(filterText) {
       }
     };
   });
+}
+
+function resolvePromise() {
+  return new Promise((resolve, reject) => {
+    resolve(['a', 'b', 'c']);
+  })
 }
 
 function rejectPromise() {

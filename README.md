@@ -188,6 +188,7 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 |------|------|----------|
 | select | selectedValue | fires when selectedValue changes
 | clear | - | fires when clear all is invoked
+| loaded | { items } | fires when `loadOptions` resolves
 | error | { type, details } | fires when error is caught
 
 ```html
