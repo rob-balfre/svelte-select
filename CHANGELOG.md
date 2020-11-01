@@ -243,7 +243,7 @@
 
 * Updated README
 * Added Async (loadOptions)
-* Added noOptionsMessage  
+* Added noOptionsMessage
 * Bug fixes
 * Updated examples
 

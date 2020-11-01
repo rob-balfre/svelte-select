@@ -60,6 +60,13 @@ assert.htmlEqual = (a, b) => {
   assert.equal(normalizeHtml(a), normalizeHtml(b));
 };
 
+assert.arrayEqual = (a, b) => {
+  assert.ok(Array.isArray(a));
+  assert.ok(Array.isArray(b));
+  assert.equal(a.length, b.length);
+  assert.ok(a.every((val, i) => val === b[i]));
+};
+
 // tests
 test('with no data creates default elements', async (t) => {
   const testTemplate = new SelectDefault({
@@ -294,10 +301,10 @@ test('select view updates with selectedValue updates', async (t) => {
   const select = new Select({
     target,
   });
-  
+
   await handleSet(select, {selectedValue: {value: 'chips', label: 'Chips'}});
   t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'Chips');
-  
+
   select.$destroy();
 });
 
@@ -338,7 +345,7 @@ test('Select opens List populated with items', async (t) => {
 
   await querySelectorClick('.selectContainer');
   t.ok(target.querySelector('.listItem'));
-  
+
   select.$destroy();
 });
 
@@ -1134,7 +1141,7 @@ test('items should be grouped by groupBy expression', async (t) => {
       t.ok(item.isGroupHeader || prevItemIsHeaderOrInSameGroup);
     }
   });
-  
+
   select.$destroy();
 });
 
@@ -1148,7 +1155,7 @@ test('clicking group header should not make a selected', async (t) => {
       groupBy: (item) => item.group
     }
   });
-  
+
   await wait(0);
   await querySelectorClick('.listGroupTitle');
 
@@ -1166,7 +1173,7 @@ test('when groupBy, no active item and keydown enter is fired then list should c
       groupBy: (item) => item.group
     }
   });
-  
+
   await wait(0);
   await querySelectorClick('.selectContainer');
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
@@ -1843,7 +1850,7 @@ test('when items in list filter or update then first item in list should highlig
   await handleKeyboard('ArrowDown');
   await handleKeyboard('ArrowDown');
   await handleKeyboard('ArrowDown');
-  
+
   t.ok(document.querySelector('.hover').innerHTML === 'Cake');
   await handleSet(select, {filterText: 'c'});
   t.ok(document.querySelector('.hover').innerHTML === 'Chocolate');
@@ -1895,7 +1902,7 @@ test('when isMulti and item is selected or state changes then check selectedValu
   t.ok(!item);
   item = false;
   await handleSet(select, {selectedValue: [{value: 'pizza', label: 'Pizza'}]});
-  
+
   t.ok(item);
   select.$destroy();
 });
@@ -1923,7 +1930,7 @@ test('when isFocused turns to false then check Select is no longer in focus', as
         isFocused: false,
       })
     }, 0)
-  
+
     selectSecond.$set({
       isFocused: true
     })
@@ -1935,7 +1942,7 @@ test('when isFocused turns to false then check Select is no longer in focus', as
   await wait(0);
 
   t.ok(selectSecond.isFocused);
-  t.ok(!select.isFocused);  
+  t.ok(!select.isFocused);
 
   selectSecond.$destroy();
   select.$destroy();
@@ -1950,7 +1957,7 @@ test('when items and loadOptions method are both supplied then fallback to items
       getOptionLabel: (option) => option.name,
       getSelectionLabel: (option) => option.name,
       loadOptions: getPosts,
-      optionIdentifier: 'id',      
+      optionIdentifier: 'id',
       items,
       isFocused: true,
       listOpen: true
@@ -2083,7 +2090,7 @@ test('when loadOptions method is supplied but filterText is empty then do not ru
   await wait(500);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.ok(document.querySelector('.customItem_name').innerHTML === 'Juniper Wheat Beer');
-  select.$set({selectedValue: undefined, filterText: ''});  
+  select.$set({selectedValue: undefined, filterText: ''});
   await wait(0);
   select.$set({listOpen: true});
   await wait(0);
@@ -2246,8 +2253,8 @@ test('when isMulti, groupBy and selectedValue are supplied then list should be f
       items: _items,
       groupBy: (item) => item.group,
       optionIdentifier: 'id',
-      getSelectionLabel: (item) => item.name, 
-      getOptionLabel: (item) => item.name,  
+      getSelectionLabel: (item) => item.name,
+      getOptionLabel: (item) => item.name,
       selectedValue: [{ id: 2, name: "Bar", group: "second" }],
       listOpen: true
     }
@@ -2331,7 +2338,7 @@ test('When isCreatable enabled, creator is not displayed when duplicate item val
   const listItems = document.querySelectorAll('.listContainer > .listItem');
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, dupeValueForCheck);
 
-  select.$destroy(); 
+  select.$destroy();
 });
 
 test('When creator selected, selected item is set to created item', async (t) => {
@@ -2399,7 +2406,7 @@ test('When creator is selected multiple times, items are all added to multi sele
       isMulti: true
     }
   });
-  
+
   select.$set({ filterText: filterTextForItem1 });
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
@@ -2429,7 +2436,7 @@ test('When isMulti and an items remove icon is clicked then item should be remov
     }
   });
 
-  await querySelectorClick('.multiSelectItem_clear'); 
+  await querySelectorClick('.multiSelectItem_clear');
   t.ok(select.selectedValue[0].value === 'cake')
   await querySelectorClick('.multiSelectItem_clear');
   t.ok(select.selectedValue === undefined);
@@ -2694,7 +2701,7 @@ test('When showIndicator prop is true always show chevron on Select', async (t) 
 test('When items and loadItems then listOpen should be false', async (t) => {
   const select = new Select({
     target,
-    props: {      
+    props: {
       getSelectionLabel: (option) => option.name,
       getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
@@ -2703,7 +2710,7 @@ test('When items and loadItems then listOpen should be false', async (t) => {
         id: 1,
         name: 'Initial Items #1'
       }]
-      
+
     }
   });
 
@@ -2753,22 +2760,56 @@ test('When noOptionsMessage is changed after List component has been created the
   select.$set({noOptionsMessage: 'THIRD'});
   await wait(0);
   t.ok(document.querySelector('.empty').innerHTML === 'THIRD');
-  
+
   select.$destroy();
 });
 
+
+test('When loadOptions promise is resolved then dispatch loaded', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      loadOptions: resolvePromise,
+    },
+  });
+
+  let loadedEventData = undefined;
+  const loadedOff = select.$on('loaded', event => {
+    loadedEventData = event;
+  });
+  let errorEventData = undefined;
+  const errorOff = select.$on('error', event => {
+    errorEventData = event;
+  })
+
+  await wait(0);
+  select.$set({listOpen: true});
+  await wait(0);
+  select.$set({filterText: 'test'});
+  await wait(500);
+  t.arrayEqual(loadedEventData.detail.items, ['a', 'b', 'c']);
+  t.equal(errorEventData, undefined);
+
+  loadedOff();
+  errorOff();
+  select.$destroy();
+});
 
 test('When loadOptions promise is rejected then dispatch error', async (t) => {
   const select = new Select({
     target,
     props: {
-      loadOptions: rejectPromise,      
+      loadOptions: rejectPromise,
     },
   });
-  
-  let eventData = undefined;
-  const off = select.$on('error', event => {
-    eventData = event;
+
+  let loadedEventData = undefined;
+  const loadedOff = select.$on('loaded', event => {
+    loadedEventData = event;
+  });
+  let errorEventData = undefined;
+  const errorOff = select.$on('error', event => {
+    errorEventData = event;
   });
 
   await wait(0);
@@ -2776,10 +2817,12 @@ test('When loadOptions promise is rejected then dispatch error', async (t) => {
   await wait(0);
   select.$set({filterText: 'test'});
   await wait(500);
-  t.ok(eventData.detail.type === 'loadOptions');
-  t.ok(eventData.detail.details === 'error 123');
+  t.equal(loadedEventData, undefined);
+  t.equal(errorEventData.detail.type, 'loadOptions');
+  t.equal(errorEventData.detail.details, 'error 123');
 
-  off()
+  loadedOff();
+  errorOff();
   select.$destroy();
 });
 
@@ -2814,6 +2857,12 @@ function getPosts(filterText) {
       }
     };
   });
+}
+
+function resolvePromise() {
+  return new Promise((resolve, reject) => {
+    resolve(['a', 'b', 'c']);
+  })
 }
 
 function rejectPromise() {

@@ -211,10 +211,10 @@
 <div class="listContainer virtualList" bind:this={container}>
 
   <VirtualList {items} {itemHeight} let:item let:i>
-  
+
     <div on:mouseover="{() => handleHover(i)}" on:click="{event => handleClick({item, i, event})}"
         class="listItem">
-          <svelte:component 
+          <svelte:component
             this="{Item}"
             {item}
             {filterText}
@@ -224,7 +224,7 @@
             isHover="{isItemHover(hoverItemIndex, item, i, items)}"
           />
     </div>
-  
+
 </VirtualList>
 </div>
 {/if}
@@ -235,12 +235,12 @@
     {#if item.isGroupHeader && !item.isSelectable}
       <div class="listGroupTitle">{getGroupHeaderLabel(item)}</div>
     { :else }
-    <div 
-      on:mouseover="{() => handleHover(i)}" 
+    <div
+      on:mouseover="{() => handleHover(i)}"
       on:click="{event => handleClick({item, i, event})}"
       class="listItem"
     >
-      <svelte:component 
+      <svelte:component
         this="{Item}"
         {item}
         {filterText}

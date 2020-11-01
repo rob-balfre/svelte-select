@@ -107,8 +107,9 @@
       dispatch("error", { type: 'loadOptions', details: err });
     });
 
-    if (res) { 
+    if (res) {
       items = [...res];
+      dispatch("loaded", { items });
     } else {
       items = [];
     }
