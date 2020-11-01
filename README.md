@@ -30,7 +30,7 @@ yarn add svelte-select
     {value: 'chips', label: 'Chips'},
     {value: 'ice-cream', label: 'Ice Cream'},
   ];
-  
+
   let selectedValue = undefined;
 </script>
 
@@ -75,19 +75,19 @@ yarn add svelte-select
 ### Exposed methods
 If you really want to get your hands dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
 
-```js 
+```js
 export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
 ```
 
-```js 
+```js
 export let groupBy = undefined; // see adv demo for example
 ```
 
-```js 
+```js
 export let groupFilter = groups => groups;
 ```
 
-```js 
+```js
 export let createGroupHeaderItem = groupValue => {
   return {
     value: groupValue,
@@ -96,7 +96,7 @@ export let createGroupHeaderItem = groupValue => {
 };
 ```
 
-```js 
+```js
 export let createItem = filterText => {
   return {
     value: filterText,
@@ -105,25 +105,25 @@ export let createItem = filterText => {
 };
 ```
 
-```js 
+```js
 export let getOptionLabel = (option, filterText) => {
   return option.isCreator ? `Create \"${filterText}\"` : option.label;
 };
 ```
 
-```js 
+```js
 export let getSelectionLabel = option => {
   if (option) return option.label;
 };
 ```
 
-```js 
+```js
 export let getGroupHeaderLabel = option => {
   return option.label;
 };
 ```
 
-```js 
+```js
 export function handleClear() {
   selectedValue = undefined;
   listOpen = false;
@@ -132,7 +132,7 @@ export function handleClear() {
 }
 ```
 
-```js 
+```js
 export function handleClear() {
   selectedValue = undefined;
   listOpen = false;
@@ -141,7 +141,7 @@ export function handleClear() {
 }
 ```
 
-```js 
+```js
 export let loadOptions = undefined; // if used must return a Promise that updates 'items'
 ```
 
@@ -152,7 +152,7 @@ You can style a component by overriding [the available CSS variables](/docs/them
 ```html
 <script>
   import Select from 'svelte-select';
-  
+
   const items = ['One', 'Two', 'Three'];
 </script>
 
@@ -166,7 +166,7 @@ You can style a component by overriding [the available CSS variables](/docs/them
 
 <div class="themed">
   <h2>Theming</h2>
-  <Select {items}></Select>  
+  <Select {items}></Select>
 </div>
 ```
 
@@ -175,11 +175,11 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 ```html
 <script>
   import Select from 'svelte-select';
-  
+
   const items = ['One', 'Two', 'Three'];
 </script>
 
-<Select {items} inputStyles="box-sizing: border-box;"></Select> 
+<Select {items} inputStyles="box-sizing: border-box;"></Select>
 ```
 
 ## Events
@@ -217,7 +217,7 @@ yarn test:browser
 
 In your favourite browser go to http://localhost:3000 and open devtools and see the console for the test output. When developing its handy to see the component on the page; comment out the `select.$destroy();` on the last test in /test/src/index.js or use the `test.only()` to target just one test.
 
-For example: 
+For example:
 
 ```js
 test.only('when getSelectionLabel contains HTML then render the HTML', async (t) => {

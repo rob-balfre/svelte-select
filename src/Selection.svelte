@@ -12,5 +12,5 @@
 </style>
 
 <div class="selection">
-  {@html getSelectionLabel(item)} 
+  {@html getSelectionLabel(item)}
 </div>
