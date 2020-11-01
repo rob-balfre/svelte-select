@@ -133,15 +133,6 @@ export function handleClear() {
 ```
 
 ```js
-export function handleClear() {
-  selectedValue = undefined;
-  listOpen = false;
-  dispatch("clear", selectedValue);
-  handleFocus();
-}
-```
-
-```js
 export let loadOptions = undefined; // if used must return a Promise that updates 'items'
 ```
 
