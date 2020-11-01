@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.14.0
+
+* Added event 'loaded' when loadOptions resolves - thanks to @singingwolfboy
+
 ## 3.13.0
 
 * Added TypeScript declaration file - thanks to @singingwolfboy
