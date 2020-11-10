@@ -142,11 +142,11 @@
 
   let _inputAttributes = {};
   $: {
-    _inputAttributes = Object.assign(inputAttributes, {
+    _inputAttributes = Object.assign({
       autocomplete: "off",
       autocorrect: "off",
       spellcheck: false
-    });
+    }, inputAttributes);
 
     if (!isSearchable) {
       _inputAttributes.readonly = true;

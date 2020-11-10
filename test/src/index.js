@@ -2200,11 +2200,17 @@ test('When inputAttributes is supplied each attribute is placed on the Select in
     target,
     props: {
       items,
-      inputAttributes: { id: 'testId' }
+      inputAttributes: {
+        id: 'testId',
+        autocomplete: 'custom-value'
+      }
     }
   });
 
-  t.ok(document.getElementById('testId'));
+  const el = document.getElementById('testId');
+
+  t.equal(el.id, 'testId');
+  t.equal(el.getAttribute('autocomplete'), 'custom-value');
 
   select.$destroy();
 });
