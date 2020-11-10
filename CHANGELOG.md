@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.14.1
+
+* Fix input attributes so the defaults can be overwritten
+
 ## 3.14.0
 
 * Added event 'loaded' when loadOptions resolves - thanks to @singingwolfboy
