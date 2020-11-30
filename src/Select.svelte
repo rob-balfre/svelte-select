@@ -612,6 +612,12 @@
     if (listOpen) loadList();
 
     if (items && items.length > 0) {
+      if(typeof(selectedValue) !== undefined){
+        const index = items.findIndex(item => item[optionIdentifier] === selectedValue);
+        if(index >= 0){
+          selectedValue = items[index];
+        }
+      }
       originalItemsClone = JSON.stringify(items);
     }
   });
