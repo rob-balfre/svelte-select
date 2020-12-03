@@ -132,6 +132,14 @@
     }
   }
 
+  $: if (selectedValue) {
+    if (Array.isArray(selectedValue)) {
+      selectedValue = selectedValue.map(selection => items.find(item => item.value === selection.value));
+    } else {
+      selectedValue = items.find(item => item.value === selectedValue.value);
+    }
+  }
+
   $: {
     if (noOptionsMessage && list) list.$set({ noOptionsMessage });
   }
