@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.14.2
+
+* Fix so selectedValue updates on items change - thanks to @stephenlrandall
+
 ## 3.14.1
 
 * Fix input attributes so the defaults can be overwritten
