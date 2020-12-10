@@ -121,6 +121,8 @@
 
   $: disabled = isDisabled;
 
+  $: updateSelectedValueDisplay(items);
+
   $: {
     if (typeof selectedValue === "string") {
       selectedValue = {
@@ -361,6 +363,17 @@
         selectedValue = uniqueValues;
     }
     return noDuplicates;
+  }
+
+  function updateSelectedValueDisplay(items) {
+    if (!items || items.length === 0 || items.some(item => typeof item !== "object")) return;
+    if (!selectedValue || (isMulti ? selectedValue.some(selection => !selection || !selection[optionIdentifier]) : !selectedValue[optionIdentifier])) return;
+
+    if (Array.isArray(selectedValue)) {
+      selectedValue = selectedValue.map(selection => items.find(item => item[optionIdentifier] === selection[optionIdentifier]) || "");
+    } else {
+      selectedValue = items.find(item => item[optionIdentifier] === selectedValue[optionIdentifier]) || "";
+    }
   }
 
   async function setList(items) {
