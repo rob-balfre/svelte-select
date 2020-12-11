@@ -20,6 +20,7 @@
   export let Selection = SelectionComponent;
   export let MultiSelection = MultiSelectionComponent;
   export let isMulti = false;
+  export let multiFullItemClearable = false;
   export let isDisabled = false;
   export let isCreatable = false;
   export let isFocused = false;
@@ -820,6 +821,7 @@
       {getSelectionLabel}
       {activeSelectedValue}
       {isDisabled}
+      {multiFullItemClearable}
       on:multiItemClear={handleMultiItemClear}
       on:focus={handleFocus} />
   {/if}
