@@ -365,14 +365,19 @@
     return noDuplicates;
   }
 
+  function findItem(selection) {
+    let matchTo = selection ? selection[optionIdentifier] : selectedValue[optionIdentifier];
+    return items.find(item => item[optionIdentifier] === matchTo);
+  } 
+
   function updateSelectedValueDisplay(items) {
     if (!items || items.length === 0 || items.some(item => typeof item !== "object")) return;
     if (!selectedValue || (isMulti ? selectedValue.some(selection => !selection || !selection[optionIdentifier]) : !selectedValue[optionIdentifier])) return;
 
     if (Array.isArray(selectedValue)) {
-      selectedValue = selectedValue.map(selection => items.find(item => item[optionIdentifier] === selection[optionIdentifier]) || "");
+      selectedValue = selectedValue.map(selection => findItem(selection) || selection);
     } else {
-      selectedValue = items.find(item => item[optionIdentifier] === selectedValue[optionIdentifier]) || "";
+      selectedValue = findItem() || selectedValue;
     }
   }
 

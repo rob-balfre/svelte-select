@@ -2887,6 +2887,32 @@ test('When items change then selectedValue should also update', async (t) => {
   multiSelect.$destroy();
 });
 
+test('When items change then selectedValue should also update but only if found in items', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      selectedValue: {value: 'chips', label: 'Chips'},
+    },
+  });
+
+  await wait(0);
+
+  select.$set({items: [
+    {value: 'chocolate', label: 'Chocolate'},
+    {value: 'pizza', label: 'Pizza'},
+    {value: 'cake', label: 'Cake'},
+    {value: 'loaded-fries', label: 'Loaded Fries'},
+    {value: 'ice-cream', label: 'Ice Cream'},
+  ]});
+
+  await wait(0);
+
+  t.ok(select.selectedValue.label === 'Chips');
+  t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'Chips');
+});
+
+
 function focus(element, setFocus) {
   return new Promise(fulfil => {
     element.addEventListener('focus', function handler() {
