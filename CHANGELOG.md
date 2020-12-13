@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.14.3
+
+* Regression fix for 3.14.2 clearing selectedValue if not found in items - thanks to @frederikhors for reporting
+
 ## 3.14.2
 
 * Fix so selectedValue updates on items change - thanks to @stephenlrandall
