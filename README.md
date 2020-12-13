@@ -31,10 +31,15 @@ yarn add svelte-select
     {value: 'ice-cream', label: 'Ice Cream'},
   ];
 
-  let selectedValue = undefined;
+  let selectedValue = {value: 'cake', label: 'Cake'};
+
+  function handleSelect(event) {
+    console.log('selected item': event.detail);
+    // .. do something here 🙂
+  }
 </script>
 
-<Select {items} bind:selectedValue></Select>
+<Select {items} {selectedValue} on:select={handleSelect}></Select>
 ```
 
 
@@ -177,7 +182,7 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 
 | Event Name | Callback | Description |
 |------|------|----------|
-| select | selectedValue | fires when selectedValue changes
+| select | { detail } | fires when selectedValue changes
 | clear | - | fires when clear all is invoked
 | loaded | { items } | fires when `loadOptions` resolves
 | error | { type, details } | fires when error is caught
@@ -187,7 +192,8 @@ You can also use the `inputStyles` prop to write in any override styles needed f
   import Select from 'svelte-select';
 
   let items = [...];
-  function handleSelect(selectedVal) {
+  function handleSelect(event) {
+    // event.detail will contain the selected value
     ...
   }
   function onClear() {
