@@ -2910,8 +2910,28 @@ test('When items change then selectedValue should also update but only if found 
 
   t.ok(select.selectedValue.label === 'Chips');
   t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'Chips');
+
+  select.$destroy();
 });
 
+test('When isMulti and multiFullItemClearable then clicking anywhere on the item will remove item', async (t) => {
+  const multiSelect = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items,
+      multiFullItemClearable: true,
+      selectedValue: [{value: 'chips', label: 'Chips'}, {value: 'pizza', label: 'Pizza'}],
+    },
+  });
+
+  await wait(0);
+  await querySelectorClick('.multiSelectItem');
+  await wait(0);
+  t.ok(multiSelect.selectedValue[0].label === 'Pizza');
+  
+  multiSelect.$destroy();
+});
 
 function focus(element, setFocus) {
   return new Promise(fulfil => {
