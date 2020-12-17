@@ -6,6 +6,7 @@
   export let selectedValue = [];
   export let activeSelectedValue = undefined;
   export let isDisabled = false;
+  export let multiFullItemClearable = false;
   export let getSelectionLabel = undefined;
 
   function handleClear(i, event) {
@@ -15,11 +16,11 @@
 </script>
 
 {#each selectedValue as value, i}
-<div class="multiSelectItem {activeSelectedValue === i ? 'active' : ''} {isDisabled ? 'disabled' : ''}">
+<div class="multiSelectItem {activeSelectedValue === i ? 'active' : ''} {isDisabled ? 'disabled' : ''}" on:click={event => multiFullItemClearable ? handleClear(i, event) : {}}>
   <div class="multiSelectItem_label">
     {@html getSelectionLabel(value)}
   </div>
-  {#if !isDisabled}
+  {#if !isDisabled && !multiFullItemClearable}
   <div class="multiSelectItem_clear" on:click="{event => handleClear(i, event)}">
     <svg width="100%" height="100%" viewBox="-2 -2 50 50" focusable="false" role="presentation">
       <path
