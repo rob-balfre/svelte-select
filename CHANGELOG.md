@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.15.0
+
+* Added new prop multiFullItemClearable for easier clearable items when isMulti is true - thanks to @stephenlrandall
+
 ## 3.14.3
 
 * Regression fix for 3.14.2 clearing selectedValue if not found in items - thanks to @frederikhors for reporting
