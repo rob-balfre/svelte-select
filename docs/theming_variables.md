@@ -19,6 +19,7 @@ You can override the following variables to style a Select component.
 - `--disabledBorderColor`
 - `--disabledColor`
 - `--disabledPlaceholderColor`
+- `--disabledPlaceholderOpacity`
 - `--errorBackground`
 - `--errorBorder`
 - `--groupItemPaddingLeft`
@@ -79,6 +80,7 @@ You can override the following variables to style a Select component.
 - `--multiSelectPadding`
 - `--padding`
 - `--placeholderColor`
+- `--placeholderOpacity`
 - `--selectedItemPadding`
 - `--spinnerColor`
 - `--spinnerHeight`

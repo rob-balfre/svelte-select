@@ -671,6 +671,7 @@
 
   .selectContainer input::placeholder {
     color: var(--placeholderColor, #78848f);
+    opacity: var(--placeholderOpacity, 1);
   }
 
   .selectContainer input:focus {
@@ -693,6 +694,7 @@
 
   .selectContainer.disabled input::placeholder {
     color: var(--disabledPlaceholderColor, #c1c6cc);
+    opacity: var(--disabledPlaceholderOpacity, 1);
   }
 
   .selectedItem {
