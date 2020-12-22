@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.16.0
+
+* New CSS custom props '--placeholderOpacity' and 'disabledPlaceholderOpacity' added - thanks to @tiaanduplessis
+
 ## 3.15.0
 
 * Added new prop multiFullItemClearable for easier clearable items when isMulti is true - thanks to @stephenlrandall
