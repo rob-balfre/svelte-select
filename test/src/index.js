@@ -2944,6 +2944,36 @@ function focus(element, setFocus) {
   });
 }
 
+test('when loadOptions and items is supplied then list should close on blur', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+  let items=[{value:1, label:1}, {value:2, label:2}];
+	let loadOptions = async(filterText) => {
+		const res = await fetch(`https://api.punkapi.com/v2/beers?beer_name=${filterText}`)
+		const data = await res.json();    
+    return data.map((beer)=> ({value: beer.id, label: beer.name}));
+	}
+
+  const select = new Select({
+    target,
+    props: {
+      items,
+      loadOptions,
+    }
+  });
+
+  select.$set({isFocused: true});
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  await wait(0);
+  select.$set(({ filterText: 's'}))
+  await wait(600);
+  div.click();
+  div.remove();
+
+  select.$destroy();
+});
+
+
 function getPosts(filterText) {
   filterText = filterText ? filterText.replace(' ','_') : '';
 

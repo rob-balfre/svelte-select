@@ -384,6 +384,7 @@
 
   async function setList(items) {
     await tick();
+    if (!listOpen) return;
     if (list) return list.$set({ items });
     if (loadOptions && getItemsHasInvoked && items.length > 0) loadList();
   }
