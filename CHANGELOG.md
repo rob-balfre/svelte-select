@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 3.16.1
+
+* Bug fix for loadOptions and list causing blur to not close list - thanks to @Ginfone for reporting
+
 ## 3.16.0
 
 * New CSS custom props '--placeholderOpacity' and 'disabledPlaceholderOpacity' added - thanks to @tiaanduplessis
