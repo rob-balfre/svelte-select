@@ -663,6 +663,7 @@
     line-height: var(--height, 42px);
     padding: var(--inputPadding, var(--padding));
     width: 100%;
+    box-sizing: border-box;
     background: transparent;
     font-size: var(--inputFontSize, 14px);
     letter-spacing: var(--inputLetterSpacing, -0.08px);
