@@ -6,19 +6,35 @@
     onMount,
     tick
   } from "svelte";
-  import List from "./List.svelte";
+  import ClearComponent from "./Clear.svelte";
+  import ContainerComponent from "./Container.svelte";
+  import IndicatorComponent from "./Indicator.svelte";
+  import InputComponent from "./Input.svelte";
   import ItemComponent from "./Item.svelte";
-  import SelectionComponent from "./Selection.svelte";
+  import List from "./List.svelte";
   import MultiSelectionComponent from "./MultiSelection.svelte";
+  import SelectionComponent from "./Selection.svelte";
+  import SelectionContainerComponent from "./SelectionContainer.svelte";
+  import SpinnerComponent from "./Spinner.svelte";
   import isOutOfViewport from "./utils/isOutOfViewport";
   import debounce from "./utils/debounce";
 
   const dispatch = createEventDispatcher();
   export let container = undefined;
   export let input = undefined;
+  export let Clear = ClearComponent;
+  export let Container = ContainerComponent;
+  export let Empty = undefined;
+  export let GroupItem = undefined;
+  export let Indicator = IndicatorComponent;
+  export let Input = InputComponent;
   export let Item = ItemComponent;
-  export let Selection = SelectionComponent;
+  export let ItemContainer = undefined;
+  export let ListContainer = undefined;
   export let MultiSelection = MultiSelectionComponent;
+  export let Selection = SelectionComponent;
+  export let SelectionContainer = SelectionContainerComponent;
+  export let Spinner = SpinnerComponent;
   export let isMulti = false;
   export let multiFullItemClearable = false;
   export let isDisabled = false;
@@ -27,6 +43,7 @@
   export let selectedValue = undefined;
   export let filterText = "";
   export let placeholder = "Select...";
+  export let positionBuffer = 5;
   export let items = [];
   export let itemFilter = (label, filterText, option) =>
     label.toLowerCase().includes(filterText.toLowerCase());
@@ -369,7 +386,7 @@
   function findItem(selection) {
     let matchTo = selection ? selection[optionIdentifier] : selectedValue[optionIdentifier];
     return items.find(item => item[optionIdentifier] === matchTo);
-  } 
+  }
 
   function updateSelectedValueDisplay(items) {
     if (!items || items.length === 0 || items.some(item => typeof item !== "object")) return;
@@ -417,9 +434,9 @@
     target.style.left = "0";
 
     if (listPlacement === "top") {
-      target.style.bottom = `${height + 5}px`;
+      target.style.bottom = `${height + positionBuffer}px`;
     } else {
-      target.style.top = `${height + 5}px`;
+      target.style.top = `${height + positionBuffer}px`;
     }
 
     target = target;
@@ -545,7 +562,11 @@
     if (target && list) return;
 
     const data = {
+      Empty,
+      GroupItem,
       Item,
+      ItemContainer,
+      ListContainer,
       filterText,
       optionIdentifier,
       noOptionsMessage,
@@ -641,182 +662,22 @@
   });
 </script>
 
-<style>
-  .selectContainer {
-    --padding: 0 16px;
-
-    border: var(--border, 1px solid #d8dbdf);
-    border-radius: var(--borderRadius, 3px);
-    height: var(--height, 42px);
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: var(--padding);
-    background: var(--background, #fff);
-  }
-
-  .selectContainer input {
-    cursor: default;
-    border: none;
-    color: var(--inputColor, #3f4f5f);
-    height: var(--height, 42px);
-    line-height: var(--height, 42px);
-    padding: var(--inputPadding, var(--padding));
-    width: 100%;
-    background: transparent;
-    font-size: var(--inputFontSize, 14px);
-    letter-spacing: var(--inputLetterSpacing, -0.08px);
-    position: absolute;
-    left: var(--inputLeft, 0);
-  }
-
-  .selectContainer input::placeholder {
-    color: var(--placeholderColor, #78848f);
-    opacity: var(--placeholderOpacity, 1);
-  }
-
-  .selectContainer input:focus {
-    outline: none;
-  }
-
-  .selectContainer:hover {
-    border-color: var(--borderHoverColor, #b2b8bf);
-  }
-
-  .selectContainer.focused {
-    border-color: var(--borderFocusColor, #006fe8);
-  }
-
-  .selectContainer.disabled {
-    background: var(--disabledBackground, #ebedef);
-    border-color: var(--disabledBorderColor, #ebedef);
-    color: var(--disabledColor, #c1c6cc);
-  }
-
-  .selectContainer.disabled input::placeholder {
-    color: var(--disabledPlaceholderColor, #c1c6cc);
-    opacity: var(--disabledPlaceholderOpacity, 1);
-  }
-
-  .selectedItem {
-    line-height: var(--height, 42px);
-    height: var(--height, 42px);
-    overflow-x: hidden;
-    padding: var(--selectedItemPadding, 0 20px 0 0);
-  }
-
-  .selectedItem:focus {
-    outline: none;
-  }
-
-  .clearSelect {
-    position: absolute;
-    right: var(--clearSelectRight, 10px);
-    top: var(--clearSelectTop, 11px);
-    bottom: var(--clearSelectBottom, 11px);
-    width: var(--clearSelectWidth, 20px);
-    color: var(--clearSelectColor, #c5cacf);
-    flex: none !important;
-  }
-
-  .clearSelect:hover {
-    color: var(--clearSelectHoverColor, #2c3e50);
-  }
-
-  .selectContainer.focused .clearSelect {
-    color: var(--clearSelectFocusColor, #3f4f5f);
-  }
-
-  .indicator {
-    position: absolute;
-    right: var(--indicatorRight, 10px);
-    top: var(--indicatorTop, 11px);
-    width: var(--indicatorWidth, 20px);
-    height: var(--indicatorHeight, 20px);
-    color: var(--indicatorColor, #c5cacf);
-  }
-
-  .indicator svg {
-    display: inline-block;
-    fill: var(--indicatorFill, currentcolor);
-    line-height: 1;
-    stroke: var(--indicatorStroke, currentcolor);
-    stroke-width: 0;
-  }
-
-  .spinner {
-    position: absolute;
-    right: var(--spinnerRight, 10px);
-    top: var(--spinnerLeft, 11px);
-    width: var(--spinnerWidth, 20px);
-    height: var(--spinnerHeight, 20px);
-    color: var(--spinnerColor, #51ce6c);
-    animation: rotate 0.75s linear infinite;
-  }
-
-  .spinner_icon {
-    display: block;
-    height: 100%;
-    transform-origin: center center;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    -webkit-transform: none;
-  }
-
-  .spinner_path {
-    stroke-dasharray: 90;
-    stroke-linecap: round;
-  }
-
-  .multiSelect {
-    display: flex;
-    padding: var(--multiSelectPadding, 0 35px 0 16px);
-    height: auto;
-    flex-wrap: wrap;
-    align-items: stretch;
-  }
-
-  .multiSelect > * {
-    flex: 1 1 50px;
-  }
-
-  .selectContainer.multiSelect input {
-    padding: var(--multiSelectInputPadding, 0);
-    position: relative;
-    margin: var(--multiSelectInputMargin, 0);
-  }
-
-  .hasError {
-    border: var(--errorBorder, 1px solid #ff2d55);
-    background: var(--errorBackground, #fff);
-  }
-
-  @keyframes rotate {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-</style>
 
 <svelte:window
   on:click={handleWindowClick}
   on:keydown={handleKeyDown}
   on:resize={getPosition} />
 
-<div
-  class="selectContainer {containerClasses}"
-  class:hasError
-  class:multiSelect={isMulti}
-  class:disabled={isDisabled}
-  class:focused={isFocused}
-  style={containerStyles}
+<svelte:component
+  this={Container}
+  {containerClasses}
+  {containerStyles}
+  {hasError}
+  {isMulti}
+  {isDisabled}
+  {isFocused}
   on:click={handleClick}
-  bind:this={container}>
+  bind:instance={container}>
 
   {#if Icon}
     <svelte:component this={Icon} {...iconProps} />
@@ -834,84 +695,34 @@
       on:focus={handleFocus} />
   {/if}
 
-  {#if isDisabled}
-    <input
-      {..._inputAttributes}
-      bind:this={input}
-      on:focus={handleFocus}
-      bind:value={filterText}
-      placeholder={placeholderText}
-      style={inputStyles}
-      disabled />
-  {:else}
-    <input
-      {..._inputAttributes}
-      bind:this={input}
-      on:focus={handleFocus}
-      bind:value={filterText}
-      placeholder={placeholderText}
-      style={inputStyles} />
-  {/if}
+  <svelte:component
+    this={Input}
+    inputAttributes={_inputAttributes}
+    {isDisabled}
+    {inputStyles}
+    {placeholderText}
+    on:focus={handleFocus}
+    bind:value={filterText}
+    bind:instance={input}/>
 
   {#if !isMulti && showSelectedItem}
-    <div class="selectedItem" on:focus={handleFocus}>
+    <svelte:component this={SelectionContainer} on:focus={handleFocus}>
       <svelte:component
         this={Selection}
         item={selectedValue}
         {getSelectionLabel} />
-    </div>
+    </svelte:component>
   {/if}
 
   {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
-    <div class="clearSelect" on:click|preventDefault={handleClear}>
-      <svg
-        width="100%"
-        height="100%"
-        viewBox="-2 -2 50 50"
-        focusable="false"
-        role="presentation">
-        <path
-          fill="currentColor"
-          d="M34.923,37.251L24,26.328L13.077,37.251L9.436,33.61l10.923-10.923L9.436,11.765l3.641-3.641L24,19.047L34.923,8.124
-          l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z" />
-      </svg>
-    </div>
+    <svelte:component this={Clear} on:click={handleClear}/>
   {/if}
 
   {#if showIndicator || (showChevron && !selectedValue || (!isSearchable && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem)))}
-    <div class="indicator">
-      {#if indicatorSvg}
-        {@html indicatorSvg}
-      {:else}
-        <svg
-          width="100%"
-          height="100%"
-          viewBox="0 0 20 20"
-          focusable="false">
-          <path
-            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747
-            3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0
-            1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502
-            0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0
-            0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z" />
-        </svg>
-      {/if}
-    </div>
+    <svelte:component this={Indicator} {indicatorSvg}/>
   {/if}
 
   {#if isWaiting}
-    <div class="spinner">
-      <svg class="spinner_icon" viewBox="25 25 50 50">
-        <circle
-          class="spinner_path"
-          cx="50"
-          cy="50"
-          r="20"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="5"
-          stroke-miterlimit="10" />
-      </svg>
-    </div>
+    <svelte:component this={Spinner}/>
   {/if}
-</div>
+</svelte:component>

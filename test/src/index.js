@@ -1,7 +1,17 @@
 import getName from 'namey-mcnameface';
 import normalizeHtml from '../utils/normalizeHtml';
 
+import CustomClear from './CustomClear.svelte';
+import CustomContainer from './CustomContainer.svelte';
+import CustomEmpty from './CustomEmpty.svelte';
+import CustomGroupItem from './CustomGroupItem.svelte';
+import CustomIndicator from './CustomIndicator.svelte';
+import CustomInput from './CustomInput.svelte';
 import CustomItem from './CustomItem.svelte';
+import CustomItemContainer from './CustomItemContainer.svelte';
+import CustomListContainer from './CustomListContainer.svelte';
+import CustomSelectionContainer from './CustomSelectionContainer.svelte';
+import CustomSpinner from './CustomSpinner.svelte';
 import Select from '../../src/Select.svelte';
 import List from '../../src/List.svelte';
 import TestIcon from './TestIcon.svelte';
@@ -1581,7 +1591,7 @@ test('when noOptionsMessage is set and there are no items then show message', as
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
-  t.ok(document.querySelector('.empty').innerHTML === 'SO SO SO SCANDALOUS');
+  t.ok(document.querySelector('.empty').innerHTML.trim() === 'SO SO SO SCANDALOUS');
 
   select.$destroy();
 });
@@ -1649,6 +1659,168 @@ test('when a custom Item component is supplied then use to display each item', a
 
   await handleKeyboard('ArrowDown');
   t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
+
+  select.$destroy();
+});
+
+test('when a custom ItemContainer component is supplied then use to wrap each item', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      ItemContainer: CustomItemContainer,
+      getOptionLabel: (option) => option.value,
+      isFocused: true,
+      items
+    }
+  });
+
+  await handleKeyboard('ArrowDown');
+  t.ok(document.querySelector('.customItemContainer').textContent.trim() === items[0].value);
+
+  select.$destroy();
+});
+
+test('when a custom GroupItem component is supplied then use that to display group headers', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      GroupItem: CustomGroupItem,
+      items: itemsWithGroup,
+      isFocused: true,
+      groupBy: (item) => item.group
+    }
+  });
+
+  await handleKeyboard('ArrowDown');
+  t.ok(document.querySelectorAll('.customGroupItem').length === 2);
+
+  select.$destroy();
+});
+
+
+test('when a custom ListContainer component is supplied then use to wrap the list', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      ListContainer: CustomListContainer,
+      getOptionLabel: (option) => option.value,
+      isFocused: true,
+      items
+    }
+  });
+
+  await handleKeyboard('ArrowDown');
+  t.ok(document.querySelector('.customListContainer').children[0].textContent.trim() === items[0].value);
+
+  select.$destroy();
+});
+
+test('when a custom Empty component is supplied then use to wrap the list', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      Empty: CustomEmpty,
+      getOptionLabel: (option) => option.name,
+      isFocused: true,
+      items: [],
+    }
+  });
+
+  await handleKeyboard('ArrowDown');
+  t.ok(document.querySelector('.customEmpty').innerHTML.trim() === 'No options');
+
+  select.$destroy();
+});
+
+test('when a custom SelectionContainer component is supplied then use to wrap the selection', async(t) => {
+  const select = new Select({
+    target,
+    props: {
+      SelectionContainer: CustomSelectionContainer,
+      getOptionLabel: (option) => option.value,
+      getSelectionLabel: (option) => option.value,
+      isFocused: true,
+      items
+    }
+  });
+
+  await handleKeyboard('ArrowDown');
+  await handleKeyboard('Enter');
+  t.ok(document.querySelector('.customSelectionContainer').textContent.trim() === items[0].value);
+
+  select.$destroy();
+});
+
+test('when a custom Input component is supplied then use that for the input', async (t) => {
+const select = new Select({
+    target,
+    props: {
+      Input: CustomInput,
+      items
+    }
+  });
+
+  t.ok(document.querySelector('input.customInput'));
+
+  select.$destroy();
+});
+
+test('when a custom Container component is supplied then use to wrap the select', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      Container: CustomContainer,
+      items
+    }
+  });
+
+  t.ok(document.querySelector('.customContainer input'));
+
+  select.$destroy();
+});
+
+test('when a custom Clear component is supplied then display that', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      Clear: CustomClear,
+      items
+    }
+  });
+
+  await querySelectorClick('.selectContainer');
+  await handleKeyboard('Enter');
+  t.ok(document.querySelector('.customClear'));
+
+  select.$destroy();
+});
+
+test('when a custom Indicator component is supplied then use that for the chevron', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      Indicator: CustomIndicator,
+      items,
+      showChevron: true
+    }
+  });
+
+  t.ok(document.querySelector('.customIndicator'));
+
+  select.$destroy();
+});
+
+test('when a custom Spinner component is supplied then use that for the spinner', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      Spinner: CustomSpinner,
+      items,
+      isWaiting: true
+    }
+  });
+
+  t.ok(document.querySelector('.customSpinner'));
 
   select.$destroy();
 });
@@ -2758,14 +2930,14 @@ test('When noOptionsMessage is changed after List component has been created the
   await wait(0);
   select.$set({listOpen: true});
   await wait(0);
-  t.ok(document.querySelector('.empty').innerHTML === 'FIRST');
+  t.ok(document.querySelector('.empty').innerHTML.trim() === 'FIRST');
   select.$set({noOptionsMessage: 'SECOND'});
   await wait(0);
-  t.ok(document.querySelector('.empty').innerHTML === 'SECOND');
+  t.ok(document.querySelector('.empty').innerHTML.trim() === 'SECOND');
   select.$set({filterText: 'sdfsf ssdfsdfs fs'});
   select.$set({noOptionsMessage: 'THIRD'});
   await wait(0);
-  t.ok(document.querySelector('.empty').innerHTML === 'THIRD');
+  t.ok(document.querySelector('.empty').innerHTML.trim() === 'THIRD');
 
   select.$destroy();
 });
@@ -2929,7 +3101,7 @@ test('When isMulti and multiFullItemClearable then clicking anywhere on the item
   await querySelectorClick('.multiSelectItem');
   await wait(0);
   t.ok(multiSelect.selectedValue[0].label === 'Pizza');
-  
+
   multiSelect.$destroy();
 });
 
@@ -2950,7 +3122,7 @@ test('when loadOptions and items is supplied then list should close on blur', as
   let items=[{value:1, label:1}, {value:2, label:2}];
 	let loadOptions = async(filterText) => {
 		const res = await fetch(`https://api.punkapi.com/v2/beers?beer_name=${filterText}`)
-		const data = await res.json();    
+		const data = await res.json();
     return data.map((beer)=> ({value: beer.id, label: beer.name}));
 	}
 

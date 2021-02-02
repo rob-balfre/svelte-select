@@ -57,8 +57,6 @@
   }
 </style>
 
-
-
 <div class="item {itemClasses}">
   {@html getOptionLabel(item, filterText)}
 </div>

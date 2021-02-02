@@ -45,6 +45,7 @@ yarn add svelte-select
 
 ## API
 
+Properties:
 - `items: Array` Default: `[]`. List of selectable items that appear in the dropdown.
 - `selectedValue: Any` Default: `undefined`. Selected item or items
 - `filterText: String` Default: `''`. Text to filter `items` by.
@@ -66,16 +67,27 @@ yarn add svelte-select
 - `listAutoWidth: Boolean` Default: `true`. List width will grow wider than the Select container (depending on list item content length).
 - `showIndicator: Boolean` Default: `false`. If true, the chevron indicator is always shown.
 - `inputAttributes: Object` Default: `{}`. Useful for passing in HTML attributes like `'id'` to the Select input.
-
-- `Item: Component` Default: `Item`. Item component.
-- `Selection: Component` Default: `Selection`. Selection component.
-- `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
-- `Icon: Component` Default: `Icon`. Icon component.
-- `iconProps: Object` Default: `{}`. Icon props.
-
+- `positionBuffer: Number` Default: `5`. The distance between select input and the dropdown.
 - `indicatorSvg: @html` Default: `undefined`. Override default SVG chevron indicator.
-
 - `isVirtualList: Boolean` Default: `false`. Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental).
+
+Replaceable Component Properties:
+- `Clear: Component` Default: `Clear`. The Clear (X) button component.
+- `Container: Component` Default: `Container`. Container for entire select.
+- `Empty: Component` Default: `Empty`. Empty component which displays when the dropdown is empty.
+- `GroupItem: Component` Default: `GroupItem`. The component which displays item groups.
+- `Icon: Component` Default: `Icon`. Icon component.
+  - `iconProps: Object` Default: `{}`. Icon props to send to Icon component.
+- `Indicator: Component` Default: `Indicator`. The indicator/chevron component.
+- `Input: Component` Default: `Input`. The component for text input.
+- `Item: Component` Default: `Item`. Item component for each item in the dropdown.
+- `ItemContainer: Component` Default: `ItemContainer`. Item container component which wraps each item.
+- `ListContainer: Component` Default: `ListContainer`. List container component which wraps the list in the dropdown.
+- `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
+- `Selection: Component` Default: `Selection`. Selection component which shows the selected value(s).
+- `SelectionContainer: Component` Default: `SelectionContainer`. Selection container component which wraps the selection component.
+- `Spinner: Component` Default: `Spinner`. The spinner component displayed when items are loading.
+
 
 ### Exposed methods
 If you really want to get your hands dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
@@ -234,13 +246,15 @@ test.only('when getSelectionLabel contains HTML then render the HTML', async (t)
 
 ```
 
+## Using with Bootstrap or other CSS framework
+
+See the [examples here](examples/bootstrap).
 
 ## Configuring webpack
 
 If you're using webpack with [svelte-loader](https://github.com/sveltejs/svelte-loader), make sure that you add `"svelte"` to [`resolve.mainFields`](https://webpack.js.org/configuration/resolve/#resolve-mainfields) in your webpack config. This ensures that webpack imports the uncompiled component (`src/index.html`) rather than the compiled version (`index.mjs`) — this is more efficient.
 
 If you're using Rollup with [rollup-plugin-svelte](https://github.com/rollup/rollup-plugin-svelte), this will happen automatically.
-
 
 ## License
 
