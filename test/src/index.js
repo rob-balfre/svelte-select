@@ -5,6 +5,7 @@ import CustomItem from './CustomItem.svelte';
 import Select from '../../src/Select.svelte';
 import List from '../../src/List.svelte';
 import TestIcon from './TestIcon.svelte';
+import TestClearIcon from './TestClearIcon.svelte';
 import SelectDefault from './Select/Select--default.html'
 import SelectMultiSelected from './Select/Select--multiSelected.html'
 import ListDefault from './List/List--default.html'
@@ -2969,6 +2970,68 @@ test('when loadOptions and items is supplied then list should close on blur', as
   await wait(600);
   div.click();
   div.remove();
+
+  select.$destroy();
+});
+
+
+
+test('when isCreatable and item created then event "itemCreated" should dispatch', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isCreatable: true,
+      isFocused: true,
+      listOpen: true,
+      isMulti: true
+    }
+  });
+  
+  let eventDetail;
+  select.$on('itemCreated', (event) => {
+    eventDetail = event.detail;
+  });
+
+  select.$set({ filterText: 'TestCreate' });
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+  t.ok(eventDetail === 'TestCreate');
+
+  select.$destroy();
+});
+
+async function getCancelledRes() {
+  Promise.resolve({cancelled: true});
+}
+
+test('when loadOptions response returns cancelled true then dont end loading state', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      loadOptions: getCancelledRes,
+    }
+  });
+
+  select.$set({filterText: 'Juniper'});
+  await wait(0);
+  
+
+  select.$destroy();
+});
+
+test('when ClearItem replace clear icon', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      ClearIcon: TestClearIcon,
+      selectedValue: {value: 'chips', label: 'Chips'}
+    }
+  });
+  
+  t.ok(target.querySelector('.testClearIcon'));
 
   select.$destroy();
 });
