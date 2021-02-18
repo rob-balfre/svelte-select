@@ -1,5 +1,11 @@
 # svelte-select changelog
 
+## 3.17.0
+
+* Add ClearIcon prop
+* Added docs for filteredItems
+* loadOptions res now checked for cancelled value
+
 ## 3.16.1
 
 * Bug fix for loadOptions and list causing blur to not close list - thanks to @Ginfone for reporting
