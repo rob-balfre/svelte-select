@@ -5,3 +5,6 @@ index.js
 index.mjs
 test/public/bundle.js
 !test/src/index.js
+.prettierrc
+.prettierignore
+.nova

@@ -66,16 +66,15 @@ yarn add svelte-select
 - `listAutoWidth: Boolean` Default: `true`. List width will grow wider than the Select container (depending on list item content length).
 - `showIndicator: Boolean` Default: `false`. If true, the chevron indicator is always shown.
 - `inputAttributes: Object` Default: `{}`. Useful for passing in HTML attributes like `'id'` to the Select input.
-
 - `Item: Component` Default: `Item`. Item component.
 - `Selection: Component` Default: `Selection`. Selection component.
 - `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
 - `Icon: Component` Default: `Icon`. Icon component.
 - `iconProps: Object` Default: `{}`. Icon props.
-
 - `indicatorSvg: @html` Default: `undefined`. Override default SVG chevron indicator.
-
+- `ClearIcon` Default: `ClearIcon`. ClearIcon component.
 - `isVirtualList: Boolean` Default: `false`. Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental).
+- `filteredItems: Array` Default: `[]`. List of items that are filtered by `filterText`
 
 ### Exposed methods
 If you really want to get your hands dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
@@ -139,6 +138,7 @@ export function handleClear() {
 
 ```js
 export let loadOptions = undefined; // if used must return a Promise that updates 'items'
+/* Return an object with { cancelled: true } to keep the loading state as active. */
 ```
 
 ## Styling
