@@ -34,7 +34,7 @@ yarn add svelte-select
   let selectedValue = {value: 'cake', label: 'Cake'};
 
   function handleSelect(event) {
-    console.log('selected item': event.detail);
+    console.log('selected item', event.detail);
     // .. do something here 🙂
   }
 </script>
