@@ -234,6 +234,28 @@
         filteredItems = sortedGroupedItems;
     }
 
+    function dispatchSelectedItem() {
+        if (isMulti) {
+            if (
+                JSON.stringify(selectedValue) !==
+                JSON.stringify(prev_selectedValue)
+            ) {
+                if (checkSelectedValueForDuplicates()) {
+                    dispatch('select', selectedValue);
+                }
+            }
+            return;
+        }
+
+        if (
+            !prev_selectedValue ||
+            JSON.stringify(selectedValue[optionIdentifier]) !==
+                JSON.stringify(prev_selectedValue[optionIdentifier])
+        ) {
+            dispatch('select', selectedValue);
+        }
+    }
+
     $: {
         if (selectedValue) setSelectedValue();
     }
@@ -262,32 +284,22 @@
         }
     }
 
+    $: {
+        if (isMulti && selectedValue && selectedValue.length > 1) {
+            checkSelectedValueForDuplicates();
+        }
+    }
+
+    $: {
+        if (selectedValue) {
+            dispatchSelectedItem();
+        }
+    }
+
     $: showSelectedItem = selectedValue && filterText.length === 0;
     $: placeholderText = selectedValue ? '' : placeholder;
 
     beforeUpdate(() => {
-        if (isMulti && selectedValue && selectedValue.length > 1) {
-            checkSelectedValueForDuplicates();
-        }
-
-        if (!isMulti && selectedValue && prev_selectedValue !== selectedValue) {
-            if (
-                !prev_selectedValue ||
-                JSON.stringify(selectedValue[optionIdentifier]) !==
-                    JSON.stringify(prev_selectedValue[optionIdentifier])
-            ) {
-                dispatch('select', selectedValue);
-            }
-        }
-
-        if (
-            isMulti &&
-            JSON.stringify(selectedValue) !== JSON.stringify(prev_selectedValue)
-        ) {
-            if (checkSelectedValueForDuplicates()) {
-                dispatch('select', selectedValue);
-            }
-        }
 
         if (container && listOpen !== prev_listOpen) {
             if (listOpen) {
