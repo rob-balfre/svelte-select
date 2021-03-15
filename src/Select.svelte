@@ -172,30 +172,26 @@
         filteredItems = JSON.parse(originalItemsClone);
     }
 
+    function filterItem(item) {
+        let keepItem = true;
+
+        if (isMulti && selectedValue) {
+            keepItem = !selectedValue.some((value) => {
+                return value[optionIdentifier] === item[optionIdentifier];
+            });
+        }
+
+        if (!keepItem) return false;
+        if (filterText.length < 1) return true;
+        return itemFilter(getOptionLabel(item, filterText), filterText, item);
+    }
+
     function setupFilteredItems() {
         filteredItems = loadOptions
             ? filterText.length === 0
                 ? []
                 : items
-            : items.filter((item) => {
-                  let keepItem = true;
-
-                  if (isMulti && selectedValue) {
-                      keepItem = !selectedValue.some((value) => {
-                          return (
-                              value[optionIdentifier] === item[optionIdentifier]
-                          );
-                      });
-                  }
-
-                  if (!keepItem) return false;
-                  if (filterText.length < 1) return true;
-                  return itemFilter(
-                      getOptionLabel(item, filterText),
-                      filterText,
-                      item
-                  );
-              });
+            : items.filter((item) => filterItem(item));
     }
 
     function filterGroupedItems() {
@@ -256,6 +252,41 @@
         }
     }
 
+    function setupFilterText() {
+        if (filterText.length > 0) {
+            isFocused = true;
+            listOpen = true;
+
+            if (loadOptions) {
+                getItems();
+            } else {
+                loadList();
+                listOpen = true;
+
+                if (isMulti) {
+                    activeSelectedValue = undefined;
+                }
+            }
+        } else {
+            setList([]);
+        }
+
+        if (list) {
+            list.$set({
+                filterText,
+            });
+        }
+    }
+
+    function setupFocus() {
+        if (isFocused || listOpen) {
+            handleFocus();
+        } else {
+            resetFilter();
+            if (input) input.blur();
+        }
+    }
+
     $: {
         if (selectedValue) setSelectedValue();
     }
@@ -296,101 +327,82 @@
         }
     }
 
-    $: showSelectedItem = selectedValue && filterText.length === 0;
-    $: placeholderText = selectedValue ? '' : placeholder;
-
-    beforeUpdate(() => {
-
-        if (container && listOpen !== prev_listOpen) {
+    $: {
+        if (container) {
             if (listOpen) {
                 loadList();
             } else {
                 removeList();
             }
         }
+    }
 
-        if (filterText !== prev_filterText) {
-            if (filterText.length > 0) {
-                isFocused = true;
-                listOpen = true;
-
-                if (loadOptions) {
-                    getItems();
-                } else {
-                    loadList();
-                    listOpen = true;
-
-                    if (isMulti) {
-                        activeSelectedValue = undefined;
-                    }
-                }
-            } else {
-                setList([]);
-            }
-
-            if (list) {
-                list.$set({
-                    filterText,
-                });
-            }
-        }
-
+    $: {
         if (isFocused !== prev_isFocused) {
-            if (isFocused || listOpen) {
-                handleFocus();
-            } else {
-                resetFilter();
-                if (input) input.blur();
-            }
+            setupFocus();
         }
+    }
 
-        if (prev_filteredItems !== filteredItems) {
-            let _filteredItems = [...filteredItems];
+    $: {
+        if (filterText !== prev_filterText) {
+            setupFilterText();
+        }
+    }
 
-            if (isCreatable && filterText) {
-                const itemToCreate = createItem(filterText);
-                itemToCreate.isCreator = true;
+    function setupFilteredItem() {
+        let _filteredItems = [...filteredItems];
 
-                const existingItemWithFilterValue = _filteredItems.find(
-                    (item) => {
-                        return (
-                            item[optionIdentifier] ===
-                            itemToCreate[optionIdentifier]
-                        );
-                    }
+        if (isCreatable && filterText) {
+            const itemToCreate = createItem(filterText);
+            itemToCreate.isCreator = true;
+
+            const existingItemWithFilterValue = _filteredItems.find((item) => {
+                return (
+                    item[optionIdentifier] === itemToCreate[optionIdentifier]
                 );
+            });
 
-                let existingSelectionWithFilterValue;
+            let existingSelectionWithFilterValue;
 
-                if (selectedValue) {
-                    if (isMulti) {
-                        existingSelectionWithFilterValue = selectedValue.find(
-                            (selection) => {
-                                return (
-                                    selection[optionIdentifier] ===
-                                    itemToCreate[optionIdentifier]
-                                );
-                            }
-                        );
-                    } else if (
-                        selectedValue[optionIdentifier] ===
-                        itemToCreate[optionIdentifier]
-                    ) {
-                        existingSelectionWithFilterValue = selectedValue;
-                    }
-                }
-
-                if (
-                    !existingItemWithFilterValue &&
-                    !existingSelectionWithFilterValue
+            if (selectedValue) {
+                if (isMulti) {
+                    existingSelectionWithFilterValue = selectedValue.find(
+                        (selection) => {
+                            return (
+                                selection[optionIdentifier] ===
+                                itemToCreate[optionIdentifier]
+                            );
+                        }
+                    );
+                } else if (
+                    selectedValue[optionIdentifier] ===
+                    itemToCreate[optionIdentifier]
                 ) {
-                    _filteredItems = [..._filteredItems, itemToCreate];
+                    existingSelectionWithFilterValue = selectedValue;
                 }
             }
 
-            setList(_filteredItems);
+            if (
+                !existingItemWithFilterValue &&
+                !existingSelectionWithFilterValue
+            ) {
+                _filteredItems = [..._filteredItems, itemToCreate];
+            }
         }
 
+        setList(_filteredItems);
+    }
+
+    $: {
+        if (prev_filteredItems !== filteredItems) {
+            setupFilteredItem();
+        }
+    }
+
+    $: showSelectedItem = selectedValue && filterText.length === 0;
+    $: placeholderText = selectedValue ? '' : placeholder;
+
+    beforeUpdate(() => {
         prev_selectedValue = selectedValue;
         prev_listOpen = listOpen;
         prev_filterText = filterText;
