@@ -1,17 +1,13 @@
 <script>
     import { onMount, tick } from 'svelte';
 
-    // props
     export let items = undefined;
     export let height = '100%';
     export let itemHeight = 40;
     export let hoverItemIndex = 0;
-
-    // read-only, but visible to consumers via bind:start
     export let start = 0;
     export let end = 0;
 
-    // local state
     let height_map = [];
     let rows;
     let viewport;
@@ -28,13 +24,12 @@
         return { index: i + start, data };
     });
 
-    // whenever `items` changes, invalidate the current heightmap
     $: if (mounted) refresh(items, viewport_height, itemHeight);
 
     async function refresh(items, viewport_height, itemHeight) {
         const { scrollTop } = viewport;
 
-        await tick(); // wait until the DOM is up to date
+        await tick();
 
         let content_height = top - scrollTop;
         let i = start;
@@ -44,7 +39,7 @@
 
             if (!row) {
                 end = i + 1;
-                await tick(); // render the newly visible row
+                await tick();
                 row = rows[i - start];
             }
 
@@ -61,7 +56,7 @@
         bottom = remaining * average_height;
         height_map.length = items.length;
 
-        viewport.scrollTop = 0;
+        if (viewport) viewport.scrollTop = 0;
     }
 
     async function handle_scroll() {
@@ -104,7 +99,6 @@
         while (i < items.length) height_map[i++] = average_height;
         bottom = remaining * average_height;
 
-        // prevent jumping if we scrolled up into unknown territory
         if (start < old_start) {
             await tick();
 
@@ -121,13 +115,8 @@
             const d = actual_height - expected_height;
             viewport.scrollTo(0, scrollTop + d);
         }
-
-        // TODO if we overestimated the space these
-        // rows would occupy we may need to add some
-        // more. maybe we can just call handle_scroll again?
     }
 
-    // trigger initial refresh
     onMount(() => {
         rows = contents.getElementsByTagName('svelte-virtual-list-row');
         mounted = true;

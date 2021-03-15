@@ -1,18 +1,11 @@
 <script>
-    import {
-        beforeUpdate,
-        createEventDispatcher,
-        onMount,
-        tick,
-    } from 'svelte';
+    import { beforeUpdate, createEventDispatcher, onMount, tick } from 'svelte';
+    import ItemComponent from './Item.svelte';
 
     const dispatch = createEventDispatcher();
 
     export let container = undefined;
-
-    import ItemComponent from './Item.svelte';
-    import VirtualList from './VirtualList.svelte';
-
+    export let VirtualList;
     export let Item = ItemComponent;
     export let isVirtualList = false;
     export let items = [];
@@ -71,24 +64,6 @@
 
         prev_items = items;
     });
-
-    function itemClasses(
-        hoverItemIndex,
-        item,
-        itemIndex,
-        items,
-        selectedValue,
-        optionIdentifier,
-        isMulti
-    ) {
-        return `${
-            selectedValue &&
-            !isMulti &&
-            selectedValue[optionIdentifier] === item[optionIdentifier]
-                ? 'active '
-                : ''
-        }${hoverItemIndex === itemIndex || items.length === 1 ? 'hover' : ''}`;
-    }
 
     function handleSelect(item) {
         if (item.isCreator) return;
@@ -265,7 +240,13 @@
 
 {#if isVirtualList}
     <div class="listContainer virtualList" bind:this={container}>
-        <VirtualList {items} {itemHeight} let:item let:i>
+        <svelte:component
+            this={VirtualList}
+            {items}
+            {itemHeight}
+            let:item
+            let:i
+        >
             <div
                 on:mouseover={() => handleHover(i)}
                 on:click={(event) => handleClick({ item, i, event })}
@@ -285,7 +266,7 @@
                     isHover={isItemHover(hoverItemIndex, item, i, items)}
                 />
             </div>
-        </VirtualList>
+        </svelte:component>
     </div>
 {/if}
 

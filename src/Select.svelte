@@ -88,8 +88,8 @@
     let target;
     let activeSelectedValue;
     let originalItemsClone;
+    let VirtualList;
     let prev_selectedValue;
-    let prev_listOpen;
     let prev_filterText;
     let prev_isFocused;
     let prev_filteredItems;
@@ -287,6 +287,12 @@
         }
     }
 
+    let VirtualListComponent;
+    async function setupVirtualList() {
+        VirtualListComponent = await import('./VirtualList.svelte');
+        VirtualList = VirtualListComponent.default;
+    }
+
     $: {
         if (selectedValue) setSelectedValue();
     }
@@ -404,7 +410,6 @@
 
     beforeUpdate(() => {
         prev_selectedValue = selectedValue;
-        prev_listOpen = listOpen;
         prev_filterText = filterText;
         prev_isFocused = isFocused;
         prev_filteredItems = filteredItems;
@@ -628,6 +633,8 @@
         await tick();
         if (target && list) return;
 
+        if (isVirtualList && !VirtualListComponent) await setupVirtualList();
+
         const data = {
             Item,
             filterText,
@@ -635,6 +642,7 @@
             noOptionsMessage,
             hideEmptyState,
             isVirtualList,
+            VirtualList,
             selectedValue,
             isMulti,
             getGroupHeaderLabel,
@@ -646,6 +654,7 @@
             data.getOptionLabel = getOptionLabel;
         }
 
+        if (target) target.remove();
         target = document.createElement('div');
 
         Object.assign(target.style, {
@@ -654,7 +663,9 @@
             visibility: 'hidden',
         });
 
+        if (list) list.$destroy();
         list = list;
+
         target = target;
         if (container) container.appendChild(target);
 
