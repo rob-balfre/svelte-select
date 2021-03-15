@@ -1,0 +1,14 @@
+{
+    "useTabs": false,
+    "singleQuote": true,
+    "tabWidth": 4,
+    "overrides": [
+        {
+            "files": ["*.svelte"],
+            "options": {
+                "singleQuote": true
+            }
+        }
+    ],
+    "svelteSortOrder": "scripts-styles-markup"
+}
