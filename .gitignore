@@ -1,7 +1,5 @@
 node_modules
 .DS_Store
 .idea
-index.js
-index.mjs
 .nova
-/dist/
+dist
