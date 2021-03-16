@@ -9,7 +9,7 @@ async function go() {
   const port = await ports.find(1234);
   console.log(`found available port: ${port}`);
 
-  const server = http.createServer(sirv('test/public'));
+  const server = http.createServer(sirv('dist/test'));
   server.listen(port);
 
   await ports.wait(port).catch(() => {
