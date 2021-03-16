@@ -55,6 +55,7 @@ You can override the following variables to style a Select component.
 - `--listEmptyTextAlign`
 - `--listMaxHeight`
 - `--listShadow`
+- `--margin`
 - `--multiClearBG`
 - `--multiClearFill`
 - `--multiClearHeight`

@@ -750,6 +750,7 @@
         align-items: center;
         padding: var(--padding);
         background: var(--background, #fff);
+        margin: var(--margin, 0);
     }
 
     .selectContainer input {
