@@ -1,4 +1,5 @@
-import getName from 'namey-mcnameface';
+import './reset.css'
+import getName from '../utils/nameGen';
 import normalizeHtml from '../utils/normalizeHtml';
 
 import CustomItem from './CustomItem.svelte';
@@ -6,10 +7,10 @@ import Select from '../../src/Select.svelte';
 import List from '../../src/List.svelte';
 import TestIcon from './TestIcon.svelte';
 import TestClearIcon from './TestClearIcon.svelte';
-import SelectDefault from './Select/Select--default.html'
-import SelectMultiSelected from './Select/Select--multiSelected.html'
-import ListDefault from './List/List--default.html'
-import ParentContainer from './Select/ParentContainer.html'
+import SelectDefault from './Select/Select--default.svelte'
+import SelectMultiSelected from './Select/Select--multiSelected.svelte'
+import ListDefault from './List/List--default.svelte'
+import ParentContainer from './Select/ParentContainer.svelte'
 import {assert, test, done} from 'tape-modern';
 
 function querySelectorClick(selector) {
@@ -27,10 +28,31 @@ function handleSet(component, data) {
   return new Promise(f => setTimeout(f, 0));
 }
 
+function focus(element, setFocus) {
+  return new Promise(fulfil => {
+    element.addEventListener('focus', function handler() {
+      element.removeEventListener('focus', handler);
+      fulfil(true);
+    });
+
+    setFocus();
+  });
+}
+
 // setup
-const target = document.querySelector('main');
-const testTarget = document.getElementById('testTemplate');
-const extraTarget = document.getElementById('extra');
+const target = document.createElement('main');
+document.body.appendChild(target);
+
+const testTarget = document.createElement("div");
+testTarget.id = 'testTemplate';
+document.body.appendChild(testTarget);
+
+const extraTarget = document.createElement("div");
+extraTarget.id = 'extra';
+document.body.appendChild(extraTarget)
+
+
+
 const items = [
   {value: 'chocolate', label: 'Chocolate'},
   {value: 'pizza', label: 'Pizza'},
@@ -109,7 +131,7 @@ test('when isFocused changes to true input should focus', async (t) => {
     select.$set({isFocused: true});
   };
 
-  const hasFocused = await focus(select.input, setFocus);
+  const hasFocused = await focus(target.querySelector('.selectContainer input'), setFocus);
   t.ok(hasFocused);
   select.$destroy();
 });
@@ -500,8 +522,9 @@ test('focus on Select input updates focus state', async (t) => {
       items
     }
   });
-
+  
   document.querySelector('.selectContainer input').focus();
+
   t.ok(select.isFocused);
   select.$destroy();
 });
@@ -2934,17 +2957,6 @@ test('When isMulti and multiFullItemClearable then clicking anywhere on the item
   multiSelect.$destroy();
 });
 
-function focus(element, setFocus) {
-  return new Promise(fulfil => {
-    element.addEventListener('focus', function handler() {
-      element.removeEventListener('focus', handler);
-      fulfil(true);
-    });
-
-    setFocus();
-  });
-}
-
 test('when loadOptions and items is supplied then list should close on blur', async (t) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
@@ -3070,8 +3082,7 @@ function rejectPromise() {
   })
 }
 
-
-
-
 // this allows us to close puppeteer once tests have completed
 window.done = done;
+
+export default {};
