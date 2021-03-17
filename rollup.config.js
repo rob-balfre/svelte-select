@@ -3,7 +3,7 @@ import resolve from 'rollup-plugin-node-resolve';
 import css from 'rollup-plugin-css-only';
 import cleaner from 'rollup-plugin-cleaner';
 import { terser } from 'rollup-plugin-terser';
-import html from '@rollup/plugin-html';
+
 
 export default [
     {
@@ -26,22 +26,18 @@ export default [
     {
         input: 'test/src/index.js',
         output: {
-            dir: './test/build',
+            dir: './test/public',
+            inlineDynamicImports: true,
         },
         plugins: [
-            cleaner({
-                targets: ['./dist/build'],
-            }),
             svelte({
                 emitCss: false,
-                accessors: true,
                 compilerOptions: {
                     accessors: true,
                     dev: true,
                 },
             }),
-            css({ output: { dir: './test/build' } }),
-            html(),
+            css({ output: { dir: './test/public' } }),
             resolve(),
         ],
     },

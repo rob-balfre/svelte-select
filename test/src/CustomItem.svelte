@@ -2,10 +2,7 @@
   export let isActive = false;
   export let isFirst = false;
   export let isHover = false;
-  export let getOptionLabel = undefined;
-  export let getSelectionLabel = undefined;
   export let item = undefined;
-  export let filterText = '';
 
   let itemClasses = '';
 

@@ -31,7 +31,7 @@ yarn add svelte-select
     {value: 'ice-cream', label: 'Ice Cream'},
   ];
 
-  let selectedValue = {value: 'cake', label: 'Cake'};
+  let value = {value: 'cake', label: 'Cake'};
 
   function handleSelect(event) {
     console.log('selected item': event.detail);
@@ -39,14 +39,14 @@ yarn add svelte-select
   }
 </script>
 
-<Select {items} {selectedValue} on:select={handleSelect}></Select>
+<Select {items} {value} on:select={handleSelect}></Select>
 ```
 
 
 ## API
 
 - `items: Array` Default: `[]`. List of selectable items that appear in the dropdown.
-- `selectedValue: Any` Default: `undefined`. Selected item or items
+- `value: Any` Default: `undefined`. Selected item or items
 - `filterText: String` Default: `''`. Text to filter `items` by.
 - `placeholder: String` Default: `'Select...'`. Placeholder text.
 - `noOptionsMessage: String` Default: `'No options'`. Message to display in list when there are no `items`.
@@ -56,9 +56,9 @@ yarn add svelte-select
 - `containerClasses: String` Default: `''`. Add extra container classes, for example 'global-x local-y'.
 - `containerStyles: String` Default: `''`. Add inline styles to container.
 - `isClearable: Boolean` Default: `true`. Enable clearing of selected items.
-- `isCreatable: Boolean` Default: `false`. Can create new item(s) to be added to `selectedValue`.
+- `isCreatable: Boolean` Default: `false`. Can create new item(s) to be added to `value`.
 - `isDisabled: Boolean` Default: `false`. Disable select.
-- `isMulti: Boolean` Default: `false`. Enable multi-select, `selectedValue` becomes an array of selected items.
+- `isMulti: Boolean` Default: `false`. Enable multi-select, `value` becomes an array of selected items.
 - `isSearchable: Boolean` Default: `true`. Enable search/filtering of `items` via `filterText`.
 - `isGroupHeaderSelectable: Boolean` Default: `false`. Enable selectable group headers in `items` (see adv demo).
 - `listPlacement: String` Default: `'auto'`. When `'auto'` displays either `'top'` or `'bottom'` depending on viewport.
@@ -129,9 +129,9 @@ export let getGroupHeaderLabel = option => {
 
 ```js
 export function handleClear() {
-  selectedValue = undefined;
+  value = undefined;
   listOpen = false;
-  dispatch("clear", selectedValue);
+  dispatch("clear", value);
   handleFocus();
 }
 ```
@@ -182,7 +182,7 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 
 | Event Name | Callback | Description |
 |------|------|----------|
-| select | { detail } | fires when selectedValue changes
+| select | { detail } | fires when value changes
 | clear | - | fires when clear all is invoked
 | loaded | { items } | fires when `loadOptions` resolves
 | error | { type, details } | fires when error is caught
@@ -222,7 +222,7 @@ test.only('when getSelectionLabel contains HTML then render the HTML', async (t)
   const select = new Select({
     target,
     props: {
-      selectedValue: items[0],
+      value: items[0],
       getSelectionLabel: (option) => `<p>${option.label}</p>`,
     }
   });

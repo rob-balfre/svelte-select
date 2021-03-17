@@ -1,6 +1,6 @@
 {
   "name": "svelte-select",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.4",
   "repository": "https://rob-balfre@github.com/rob-balfre/svelte-select.git",
   "description": "A <Select> component for Svelte apps",
   "svelte": "src/index.js",
@@ -11,13 +11,12 @@
     "dev": "rollup -cw",
     "prepublishOnly": "npm test",
     "test": "node test/runner.js",
-    "test:browser": "npm run build && serve test/build",
+    "test:browser": "npm run build && serve test/public",
     "gen:docs": "node docs/generate_theming_variables_md.js",
     "pretest": "npm run build"
   },
   "devDependencies": {
     "@babel/polyfill": "7.12.1",
-    "@rollup/plugin-html": "^0.2.3",
     "find-in-files": "^0.5.0",
     "port-authority": "^1.0.5",
     "puppeteer": "^1.9.0",

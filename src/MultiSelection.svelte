@@ -3,8 +3,8 @@
 
     const dispatch = createEventDispatcher();
 
-    export let selectedValue = [];
-    export let activeSelectedValue = undefined;
+    export let value = [];
+    export let activeValue = undefined;
     export let isDisabled = false;
     export let multiFullItemClearable = false;
     export let getSelectionLabel = undefined;
@@ -74,9 +74,9 @@
     }
 </style>
 
-{#each selectedValue as value, i}
+{#each value as value, i}
     <div
-        class="multiSelectItem {activeSelectedValue === i
+        class="multiSelectItem {activeValue === i
             ? 'active'
             : ''} {isDisabled ? 'disabled' : ''}"
         on:click={(event) =>

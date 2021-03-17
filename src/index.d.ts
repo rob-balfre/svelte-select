@@ -10,7 +10,7 @@ export interface SelectProps {
   isDisabled?: boolean;
   isCreatable?: boolean;
   isFocused?: boolean;
-  selectedValue?: any;
+  value?: any;
   filterText?: string;
   placeholder?: string;
   items?: any[];

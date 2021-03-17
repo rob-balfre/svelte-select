@@ -18,7 +18,7 @@
     };
     export let itemHeight = 40;
     export let hoverItemIndex = 0;
-    export let selectedValue = undefined;
+    export let value = undefined;
     export let optionIdentifier = 'value';
     export let hideEmptyState = false;
     export let noOptionsMessage = 'No options';
@@ -31,10 +31,10 @@
     let prev_items;
 
     onMount(() => {
-        if (items.length > 0 && !isMulti && selectedValue) {
+        if (items.length > 0 && !isMulti && value) {
             const _hoverItemIndex = items.findIndex(
                 (item) =>
-                    item[optionIdentifier] === selectedValue[optionIdentifier]
+                    item[optionIdentifier] === value[optionIdentifier]
             );
 
             if (_hoverItemIndex) {
@@ -80,9 +80,9 @@
         event.stopPropagation();
 
         if (
-            selectedValue &&
+            value &&
             !isMulti &&
-            selectedValue[optionIdentifier] === item[optionIdentifier]
+            value[optionIdentifier] === item[optionIdentifier]
         )
             return closeList();
 
@@ -138,9 +138,9 @@
                 if (items.length === 0) break;
                 const hoverItem = items[hoverItemIndex];
                 if (
-                    selectedValue &&
+                    value &&
                     !isMulti &&
-                    selectedValue[optionIdentifier] ===
+                    value[optionIdentifier] ===
                         hoverItem[optionIdentifier]
                 ) {
                     closeList();
@@ -158,8 +158,8 @@
                 e.preventDefault();
                 if (items.length === 0) break;
                 if (
-                    selectedValue &&
-                    selectedValue[optionIdentifier] ===
+                    value &&
+                    value[optionIdentifier] ===
                         items[hoverItemIndex][optionIdentifier]
                 )
                     return closeList();
@@ -186,10 +186,10 @@
         container.scrollTop -= offsetBounding;
     }
 
-    function isItemActive(item, selectedValue, optionIdentifier) {
+    function isItemActive(item, value, optionIdentifier) {
         return (
-            selectedValue &&
-            selectedValue[optionIdentifier] === item[optionIdentifier]
+            value &&
+            value[optionIdentifier] === item[optionIdentifier]
         );
     }
 
@@ -260,7 +260,7 @@
                     isFirst={isItemFirst(i)}
                     isActive={isItemActive(
                         item,
-                        selectedValue,
+                        value,
                         optionIdentifier
                     )}
                     isHover={isItemHover(hoverItemIndex, item, i, items)}
@@ -289,7 +289,7 @@
                         isFirst={isItemFirst(i)}
                         isActive={isItemActive(
                             item,
-                            selectedValue,
+                            value,
                             optionIdentifier
                         )}
                         isHover={isItemHover(hoverItemIndex, item, i, items)}
