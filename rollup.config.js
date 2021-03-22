@@ -31,7 +31,7 @@ export default [
         },
         plugins: [
             svelte({
-                emitCss: false,
+                emitCss: true,
                 compilerOptions: {
                     accessors: true,
                     dev: true,

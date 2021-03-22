@@ -7,11 +7,10 @@
         tick,
     } from 'svelte';
 
-    import List from './List.svelte';
     import ItemComponent from './Item.svelte';
     import SelectionComponent from './Selection.svelte';
     import MultiSelectionComponent from './MultiSelection.svelte';
-    
+
     import isOutOfViewport from './utils/isOutOfViewport';
     import debounce from './utils/debounce';
     import DefaultClearIcon from './ClearIcon.svelte';
@@ -90,7 +89,6 @@
     let target;
     let activeValue;
     let originalItemsClone;
-    let VirtualList;
     let prev_value;
     let prev_filterText;
     let prev_isFocused;
@@ -133,11 +131,7 @@
                 [optionIdentifier]: value,
                 label: value,
             };
-        } else if (
-            isMulti &&
-            Array.isArray(value) &&
-            value.length > 0
-        ) {
+        } else if (isMulti && Array.isArray(value) && value.length > 0) {
             value = value.map((item) =>
                 typeof item === 'string' ? { value: item, label: item } : item
             );
@@ -234,10 +228,7 @@
 
     function dispatchSelectedItem() {
         if (isMulti) {
-            if (
-                JSON.stringify(value) !==
-                JSON.stringify(prev_value)
-            ) {
+            if (JSON.stringify(value) !== JSON.stringify(prev_value)) {
                 if (checkvalueForDuplicates()) {
                     dispatch('select', value);
                 }
@@ -289,10 +280,23 @@
         }
     }
 
-    let VirtualListComponent;
-    async function setupVirtualList() {
-        VirtualListComponent = await import('./VirtualList.svelte');
-        VirtualList = VirtualListComponent.default;
+    export let VirtualList = null;
+    export let List = null;
+
+    async function importInternalComponent(componentName) {
+        let file;
+
+        switch (componentName) {
+            case 'VirtualList':
+                file = await import(`./VirtualList.svelte`);
+                break;
+
+            case 'List':
+                file = await import(`./List.svelte`);
+                break;
+        }
+
+        return file.default;
     }
 
     $: {
@@ -383,8 +387,7 @@
                         }
                     );
                 } else if (
-                    value[optionIdentifier] ===
-                    itemToCreate[optionIdentifier]
+                    value[optionIdentifier] === itemToCreate[optionIdentifier]
                 ) {
                     existingSelectionWithFilterValue = value;
                 }
@@ -462,9 +465,7 @@
             return;
 
         if (Array.isArray(value)) {
-            value = value.map(
-                (selection) => findItem(selection) || selection
-            );
+            value = value.map((selection) => findItem(selection) || selection);
         } else {
             value = findItem() || value;
         }
@@ -479,8 +480,7 @@
 
     function handleMultiItemClear(event) {
         const { detail } = event;
-        const itemToRemove =
-            value[detail ? detail.i : value.length - 1];
+        const itemToRemove = value[detail ? detail.i : value.length - 1];
 
         if (value.length === 1) {
             value = undefined;
@@ -545,11 +545,7 @@
                             ? activeValue
                             : value.length - 1
                     );
-                    if (
-                        activeValue === 0 ||
-                        activeValue === undefined
-                    )
-                        break;
+                    if (activeValue === 0 || activeValue === undefined) break;
                     activeValue =
                         value.length > activeValue
                             ? activeValue - 1
@@ -562,10 +558,7 @@
 
                 if (activeValue === undefined) {
                     activeValue = value.length - 1;
-                } else if (
-                    value.length > activeValue &&
-                    activeValue !== 0
-                ) {
+                } else if (value.length > activeValue && activeValue !== 0) {
                     activeValue -= 1;
                 }
                 break;
@@ -635,7 +628,9 @@
         await tick();
         if (target && list) return;
 
-        if (isVirtualList && !VirtualListComponent) await setupVirtualList();
+        if (isVirtualList && !VirtualList) {
+            VirtualList = await importInternalComponent('VirtualList');
+        }
 
         const data = {
             Item,
@@ -684,9 +679,7 @@
 
                 if (!item.isGroupHeader || item.isSelectable) {
                     if (isMulti) {
-                        value = value
-                            ? value.concat([item])
-                            : [item];
+                        value = value ? value.concat([item]) : [item];
                     } else {
                         value = item;
                     }
@@ -726,8 +719,10 @@
         getPosition();
     }
 
-    onMount(() => {
-        if (isFocused) input.focus();
+    onMount(async () => {
+        if (!List) List = await importInternalComponent('List');
+
+        if (isFocused && input) input.focus();
         if (listOpen) loadList();
 
         if (items && items.length > 0) {

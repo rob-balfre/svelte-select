@@ -35,7 +35,7 @@ function focus(element, setFocus) {
       fulfil(true);
     });
 
-    setFocus();
+    if (setFocus) setFocus();
   });
 }
 

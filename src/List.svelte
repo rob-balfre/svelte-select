@@ -5,7 +5,7 @@
     const dispatch = createEventDispatcher();
 
     export let container = undefined;
-    export let VirtualList;
+    export let VirtualList = null;
     export let Item = ItemComponent;
     export let isVirtualList = false;
     export let items = [];
