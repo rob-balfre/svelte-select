@@ -3,5 +3,5 @@ node_modules
 .idea
 .nova
 /dist/
-# /test/public/index.js
-# /test/public/bundle.js
+/test/public/index.js
+/test/public/bundle.css

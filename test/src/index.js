@@ -29,13 +29,21 @@ function handleSet(component, data) {
 }
 
 function focus(element, setFocus) {
-  return new Promise(fulfil => {
+  return new Promise(resolve => {
     element.addEventListener('focus', function handler() {
       element.removeEventListener('focus', handler);
-      fulfil(true);
+      resolve(true);
     });
 
     if (setFocus) setFocus();
+  });
+}
+
+function selectReady(select) {
+  return new Promise(resolve => {
+    select.$on('ready', () => {
+      resolve();
+    });
   });
 }
 
@@ -1228,7 +1236,7 @@ test('when isGroupHeaderSelectable clicking group header should select createGro
     };
   }
 
-  await querySelectorClick('.selectContainer');
+  await selectReady(select);
 
   const groupHeaderItem = select.list.items[0];
   const groupItem = select.list.items.find((item) => {
@@ -1262,7 +1270,7 @@ test('group headers label should be created by getGroupHeaderLabel(item)', async
     return `Group label is ${item.id}`;
   }
 
-  await querySelectorClick('.selectContainer');
+  await selectReady(select);
 
   const groupHeaderItem = select.list.items[0];
 
@@ -1463,7 +1471,7 @@ test('when isMulti and selected items reach edge of container then Select height
   select.$destroy();
 });
 
-test('when isMulti and value is populated then navigating with LeftArrow updates activevalue', async (t) => {
+test('when isMulti and value is populated then navigating with LeftArrow updates activeValue', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1477,12 +1485,13 @@ test('when isMulti and value is populated then navigating with LeftArrow updates
   target.style.maxWidth = '100%';
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
-  t.ok(select.$capture_state().activevalue === 1);
+
+  t.ok(select.$capture_state().activeValue === 1);
 
   select.$destroy();
 });
 
-test('when isMulti and value is populated then navigating with ArrowRight updates activevalue', async (t) => {
+test('when isMulti and value is populated then navigating with ArrowRight updates activeValue', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1497,7 +1506,7 @@ test('when isMulti and value is populated then navigating with ArrowRight update
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowRight'}));
-  t.ok(select.$capture_state().activevalue === 1);
+  t.ok(select.$capture_state().activeValue === 1);
 
   select.$destroy();
 });

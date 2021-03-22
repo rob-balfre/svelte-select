@@ -125,7 +125,7 @@
 
     $: updateValueDisplay(items);
 
-    function setvalue() {
+    function setValue() {
         if (typeof value === 'string') {
             value = {
                 [optionIdentifier]: value,
@@ -300,7 +300,7 @@
     }
 
     $: {
-        if (value) setvalue();
+        if (value) setValue();
     }
 
     $: {
@@ -626,6 +626,7 @@
 
     async function loadList() {
         await tick();
+        if (!List) return;
         if (target && list) return;
 
         if (isVirtualList && !VirtualList) {
@@ -659,10 +660,9 @@
             'z-index': 2,
             visibility: 'hidden',
         });
-
+        
         if (list) list.$destroy();
         list = list;
-
         target = target;
         if (container) container.appendChild(target);
 
@@ -715,19 +715,18 @@
             listOpen = false;
         });
 
-        (list = list), (target = target);
         getPosition();
     }
 
     onMount(async () => {
         if (!List) List = await importInternalComponent('List');
-
         if (isFocused && input) input.focus();
         if (listOpen) loadList();
-
         if (items && items.length > 0) {
             originalItemsClone = JSON.stringify(items);
         }
+
+        dispatch('ready');
     });
 
     onDestroy(() => {
