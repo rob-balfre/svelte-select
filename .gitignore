@@ -5,3 +5,6 @@ node_modules
 /dist/
 /test/public/index.js
 /test/public/bundle.css
+/examples/webpack/public/*.js
+/examples/webpack/public/*.css
+/examples/webpack/public/build/

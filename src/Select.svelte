@@ -93,6 +93,7 @@
     let prev_filterText;
     let prev_isFocused;
     let prev_filteredItems;
+    let prev_isMulti;
 
     async function resetFilter() {
         await tick();
@@ -182,19 +183,20 @@
         return itemFilter(getOptionLabel(item, filterText), filterText, item);
     }
 
-    function setupFilteredItems() {
-        filteredItems = loadOptions
-            ? filterText.length === 0
-                ? []
-                : items
-            : items.filter((item) => filterItem(item));
+    function filterItems() {
+        filteredItems =
+            loadOptions && filterText && filterText.length > 0
+                ? filterText.length === 0
+                    ? []
+                    : items
+                : items.filter((item) => filterItem(item));
     }
 
     function filterGroupedItems() {
         const groupValues = [];
         const groups = {};
 
-        filteredItems.forEach((item) => {
+        items.forEach((item) => {
             const groupValue = groupBy(item);
 
             if (!groupValues.includes(groupValue)) {
@@ -229,7 +231,7 @@
     function dispatchSelectedItem() {
         if (isMulti) {
             if (JSON.stringify(value) !== JSON.stringify(prev_value)) {
-                if (checkvalueForDuplicates()) {
+                if (checkValueForDuplicates()) {
                     dispatch('select', value);
                 }
             }
@@ -252,7 +254,7 @@
 
             if (loadOptions) {
                 getItems();
-            } else {
+            } else {                
                 loadList();
                 listOpen = true;
 
@@ -278,6 +280,20 @@
             resetFilter();
             if (input) input.blur();
         }
+    }
+
+    function setupMulti() {
+        if (value) {
+            if (Array.isArray(value)) {
+                value = [...value];
+            } else {
+                value = [value];
+            }
+        }
+    }
+
+    function setupSingle() {
+        if (value) value = null;
     }
 
     export let VirtualList = null;
@@ -318,8 +334,10 @@
 
         if (loadOptions && filterText.length === 0 && originalItemsClone) {
             resetFilteredItems();
-        } else {
-            setupFilteredItems();
+        }
+
+        if (!groupBy && filterText && filterText.length > 0) {
+            filterItems();
         }
 
         if (groupBy) {
@@ -328,8 +346,18 @@
     }
 
     $: {
+        if (isMulti) {
+            setupMulti();
+        }
+
+        if (prev_isMulti && !isMulti) {
+            setupSingle();
+        }
+    }
+
+    $: {
         if (isMulti && value && value.length > 1) {
-            checkvalueForDuplicates();
+            checkValueForDuplicates();
         }
     }
 
@@ -340,12 +368,10 @@
     }
 
     $: {
-        if (container) {
-            if (listOpen) {
-                loadList();
-            } else {
-                removeList();
-            }
+        if (listOpen) {
+            loadList();
+        } else {
+            removeList();
         }
     }
 
@@ -399,6 +425,8 @@
             ) {
                 _filteredItems = [..._filteredItems, itemToCreate];
             }
+        } else if (isMulti && value && value.length > 0) {
+            filterItems();
         }
 
         setList(_filteredItems);
@@ -413,14 +441,19 @@
     $: showSelectedItem = value && filterText.length === 0;
     $: placeholderText = value ? '' : placeholder;
 
-    beforeUpdate(() => {
+    async function setupList() {
+        List = await importInternalComponent('List');
+    }
+
+    beforeUpdate(async () => {
         prev_value = value;
         prev_filterText = filterText;
         prev_isFocused = isFocused;
         prev_filteredItems = filteredItems;
+        prev_isMulti = isMulti;
     });
 
-    function checkvalueForDuplicates() {
+    function checkValueForDuplicates() {
         let noDuplicates = true;
         if (value) {
             const ids = [];
@@ -472,10 +505,16 @@
     }
 
     async function setList(items) {
-        await tick();
         if (!listOpen) return;
-        if (list) return list.$set({ items });
-        if (loadOptions && getItemsHasInvoked && items.length > 0) loadList();
+        
+        if (loadOptions && getItemsHasInvoked && items.length > 0) {
+            list.$destroy();
+            list = null;
+            return loadList();
+        }
+
+        if (!list) await loadList();
+        list.$set({ items });
     }
 
     function handleMultiItemClear(event) {
@@ -489,6 +528,8 @@
                 return item !== itemToRemove;
             });
         }
+
+        filterItems();
 
         dispatch('clear', itemToRemove);
 
@@ -621,13 +662,18 @@
         value = undefined;
         listOpen = false;
         dispatch('clear', value);
+        if (isMulti) filterItems();
         handleFocus();
     }
 
     async function loadList() {
-        await tick();
-        if (!List) return;
-        if (target && list) return;
+        if (!List && listOpen) {
+            await setupList();
+        }
+
+        if (target && list) {
+            return
+        };
 
         if (isVirtualList && !VirtualList) {
             VirtualList = await importInternalComponent('VirtualList');
@@ -680,6 +726,7 @@
                 if (!item.isGroupHeader || item.isSelectable) {
                     if (isMulti) {
                         value = value ? value.concat([item]) : [item];
+                        filterItems();
                     } else {
                         value = item;
                     }
@@ -718,15 +765,11 @@
         getPosition();
     }
 
-    onMount(async () => {
-        if (!List) List = await importInternalComponent('List');
-        if (isFocused && input) input.focus();
-        if (listOpen) loadList();
-        if (items && items.length > 0) {
-            originalItemsClone = JSON.stringify(items);
-        }
+    onMount(() => {
+        originalItemsClone = JSON.stringify(items ? items : []);
 
-        dispatch('ready');
+        if (isFocused && input) input.focus();
+        if (!groupBy) filterItems();
     });
 
     onDestroy(() => {
@@ -737,9 +780,9 @@
 <style>
     .selectContainer {
         --padding: 0 16px;
-
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--borderRadius, 3px);
+        box-sizing: border-box;
         height: var(--height, 42px);
         position: relative;
         display: flex;

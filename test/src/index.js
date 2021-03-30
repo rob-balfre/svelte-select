@@ -39,12 +39,37 @@ function focus(element, setFocus) {
   });
 }
 
-function selectReady(select) {
-  return new Promise(resolve => {
-    select.$on('ready', () => {
-      resolve();
-    });
+function getPosts(filterText) {
+  filterText = filterText ? filterText.replace(' ','_') : '';
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `https://api.punkapi.com/v2/beers?beer_name=${filterText}`);
+    xhr.send();
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        setTimeout(resolve(JSON.parse(xhr.response).sort((a, b) => {
+          if (a.name > b.name) return 1;
+          if (a.name < b.name) return -1;
+        })), 2000);
+      } else {
+        reject()
+      }
+    };
   });
+}
+
+function resolvePromise() {
+  return new Promise((resolve, reject) => {
+    resolve(['a', 'b', 'c']);
+  })
+}
+
+function rejectPromise() {
+  return new Promise((resolve, reject) => {
+    reject('error 123');
+  })
 }
 
 // setup
@@ -59,8 +84,6 @@ const extraTarget = document.createElement("div");
 extraTarget.id = 'extra';
 document.body.appendChild(extraTarget)
 
-
-
 const items = [
   {value: 'chocolate', label: 'Chocolate'},
   {value: 'pizza', label: 'Pizza'},
@@ -68,6 +91,7 @@ const items = [
   {value: 'chips', label: 'Chips'},
   {value: 'ice-cream', label: 'Ice Cream'},
 ];
+
 const itemsWithGroup = [
   {value: 'chocolate', label: 'Chocolate', group: 'Sweet'},
   {value: 'pizza', label: 'Pizza', group: 'Savory'},
@@ -75,6 +99,7 @@ const itemsWithGroup = [
   {value: 'chips', label: 'Chips', group: 'Savory'},
   {value: 'ice-cream', label: 'Ice Cream', group: 'Sweet'}
 ];
+
 const itemsWithIndex = [
   {value: 'chocolate', label: 'Chocolate', index: 0},
   {value: 'pizza', label: 'Pizza', index: 1},
@@ -82,6 +107,14 @@ const itemsWithIndex = [
   {value: 'chips', label: 'Chips', index: 3},
   {value: 'ice-cream', label: 'Ice Cream', index: 4},
 ];
+
+function itemsPromise() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(JSON.parse(JSON.stringify(items)));
+    })
+  })
+}
 
 function wait(ms) {
   return new Promise(f => setTimeout(f, ms));
@@ -824,6 +857,7 @@ test('While filtering, the first item in List should receive hover class', async
     }
   });
 
+  await wait(0);
   await handleSet(select, {filterText: 'I'})
   t.ok(document.querySelector('.listItem .hover'));
   select.$destroy();
@@ -1236,7 +1270,7 @@ test('when isGroupHeaderSelectable clicking group header should select createGro
     };
   }
 
-  await selectReady(select);
+  await wait(0);
 
   const groupHeaderItem = select.list.items[0];
   const groupItem = select.list.items.find((item) => {
@@ -1270,7 +1304,7 @@ test('group headers label should be created by getGroupHeaderLabel(item)', async
     return `Group label is ${item.id}`;
   }
 
-  await selectReady(select);
+  await wait(0);
 
   const groupHeaderItem = select.list.items[0];
 
@@ -1360,6 +1394,8 @@ test('when isMulti is true items in value will not appear in List', async (t) =>
       value: [{value: 'chocolate', label: 'Chocolate'}]
     }
   });
+
+  await wait(0);
 
   t.equal(JSON.stringify(select.filteredItems), JSON.stringify([
     {value: 'pizza', label: 'Pizza'},
@@ -1551,7 +1587,6 @@ test('when isMulti is true show each item in value if simple arrays are used', a
     target,
     props: {
       isMulti: true,
-      test: true,
       items: ['pizza', 'chips', 'chocolate'],
       value: ['pizza', 'chocolate']
     }
@@ -1982,7 +2017,7 @@ test('when isFocused turns to false then check Select is no longer in focus', as
 });
 
 test('when items and loadOptions method are both supplied then fallback to items until filterText changes', async (t) => {
-  const items = [{name: 'test1', id: 0}, {name: 'test2', id: 1}, {name: 'test3', id: 2}];
+  const _items = [{name: 'test1', id: 0}, {name: 'test2', id: 1}, {name: 'test3', id: 2}];
 
   const select = new Select({
     target,
@@ -1991,17 +2026,9 @@ test('when items and loadOptions method are both supplied then fallback to items
       getSelectionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
-      items,
+      items: _items,
       isFocused: true,
       listOpen: true
-    }
-  });
-
-  select.$on('state', ({current, changed}) => {
-    if (changed.filterText && current.filterText === '' && !current.value) {
-      select.$set({
-        items
-      })
     }
   });
 
@@ -2446,6 +2473,7 @@ test('When creator is selected multiple times, items are all added to multi sele
     }
   });
 
+  await wait(0);
   select.$set({ filterText: filterTextForItem1 });
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
@@ -2521,6 +2549,7 @@ test('When isCreatable with non-default item structure, item creator displays ge
   select.$set({ filterText });
   await wait(0);
   const listItems = document.querySelectorAll('.listContainer > .listItem');
+  console.log('listItems :>> ', listItems);
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, creatorLabel(filterText));
 
   select.$destroy();
@@ -3058,40 +3087,36 @@ test('when ClearItem replace clear icon', async (t) => {
 });
 
 
-function getPosts(filterText) {
-  filterText = filterText ? filterText.replace(' ','_') : '';
-
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `https://api.punkapi.com/v2/beers?beer_name=${filterText}`);
-    xhr.send();
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        setTimeout(resolve(JSON.parse(xhr.response).sort((a, b) => {
-          if (a.name > b.name) return 1;
-          if (a.name < b.name) return -1;
-        })), 2000);
-      } else {
-        reject()
-      }
-    };
+test('when switching between isMulti true/false ensure Select continues working', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      listOpen: true,
+      value: {value: 'chips', label: 'Chips'}
+    }
   });
-}
 
-function resolvePromise() {
-  return new Promise((resolve, reject) => {
-    resolve(['a', 'b', 'c']);
-  })
-}
+  select.isMulti = true;
+  select.loadOptions = itemsPromise;
+  
+  // console.log('select :>> ', select.value);
+  // console.log('select :>> ', select.items);
 
-function rejectPromise() {
-  return new Promise((resolve, reject) => {
-    reject('error 123');
-  })
-}
+  t.ok(JSON.stringify(select.value) === JSON.stringify([{value: 'chips', label: 'Chips'}]));
+  t.ok(Array.isArray(select.value));
+  
+  select.isMulti = false;
+  select.loadOptions = null;
+  select.items = [...items];
+
+  t.ok(select.value === null);
+
+  select.$destroy();
+});
+
+
 
 // this allows us to close puppeteer once tests have completed
 window.done = done;
-
 export default {};
