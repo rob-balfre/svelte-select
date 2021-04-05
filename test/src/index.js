@@ -1630,6 +1630,7 @@ test('when loadOptions method is supplied and filterText has length then items s
     }
   });
 
+  await wait(0);
   select.$set({filterText: 'Juniper'});
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
