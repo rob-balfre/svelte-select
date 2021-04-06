@@ -125,6 +125,10 @@
 
     function handleKeyDown(e) {
         switch (e.key) {
+            case 'Escape': 
+                e.preventDefault();
+                closeList();
+                break;
             case 'ArrowDown':
                 e.preventDefault();
                 items.length && updateHoverItem(1);

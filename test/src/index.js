@@ -3132,6 +3132,25 @@ test('when isSearchable is false then input should be readonly', async (t) => {
 });
 
 
+test('when esc key pressed should close list', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      listOpen: true
+    }
+  });
+
+  await wait(0);
+  t.ok(select.listOpen === true);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Escape'}));
+  t.ok(select.listOpen === false);
+
+  select.$destroy();
+});
+
+
+
 // this allows us to close puppeteer once tests have completed
 window.done = done;
 export default {};
