@@ -254,7 +254,7 @@
 
             if (loadOptions) {
                 getItems();
-            } else {                
+            } else {
                 loadList();
                 listOpen = true;
 
@@ -506,7 +506,7 @@
 
     async function setList(items) {
         if (!listOpen) return;
-        
+
         if (loadOptions && getItemsHasInvoked && items.length > 0) {
             list.$destroy();
             list = null;
@@ -672,8 +672,8 @@
         }
 
         if (target && list) {
-            return
-        };
+            return;
+        }
 
         if (isVirtualList && !VirtualList) {
             VirtualList = await importInternalComponent('VirtualList');
@@ -706,7 +706,7 @@
             'z-index': 2,
             visibility: 'hidden',
         });
-        
+
         if (list) list.$destroy();
         list = list;
         target = target;
@@ -974,26 +974,16 @@
         />
     {/if}
 
-    {#if isDisabled}
-        <input
-            {..._inputAttributes}
-            bind:this={input}
-            on:focus={handleFocus}
-            bind:value={filterText}
-            placeholder={placeholderText}
-            style={inputStyles}
-            disabled
-        />
-    {:else}
-        <input
-            {..._inputAttributes}
-            bind:this={input}
-            on:focus={handleFocus}
-            bind:value={filterText}
-            placeholder={placeholderText}
-            style={inputStyles}
-        />
-    {/if}
+    <input
+        readOnly={!isSearchable}
+        {..._inputAttributes}
+        bind:this={input}
+        on:focus={handleFocus}
+        bind:value={filterText}
+        placeholder={placeholderText}
+        style={inputStyles}
+        disabled={isDisabled}
+    />
 
     {#if !isMulti && showSelectedItem}
         <div class="selectedItem" on:focus={handleFocus}>

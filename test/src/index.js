@@ -3116,6 +3116,20 @@ test('when switching between isMulti true/false ensure Select continues working'
   select.$destroy();
 });
 
+test('when isSearchable is false then input should be readonly', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isSearchable: false
+    }
+  });
+
+  let elem = target.querySelector('.selectContainer input');
+  t.ok(elem.hasAttribute('readonly'));
+
+  select.$destroy();
+});
 
 
 // this allows us to close puppeteer once tests have completed

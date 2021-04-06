@@ -40,6 +40,7 @@ You can override the following variables to style a Select component.
 - `--inputFontSize`
 - `--inputLeft`
 - `--inputLetterSpacing`
+- `--inputMargin`
 - `--inputPadding`
 - `--itemActiveBackground`
 - `--itemColor`
@@ -49,6 +50,7 @@ You can override the following variables to style a Select component.
 - `--itemIsActiveColor`
 - `--itemPadding`
 - `--listBackground`
+- `--listBorder`
 - `--listBorderRadius`
 - `--listEmptyColor`
 - `--listEmptyPadding`
