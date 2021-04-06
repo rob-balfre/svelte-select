@@ -75,6 +75,7 @@ yarn add svelte-select
 - `ClearIcon` Default: `ClearIcon`. ClearIcon component.
 - `isVirtualList: Boolean` Default: `false`. Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental).
 - `filteredItems: Array` Default: `[]`. List of items that are filtered by `filterText`
+- `placeholderAlwaysShow: Boolean` Default: `false`. When `isMulti` then placeholder text will always still show.
 
 ### Exposed methods
 If you really want to get your hands dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.

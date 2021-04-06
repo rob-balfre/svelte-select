@@ -29,6 +29,7 @@
     export let value = undefined;
     export let filterText = '';
     export let placeholder = 'Select...';
+    export let placeholderAlwaysShow = false;
     export let items = [];
     export let itemFilter = (label, filterText, option) =>
         label.toLowerCase().includes(filterText.toLowerCase());
@@ -439,7 +440,7 @@
     }
 
     $: showSelectedItem = value && filterText.length === 0;
-    $: placeholderText = value ? '' : placeholder;
+    $: placeholderText = placeholderAlwaysShow && isMulti ? placeholder : (value ? '' : placeholder);
 
     async function setupList() {
         List = await importInternalComponent('List');

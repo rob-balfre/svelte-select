@@ -3100,9 +3100,6 @@ test('when switching between isMulti true/false ensure Select continues working'
 
   select.isMulti = true;
   select.loadOptions = itemsPromise;
-  
-  // console.log('select :>> ', select.value);
-  // console.log('select :>> ', select.items);
 
   t.ok(JSON.stringify(select.value) === JSON.stringify([{value: 'chips', label: 'Chips'}]));
   t.ok(Array.isArray(select.value));
@@ -3145,6 +3142,27 @@ test('when esc key pressed should close list', async (t) => {
   t.ok(select.listOpen === true);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Escape'}));
   t.ok(select.listOpen === false);
+
+  select.$destroy();
+});
+
+
+test('when isMulti and placeholderAlwaysShow then always show placeholder text', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      value: [{value: 'chocolate', label: 'Chocolate'},
+      {value: 'pizza', label: 'Pizza'},],
+      isMulti: true,
+      placeholderAlwaysShow: true,
+      placeholder: 'foo bar'
+    }
+  });
+
+  await wait(0);
+  let elem = target.querySelector('.selectContainer input');
+  t.ok(elem.placeholder === 'foo bar');
 
   select.$destroy();
 });
