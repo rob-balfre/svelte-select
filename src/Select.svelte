@@ -62,6 +62,7 @@
     };
   };
 
+  export let useBuiltInSearch = true;
   export let isSearchable = true;
   export let inputStyles = "";
   export let isClearable = true;
@@ -194,11 +195,15 @@
 
             if (!keepItem) return false;
             if (filterText.length < 1) return true;
-            return itemFilter(
-              getOptionLabel(item, filterText),
-              filterText,
-              item
-            );
+            if(useBuiltInSearch){
+              return itemFilter(
+                getOptionLabel(item, filterText),
+                filterText,
+                item
+              );
+            }else{
+              return items;
+            }
           });
     }
 
