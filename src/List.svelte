@@ -1,5 +1,6 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onMount, tick } from 'svelte';
+    import isOutOfViewport from './utils/isOutOfViewport';
     import ItemComponent from './Item.svelte';
 
     const dispatch = createEventDispatcher();
@@ -25,6 +26,9 @@
     export let isMulti = false;
     export let activeItemIndex = 0;
     export let filterText = '';
+    export let parent = null;
+    export let listPlacement = null;
+    export let listAutoWidth = null;
 
     let isScrollingTimer = 0;
     let isScrolling = false;
@@ -33,8 +37,7 @@
     onMount(() => {
         if (items.length > 0 && !isMulti && value) {
             const _hoverItemIndex = items.findIndex(
-                (item) =>
-                    item[optionIdentifier] === value[optionIdentifier]
+                (item) => item[optionIdentifier] === value[optionIdentifier]
             );
 
             if (_hoverItemIndex) {
@@ -125,7 +128,7 @@
 
     function handleKeyDown(e) {
         switch (e.key) {
-            case 'Escape': 
+            case 'Escape':
                 e.preventDefault();
                 closeList();
                 break;
@@ -144,8 +147,7 @@
                 if (
                     value &&
                     !isMulti &&
-                    value[optionIdentifier] ===
-                        hoverItem[optionIdentifier]
+                    value[optionIdentifier] === hoverItem[optionIdentifier]
                 ) {
                     closeList();
                     break;
@@ -191,10 +193,7 @@
     }
 
     function isItemActive(item, value, optionIdentifier) {
-        return (
-            value &&
-            value[optionIdentifier] === item[optionIdentifier]
-        );
+        return value && value[optionIdentifier] === item[optionIdentifier];
     }
 
     function isItemFirst(itemIndex) {
@@ -203,6 +202,29 @@
 
     function isItemHover(hoverItemIndex, item, itemIndex, items) {
         return hoverItemIndex === itemIndex || items.length === 1;
+    }
+
+    let listStyle;
+    function computePlacement() {
+        const { top, height, width } = parent.getBoundingClientRect();
+
+        listStyle = '';
+        listStyle += `min-width:${width}px;width:${
+            listAutoWidth ? 'auto' : '100%'
+        };left:0;`;
+
+        if (
+            listPlacement === 'top' ||
+            (listPlacement === 'auto' && isOutOfViewport(parent).bottom)
+        ) {
+            listStyle += `bottom:${height + 5}px;`;
+        } else {
+            listStyle += `top:${height + 5}px;`;
+        }
+    }
+
+    $: {
+        if (parent && container) computePlacement();
     }
 </script>
 
@@ -214,6 +236,9 @@
         overflow-y: auto;
         background: var(--listBackground, #fff);
         border: var(--listBorder, none);
+        position: var(--listPosition, absolute);
+        z-index: var(--listZIndex, 2);
+        width: 100%;
     }
 
     .virtualList {
@@ -241,10 +266,15 @@
     }
 </style>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window on:keydown={handleKeyDown} on:resize={computePlacement} />
 
 {#if isVirtualList}
-    <div class="listContainer virtualList" bind:this={container}>
+    <div
+        class="listContainer virtualList"
+        bind:this={container}
+        style={listStyle}
+    >
+        >
         <svelte:component
             this={VirtualList}
             {items}
@@ -263,11 +293,7 @@
                     {filterText}
                     {getOptionLabel}
                     isFirst={isItemFirst(i)}
-                    isActive={isItemActive(
-                        item,
-                        value,
-                        optionIdentifier
-                    )}
+                    isActive={isItemActive(item, value, optionIdentifier)}
                     isHover={isItemHover(hoverItemIndex, item, i, items)}
                 />
             </div>
@@ -276,7 +302,7 @@
 {/if}
 
 {#if !isVirtualList}
-    <div class="listContainer" bind:this={container}>
+    <div class="listContainer" bind:this={container} style={listStyle}>
         {#each items as item, i}
             {#if item.isGroupHeader && !item.isSelectable}
                 <div class="listGroupTitle">{getGroupHeaderLabel(item)}</div>
@@ -292,11 +318,7 @@
                         {filterText}
                         {getOptionLabel}
                         isFirst={isItemFirst(i)}
-                        isActive={isItemActive(
-                            item,
-                            value,
-                            optionIdentifier
-                        )}
+                        isActive={isItemActive(item, value, optionIdentifier)}
                         isHover={isItemHover(hoverItemIndex, item, i, items)}
                     />
                 </div>

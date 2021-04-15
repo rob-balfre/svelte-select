@@ -7,20 +7,18 @@
         tick,
     } from 'svelte';
 
-    import ItemComponent from './Item.svelte';
-    import SelectionComponent from './Selection.svelte';
-    import MultiSelectionComponent from './MultiSelection.svelte';
-
-    import isOutOfViewport from './utils/isOutOfViewport';
+    import _List from './List.svelte';
+    import _Item from './Item.svelte';
+    import _Selection from './Selection.svelte';
+    import _MultiSelection from './MultiSelection.svelte';
+    import _VirtualList from './VirtualList.svelte';
     import debounce from './utils/debounce';
     import DefaultClearIcon from './ClearIcon.svelte';
 
     const dispatch = createEventDispatcher();
+
     export let container = undefined;
     export let input = undefined;
-    export let Item = ItemComponent;
-    export let Selection = SelectionComponent;
-    export let MultiSelection = MultiSelectionComponent;
     export let isMulti = false;
     export let multiFullItemClearable = false;
     export let isDisabled = false;
@@ -86,6 +84,11 @@
     export let containerClasses = '';
     export let indicatorSvg = undefined;
     export let ClearIcon = DefaultClearIcon;
+    export let Item = _Item;
+    export let List = _List;
+    export let Selection = _Selection;
+    export let MultiSelection = _MultiSelection;
+    export let VirtualList = _VirtualList;
 
     let target;
     let activeValue;
@@ -167,7 +170,8 @@
     }
 
     function resetFilteredItems() {
-        filteredItems = JSON.parse(originalItemsClone);
+        if (originalItemsClone) filteredItems = JSON.parse(originalItemsClone);
+        if (groupBy) filterItems();
     }
 
     function filterItem(item) {
@@ -191,13 +195,15 @@
                     ? []
                     : items
                 : items.filter((item) => filterItem(item));
+
+        if (groupBy) filterGroupedItems();
     }
 
     function filterGroupedItems() {
         const groupValues = [];
         const groups = {};
 
-        items.forEach((item) => {
+        filteredItems.forEach((item) => {
             const groupValue = groupBy(item);
 
             if (!groupValues.includes(groupValue)) {
@@ -248,32 +254,6 @@
         }
     }
 
-    function setupFilterText() {
-        if (filterText.length > 0) {
-            isFocused = true;
-            listOpen = true;
-
-            if (loadOptions) {
-                getItems();
-            } else {
-                loadList();
-                listOpen = true;
-
-                if (isMulti) {
-                    activeValue = undefined;
-                }
-            }
-        } else {
-            setList([]);
-        }
-
-        if (list) {
-            list.$set({
-                filterText,
-            });
-        }
-    }
-
     function setupFocus() {
         if (isFocused || listOpen) {
             handleFocus();
@@ -297,25 +277,6 @@
         if (value) value = null;
     }
 
-    export let VirtualList = null;
-    export let List = null;
-
-    async function importInternalComponent(componentName) {
-        let file;
-
-        switch (componentName) {
-            case 'VirtualList':
-                file = await import(`./VirtualList.svelte`);
-                break;
-
-            case 'List':
-                file = await import(`./List.svelte`);
-                break;
-        }
-
-        return file.default;
-    }
-
     $: {
         if (value) setValue();
     }
@@ -337,12 +298,12 @@
             resetFilteredItems();
         }
 
-        if (!groupBy && filterText && filterText.length > 0) {
+        if (filterText && filterText.length > 0) {
             filterItems();
         }
 
         if (groupBy) {
-            filterGroupedItems();
+            filterItems();
         }
     }
 
@@ -369,14 +330,6 @@
     }
 
     $: {
-        if (listOpen) {
-            loadList();
-        } else {
-            removeList();
-        }
-    }
-
-    $: {
         if (isFocused !== prev_isFocused) {
             setupFocus();
         }
@@ -385,6 +338,25 @@
     $: {
         if (filterText !== prev_filterText) {
             setupFilterText();
+        }
+    }
+
+    function setupFilterText() {
+        if (filterText.length > 0) {
+            isFocused = true;
+            listOpen = true;
+
+            if (loadOptions) {
+                getItems();
+            } else {
+                listOpen = true;
+
+                if (isMulti) {
+                    activeValue = undefined;
+                }
+            }
+        } else {
+            resetFilteredItems();
         }
     }
 
@@ -430,7 +402,7 @@
             filterItems();
         }
 
-        setList(_filteredItems);
+        filteredItems = _filteredItems;
     }
 
     $: {
@@ -440,11 +412,12 @@
     }
 
     $: showSelectedItem = value && filterText.length === 0;
-    $: placeholderText = placeholderAlwaysShow && isMulti ? placeholder : (value ? '' : placeholder);
-
-    async function setupList() {
-        List = await importInternalComponent('List');
-    }
+    $: placeholderText =
+        placeholderAlwaysShow && isMulti
+            ? placeholder
+            : value
+            ? ''
+            : placeholder;
 
     beforeUpdate(async () => {
         prev_value = value;
@@ -505,19 +478,6 @@
         }
     }
 
-    async function setList(items) {
-        if (!listOpen) return;
-
-        if (loadOptions && getItemsHasInvoked && items.length > 0) {
-            list.$destroy();
-            list = null;
-            return loadList();
-        }
-
-        if (!list) await loadList();
-        list.$set({ items });
-    }
-
     function handleMultiItemClear(event) {
         const { detail } = event;
         const itemToRemove = value[detail ? detail.i : value.length - 1];
@@ -533,33 +493,6 @@
         filterItems();
 
         dispatch('clear', itemToRemove);
-
-        getPosition();
-    }
-
-    async function getPosition() {
-        await tick();
-        if (!target || !container) return;
-        const { top, height, width } = container.getBoundingClientRect();
-
-        target.style['min-width'] = `${width}px`;
-        target.style.width = `${listAutoWidth ? 'auto' : '100%'}`;
-        target.style.left = '0';
-
-        if (listPlacement === 'top') {
-            target.style.bottom = `${height + 5}px`;
-        } else {
-            target.style.top = `${height + 5}px`;
-        }
-
-        target = target;
-
-        if (listPlacement === 'auto' && isOutOfViewport(target).bottom) {
-            target.style.top = ``;
-            target.style.bottom = `${height + 5}px`;
-        }
-
-        target.style.visibility = '';
     }
 
     function handleKeyDown(e) {
@@ -667,105 +600,6 @@
         handleFocus();
     }
 
-    async function loadList() {
-        if (!List && listOpen) {
-            await setupList();
-        }
-
-        if (target && list) {
-            return;
-        }
-
-        if (isVirtualList && !VirtualList) {
-            VirtualList = await importInternalComponent('VirtualList');
-        }
-
-        const data = {
-            Item,
-            filterText,
-            optionIdentifier,
-            noOptionsMessage,
-            hideEmptyState,
-            isVirtualList,
-            VirtualList,
-            value,
-            isMulti,
-            getGroupHeaderLabel,
-            items: filteredItems,
-            itemHeight,
-        };
-
-        if (getOptionLabel) {
-            data.getOptionLabel = getOptionLabel;
-        }
-
-        if (target) target.remove();
-        target = document.createElement('div');
-
-        Object.assign(target.style, {
-            position: 'absolute',
-            'z-index': 2,
-            visibility: 'hidden',
-        });
-
-        if (list) list.$destroy();
-        list = list;
-        target = target;
-        if (container) container.appendChild(target);
-
-        list = new List({
-            target,
-            props: data,
-        });
-
-        list.$on('itemSelected', (event) => {
-            const { detail } = event;
-
-            if (detail) {
-                const item = Object.assign({}, detail);
-
-                if (!item.isGroupHeader || item.isSelectable) {
-                    if (isMulti) {
-                        value = value ? value.concat([item]) : [item];
-                        filterItems();
-                    } else {
-                        value = item;
-                    }
-
-                    resetFilter();
-                    value = value;
-
-                    setTimeout(() => {
-                        listOpen = false;
-                        activeValue = undefined;
-                    });
-                }
-            }
-        });
-
-        list.$on('itemCreated', (event) => {
-            const { detail } = event;
-            if (isMulti) {
-                value = value || [];
-                value = [...value, createItem(detail)];
-            } else {
-                value = createItem(detail);
-            }
-
-            dispatch('itemCreated', detail);
-            filterText = '';
-            listOpen = false;
-            activeValue = undefined;
-            resetFilter();
-        });
-
-        list.$on('closeList', () => {
-            listOpen = false;
-        });
-
-        getPosition();
-    }
-
     onMount(() => {
         originalItemsClone = JSON.stringify(items ? items : []);
 
@@ -776,6 +610,70 @@
     onDestroy(() => {
         removeList();
     });
+
+    $: listProps = {
+        Item,
+        filterText,
+        optionIdentifier,
+        noOptionsMessage,
+        hideEmptyState,
+        isVirtualList,
+        VirtualList,
+        value,
+        isMulti,
+        getGroupHeaderLabel,
+        items: filteredItems,
+        itemHeight,
+        getOptionLabel,
+        listPlacement,
+        parent: container,
+        listAutoWidth,
+    };
+
+    function itemSelected(event) {
+        const { detail } = event;
+
+        if (detail) {
+            const item = Object.assign({}, detail);
+
+            if (!item.isGroupHeader || item.isSelectable) {
+                if (isMulti) {
+                    value = value ? value.concat([item]) : [item];
+                    filterItems();
+                } else {
+                    value = item;
+                }
+
+                resetFilter();
+                value = value;
+
+                setTimeout(() => {
+                    listOpen = false;
+                    activeValue = undefined;
+                });
+            }
+        }
+    }
+
+    function itemCreated(event) {
+        const { detail } = event;
+        if (isMulti) {
+            value = value || [];
+            value = [...value, createItem(detail)];
+        } else {
+            value = createItem(detail);
+        }
+
+        dispatch('itemCreated', detail);
+        filterText = '';
+        listOpen = false;
+        activeValue = undefined;
+        resetFilter();
+    }
+
+    function closeList() {
+        listOpen = false;
+    }
 </script>
 
 <style>
@@ -945,7 +843,6 @@
 <svelte:window
     on:click={handleWindowClick}
     on:keydown={handleKeyDown}
-    on:resize={getPosition}
 />
 
 <div
@@ -1040,5 +937,15 @@
                 />
             </svg>
         </div>
+    {/if}
+
+    {#if listOpen}
+        <svelte:component
+            this={List}
+            {...listProps}
+            on:itemSelected={itemSelected}
+            on:itemCreated={itemCreated}
+            on:closeList={closeList}
+        />
     {/if}
 </div>

@@ -472,7 +472,6 @@ test('when listPosition is set to top list should be above the input', async (t)
     }
   });
 
-  await wait(0);
   const distanceOfListBottomFromViewportTop = document.querySelector('.listContainer').getBoundingClientRect().bottom;
   const distanceOfInputTopFromViewportTop = document.querySelector('.selectContainer').getBoundingClientRect().top;
 
@@ -1023,10 +1022,16 @@ test('clicking between Selects should close and blur other Select', async (t) =>
   });
 
   await querySelectorClick('.selectContainer');
-  t.ok(select.list);
+  t.ok(select.listOpen);
+  t.ok(select.isFocused);
+  t.ok(!other.isFocused);
+  t.ok(!other.isFocused);
+
   await querySelectorClick('#extra .selectContainer');
-  t.ok(!select.list);
-  t.ok(other.list);
+  t.ok(!select.listOpen);
+  t.ok(!select.isFocused);
+  t.ok(other.listOpen);
+  t.ok(other.isFocused);
 
   select.$destroy();
   other.$destroy();
@@ -1196,18 +1201,10 @@ test('items should be grouped by groupBy expression', async (t) => {
     return item.group;
   }
 
-  await wait(0);
-
-  const groupedListItems = select.list.items;
-
-  groupedListItems.forEach((item, itemIndex) => {
-    if(itemIndex > 0) {
-      const prevItem = groupedListItems[itemIndex - 1];
-      const prevItemIsHeaderOrInSameGroup = item.group === (prevItem.isGroupHeader ? prevItem.value : prevItem.group);
-      t.ok(item.isGroupHeader || prevItemIsHeaderOrInSameGroup);
-    }
-  });
-
+  let title = document.querySelector('.listGroupTitle').innerHTML;
+  t.ok(title === 'Sweet');
+  let item = document.querySelector('.listItem .item').innerHTML; 
+  t.ok(item === 'Chocolate');
   select.$destroy();
 });
 
@@ -1272,8 +1269,8 @@ test('when isGroupHeaderSelectable clicking group header should select createGro
 
   await wait(0);
 
-  const groupHeaderItem = select.list.items[0];
-  const groupItem = select.list.items.find((item) => {
+  const groupHeaderItem = select.filteredItems[0];
+  const groupItem = select.filteredItems.find((item) => {
     return item.group === groupHeaderItem.id;
   });
 
@@ -1306,7 +1303,7 @@ test('group headers label should be created by getGroupHeaderLabel(item)', async
 
   await wait(0);
 
-  const groupHeaderItem = select.list.items[0];
+  const groupHeaderItem = select.filteredItems[0];
 
   t.equal(target.querySelector('.listGroupTitle').textContent, getGroupHeaderLabel(groupHeaderItem));
 
@@ -2310,7 +2307,8 @@ test('when isMulti, groupBy and value are supplied then list should be filtered'
     { id: 1, name: "Foo", group: "first" },
     { id: 2, name: "Bar", group: "second" },
     { id: 3, name: "Baz", group: "second" },
-    { id: 4, name: "Qux", group: "first" }
+    { id: 4, name: "Qux", group: "first" },
+    { id: 5, name: "Bah", group: "first" },
   ];
 
   const select = new Select({
