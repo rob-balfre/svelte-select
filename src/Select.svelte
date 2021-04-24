@@ -90,6 +90,14 @@
     export let MultiSelection = _MultiSelection;
     export let VirtualList = _VirtualList;
 
+    export let selectedValue = null;
+    $: {
+        if (selectedValue)
+            console.warn(
+                'selectedValue is no longer used. Please use value instead.'
+            );
+    }
+
     let target;
     let activeValue;
     let originalItemsClone;
@@ -104,11 +112,8 @@
         filterText = '';
     }
 
-    let getItemsHasInvoked = false;
     const getItems = debounce(async () => {
-        getItemsHasInvoked = true;
         isWaiting = true;
-
         let res = await loadOptions(filterText).catch((err) => {
             console.warn('svelte-select loadOptions error :>> ', err);
             dispatch('error', { type: 'loadOptions', details: err });
@@ -674,6 +679,10 @@
     function closeList() {
         listOpen = false;
     }
+
+    $: {
+        if (value) selectedValue = value;
+    }
 </script>
 
 <style>
@@ -840,10 +849,7 @@
     }
 </style>
 
-<svelte:window
-    on:click={handleWindowClick}
-    on:keydown={handleKeyDown}
-/>
+<svelte:window on:click={handleWindowClick} on:keydown={handleKeyDown} />
 
 <div
     class="selectContainer {containerClasses}"
