@@ -152,7 +152,6 @@
                     closeList();
                     break;
                 }
-
                 if (hoverItem.isCreator) {
                     dispatch('itemCreated', filterText);
                 } else {

@@ -1411,10 +1411,11 @@ test('when isMulti is true both value and filterText filters List', async (t) =>
       listOpen: true,
       isMulti: true,
       items,
-      filterText: 'Pizza',
       value: [{value: 'chocolate', label: 'Chocolate'}]
     }
   });
+
+  select.filterText = 'Pizza',
 
   t.equal(JSON.stringify(select.filteredItems), JSON.stringify([
     {value: 'pizza', label: 'Pizza'}

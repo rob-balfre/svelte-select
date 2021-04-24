@@ -2,9 +2,7 @@
     import {
         beforeUpdate,
         createEventDispatcher,
-        onDestroy,
         onMount,
-        tick,
     } from 'svelte';
 
     import _List from './List.svelte';
@@ -68,7 +66,6 @@
     export let isWaiting = false;
     export let listPlacement = 'auto';
     export let listOpen = false;
-    export let list = undefined;
     export let isVirtualList = false;
     export let loadOptionsInterval = 300;
     export let noOptionsMessage = 'No options';
@@ -98,7 +95,6 @@
             );
     }
 
-    let target;
     let activeValue;
     let originalItemsClone;
     let prev_value;
@@ -106,11 +102,6 @@
     let prev_isFocused;
     let prev_filteredItems;
     let prev_isMulti;
-
-    async function resetFilter() {
-        await tick();
-        filterText = '';
-    }
 
     const getItems = debounce(async () => {
         isWaiting = true;
@@ -146,6 +137,8 @@
                 typeof item === 'string' ? { value: item, label: item } : item
             );
         }
+
+        filterText = '';
     }
 
     let _inputAttributes;
@@ -263,7 +256,6 @@
         if (isFocused || listOpen) {
             handleFocus();
         } else {
-            resetFilter();
             if (input) input.blur();
         }
     }
@@ -284,10 +276,6 @@
 
     $: {
         if (value) setValue();
-    }
-
-    $: {
-        if (noOptionsMessage && list) list.$set({ noOptionsMessage });
     }
 
     $: {
@@ -533,9 +521,7 @@
                 }
                 break;
             case 'ArrowLeft':
-                if (list) list.$set({ hoverItemIndex: -1 });
                 if (!isMulti || filterText.length > 0) return;
-
                 if (activeValue === undefined) {
                     activeValue = value.length - 1;
                 } else if (value.length > activeValue && activeValue !== 0) {
@@ -543,7 +529,6 @@
                 }
                 break;
             case 'ArrowRight':
-                if (list) list.$set({ hoverItemIndex: -1 });
                 if (
                     !isMulti ||
                     filterText.length > 0 ||
@@ -562,22 +547,6 @@
     function handleFocus() {
         isFocused = true;
         if (input) input.focus();
-    }
-
-    function removeList() {
-        resetFilter();
-        activeValue = undefined;
-
-        if (!list) return;
-        list.$destroy();
-        list = undefined;
-
-        if (!target) return;
-        if (target.parentNode) target.parentNode.removeChild(target);
-        target = undefined;
-
-        list = list;
-        target = target;
     }
 
     function handleWindowClick(event) {
@@ -610,10 +579,6 @@
 
         if (isFocused && input) input.focus();
         if (!groupBy) filterItems();
-    });
-
-    onDestroy(() => {
-        removeList();
     });
 
     $: listProps = {
@@ -649,7 +614,6 @@
                     value = item;
                 }
 
-                resetFilter();
                 value = value;
 
                 setTimeout(() => {
@@ -673,15 +637,10 @@
         filterText = '';
         listOpen = false;
         activeValue = undefined;
-        resetFilter();
     }
 
     function closeList() {
         listOpen = false;
-    }
-
-    $: {
-        if (value) selectedValue = value;
     }
 </script>
 
