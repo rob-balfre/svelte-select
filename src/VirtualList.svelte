@@ -145,17 +145,13 @@
     bind:this={viewport}
     bind:offsetHeight={viewport_height}
     on:scroll={handle_scroll}
-    style="height: {height};"
->
+    style="height: {height};">
     <svelte-virtual-list-contents
         bind:this={contents}
-        style="padding-top: {top}px; padding-bottom: {bottom}px;"
-    >
+        style="padding-top: {top}px; padding-bottom: {bottom}px;">
         {#each visible as row (row.index)}
             <svelte-virtual-list-row>
-                <slot item={row.data} i={row.index} {hoverItemIndex}
-                    >Missing template</slot
-                >
+                <slot item={row.data} i={row.index} {hoverItemIndex}>Missing template</slot>
             </svelte-virtual-list-row>
         {/each}
     </svelte-virtual-list-contents>

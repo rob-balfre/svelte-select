@@ -271,21 +271,17 @@
     <div
         class="listContainer virtualList"
         bind:this={container}
-        style={listStyle}
-    >
-        >
+        style={listStyle}>
         <svelte:component
             this={VirtualList}
             {items}
             {itemHeight}
             let:item
-            let:i
-        >
+            let:i>
             <div
                 on:mouseover={() => handleHover(i)}
                 on:click={(event) => handleClick({ item, i, event })}
-                class="listItem"
-            >
+                class="listItem">
                 <svelte:component
                     this={Item}
                     {item}
@@ -293,8 +289,7 @@
                     {getOptionLabel}
                     isFirst={isItemFirst(i)}
                     isActive={isItemActive(item, value, optionIdentifier)}
-                    isHover={isItemHover(hoverItemIndex, item, i, items)}
-                />
+                    isHover={isItemHover(hoverItemIndex, item, i, items)} />
             </div>
         </svelte:component>
     </div>
@@ -309,8 +304,7 @@
                 <div
                     on:mouseover={() => handleHover(i)}
                     on:click={(event) => handleClick({ item, i, event })}
-                    class="listItem"
-                >
+                    class="listItem">
                     <svelte:component
                         this={Item}
                         {item}
@@ -318,8 +312,7 @@
                         {getOptionLabel}
                         isFirst={isItemFirst(i)}
                         isActive={isItemActive(item, value, optionIdentifier)}
-                        isHover={isItemHover(hoverItemIndex, item, i, items)}
-                    />
+                        isHover={isItemHover(hoverItemIndex, item, i, items)} />
                 </div>
             {/if}
         {:else}
