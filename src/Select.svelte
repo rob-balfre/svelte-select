@@ -25,6 +25,7 @@
   export let isDisabled = false;
   export let isCreatable = false;
   export let isFocused = false;
+  export let isRequired = false;
   export let selectedValue = undefined;
   export let filterText = "";
   export let placeholder = "Select...";
@@ -158,6 +159,14 @@
 
     if (!isSearchable) {
       _inputAttributes.readonly = true;
+    }
+    
+    if(isRequired){
+      if(isMulti){
+        _inputAttributes.required = (selectedValue == undefined || selectedValue.length == 0)
+      } else {
+        _inputAttributes.required = selectedValue == undefined
+      }
     }
   }
 
