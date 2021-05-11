@@ -3166,8 +3166,33 @@ test('when loadOptions and value then items should show on promise resolve',asyn
   select.$destroy();
 });
 
+test('when loadOptions, isMulti and value then filterText should remain on promise resolve',async (t) => {
+  const loadOptionsFn = async () => {
+    return Promise.resolve([
+      {value: 'chocolate', label: 'Chocolate'},
+      {value: 'ice-cream', label: 'Ice-cream'},
+      {value: 'pizza', label: 'pizza'},
+    ]);
+  }
 
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      value: {
+        value: 'chocolate', label: 'Chocolate'
+      },
+      listOpen: true,
+      filterText: 'test',
+      loadOptions: loadOptionsFn
+    }
+  });
 
+  await wait(300);
+  t.ok(select.filterText === 'test');
+  
+  select.$destroy();
+});
 
 // this allows us to close puppeteer once tests have completed
 window.done = done;

@@ -142,7 +142,9 @@
             );
         }
 
-        if (prev_filterText) filterText = '';
+        if (prev_filterText && !loadOptions) {
+            filterText = '';
+        }
     }
 
     let _inputAttributes;
@@ -621,6 +623,7 @@
                 setTimeout(() => {
                     listOpen = false;
                     activeValue = undefined;
+                    if (loadOptions) filterText = '';
                 });
             }
         }
