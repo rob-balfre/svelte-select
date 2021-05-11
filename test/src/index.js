@@ -809,9 +809,9 @@ test('Select filter text filters list', async (t) => {
   });
 
   await wait(0);
-  t.ok(select.filteredItems.length === 5);
+  t.ok(select.items.length === 5);
   await handleSet(select, {filterText: 'Ice'})
-  t.ok(select.filteredItems.length === 1);
+  t.ok(select.items.length === 1);
 
   select.$destroy();
 });
@@ -826,9 +826,9 @@ test('Select filter text filters list with itemFilter', async (t) => {
   });
 
   await wait(0);
-  t.ok(select.filteredItems.length === 5);
+  t.ok(select.items.length === 5);
   await handleSet(select, {filterText: 'cream ice'})
-  t.ok(select.filteredItems.length === 1);
+  t.ok(select.items.length === 1);
 
   select.$destroy();
 });
@@ -1269,8 +1269,8 @@ test('when isGroupHeaderSelectable clicking group header should select createGro
 
   await wait(0);
 
-  const groupHeaderItem = select.filteredItems[0];
-  const groupItem = select.filteredItems.find((item) => {
+  const groupHeaderItem = select.items[0];
+  const groupItem = select.items.find((item) => {
     return item.group === groupHeaderItem.id;
   });
 
@@ -1303,7 +1303,7 @@ test('group headers label should be created by getGroupHeaderLabel(item)', async
 
   await wait(0);
 
-  const groupHeaderItem = select.filteredItems[0];
+  const groupHeaderItem = select.items[0];
 
   t.equal(target.querySelector('.listGroupTitle').textContent, getGroupHeaderLabel(groupHeaderItem));
 
@@ -1394,7 +1394,7 @@ test('when isMulti is true items in value will not appear in List', async (t) =>
 
   await wait(0);
 
-  t.equal(JSON.stringify(select.filteredItems), JSON.stringify([
+  t.equal(JSON.stringify(select.items), JSON.stringify([
     {value: 'pizza', label: 'Pizza'},
     {value: 'cake', label: 'Cake'},
     {value: 'chips', label: 'Chips'},
@@ -1417,7 +1417,7 @@ test('when isMulti is true both value and filterText filters List', async (t) =>
 
   select.filterText = 'Pizza',
 
-  t.equal(JSON.stringify(select.filteredItems), JSON.stringify([
+  t.equal(JSON.stringify(select.items), JSON.stringify([
     {value: 'pizza', label: 'Pizza'}
   ]));
 
@@ -2036,8 +2036,6 @@ test('when items and loadOptions method are both supplied then fallback to items
   await handleSet(select, {filterText: 'Juniper'});
   await wait(500);
   t.ok(document.querySelector('.item').innerHTML === 'Juniper Wheat Beer');
-  await handleSet(select, {filterText: ''});
-  t.ok(document.querySelector('.item').innerHTML === 'test1');
 
   select.$destroy();
 });
@@ -2128,32 +2126,6 @@ test('when isVirtualList and filterText changes then rendered list scrolls to to
 
   await wait(0);
   t.ok(virtual.scrollTop === 0);
-
-  select.$destroy();
-});
-
-test('when loadOptions method is supplied but filterText is empty then do not run loadOptions and clean list', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      getOptionLabel: (option) => option.name,
-      loadOptions: getPosts,
-      optionIdentifier: 'id',
-      Item: CustomItem,
-      Selection: CustomItem
-    }
-  });
-
-  await wait(0);
-  select.$set({filterText: 'Juniper'});
-  await wait(500);
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.ok(document.querySelector('.customItem_name').innerHTML === 'Juniper Wheat Beer');
-  select.$set({value: undefined, filterText: ''});
-  await wait(0);
-  select.$set({listOpen: true});
-  await wait(0);
-  t.ok(document.querySelector('.empty'));
 
   select.$destroy();
 });
@@ -2326,7 +2298,7 @@ test('when isMulti, groupBy and value are supplied then list should be filtered'
     }
   });
 
-  t.ok(!select.filteredItems.find(item => item.name === 'Bar'));
+  t.ok(!select.items.find(item => item.name === 'Bar'));
 
   select.$destroy();
 });
@@ -3165,6 +3137,35 @@ test('when isMulti and placeholderAlwaysShow then always show placeholder text',
 
   select.$destroy();
 });
+
+
+test('when loadOptions and value then items should show on promise resolve',async (t) => {
+  const loadOptionsFn = async () => {
+    return Promise.resolve([
+      {value: 'chocolate', label: 'Chocolate'},
+      {value: 'ice-cream', label: 'Ice-cream'},
+      {value: 'pizza', label: 'pizza'},
+    ]);
+  }
+
+  const select = new Select({
+    target,
+    props: {
+      value: {
+        value: 'chocolate', label: 'Chocolate'
+      },
+      listOpen: true,
+      filterText: 'a',
+      loadOptions: loadOptionsFn
+    }
+  });
+
+  await wait(300);
+  t.ok(select.items.length === 3);
+  
+  select.$destroy();
+});
+
 
 
 

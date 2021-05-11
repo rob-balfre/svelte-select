@@ -1,9 +1,5 @@
 <script>
-    import {
-        beforeUpdate,
-        createEventDispatcher,
-        onMount,
-    } from 'svelte';
+    import { beforeUpdate, createEventDispatcher, onMount } from 'svelte';
 
     import _List from './List.svelte';
     import _Item from './Item.svelte';
@@ -70,7 +66,6 @@
     export let loadOptionsInterval = 300;
     export let noOptionsMessage = 'No options';
     export let hideEmptyState = false;
-    export let filteredItems = [];
     export let inputAttributes = {};
     export let listAutoWidth = true;
     export let itemHeight = 40;
@@ -95,12 +90,21 @@
             );
     }
 
+    const originalItemsClone = (() => {
+        let _items = JSON.parse(JSON.stringify(items ? items : []));
+
+        if (_items && _items.length > 0 && typeof _items[0] !== 'object') {
+            _items = convertStringItemsToObjects();
+        }
+
+        return _items;
+    })();
+
     let activeValue;
-    let originalItemsClone;
     let prev_value;
     let prev_filterText;
     let prev_isFocused;
-    let prev_filteredItems;
+    let prev_items;
     let prev_isMulti;
 
     const getItems = debounce(async () => {
@@ -138,7 +142,7 @@
             );
         }
 
-        filterText = '';
+        if (prev_filterText) filterText = '';
     }
 
     let _inputAttributes;
@@ -158,7 +162,7 @@
     }
 
     function convertStringItemsToObjects() {
-        items = items.map((item, index) => {
+        return items.map((item, index) => {
             return {
                 index,
                 value: item,
@@ -168,7 +172,8 @@
     }
 
     function resetFilteredItems() {
-        if (originalItemsClone) filteredItems = JSON.parse(originalItemsClone);
+        if (loadOptions) return;
+        items = originalItemsClone;
         if (groupBy) filterItems();
     }
 
@@ -187,13 +192,9 @@
     }
 
     function filterItems() {
-        filteredItems =
-            loadOptions && filterText && filterText.length > 0
-                ? filterText.length === 0
-                    ? []
-                    : items
-                : items.filter((item) => filterItem(item));
-
+        if (loadOptions) return;
+        let _items = originalItemsClone;
+        items = _items.filter((item) => filterItem(item));
         if (groupBy) filterGroupedItems();
     }
 
@@ -201,7 +202,7 @@
         const groupValues = [];
         const groups = {};
 
-        filteredItems.forEach((item) => {
+        items.forEach((item) => {
             const groupValue = groupBy(item);
 
             if (!groupValues.includes(groupValue)) {
@@ -230,7 +231,7 @@
             sortedGroupedItems.push(...groups[groupValue]);
         });
 
-        filteredItems = sortedGroupedItems;
+        items = sortedGroupedItems;
     }
 
     function dispatchSelectedItem() {
@@ -283,11 +284,11 @@
     }
 
     $: {
-        if (items && items.length > 0 && typeof items[0] !== 'object') {
-            convertStringItemsToObjects();
-        }
-
-        if (loadOptions && filterText.length === 0 && originalItemsClone) {
+        if (
+            loadOptions &&
+            filterText.length === 0 &&
+            originalItemsClone.length > 0
+        ) {
             resetFilteredItems();
         }
 
@@ -354,7 +355,9 @@
     }
 
     function setupFilteredItem() {
-        let _filteredItems = [...filteredItems];
+        if (loadOptions) return;
+
+        let _filteredItems = [...items];
 
         if (isCreatable && filterText) {
             const itemToCreate = createItem(filterText);
@@ -395,11 +398,11 @@
             filterItems();
         }
 
-        filteredItems = _filteredItems;
+        items = _filteredItems;
     }
 
     $: {
-        if (prev_filteredItems !== filteredItems) {
+        if (prev_items !== items) {
             setupFilteredItem();
         }
     }
@@ -416,7 +419,7 @@
         prev_value = value;
         prev_filterText = filterText;
         prev_isFocused = isFocused;
-        prev_filteredItems = filteredItems;
+        prev_items = items;
         prev_isMulti = isMulti;
     });
 
@@ -575,10 +578,9 @@
     }
 
     onMount(() => {
-        originalItemsClone = JSON.stringify(items ? items : []);
-
         if (isFocused && input) input.focus();
-        if (!groupBy) filterItems();
+        if (loadOptions && items) items = [...items];
+        if (isMulti && value) filterItems();
     });
 
     $: listProps = {
@@ -592,7 +594,7 @@
         value,
         isMulti,
         getGroupHeaderLabel,
-        items: filteredItems,
+        items,
         itemHeight,
         getOptionLabel,
         listPlacement,
@@ -818,8 +820,7 @@
     class:focused={isFocused}
     style={containerStyles}
     on:click={handleClick}
-    bind:this={container}
->
+    bind:this={container}>
     {#if Icon}
         <svelte:component this={Icon} {...iconProps} />
     {/if}
@@ -833,8 +834,7 @@
             {isDisabled}
             {multiFullItemClearable}
             on:multiItemClear={handleMultiItemClear}
-            on:focus={handleFocus}
-        />
+            on:focus={handleFocus} />
     {/if}
 
     <input
@@ -845,16 +845,14 @@
         bind:value={filterText}
         placeholder={placeholderText}
         style={inputStyles}
-        disabled={isDisabled}
-    />
+        disabled={isDisabled} />
 
     {#if !isMulti && showSelectedItem}
         <div class="selectedItem" on:focus={handleFocus}>
             <svelte:component
                 this={Selection}
                 item={value}
-                {getSelectionLabel}
-            />
+                {getSelectionLabel} />
         </div>
     {/if}
 
@@ -873,15 +871,13 @@
                     width="100%"
                     height="100%"
                     viewBox="0 0 20 20"
-                    focusable="false"
-                >
+                    focusable="false">
                     <path
                         d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747
           3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0
           1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502
           0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0
-          0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                    />
+          0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z" />
                 </svg>
             {/if}
         </div>
@@ -898,8 +894,7 @@
                     fill="none"
                     stroke="currentColor"
                     stroke-width="5"
-                    stroke-miterlimit="10"
-                />
+                    stroke-miterlimit="10" />
             </svg>
         </div>
     {/if}
@@ -910,7 +905,6 @@
             {...listProps}
             on:itemSelected={itemSelected}
             on:itemCreated={itemCreated}
-            on:closeList={closeList}
-        />
+            on:closeList={closeList} />
     {/if}
 </div>
