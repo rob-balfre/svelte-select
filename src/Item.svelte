@@ -64,7 +64,7 @@
 
     .item.hover:not(.active) {
         background: var(--itemHoverBG, #e7f2ff);
-        color: var(--itemHoverBG, inherit);
+        color: var(--itemHoverColor, inherit);
     }
 </style>
 
