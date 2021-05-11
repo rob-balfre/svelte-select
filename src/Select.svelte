@@ -410,6 +410,7 @@
     }
 
     $: showSelectedItem = value && filterText.length === 0;
+    $: showClearIcon = showSelectedItem && isClearable && !isDisabled && !isWaiting;
     $: placeholderText =
         placeholderAlwaysShow && isMulti
             ? placeholder
@@ -859,13 +860,13 @@
         </div>
     {/if}
 
-    {#if showSelectedItem && isClearable && !isDisabled && !isWaiting}
+    {#if showClearIcon }
         <div class="clearSelect" on:click|preventDefault={handleClear}>
             <svelte:component this={ClearIcon} />
         </div>
     {/if}
 
-    {#if showIndicator || (showChevron && !value) || (!isSearchable && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem))}
+    {#if !showClearIcon && (showIndicator || (showChevron && !value) || (!isSearchable && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem))) }
         <div class="indicator">
             {#if indicatorSvg}
                 {@html indicatorSvg}

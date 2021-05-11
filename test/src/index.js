@@ -2723,13 +2723,14 @@ test('When showChevron prop is true and no value show chevron on Select', async 
   select.$destroy();
 });
 
-test('When showIndicator prop is true always show chevron on Select', async (t) => {
+test('When showIndicator and isClearable is true always show chevron on Select', async (t) => {
   const select = new Select({
     target,
     props: {
       items,
       value: {value: 'chocolate', label: 'Chocolate'},
-      showIndicator: true
+      showIndicator: true,
+      isClearable: false
     }
   });
 
@@ -3193,6 +3194,28 @@ test('when loadOptions, isMulti and value then filterText should remain on promi
   
   select.$destroy();
 });
+
+
+test('When isClearable and showIndicator then indicator icon should not show when value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isClearable: true,
+      showIndicator: true,
+      value: {value: 'chips', label: 'Chips'},
+    },
+  });
+
+  let elem = target.querySelector('.selectContainer .indicator');
+  t.ok(!elem);
+  select.value = null;
+  elem = target.querySelector('.selectContainer .indicator');
+  t.ok(elem);
+
+  select.$destroy();
+});
+
 
 // this allows us to close puppeteer once tests have completed
 window.done = done;
