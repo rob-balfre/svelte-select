@@ -30,6 +30,10 @@
     overflow: hidden;
     white-space: nowrap;
   }
+  
+  .item:hover{
+    color: var(--itemHoverColor, inherit);
+  }
 
   .groupHeader {
     text-transform: var(--groupTitleTextTransform, uppercase);
@@ -54,6 +58,10 @@
 
   .item.hover:not(.active) {
     background: var(--itemHoverBG, #e7f2ff);
+  }
+  
+  .item.hover{
+    color: var(--itemHoverColor, #fff);
   }
 </style>
 
