@@ -37,15 +37,16 @@
   export let getGroupHeaderLabel = option => {
     return option.label;
   };
+  export let labelIdentifier = 'label';
   export let getOptionLabel = (option, filterText) => {
-    return option.isCreator ? `Create \"${filterText}\"` : option.label;
+    return option.isCreator ? `Create \"${filterText}\"` : option[labelIdentifier];
   };
   export let optionIdentifier = "value";
   export let loadOptions = undefined;
   export let hasError = false;
   export let containerStyles = "";
   export let getSelectionLabel = option => {
-    if (option) return option.label;
+    if (option) return option[labelIdentifier];
   };
 
   export let createGroupHeaderItem = groupValue => {

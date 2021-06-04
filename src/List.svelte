@@ -11,10 +11,11 @@
   export let Item = ItemComponent;
   export let isVirtualList = false;
   export let items = [];
+  export let labelIdentifier = 'label';
   export let getOptionLabel = (option, filterText) => {
-    if (option) return option.isCreator ? `Create \"${filterText}\"` : option.label;
+    if (option) return option.isCreator ? `Create \"${filterText}\"` : option[labelIdentifier];
   };
-  export let getGroupHeaderLabel = (option) => { return option.label };
+  export let getGroupHeaderLabel = (option) => { return option[labelIdentifier] };
   export let itemHeight = 40;
   export let hoverItemIndex = 0;
   export let selectedValue = undefined;
