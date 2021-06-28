@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 4.1.0
+
+* Add labelIdentifier prop - thanks to @martgnz
+
 ## 4.0.0
 
 * selectedValue deprecated please use value going forward
