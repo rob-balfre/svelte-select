@@ -1,10 +1,7 @@
 node_modules
 .DS_Store
 .idea
-index.js
-index.mjs
-test/public/bundle.js
-!test/src/index.js
-.prettierrc
-.prettierignore
 .nova
+/dist/
+/test/public/index.js
+/test/public/bundle.css

@@ -82,12 +82,7 @@
     display: flex;
     padding: 0 16px;
   }
-
-  .multiSelectItems {
-    display: flex;
-    padding: 8px 0;
-  }
-
+  
   .multiSelectItem {
     background: #E8EAED;
     margin-right: 5px;
