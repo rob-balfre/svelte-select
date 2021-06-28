@@ -21,6 +21,7 @@ export interface SelectProps {
   getGroupHeaderLabel?: (option: any) => string;
   getOptionLabel?: (option: any, filterText: string) => string;
   optionIdentifier?: string;
+  labelIdentifier?: string;
   loadOptions?: (filterText: string) => Promise<any[]>;
   hasError?: boolean;
   containerStyles?: string;

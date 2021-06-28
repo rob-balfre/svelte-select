@@ -51,6 +51,7 @@ yarn add svelte-select
 - `placeholder: String` Default: `'Select...'`. Placeholder text.
 - `noOptionsMessage: String` Default: `'No options'`. Message to display in list when there are no `items`.
 - `optionIdentifier: String` Default: `'value'`. Override default identifier.
+- `labelIdentifier: String` Default: `'label'`. Override default identifier.
 - `listOpen: Boolean` Default: `false`. Open/close list.
 - `hideEmptyState: Boolean` Default: `false`. Hide list and don't show `noOptionsMessage` when there are no `items`.
 - `containerClasses: String` Default: `''`. Add extra container classes, for example 'global-x local-y'.

@@ -1597,6 +1597,24 @@ test('when isMulti is true show each item in value if simple arrays are used', a
   select.$destroy();
 });
 
+
+test('when labelIdentifier is set you can pass a string and see the right label', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: [{id: 0, name: 'ONE'}, {id: 1, name: 'TWO'}],
+      value: {id: 0, name: 'ONE'},
+      optionIdentifier: 'id',
+      labelIdentifier: 'name',
+    }
+  });
+
+  t.ok(document.querySelector('.selection').innerHTML === 'ONE');
+
+  select.$destroy();
+});
+
+
 test('when getValue method is set should use that key to update value', async (t) => {
   const select = new Select({
     target,

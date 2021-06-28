@@ -29,17 +29,18 @@
     export let groupFilter = (groups) => groups;
     export let isGroupHeaderSelectable = false;
     export let getGroupHeaderLabel = (option) => {
-        return option.label;
+        return option[labelIdentifier];
     };
+    export let labelIdentifier = 'label';
     export let getOptionLabel = (option, filterText) => {
-        return option.isCreator ? `Create \"${filterText}\"` : option.label;
+        return option.isCreator ? `Create \"${filterText}\"` : option[labelIdentifier];
     };
     export let optionIdentifier = 'value';
     export let loadOptions = undefined;
     export let hasError = false;
     export let containerStyles = '';
     export let getSelectionLabel = (option) => {
-        if (option) return option.label;
+        if (option) return option[labelIdentifier];
     };
 
     export let createGroupHeaderItem = (groupValue) => {
@@ -75,6 +76,7 @@
     export let showIndicator = false;
     export let containerClasses = '';
     export let indicatorSvg = undefined;
+    
     export let ClearIcon = _ClearIcon;
     export let Item = _Item;
     export let List = _List;
