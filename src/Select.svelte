@@ -6,8 +6,8 @@
     import _Selection from './Selection.svelte';
     import _MultiSelection from './MultiSelection.svelte';
     import _VirtualList from './VirtualList.svelte';
+    import _ClearIcon from './ClearIcon.svelte';
     import debounce from './utils/debounce';
-    import DefaultClearIcon from './ClearIcon.svelte';
 
     const dispatch = createEventDispatcher();
 
@@ -75,7 +75,7 @@
     export let showIndicator = false;
     export let containerClasses = '';
     export let indicatorSvg = undefined;
-    export let ClearIcon = DefaultClearIcon;
+    export let ClearIcon = _ClearIcon;
     export let Item = _Item;
     export let List = _List;
     export let Selection = _Selection;
