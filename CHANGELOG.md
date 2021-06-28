@@ -1,5 +1,12 @@
 # svelte-select changelog
 
+## 4.0.0
+
+* selectedValue deprecated please use value going forward
+* Lots of bug fixes
+* Internals reworked and (hopefully) improved
+* File size reduced
+
 ## 3.17.0
 
 * Add ClearIcon prop
