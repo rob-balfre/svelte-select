@@ -3059,6 +3059,42 @@ test('when ClearItem replace clear icon', async (t) => {
   select.$destroy();
 });
 
+test('clicking outside the Select should close and blur it', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+    }
+  });
+
+  await querySelectorClick('.selectContainer');
+  t.ok(select.listOpen);
+  await querySelectorClick('#extra');
+  t.ok(!select.listOpen);
+
+  select.$destroy();
+});
+
+test('clicking on an external textarea should close and blur it', async (t) => {
+  const textarea = document.createElement('textarea');
+  document.body.appendChild(textarea);
+  const select = new Select({
+    target,
+    props: {
+      items,
+    }
+  });
+
+  await querySelectorClick('.selectContainer');
+  t.ok(select.listOpen);
+  await querySelectorClick('textarea');
+  t.ok(!select.listOpen);
+
+  textarea.remove();
+  select.$destroy();
+});
+
+
 
 test('when switching between isMulti true/false ensure Select continues working', async (t) => {
   const select = new Select({
