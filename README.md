@@ -184,7 +184,7 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 | Event Name | Callback | Description |
 |------|------|----------|
 | select | { detail } | fires when value changes
-| clear | { null || item } | fires when clear all is invoked or item is removed (by user) from multi select
+| clear | { detail } | fires when clear all is invoked or item is removed (by user) from multi select
 | loaded | { items } | fires when `loadOptions` resolves
 | error | { type, details } | fires when error is caught
 
