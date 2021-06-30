@@ -976,6 +976,7 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
   const longest = 'super super super super super super super super super super super super super super super super super super super super super super super super super super super super loooooonnnng name';
 
   target.style.width = '300px';
+  target.style.position = 'relative';
 
   const list = new List({
     target,
@@ -2539,7 +2540,6 @@ test('When isCreatable with non-default item structure, item creator displays ge
   select.$set({ filterText });
   await wait(0);
   const listItems = document.querySelectorAll('.listContainer > .listItem');
-  console.log('listItems :>> ', listItems);
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, creatorLabel(filterText));
 
   select.$destroy();
