@@ -76,6 +76,7 @@
     export let showIndicator = false;
     export let containerClasses = '';
     export let indicatorSvg = undefined;
+    export let listOffset = 5;
     
     export let ClearIcon = _ClearIcon;
     export let Item = _Item;
@@ -606,6 +607,7 @@
         listPlacement,
         parent: container,
         listAutoWidth,
+        listOffset
     };
 
     function itemSelected(event) {

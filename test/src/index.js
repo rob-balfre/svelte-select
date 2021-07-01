@@ -3271,6 +3271,23 @@ test('When isClearable and showIndicator then indicator icon should not show whe
 });
 
 
+test('When listOffset is set list position offset changes', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      listOffset: 0,
+      listOpen: true
+    },
+  });
+
+  let elem = target.querySelector('.listContainer');
+  t.ok(elem.style.top === '42px');
+
+  select.$destroy();
+});
+
+
 // this allows us to close puppeteer once tests have completed
 window.done = done;
 export default {};
