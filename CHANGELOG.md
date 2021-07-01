@@ -1,8 +1,13 @@
 # svelte-select changelog
 
+## 4.2.0
+
+* Added listOffset prop
+* Added CSS custom props '--listRight' and '--listLeft'
+
 ## 4.1.0
 
-* Add labelIdentifier prop - thanks to @martgnz
+* Added labelIdentifier prop - thanks to @martgnz
 
 ## 4.0.0
 
@@ -13,7 +18,7 @@
 
 ## 3.17.0
 
-* Add ClearIcon prop
+* Added ClearIcon prop
 * Added docs for filteredItems
 * loadOptions res now checked for cancelled value
 
