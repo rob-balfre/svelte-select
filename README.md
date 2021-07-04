@@ -200,7 +200,7 @@ You can also use the `inputStyles` prop to write in any override styles needed f
     // event.detail will contain the selected value
     ...
   }
-  function onClear(event) {
+  function handleClear(event) {
     // event.detail will be null unless isMulti is true and user has removed a single item
     ...
   }
