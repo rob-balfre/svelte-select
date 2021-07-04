@@ -559,7 +559,7 @@
         if (input) input.focus();
     }
 
-    function handleWindowClick(event) {
+    function handleWindowEvent(event) {
         if (!container) return;
         const eventTarget =
             event.path && event.path.length > 0 ? event.path[0] : event.target;
@@ -819,7 +819,7 @@
     }
 </style>
 
-<svelte:window on:click={handleWindowClick} on:keydown={handleKeyDown} />
+<svelte:window on:click={handleWindowEvent} on:focusin={handleWindowEvent} on:keydown={handleKeyDown} />
 
 <div
     class="selectContainer {containerClasses}"

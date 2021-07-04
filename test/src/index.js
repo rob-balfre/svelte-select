@@ -1004,6 +1004,25 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
   target.style.width = '';
 });
 
+test('focusing in an external textarea should close and blur it', async (t) => {
+  const textarea = document.createElement('textarea');
+  document.body.appendChild(textarea);
+  const select = new Select({
+    target,
+    props: {
+      items,
+    }
+  });
+
+  await querySelectorClick('.selectContainer');
+  t.ok(select.listOpen);
+  textarea.focus();
+  await wait(0);
+  t.ok(!select.listOpen);
+
+  textarea.remove();
+  select.$destroy();
+});
 
 test('clicking between Selects should close and blur other Select', async (t) => {
   const select = new Select({
