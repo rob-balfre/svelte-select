@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 4.2.1
+
+* Bug fix to remove focus when an external field is focused programmatically - thanks to @davidfou
+
 ## 4.2.0
 
 * Added listOffset prop
