@@ -3306,6 +3306,26 @@ test('When listOffset is set list position offset changes', async (t) => {
   select.$destroy();
 });
 
+test('When items are updated post onMount ensure filtering still works', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: null
+    },
+  });
+
+  await wait(0);
+
+  select.items = ['One', 'Two', 'Three'].map(item => ({ value: item, label: item }));
+  select.filterText = 'Two';
+  select.listOpen = true;
+
+  t.ok(select.items.length === 1);
+  t.ok(select.items[0].value === 'Two');
+  
+  select.$destroy();
+});
+
 
 // this allows us to close puppeteer once tests have completed
 window.done = done;

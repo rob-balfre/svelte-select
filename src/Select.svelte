@@ -93,16 +93,21 @@
             );
     }
 
-    const originalItemsClone = (() => {
-        let _items = JSON.parse(JSON.stringify(items ? items : []));
+    function originalItemsClone(newItems) {
+        let _items = JSON.parse(JSON.stringify(newItems || []));
 
         if (_items && _items.length > 0 && typeof _items[0] !== 'object') {
             _items = convertStringItemsToObjects();
         }
 
         return _items;
-    })();
+    };
 
+    $: {
+        items = originalItemsClone(items);
+    }
+
+    let unfilteredItems;
     let activeValue;
     let prev_value;
     let prev_filterText;
@@ -178,7 +183,9 @@
 
     function resetFilteredItems() {
         if (loadOptions) return;
-        items = originalItemsClone;
+        if (unfilteredItems) items = originalItemsClone(unfilteredItems);
+        unfilteredItems = null;
+        
         if (groupBy) filterItems();
     }
 
@@ -198,8 +205,8 @@
 
     function filterItems() {
         if (loadOptions) return;
-        let _items = originalItemsClone;
-        items = _items.filter((item) => filterItem(item));
+        if (!unfilteredItems) unfilteredItems = originalItemsClone(items);
+        items = unfilteredItems.filter((item) => filterItem(item));
         if (groupBy) filterGroupedItems();
     }
 
@@ -292,7 +299,8 @@
         if (
             loadOptions &&
             filterText.length === 0 &&
-            originalItemsClone.length > 0
+            unfilteredItems &&
+            unfilteredItems.length > 0
         ) {
             resetFilteredItems();
         }
