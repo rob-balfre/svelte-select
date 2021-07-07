@@ -602,6 +602,7 @@
     }
 
     function closeList() {
+        filterText = '';
         listOpen = false;
     }
 </script>

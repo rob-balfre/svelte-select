@@ -3377,6 +3377,26 @@ test('When groupBy and value selected ensure filtering still works', async (t) =
   select.$destroy();
 });
 
+test('When value selected and filterText then ensure selecting the active value still clears filterText', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+    },
+  });
+
+  select.filterText = 'Cake';
+  document.querySelector('.listItem .item').click();
+  await wait(0);
+  select.listOpen = true;
+  select.filterText = 'Cake';
+  document.querySelector('.listItem .item').click();
+  
+  t.ok(select.filterText.length === 0);
+
+  select.$destroy();
+});
+
 // this allows us to close puppeteer once tests have completed
 window.done = done;
 export default {};
