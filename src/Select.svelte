@@ -11,6 +11,10 @@
 
     const dispatch = createEventDispatcher();
 
+    export const getFilteredItems = () => {
+        return filteredItems;
+    };
+
     export let container = undefined;
     export let input = undefined;
     export let isMulti = false;
@@ -22,9 +26,9 @@
     export let filterText = '';
     export let placeholder = 'Select...';
     export let placeholderAlwaysShow = false;
-    export let items = [];
+    export let items = null;
     export let itemFilter = (label, filterText, option) =>
-        label.toLowerCase().includes(filterText.toLowerCase());
+        `${label}`.toLowerCase().includes(filterText.toLowerCase());
     export let groupBy = undefined;
     export let groupFilter = (groups) => groups;
     export let isGroupHeaderSelectable = false;
@@ -33,7 +37,9 @@
     };
     export let labelIdentifier = 'label';
     export let getOptionLabel = (option, filterText) => {
-        return option.isCreator ? `Create \"${filterText}\"` : option[labelIdentifier];
+        return option.isCreator
+            ? `Create \"${filterText}\"`
+            : option[labelIdentifier];
     };
     export let optionIdentifier = 'value';
     export let loadOptions = undefined;
@@ -85,6 +91,66 @@
     export let MultiSelection = _MultiSelection;
     export let VirtualList = _VirtualList;
 
+    function filterMethod(args) {
+        if (args.loadOptions && args.filterText.length > 0) return;
+        if (!args.items) return [];
+
+        if (
+            args.items &&
+            args.items.length > 0 &&
+            typeof args.items[0] !== 'object'
+        ) {
+            args.items = convertStringItemsToObjects(args.items);
+        }
+
+        let filterResults = args.items.filter((item) => {
+            let matchesFilter = itemFilter(
+                getOptionLabel(item, args.filterText),
+                args.filterText,
+                item
+            );
+
+            if (
+                matchesFilter &&
+                args.isMulti &&
+                args.value &&
+                Array.isArray(args.value)
+            ) {
+                matchesFilter = !args.value.some((x) => {
+                    return (
+                        x[args.optionIdentifier] === item[args.optionIdentifier]
+                    );
+                });
+            }
+
+            return matchesFilter;
+        });
+
+        if (args.groupBy) {
+            filterResults = filterGroupedItems(filterResults);
+        }
+
+        if (args.isCreatable && filterResults.length === 0) {
+            const itemToCreate = createItem(args.filterText);
+            itemToCreate.isCreator = true;
+
+            filterResults = [...filterResults, itemToCreate];
+        }
+
+        return filterResults;
+    }
+
+    $: filteredItems = filterMethod({
+        loadOptions,
+        filterText,
+        items,
+        value,
+        isMulti,
+        optionIdentifier,
+        groupBy,
+        isCreatable,
+    });
+
     export let selectedValue = null;
     $: {
         if (selectedValue)
@@ -93,26 +159,10 @@
             );
     }
 
-    function originalItemsClone(newItems) {
-        let _items = JSON.parse(JSON.stringify(newItems || []));
-
-        if (_items && _items.length > 0 && typeof _items[0] !== 'object') {
-            _items = convertStringItemsToObjects();
-        }
-
-        return _items;
-    };
-
-    $: {
-        items = originalItemsClone(items);
-    }
-
-    let unfilteredItems;
     let activeValue;
     let prev_value;
     let prev_filterText;
     let prev_isFocused;
-    let prev_items;
     let prev_isMulti;
 
     const getItems = debounce(async () => {
@@ -124,10 +174,13 @@
 
         if (res && !res.cancelled) {
             if (res) {
-                items = [...res];
-                dispatch('loaded', { items });
+                if (res && res.length > 0 && typeof res[0] !== 'object') {
+                    res = convertStringItemsToObjects(res);
+                }
+                filteredItems = [...res];
+                dispatch('loaded', { items: filteredItems });
             } else {
-                items = [];
+                filteredItems = [];
             }
 
             isWaiting = false;
@@ -171,50 +224,21 @@
         }
     }
 
-    function convertStringItemsToObjects() {
-        return items.map((item, index) => {
+    function convertStringItemsToObjects(_items) {
+        return _items.map((item, index) => {
             return {
                 index,
                 value: item,
-                label: item,
+                label: `${item}`,
             };
         });
     }
 
-    function resetFilteredItems() {
-        if (loadOptions) return;
-        if (unfilteredItems) items = originalItemsClone(unfilteredItems);
-        unfilteredItems = null;
-        
-        if (groupBy) filterItems();
-    }
-
-    function filterItem(item) {
-        let keepItem = true;
-
-        if (isMulti && value) {
-            keepItem = !value.some((x) => {
-                return x[optionIdentifier] === item[optionIdentifier];
-            });
-        }
-
-        if (!keepItem) return false;
-        if (filterText.length < 1) return true;
-        return itemFilter(getOptionLabel(item, filterText), filterText, item);
-    }
-
-    function filterItems() {
-        if (loadOptions) return;
-        if (!unfilteredItems) unfilteredItems = originalItemsClone(items);
-        items = unfilteredItems.filter((item) => filterItem(item));
-        if (groupBy) filterGroupedItems();
-    }
-
-    function filterGroupedItems() {
+    function filterGroupedItems(_items) {
         const groupValues = [];
         const groups = {};
 
-        items.forEach((item) => {
+        _items.forEach((item) => {
             const groupValue = groupBy(item);
 
             if (!groupValues.includes(groupValue)) {
@@ -243,7 +267,7 @@
             sortedGroupedItems.push(...groups[groupValue]);
         });
 
-        items = sortedGroupedItems;
+        return sortedGroupedItems;
     }
 
     function dispatchSelectedItem() {
@@ -296,25 +320,6 @@
     }
 
     $: {
-        if (
-            loadOptions &&
-            filterText.length === 0 &&
-            unfilteredItems &&
-            unfilteredItems.length > 0
-        ) {
-            resetFilteredItems();
-        }
-
-        if (filterText && filterText.length > 0) {
-            filterItems();
-        }
-
-        if (groupBy) {
-            filterItems();
-        }
-    }
-
-    $: {
         if (isMulti) {
             setupMulti();
         }
@@ -349,74 +354,19 @@
     }
 
     function setupFilterText() {
-        if (filterText.length > 0) {
-            isFocused = true;
+        if (filterText.length === 0) return;
+
+        isFocused = true;
+        listOpen = true;
+
+        if (loadOptions) {
+            getItems();
+        } else {
             listOpen = true;
 
-            if (loadOptions) {
-                getItems();
-            } else {
-                listOpen = true;
-
-                if (isMulti) {
-                    activeValue = undefined;
-                }
+            if (isMulti) {
+                activeValue = undefined;
             }
-        } else {
-            resetFilteredItems();
-        }
-    }
-
-    function setupFilteredItem() {
-        if (loadOptions) return;
-
-        let _filteredItems = [...items];
-
-        if (isCreatable && filterText) {
-            const itemToCreate = createItem(filterText);
-            itemToCreate.isCreator = true;
-
-            const existingItemWithFilterValue = _filteredItems.find((item) => {
-                return (
-                    item[optionIdentifier] === itemToCreate[optionIdentifier]
-                );
-            });
-
-            let existingSelectionWithFilterValue;
-
-            if (value) {
-                if (isMulti) {
-                    existingSelectionWithFilterValue = value.find(
-                        (selection) => {
-                            return (
-                                selection[optionIdentifier] ===
-                                itemToCreate[optionIdentifier]
-                            );
-                        }
-                    );
-                } else if (
-                    value[optionIdentifier] === itemToCreate[optionIdentifier]
-                ) {
-                    existingSelectionWithFilterValue = value;
-                }
-            }
-
-            if (
-                !existingItemWithFilterValue &&
-                !existingSelectionWithFilterValue
-            ) {
-                _filteredItems = [..._filteredItems, itemToCreate];
-            }
-        } else if (isMulti && value && value.length > 0) {
-            filterItems();
-        }
-
-        items = _filteredItems;
-    }
-
-    $: {
-        if (prev_items !== items) {
-            setupFilteredItem();
         }
     }
 
@@ -434,7 +384,6 @@
         prev_value = value;
         prev_filterText = filterText;
         prev_isFocused = isFocused;
-        prev_items = items;
         prev_isMulti = isMulti;
     });
 
@@ -500,8 +449,6 @@
                 return item !== itemToRemove;
             });
         }
-
-        filterItems();
 
         dispatch('clear', itemToRemove);
     }
@@ -588,14 +535,11 @@
         value = undefined;
         listOpen = false;
         dispatch('clear', value);
-        if (isMulti) filterItems();
         handleFocus();
     }
 
     onMount(() => {
         if (isFocused && input) input.focus();
-        if (loadOptions && items) items = [...items];
-        if (isMulti && value) filterItems();
     });
 
     $: listProps = {
@@ -609,13 +553,13 @@
         value,
         isMulti,
         getGroupHeaderLabel,
-        items,
+        items: filteredItems,
         itemHeight,
         getOptionLabel,
         listPlacement,
         parent: container,
         listAutoWidth,
-        listOffset
+        listOffset,
     };
 
     function itemSelected(event) {
@@ -627,7 +571,6 @@
             if (!item.isGroupHeader || item.isSelectable) {
                 if (isMulti) {
                     value = value ? value.concat([item]) : [item];
-                    filterItems();
                 } else {
                     value = item;
                 }
@@ -827,7 +770,10 @@
     }
 </style>
 
-<svelte:window on:click={handleWindowEvent} on:focusin={handleWindowEvent} on:keydown={handleKeyDown} />
+<svelte:window
+    on:click={handleWindowEvent}
+    on:focusin={handleWindowEvent}
+    on:keydown={handleKeyDown} />
 
 <div
     class="selectContainer {containerClasses}"

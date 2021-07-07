@@ -808,10 +808,9 @@ test('Select filter text filters list', async (t) => {
     }
   });
 
-  await wait(0);
-  t.ok(select.items.length === 5);
-  await handleSet(select, {filterText: 'Ice'})
-  t.ok(select.items.length === 1);
+  t.ok(select.getFilteredItems().length === 5);
+  select.filterText = 'Ice';
+  t.ok(select.getFilteredItems().length === 1);
 
   select.$destroy();
 });
@@ -825,10 +824,9 @@ test('Select filter text filters list with itemFilter', async (t) => {
     }
   });
 
-  await wait(0);
-  t.ok(select.items.length === 5);
-  await handleSet(select, {filterText: 'cream ice'})
-  t.ok(select.items.length === 1);
+  t.ok(select.getFilteredItems().length === 1);
+  select.filterText = 'cream ice';
+  t.ok(select.getFilteredItems().length === 1);
 
   select.$destroy();
 });
@@ -1289,8 +1287,8 @@ test('when isGroupHeaderSelectable clicking group header should select createGro
 
   await wait(0);
 
-  const groupHeaderItem = select.items[0];
-  const groupItem = select.items.find((item) => {
+  const groupHeaderItem = select.getFilteredItems()[0];
+  const groupItem = select.getFilteredItems().find((item) => {
     return item.group === groupHeaderItem.id;
   });
 
@@ -1323,7 +1321,7 @@ test('group headers label should be created by getGroupHeaderLabel(item)', async
 
   await wait(0);
 
-  const groupHeaderItem = select.items[0];
+  const groupHeaderItem = select.getFilteredItems()[0];
 
   t.equal(target.querySelector('.listGroupTitle').textContent, getGroupHeaderLabel(groupHeaderItem));
 
@@ -1414,7 +1412,7 @@ test('when isMulti is true items in value will not appear in List', async (t) =>
 
   await wait(0);
 
-  t.equal(JSON.stringify(select.items), JSON.stringify([
+  t.equal(JSON.stringify(select.getFilteredItems()), JSON.stringify([
     {value: 'pizza', label: 'Pizza'},
     {value: 'cake', label: 'Cake'},
     {value: 'chips', label: 'Chips'},
@@ -1437,7 +1435,7 @@ test('when isMulti is true both value and filterText filters List', async (t) =>
 
   select.filterText = 'Pizza',
 
-  t.equal(JSON.stringify(select.items), JSON.stringify([
+  t.equal(JSON.stringify(select.getFilteredItems()), JSON.stringify([
     {value: 'pizza', label: 'Pizza'}
   ]));
 
@@ -2336,7 +2334,7 @@ test('when isMulti, groupBy and value are supplied then list should be filtered'
     }
   });
 
-  t.ok(!select.items.find(item => item.name === 'Bar'));
+  t.ok(!select.getFilteredItems().find(item => item.name === 'Bar'));
 
   select.$destroy();
 });
@@ -2865,7 +2863,8 @@ test('When loadOptions promise is resolved then dispatch loaded', async (t) => {
   await wait(0);
   select.$set({filterText: 'test'});
   await wait(500);
-  t.arrayEqual(loadedEventData.detail.items, ['a', 'b', 'c']);
+  
+  t.equal(loadedEventData.detail.items[0].value, 'a');
   t.equal(errorEventData, undefined);
 
   loadedOff();
@@ -3005,6 +3004,21 @@ test('When isMulti and multiFullItemClearable then clicking anywhere on the item
   multiSelect.$destroy();
 });
 
+test('When isMulti and filterText then items should filter out already selected items', async (t) => {
+  const multiSelect = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items,
+      value: [{value: 'chips', label: 'Chips'}, {value: 'pizza', label: 'Pizza'}],
+    },
+  });
+
+  t.ok(multiSelect.getFilteredItems().length === 3);
+  
+  multiSelect.$destroy();
+});
+
 test('when loadOptions and items is supplied then list should close on blur', async (t) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
@@ -3033,8 +3047,6 @@ test('when loadOptions and items is supplied then list should close on blur', as
 
   select.$destroy();
 });
-
-
 
 test('when isCreatable and item created then event "itemCreated" should dispatch', async (t) => {
   const select = new Select({
@@ -3130,8 +3142,6 @@ test('clicking on an external textarea should close and blur it', async (t) => {
   textarea.remove();
   select.$destroy();
 });
-
-
 
 test('when switching between isMulti true/false ensure Select continues working', async (t) => {
   const select = new Select({
@@ -3235,7 +3245,7 @@ test('when loadOptions and value then items should show on promise resolve',asyn
   });
 
   await wait(300);
-  t.ok(select.items.length === 3);
+  t.ok(select.getFilteredItems().length === 3);
   
   select.$destroy();
 });
@@ -3320,8 +3330,32 @@ test('When items are updated post onMount ensure filtering still works', async (
   select.filterText = 'Two';
   select.listOpen = true;
 
-  t.ok(select.items.length === 1);
-  t.ok(select.items[0].value === 'Two');
+  t.ok(select.getFilteredItems().length === 1);
+  t.ok(select.getFilteredItems()[0].value === 'Two');
+  
+  select.$destroy();
+});
+
+test('When grouped items are updated post onMount ensure filtering still works', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      // items: null,
+      // items: ['One', 'Two', 'Three'].map(item => ({ value: item, label: item, group: item.includes('T') ? '2nd Group' : '1st Group' })),
+      groupBy: item => item.group
+    },
+  });
+
+  await wait(0);
+
+  select.items = ['One', 'Two', 'Three'].map(item => ({ value: item, label: item, group: item.includes('T') ? '2nd Group' : '1st Group' }));
+  select.filterText = 'Tw';
+  select.listOpen = true;
+
+  t.ok(select.getFilteredItems().length === 2);
+  t.ok(select.getFilteredItems()[0].label === '2nd Group');
+  t.ok(select.getFilteredItems()[1].label === 'Two');
+  
   
   select.$destroy();
 });

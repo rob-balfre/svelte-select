@@ -63,6 +63,7 @@
     });
 
     beforeUpdate(() => {
+        if (!items) items = [];
         if (items !== prev_items && items.length > 0) {
             hoverItemIndex = 0;
         }
