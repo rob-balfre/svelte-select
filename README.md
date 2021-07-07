@@ -145,6 +145,12 @@ export let loadOptions = undefined; // if used must return a Promise that update
 /* Return an object with { cancelled: true } to keep the loading state as active. */
 ```
 
+```js
+export const getFilteredItems = () => {
+  return filteredItems;
+};
+```
+
 ## Styling
 
 You can style a component by overriding [the available CSS variables](/docs/theming_variables.md).

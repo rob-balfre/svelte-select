@@ -3340,8 +3340,6 @@ test('When grouped items are updated post onMount ensure filtering still works',
   const select = new Select({
     target,
     props: {
-      // items: null,
-      // items: ['One', 'Two', 'Three'].map(item => ({ value: item, label: item, group: item.includes('T') ? '2nd Group' : '1st Group' })),
       groupBy: item => item.group
     },
   });
@@ -3360,6 +3358,24 @@ test('When grouped items are updated post onMount ensure filtering still works',
   select.$destroy();
 });
 
+
+test('When groupBy and value selected ensure filtering still works', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: itemsWithGroup,
+      groupBy: (item) => item.group,
+      
+    },
+  });
+
+  select.filterText = 'Cake';
+  document.querySelector('.listItem .item').click();
+  await wait(0);
+  t.ok(select.getFilteredItems().length === 7);
+
+  select.$destroy();
+});
 
 // this allows us to close puppeteer once tests have completed
 window.done = done;

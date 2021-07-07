@@ -11,10 +11,6 @@
 
     const dispatch = createEventDispatcher();
 
-    export const getFilteredItems = () => {
-        return filteredItems;
-    };
-
     export let container = undefined;
     export let input = undefined;
     export let isMulti = false;
@@ -63,6 +59,10 @@
         };
     };
 
+    export const getFilteredItems = () => {
+        return filteredItems;
+    };
+
     export let isSearchable = true;
     export let inputStyles = '';
     export let isClearable = true;
@@ -83,7 +83,7 @@
     export let containerClasses = '';
     export let indicatorSvg = undefined;
     export let listOffset = 5;
-    
+
     export let ClearIcon = _ClearIcon;
     export let Item = _Item;
     export let List = _List;
@@ -566,6 +566,7 @@
         const { detail } = event;
 
         if (detail) {
+            filterText = '';
             const item = Object.assign({}, detail);
 
             if (!item.isGroupHeader || item.isSelectable) {
@@ -580,7 +581,6 @@
                 setTimeout(() => {
                     listOpen = false;
                     activeValue = undefined;
-                    if (loadOptions) filterText = '';
                 });
             }
         }
