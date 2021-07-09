@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 4.2.3
+
+* Filtering refactor (#274)
+
 ## 4.2.2
 
 * Bug fix for filtering items (#274)
