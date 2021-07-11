@@ -1,6 +1,10 @@
 # svelte-select changelog
 
 
+## 4.2.5
+
+* isMulti on:select fix (#276)
+
 ## 4.2.4
 
 * CreateGroupHeaderItem fix (#275)
