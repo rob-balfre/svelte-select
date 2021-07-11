@@ -108,6 +108,14 @@ const itemsWithIndex = [
   {value: 'ice-cream', label: 'Ice Cream', index: 4},
 ];
 
+const itemsWithGroupIds = [
+  {_id: 'chocolate', name: 'Chocolate', groupie: 'Sweet'},
+  {_id: 'pizza', name: 'Pizza', groupie: 'Savory'},
+  {_id: 'cake', name: 'Cake', groupie: 'Sweet'},
+  {_id: 'chips', name: 'Chips', groupie: 'Savory'},
+  {_id: 'ice-cream', name: 'Ice Cream', groupie: 'Sweet'}
+];
+
 function itemsPromise() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -3396,6 +3404,86 @@ test('When value selected and filterText then ensure selecting the active value 
 
   select.$destroy();
 });
+
+
+test('When groupBy, optionIdentifier and labelIdentifier then ensure list displays correctly', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: itemsWithGroupIds,
+      optionIdentifier: '_id',
+      labelIdentifier: 'name',
+      groupBy: (item) => item.groupie,
+      listOpen: true,
+    },
+  });
+
+  let titles = document.querySelectorAll('.listGroupTitle');
+  let items = document.querySelectorAll('.listItem .item');
+  t.equal(titles[0].innerHTML, 'Sweet');
+  t.equal(titles[1].innerHTML, 'Savory');
+  t.equal(items[0].innerHTML, 'Chocolate');
+  t.equal(items[4].innerHTML, 'Chips');
+
+  select.$destroy();
+});
+
+
+test('When groupBy, optionIdentifier, labelIdentifier and createGroupHeaderItem then ensure list displays correctly', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: itemsWithGroupIds,
+      optionIdentifier: '_id',
+      labelIdentifier: 'name',
+      groupBy: (item) => item.groupie,
+      listOpen: true,
+      createGroupHeaderItem: (groupValue, item) => {
+        return {
+          name: `XXX ${groupValue} XXX ${item.name}`
+        };
+      }
+    },
+  });
+
+  let titles = document.querySelectorAll('.listGroupTitle');
+  let items = document.querySelectorAll('.listItem .item');
+  t.equal(titles[0].innerHTML, 'XXX Sweet XXX Chocolate');
+  t.equal(titles[1].innerHTML, 'XXX Savory XXX Pizza');
+  t.equal(items[0].innerHTML, 'Chocolate');
+  t.equal(items[4].innerHTML, 'Chips');
+
+  select.$destroy();
+});
+
+
+
+test('When isMulti on:select events should fire on each item removal (including the last item)', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isMulti: true,
+      value: ['Cake', 'Chips']
+    },
+  });
+
+  let events = [];
+
+  select.$on('select', (e) => {
+    events.push('event fired');
+  });
+
+  document.querySelector('.multiSelectItem_clear').click();
+  await wait(0);
+  document.querySelector('.multiSelectItem_clear').click();
+  await wait(0);
+  t.ok(events.length === 2);
+  
+
+  select.$destroy();
+});
+
 
 // this allows us to close puppeteer once tests have completed
 window.done = done;

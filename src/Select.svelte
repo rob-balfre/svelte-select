@@ -29,7 +29,7 @@
     export let groupFilter = (groups) => groups;
     export let isGroupHeaderSelectable = false;
     export let getGroupHeaderLabel = (option) => {
-        return option[labelIdentifier];
+        return option[labelIdentifier] || option.id;
     };
     export let labelIdentifier = 'label';
     export let getOptionLabel = (option, filterText) => {
@@ -336,8 +336,12 @@
     }
 
     $: {
-        if (value) {
-            dispatchSelectedItem();
+        if (value) dispatchSelectedItem();
+    }
+
+    $: {
+        if (!value && isMulti && prev_value) {
+            dispatch('select', value);
         }
     }
 
