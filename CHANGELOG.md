@@ -1,5 +1,8 @@
 # svelte-select changelog
 
+## 4.2.6
+
+* TypeScript declaration in package.json (#277) - thanks to @davidfou
 
 ## 4.2.5
 
