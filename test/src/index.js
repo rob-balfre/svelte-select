@@ -3456,6 +3456,35 @@ test('When groupBy, optionIdentifier, labelIdentifier and createGroupHeaderItem 
   select.$destroy();
 });
 
+
+
+test('When isMulti on:select events should fire on each item removal (including the last item)', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      isMulti: true,
+      value: ['Cake', 'Chips']
+    },
+  });
+
+  let events = [];
+
+  select.$on('select', (e) => {
+    events.push('event fired');
+  });
+
+  document.querySelector('.multiSelectItem_clear').click();
+  await wait(0);
+  document.querySelector('.multiSelectItem_clear').click();
+  await wait(0);
+  t.ok(events.length === 2);
+  
+
+  select.$destroy();
+});
+
+
 // this allows us to close puppeteer once tests have completed
 window.done = done;
 export default {};

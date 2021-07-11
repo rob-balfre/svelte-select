@@ -336,8 +336,12 @@
     }
 
     $: {
-        if (value) {
-            dispatchSelectedItem();
+        if (value) dispatchSelectedItem();
+    }
+
+    $: {
+        if (!value && isMulti && prev_value) {
+            dispatch('select', value);
         }
     }
 
