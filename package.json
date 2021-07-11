@@ -6,6 +6,7 @@
   "svelte": "src/index.js",
   "module": "dist/index.mjs",
   "main": "dist/index.js",
+  "types": "./src/index.d.ts",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -cw",
