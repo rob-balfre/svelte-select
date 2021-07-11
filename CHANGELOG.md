@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+
+## 4.2.4
+
+* CreateGroupHeaderItem fix (#275)
+
 ## 4.2.3
 
 * Filtering refactor (#274)
