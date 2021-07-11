@@ -108,6 +108,14 @@ const itemsWithIndex = [
   {value: 'ice-cream', label: 'Ice Cream', index: 4},
 ];
 
+const itemsWithGroupIds = [
+  {_id: 'chocolate', name: 'Chocolate', groupie: 'Sweet'},
+  {_id: 'pizza', name: 'Pizza', groupie: 'Savory'},
+  {_id: 'cake', name: 'Cake', groupie: 'Sweet'},
+  {_id: 'chips', name: 'Chips', groupie: 'Savory'},
+  {_id: 'ice-cream', name: 'Ice Cream', groupie: 'Sweet'}
+];
+
 function itemsPromise() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -3393,6 +3401,57 @@ test('When value selected and filterText then ensure selecting the active value 
   document.querySelector('.listItem .item').click();
   
   t.ok(select.filterText.length === 0);
+
+  select.$destroy();
+});
+
+
+test('When groupBy, optionIdentifier and labelIdentifier then ensure list displays correctly', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: itemsWithGroupIds,
+      optionIdentifier: '_id',
+      labelIdentifier: 'name',
+      groupBy: (item) => item.groupie,
+      listOpen: true,
+    },
+  });
+
+  let titles = document.querySelectorAll('.listGroupTitle');
+  let items = document.querySelectorAll('.listItem .item');
+  t.equal(titles[0].innerHTML, 'Sweet');
+  t.equal(titles[1].innerHTML, 'Savory');
+  t.equal(items[0].innerHTML, 'Chocolate');
+  t.equal(items[4].innerHTML, 'Chips');
+
+  select.$destroy();
+});
+
+
+test('When groupBy, optionIdentifier, labelIdentifier and createGroupHeaderItem then ensure list displays correctly', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: itemsWithGroupIds,
+      optionIdentifier: '_id',
+      labelIdentifier: 'name',
+      groupBy: (item) => item.groupie,
+      listOpen: true,
+      createGroupHeaderItem: (groupValue, item) => {
+        return {
+          name: `XXX ${groupValue} XXX ${item.name}`
+        };
+      }
+    },
+  });
+
+  let titles = document.querySelectorAll('.listGroupTitle');
+  let items = document.querySelectorAll('.listItem .item');
+  t.equal(titles[0].innerHTML, 'XXX Sweet XXX Chocolate');
+  t.equal(titles[1].innerHTML, 'XXX Savory XXX Pizza');
+  t.equal(items[0].innerHTML, 'Chocolate');
+  t.equal(items[4].innerHTML, 'Chips');
 
   select.$destroy();
 });
