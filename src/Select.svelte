@@ -131,13 +131,17 @@
         }
 
         if (args.isCreatable && filterResults.length === 0) {
-            const itemToCreate = createItem(args.filterText);
-            itemToCreate.isCreator = true;
-
-            filterResults = [...filterResults, itemToCreate];
+            filterResults = addCreatableItem(filterResults, args.filterText);
         }
 
         return filterResults;
+    }
+
+    function addCreatableItem(_items, _filterText) {
+        const itemToCreate = createItem(_filterText);
+        itemToCreate.isCreator = true;
+
+        return [..._items, itemToCreate];
     }
 
     $: filteredItems = filterMethod({
@@ -181,6 +185,10 @@
                 dispatch('loaded', { items: filteredItems });
             } else {
                 filteredItems = [];
+            }
+
+            if (filteredItems.length === 0 && isCreatable) {
+                filteredItems = addCreatableItem(filteredItems, filterText);
             }
 
             isWaiting = false;

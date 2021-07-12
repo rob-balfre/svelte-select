@@ -124,6 +124,14 @@ function itemsPromise() {
   })
 }
 
+function itemsPromiseEmpty() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve([]);
+    })
+  })
+}
+
 function wait(ms) {
   return new Promise(f => setTimeout(f, ms));
 }
@@ -3480,6 +3488,23 @@ test('When isMulti on:select events should fire on each item removal (including 
   await wait(0);
   t.ok(events.length === 2);
   
+  select.$destroy();
+});
+
+
+test('When loadOptions and isCreatable then create new item is active when promise resolves with no items', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      loadOptions: itemsPromiseEmpty,
+      isCreatable: true,
+    },
+  });
+
+  select.filterText = 'Cake';
+  await wait(400);
+  let createText = document.querySelector('.listItem .item').innerHTML;
+  t.equal(createText, 'Create "Cake"');
 
   select.$destroy();
 });

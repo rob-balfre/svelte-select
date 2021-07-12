@@ -28,7 +28,7 @@
     "rollup-plugin-svelte": "^7.1.0",
     "rollup-plugin-terser": "^7.0.2",
     "sirv": "^0.2.2",
-    "svelte": "^3.35.0",
+    "svelte": "^3.38.3",
     "tap-diff": "^0.1.1",
     "tap-dot": "^2.0.0",
     "tape-modern": "^1.1.1"
