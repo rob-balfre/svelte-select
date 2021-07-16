@@ -1,4 +1,3 @@
-import './reset.css'
 import getName from '../utils/nameGen';
 import normalizeHtml from '../utils/normalizeHtml';
 

@@ -1,6 +1,4 @@
 <!-- DEV ONLY IMPORTS -->
-<link rel="stylesheet" href="../reset.css"/>
-
 <div class="selectContainer multiSelect">
     <div class="multiSelectItem">
       <div class="multiSelectItem_label">

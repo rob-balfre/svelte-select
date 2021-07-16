@@ -1,6 +1,4 @@
 <!-- DEV ONLY IMPORTS -->
-<link rel="stylesheet" href="../reset.css"/>
-
 <div class="listContainer">
   <div class="listItem hover"><div class="item">Chocolate</div></div>
   <div class="listItem"><div class="item">Pizza</div></div>

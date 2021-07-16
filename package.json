@@ -10,7 +10,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -cw",
-    "prepublishOnly": "npm test",
+    "prepublishOnly": "npm run build",
     "test": "node test/runner.js",
     "test:browser": "npm run build && serve test/public",
     "gen:docs": "node docs/generate_theming_variables_md.js",

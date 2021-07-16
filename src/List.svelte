@@ -162,7 +162,9 @@
                 break;
             case 'Tab':
                 e.preventDefault();
-                if (items.length === 0) break;
+                if (items.length === 0) {
+                    return closeList();
+                }
                 if (
                     value &&
                     value[optionIdentifier] ===
