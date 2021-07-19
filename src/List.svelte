@@ -13,7 +13,9 @@
     export let labelIdentifier = 'label';
     export let getOptionLabel = (option, filterText) => {
         if (option)
-            return option.isCreator ? `Create \"${filterText}\"` : option[labelIdentifier];
+            return option.isCreator
+                ? `Create \"${filterText}\"`
+                : option[labelIdentifier];
     };
     export let getGroupHeaderLabel = null;
     export let itemHeight = 40;
@@ -272,11 +274,13 @@
 
 <svelte:window on:keydown={handleKeyDown} on:resize={computePlacement} />
 
-{#if isVirtualList}
-    <div
-        class="listContainer virtualList"
-        bind:this={container}
-        style={listStyle}>
+<div
+    class="listContainer"
+    class:virtualList={isVirtualList}
+    bind:this={container}
+    style={listStyle}
+    tabindex="-1">
+    {#if isVirtualList}
         <svelte:component
             this={VirtualList}
             {items}
@@ -297,11 +301,7 @@
                     isHover={isItemHover(hoverItemIndex, item, i, items)} />
             </div>
         </svelte:component>
-    </div>
-{/if}
-
-{#if !isVirtualList}
-    <div class="listContainer" bind:this={container} style={listStyle}>
+    {:else}
         {#each items as item, i}
             {#if item.isGroupHeader && !item.isSelectable}
                 <div class="listGroupTitle">{getGroupHeaderLabel(item)}</div>
@@ -325,5 +325,5 @@
                 <div class="empty">{noOptionsMessage}</div>
             {/if}
         {/each}
-    </div>
-{/if}
+    {/if}
+</div>

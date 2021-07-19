@@ -8,7 +8,6 @@ import TestIcon from './TestIcon.svelte';
 import TestClearIcon from './TestClearIcon.svelte';
 import SelectDefault from './Select/Select--default.svelte'
 import SelectMultiSelected from './Select/Select--multiSelected.svelte'
-import ListDefault from './List/List--default.svelte'
 import ParentContainer from './Select/ParentContainer.svelte'
 import {assert, test, done} from 'tape-modern';
 
@@ -439,24 +438,6 @@ test('List starts with first item in hover state', async (t) => {
   await querySelectorClick('.selectContainer');
   t.ok(target.querySelector('.listItem .hover').innerHTML === 'Chocolate');
 
-  select.$destroy();
-});
-
-test('List starts with first item in hover state', async (t) => {
-  const testTemplate = new ListDefault({
-    target: testTarget
-  });
-
-  const select = new Select({
-    target,
-    props: {
-      items,
-    }
-  });
-
-  document.querySelector('.selectContainer').click();
-
-  testTemplate.$destroy();
   select.$destroy();
 });
 
