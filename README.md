@@ -194,9 +194,9 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 |------|------|----------|
 | select | { detail } | fires when value changes
 | clear | { detail } | fires when clear all is invoked or item is removed (by user) from multi select
-| itemCreated | {detail} | fires when item is created
-| itemRemoved | {detail} | fires when item is removed
-| itemSelected | {detail} | fires when item is selected
+| itemCreated | { detail } | fires when item is created
+| itemRemoved | { detail } | fires when item is removed
+| itemSelected | { detail } | fires when item is selected
 | loaded | { items } | fires when `loadOptions` resolves
 | error | { type, details } | fires when error is caught
 
