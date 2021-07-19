@@ -130,7 +130,7 @@
             filterResults = filterGroupedItems(filterResults);
         }
 
-        if (args.isCreatable && filterResults.length === 0) {
+        if (args.isCreatable) {
             filterResults = addCreatableItem(filterResults, args.filterText);
         }
 
@@ -138,9 +138,11 @@
     }
 
     function addCreatableItem(_items, _filterText) {
+        if (_filterText.length === 0) return _items;
         const itemToCreate = createItem(_filterText);
+        if (_items[0] && _filterText === _items[0][labelIdentifier])
+            return _items;
         itemToCreate.isCreator = true;
-
         return [..._items, itemToCreate];
     }
 
@@ -187,7 +189,7 @@
                 filteredItems = [];
             }
 
-            if (filteredItems.length === 0 && isCreatable) {
+            if (isCreatable) {
                 filteredItems = addCreatableItem(filteredItems, filterText);
             }
 

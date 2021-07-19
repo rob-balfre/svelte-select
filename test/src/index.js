@@ -3489,6 +3489,23 @@ test('When loadOptions and isCreatable then create new item is active when promi
   select.$destroy();
 });
 
+test('When loadOptions and isCreatable then create new item show at bottom of results when promise resolves', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      loadOptions: itemsPromise,
+      isCreatable: true,
+    },
+  });
+
+  select.filterText = 'Cake';
+  await wait(400);
+  let createText = document.querySelector('.listItem:last-child .item').innerHTML;
+  t.equal(createText, 'Create "Cake"');
+
+  select.$destroy();
+});
+
 
 // this allows us to close puppeteer once tests have completed
 window.done = done;
