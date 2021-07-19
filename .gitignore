@@ -6,3 +6,4 @@ node_modules
 /test/public/index.js
 /test/public/bundle.css
 /tests/page/public/build
+/test-results
