@@ -13,9 +13,9 @@
     "prepublishOnly": "npm test",
     "test": "node test/runner.js",
     "test:browser": "npm run build && serve test/public",
+    "test:playwright": "playwright test",
     "gen:docs": "node docs/generate_theming_variables_md.js",
-    "pretest": "npm run build",
-    "test:new": "playwright test"
+    "pretest": "npm run build"
   },
   "devDependencies": {
     "@babel/polyfill": "7.12.1",

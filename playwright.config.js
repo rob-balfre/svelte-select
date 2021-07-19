@@ -12,5 +12,5 @@ module.exports = {
     screenshot: "only-on-failure",
     video: "retry-with-video",
   },
-  globalSetup: "tests/setup.js",
+  globalSetup: "spec/setup.js",
 };

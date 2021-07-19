@@ -788,8 +788,7 @@
     class:focused={isFocused}
     style={containerStyles}
     on:click={handleClick}
-    bind:this={container}
-    tabindex="-1">
+    bind:this={container}>
     {#if Icon}
         <svelte:component this={Icon} {...iconProps} />
     {/if}

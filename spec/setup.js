@@ -11,7 +11,7 @@ module.exports = async () => {
   process.env.SERVER_PORT = port;
 
   const bundle = await rollup.rollup({
-    input: "./tests/page/src/index.js",
+    input: "./spec/page/src/index.js",
     plugins: [
       svelte({
         emitCss: true,
@@ -20,10 +20,10 @@ module.exports = async () => {
           dev: true,
         },
       }),
-      css({ output: { dir: "./tests/page/public/build" } }),
+      css({ output: { dir: "./spec/page/public/build" } }),
       resolve(),
       serve({
-        contentBase: "./tests/page/public",
+        contentBase: "./spec/page/public",
         host: "localhost",
         port,
       }),
@@ -32,7 +32,7 @@ module.exports = async () => {
 
   await bundle.write({
     output: {
-      dir: "./tests/page/public/build",
+      dir: "./spec/page/public/build",
       inlineDynamicImports: true,
     },
   });
