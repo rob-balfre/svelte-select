@@ -455,6 +455,7 @@
         }
 
         dispatch('clear', itemToRemove);
+        dispatch('itemRemoved', itemToRemove);
     }
 
     function handleKeyDown(e) {
@@ -586,6 +587,8 @@
                     listOpen = false;
                     activeValue = undefined;
                 });
+
+                dispatch('itemSelected', detail);
             }
         }
     }
