@@ -455,7 +455,6 @@
         }
 
         dispatch('clear', itemToRemove);
-        dispatch('itemRemoved', itemToRemove);
     }
 
     function handleKeyDown(e) {
