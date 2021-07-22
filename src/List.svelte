@@ -289,6 +289,7 @@
             let:i>
             <div
                 on:mouseover={() => handleHover(i)}
+                on:focus={() => handleHover(i)}
                 on:click={(event) => handleClick({ item, i, event })}
                 class="listItem">
                 <svelte:component
@@ -308,6 +309,7 @@
             {:else}
                 <div
                     on:mouseover={() => handleHover(i)}
+                    on:focus={() => handleHover(i)}
                     on:click={(event) => handleClick({ item, i, event })}
                     class="listItem">
                     <svelte:component
