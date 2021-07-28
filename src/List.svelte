@@ -278,8 +278,7 @@
     class="listContainer"
     class:virtualList={isVirtualList}
     bind:this={container}
-    style={listStyle}
-    tabindex="-1">
+    style={listStyle}>
     {#if isVirtualList}
         <svelte:component
             this={VirtualList}
@@ -311,7 +310,8 @@
                     on:mouseover={() => handleHover(i)}
                     on:focus={() => handleHover(i)}
                     on:click={(event) => handleClick({ item, i, event })}
-                    class="listItem">
+                    class="listItem"
+                    tabindex="-1">
                     <svelte:component
                         this={Item}
                         {item}

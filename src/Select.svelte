@@ -18,7 +18,7 @@
     export let isDisabled = false;
     export let isCreatable = false;
     export let isFocused = false;
-    export let value = undefined;
+    export let value = null;
     export let filterText = '';
     export let placeholder = 'Select...';
     export let placeholderAlwaysShow = false;
@@ -43,6 +43,7 @@
     export let containerStyles = '';
     export let getSelectionLabel = (option) => {
         if (option) return option[labelIdentifier];
+        else return null;
     };
 
     export let createGroupHeaderItem = (groupValue) => {
@@ -222,9 +223,13 @@
     function assignInputAttributes() {
         _inputAttributes = Object.assign(
             {
+                autocapitalize: 'none',
                 autocomplete: 'off',
                 autocorrect: 'off',
                 spellcheck: false,
+                tabindex: 0,
+                type: 'text',
+                'aria-autocomplete': 'list',
             },
             inputAttributes
         );
@@ -393,6 +398,7 @@
             : value
             ? ''
             : placeholder;
+    $: showMultiSelect = isMulti && value && value.length > 0;
 
     beforeUpdate(async () => {
         prev_value = value;
@@ -778,6 +784,18 @@
         background: var(--errorBackground, #fff);
     }
 
+    .a11yText {
+        z-index: 9999;
+        border: 0px;
+        clip: rect(1px, 1px, 1px, 1px);
+        height: 1px;
+        width: 1px;
+        position: absolute;
+        overflow: hidden;
+        padding: 0px;
+        white-space: nowrap;
+    }
+
     @keyframes rotate {
         100% {
             transform: rotate(360deg);
@@ -799,11 +817,17 @@
     style={containerStyles}
     on:click={handleClick}
     bind:this={container}>
+    <span
+        aria-live="polite"
+        aria-atomic="false"
+        aria-relevant="additions text"
+        class="a11yText" />
+
     {#if Icon}
         <svelte:component this={Icon} {...iconProps} />
     {/if}
 
-    {#if isMulti && value && value.length > 0}
+    {#if showMultiSelect}
         <svelte:component
             this={MultiSelection}
             {value}
@@ -835,13 +859,16 @@
     {/if}
 
     {#if showClearIcon}
-        <div class="clearSelect" on:click|preventDefault={handleClear}>
+        <div
+            class="clearSelect"
+            on:click|preventDefault={handleClear}
+            aria-hidden="true">
             <svelte:component this={ClearIcon} />
         </div>
     {/if}
 
     {#if !showClearIcon && (showIndicator || (showChevron && !value) || (!isSearchable && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem)))}
-        <div class="indicator">
+        <div class="indicator" aria-hidden="true">
             {#if indicatorSvg}
                 {@html indicatorSvg}
             {:else}
@@ -849,7 +876,8 @@
                     width="100%"
                     height="100%"
                     viewBox="0 0 20 20"
-                    focusable="false">
+                    focusable="false"
+                    aria-hidden="true">
                     <path
                         d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747
           3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0
@@ -884,5 +912,21 @@
             on:itemSelected={itemSelected}
             on:itemCreated={itemCreated}
             on:closeList={closeList} />
+    {/if}
+
+    {#if !isMulti || (isMulti && !showMultiSelect)}
+        <input
+            name={inputAttributes.name}
+            type="hidden"
+            value={value ? getSelectionLabel(value) : null} />
+    {/if}
+
+    {#if isMulti && showMultiSelect}
+        {#each value as item}
+            <input
+                name={inputAttributes.name}
+                type="hidden"
+                value={item ? getSelectionLabel(item) : null} />
+        {/each}
     {/if}
 </div>

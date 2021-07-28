@@ -145,7 +145,7 @@ assert.arrayEqual = (a, b) => {
   assert.ok(a.every((val, i) => val === b[i]));
 };
 
-// tests
+
 test('with no data creates default elements', async (t) => {
   const testTemplate = new SelectDefault({
     target: testTarget
@@ -1236,7 +1236,7 @@ test('clicking group header should not make a selected', async (t) => {
   await wait(0);
   await querySelectorClick('.listGroupTitle');
 
-  t.equal(select.value, undefined);
+  t.ok(!select.value);
 
   select.$destroy();
 });
@@ -1254,7 +1254,7 @@ test('when groupBy, no active item and keydown enter is fired then list should c
   await wait(0);
   await querySelectorClick('.selectContainer');
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.equal(select.value, undefined);
+  t.ok(!select.value);
 
   select.$destroy();
 });
@@ -2213,7 +2213,7 @@ test('when isMulti and textFilter has length and no items in list then enter sho
   });
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.ok(select.value === undefined);
+  t.ok(!select.value);
 
   select.$destroy();
 });
@@ -2510,7 +2510,7 @@ test('When isMulti and an items remove icon is clicked then item should be remov
   await querySelectorClick('.multiSelectItem_clear');
   t.ok(select.value[0].value === 'cake')
   await querySelectorClick('.multiSelectItem_clear');
-  t.ok(select.value === undefined);
+  t.ok(!select.value);
 
   select.$destroy();
 });
@@ -3159,7 +3159,7 @@ test('when switching between isMulti true/false ensure Select continues working'
   select.loadOptions = null;
   select.items = [...items];
 
-  t.ok(select.value === null);
+  t.ok(!select.value);
 
   select.$destroy();
 });
@@ -3212,7 +3212,7 @@ test('when isMulti and placeholderAlwaysShow then always show placeholder text',
   });
 
   await wait(0);
-  let elem = target.querySelector('.selectContainer input');
+  let elem = target.querySelector('.selectContainer input[type="text"]');
   t.ok(elem.placeholder === 'foo bar');
 
   select.$destroy();
@@ -3502,6 +3502,86 @@ test('When loadOptions and isCreatable then create new item show at bottom of re
   await wait(400);
   let createText = document.querySelector('.listItem:last-child .item').innerHTML;
   t.equal(createText, 'Create "Cake"');
+
+  select.$destroy();
+});
+
+
+test('When inputAttributes.name supplied, add to hidden input', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      inputAttributes: { name: 'Foods' },
+      items: items,
+      showIndicator: true,
+    },
+  });
+
+  let hidden = document.querySelector('input[type="hidden"]').name;
+  t.equal(hidden, 'Foods');
+
+  select.$destroy();
+});
+
+test('When no value then hidden field should also have no value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      inputAttributes: { name: 'Foods' },
+      items: items,
+      
+    },
+  });
+
+  let hidden = document.querySelector('input[type="hidden"]').value;
+  t.ok(!hidden);
+
+  select.$destroy();
+});
+
+test('When value then hidden field should have value.label', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      value: {value: 'cake', label: 'Cake'},
+    },
+  });
+
+  let hidden = document.querySelector('input[type="hidden"]').value;
+  t.equal(hidden, 'Cake');
+
+  select.$destroy();
+});
+
+test('When isMulti and no value then hidden field should no value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items: items,
+    },
+  });
+
+  let hidden = document.querySelector('input[type="hidden"]').value;
+  t.ok(!hidden);
+
+  select.$destroy();
+});
+
+test('When isMulti and value then hidden fields should list value items', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items: items,
+      value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},]
+    },
+  });
+
+  let hidden = document.querySelectorAll('input[type="hidden"]');
+  t.equal(hidden[0].value, 'Cake');
+  t.equal(hidden[1].value, 'Pizza');
 
   select.$destroy();
 });
