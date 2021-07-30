@@ -3587,6 +3587,57 @@ test('When isMulti and value then hidden fields should list value items', async 
 });
 
 
+test('When listOpen then aria-context describes highlighted item', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      listOpen: true
+    },
+  });
+
+  let aria = document.querySelector('#aria-context');
+  t.ok(aria.innerHTML.includes('Chocolate'));
+  await handleKeyboard('ArrowDown');
+  t.ok(aria.innerHTML.includes('Pizza'));
+  
+  select.$destroy();
+});
+
+test('When listOpen and value then aria-selection describes value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      value: {value: 'cake', label: 'Cake'},
+      isFocused: true
+    },
+  });
+
+  let aria = document.querySelector('#aria-selection');
+  t.ok(aria.innerHTML.includes('Cake'));
+  
+  select.$destroy();
+});
+
+test('When listOpen, value and isMulti then aria-selection describes value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items: items,
+      value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},],
+      isFocused: true
+    },
+  });
+
+  let aria = document.querySelector('#aria-selection');
+  t.ok(aria.innerHTML.includes('Cake'));
+  t.ok(aria.innerHTML.includes('Pizza'));
+    
+  select.$destroy();
+});
+
 // this allows us to close puppeteer once tests have completed
 window.done = done;
 export default {};

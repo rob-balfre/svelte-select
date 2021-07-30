@@ -171,6 +171,7 @@
     let prev_filterText;
     let prev_isFocused;
     let prev_isMulti;
+    let hoverItemIndex;
 
     const getItems = debounce(async () => {
         isWaiting = true;
@@ -625,6 +626,39 @@
         filterText = '';
         listOpen = false;
     }
+
+    function handleAriaSelection() {
+        if (isMulti && value.length > 0) {
+            let values = value.map((v) => getSelectionLabel(v));
+            return `Options ${values.join(', ')}, selected.`;
+        } else {
+            return `Option ${getSelectionLabel(value)}, selected.`;
+        }
+    }
+
+    function handleAriaContent() {
+        if (!isFocused || !filteredItems || filteredItems.length === 0)
+            return '';
+
+        let _item = filteredItems[hoverItemIndex];
+        if (listOpen && _item) {
+            return `You are currently focused on option ${getSelectionLabel(
+                _item
+            )}. There are ${
+                filteredItems ? filteredItems.length : 0
+            } results available. Use up and down to choose options, press enter to select the currently focused option, press escape to exit the menu, press tab to select the option and exit the menu.`;
+        } else {
+            return 'Select is focused, type to refine list, press down to open the menu.';
+        }
+    }
+
+    $: ariaSelection = value ? handleAriaSelection(isMulti) : '';
+    $: ariaContext = handleAriaContent(
+        filteredItems,
+        hoverItemIndex,
+        isFocused,
+        listOpen
+    );
 </script>
 
 <style>
@@ -821,7 +855,14 @@
         aria-live="polite"
         aria-atomic="false"
         aria-relevant="additions text"
-        class="a11yText" />
+        class="a11yText">
+        {#if isFocused}
+            <span id="aria-selection">{ariaSelection}</span>
+            <span id="aria-context">
+                {ariaContext}
+            </span>
+        {/if}
+    </span>
 
     {#if Icon}
         <svelte:component this={Icon} {...iconProps} />
@@ -909,6 +950,7 @@
         <svelte:component
             this={List}
             {...listProps}
+            bind:hoverItemIndex
             on:itemSelected={itemSelected}
             on:itemCreated={itemCreated}
             on:closeList={closeList} />
