@@ -627,13 +627,28 @@
         listOpen = false;
     }
 
+    export let ariaValues = (values) => {
+        return `Option ${values}, selected.`;
+    }
+
+    export let ariaListOpen = (label, count) => {
+        return `You are currently focused on option ${label}. There are ${count} results available.`;
+    }
+
+    export let ariaFocused = () => {
+        return `Select is focused, type to refine list, press down to open the menu.`;
+    }
+
     function handleAriaSelection() {
+        let selected = undefined;
+
         if (isMulti && value.length > 0) {
-            let values = value.map((v) => getSelectionLabel(v));
-            return `Options ${values.join(', ')}, selected.`;
+            selected = value.map((v) => getSelectionLabel(v)).join(', ');
         } else {
-            return `Option ${getSelectionLabel(value)}, selected.`;
+            selected = getSelectionLabel(value);
         }
+
+        return ariaValues(selected);
     }
 
     function handleAriaContent() {
@@ -642,13 +657,12 @@
 
         let _item = filteredItems[hoverItemIndex];
         if (listOpen && _item) {
-            return `You are currently focused on option ${getSelectionLabel(
-                _item
-            )}. There are ${
-                filteredItems ? filteredItems.length : 0
-            } results available. Use up and down to choose options, press enter to select the currently focused option, press escape to exit the menu, press tab to select the option and exit the menu.`;
+            let label = getSelectionLabel(_item);
+            let count = filteredItems ? filteredItems.length : 0;
+
+            return ariaListOpen(label, count);
         } else {
-            return 'Select is focused, type to refine list, press down to open the menu.';
+            return ariaFocused();
         }
     }
 

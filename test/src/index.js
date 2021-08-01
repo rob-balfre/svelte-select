@@ -3638,6 +3638,55 @@ test('When listOpen, value and isMulti then aria-selection describes value', asy
   select.$destroy();
 });
 
+test('When ariaValues and value supplied, then aria-selection uses default updated', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      value: {value: 'pizza', label: 'Pizza'},
+      isFocused: true,
+      ariaValues: (val) => `Yummy ${val} in my tummy!`
+    },
+  });
+
+  let aria = document.querySelector('#aria-selection');
+  t.equal(aria.innerHTML, 'Yummy Pizza in my tummy!');
+  
+  select.$destroy();
+});
+
+test('When ariaListOpen, listOpen, then aria-context uses default updated', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      listOpen: true,
+      ariaListOpen: (label, count) => `label: ${label}, count: ${count}`
+    },
+  });
+
+  let aria = document.querySelector('#aria-context');
+  t.equal(aria.innerHTML, 'label: Chocolate, count: 5');
+    
+  select.$destroy();
+});
+
+test('When ariaFocused, focused value supplied, then aria-context uses default updated', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      isFocused: true,
+      ariaFocused: () => `nothing to see here.`
+    },
+  });
+
+  let aria = document.querySelector('#aria-context');
+  t.equal(aria.innerHTML, 'nothing to see here.');
+    
+  select.$destroy();
+});
+
 // this allows us to close puppeteer once tests have completed
 window.done = done;
 export default {};
