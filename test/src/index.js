@@ -3687,6 +3687,22 @@ test('When ariaFocused, focused value supplied, then aria-context uses default u
   select.$destroy();
 });
 
+
+test('When id supplied then add to input', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      id: 'foods',
+      items: items,
+    },
+  });
+
+  let aria = document.querySelector('input[type="text"]');
+  t.equal(aria.id, 'foods');
+    
+  select.$destroy();
+});
+
 // this allows us to close puppeteer once tests have completed
 window.done = done;
 export default {};

@@ -45,8 +45,9 @@ yarn add svelte-select
 
 ## API
 
+- `id: String` Default: `null`. Add an id to the input field.
 - `items: Array` Default: `[]`. List of selectable items that appear in the dropdown.
-- `value: Any` Default: `undefined`. Selected item or items
+- `value: Any` Default: `null`. Selected item or items.
 - `filterText: String` Default: `''`. Text to filter `items` by.
 - `placeholder: String` Default: `'Select...'`. Placeholder text.
 - `noOptionsMessage: String` Default: `'No options'`. Message to display in list when there are no `items`.
@@ -66,7 +67,7 @@ yarn add svelte-select
 - `hasError: Boolean` Default: `false`. Show/hide error styles around select input (red border by default).
 - `listAutoWidth: Boolean` Default: `true`. List width will grow wider than the Select container (depending on list item content length).
 - `showIndicator: Boolean` Default: `false`. If true, the chevron indicator is always shown.
-- `inputAttributes: Object` Default: `{}`. Useful for passing in HTML attributes like `'id'` to the Select input.
+- `inputAttributes: Object` Default: `{}`. Pass in HTML attributes to the Select input.
 - `Item: Component` Default: `Item`. Item component.
 - `Selection: Component` Default: `Selection`. Selection component.
 - `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
@@ -149,6 +150,24 @@ export let loadOptions = undefined; // if used must return a Promise that update
 export const getFilteredItems = () => {
   return filteredItems;
 };
+```
+
+## A11y (Accessibility)
+
+Override these methods to change the `aria-context` and `aria-selection` text.
+
+```js
+export let ariaValues = (values) => {
+  return `Option ${values}, selected.`;
+}
+
+export let ariaListOpen = (label, count) => {
+  return `You are currently focused on option ${label}. There are ${count} results available.`;
+}
+
+export let ariaFocused = () => {
+  return `Select is focused, type to refine list, press down to open the menu.`;
+}
 ```
 
 ## Styling

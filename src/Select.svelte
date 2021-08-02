@@ -11,6 +11,7 @@
 
     const dispatch = createEventDispatcher();
 
+    export let id = null;
     export let container = undefined;
     export let input = undefined;
     export let isMulti = false;
@@ -234,6 +235,10 @@
             },
             inputAttributes
         );
+
+        if (id) {
+            _inputAttributes.id = id;
+        }
 
         if (!isSearchable) {
             _inputAttributes.readonly = true;
@@ -629,15 +634,15 @@
 
     export let ariaValues = (values) => {
         return `Option ${values}, selected.`;
-    }
+    };
 
     export let ariaListOpen = (label, count) => {
         return `You are currently focused on option ${label}. There are ${count} results available.`;
-    }
+    };
 
     export let ariaFocused = () => {
         return `Select is focused, type to refine list, press down to open the menu.`;
-    }
+    };
 
     function handleAriaSelection() {
         let selected = undefined;
