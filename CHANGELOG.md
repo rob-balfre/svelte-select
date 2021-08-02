@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 4.3.0
+
+* Added A11y support (#286) - thanks to @fedoskina
+* Added id prop
 
 ## 4.2.7
 
