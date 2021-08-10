@@ -215,10 +215,6 @@
                 typeof item === 'string' ? { value: item, label: item } : item
             );
         }
-
-        if (prev_filterText && !loadOptions) {
-            filterText = '';
-        }
     }
 
     let _inputAttributes;
