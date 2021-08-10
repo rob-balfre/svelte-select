@@ -2,7 +2,7 @@
 
 ## 4.3.1
 
-* TextFilter bug
+* TextFilter bug fix (#291)
 
 ## 4.3.0
 
