@@ -94,7 +94,7 @@
 
         if (item.isCreator) {
             dispatch('itemCreated', filterText);
-        } else {
+        } else if (isItemSelectable(item)) {
             activeItemIndex = i;
             hoverItemIndex = i;
             handleSelect(item);
@@ -203,7 +203,7 @@
     }
 
     function isItemHover(hoverItemIndex, item, itemIndex, items) {
-        return hoverItemIndex === itemIndex || items.length === 1;
+        return isItemSelectable(item) && (hoverItemIndex === itemIndex || items.length === 1);
     }
 
     function isItemSelectable(item) {
