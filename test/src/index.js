@@ -114,6 +114,13 @@ const itemsWithGroupIds = [
   {_id: 'ice-cream', name: 'Ice Cream', groupie: 'Sweet'}
 ];
 
+const itemsWithSelectable = [
+  {value: 'notSelectable1', label: 'NotSelectable1', selectable: false},
+  {value: 'selectableDefault', label: 'SelectableDefault'},
+  {value: 'selectableTrue', label: 'SelectableTrue', selectable: true},
+  {value: 'notSelectable2', label: 'NotSelectable2', selectable: false}
+];
+
 function itemsPromise() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -1239,6 +1246,36 @@ test('clicking group header should not make a selected', async (t) => {
   t.ok(!select.value);
 
   select.$destroy();
+});
+
+test.only('clicking an item with selectable: false should not make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable
+    }
+  });
+
+  await wait(0);
+
+  // notSelectable1
+  await querySelectorClick('.listItem:nth-child(1)')
+  t.ok(!select.value);
+
+  // notSelectable2
+  await querySelectorClick('.listItem:nth-child(4)')
+  t.ok(!select.value);
+
+  // selectableDefault
+  await querySelectorClick('.listItem:nth-child(2)')
+  t.ok(select.value == 'selectableDefault');
+
+  // selectableDefault
+  await querySelectorClick('.listItem:nth-child(2)')
+  t.ok(select.value == 'selectableTrue');
+
+  //select.$destroy();
 });
 
 test('when groupBy, no active item and keydown enter is fired then list should close without selecting item', async (t) => {
