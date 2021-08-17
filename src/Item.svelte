@@ -2,6 +2,7 @@
     export let isActive = false;
     export let isFirst = false;
     export let isHover = false;
+    export let isSelectable = false;
     export let getOptionLabel = undefined;
     export let item = undefined;
     export let filterText = '';
@@ -24,6 +25,9 @@
         }
         if (item.isGroupItem) {
             classes.push('groupItem');
+        }
+        if (!isSelectable) {
+            classes.push('notSelectable');
         }
         itemClasses = classes.join(' ');
     }
@@ -56,6 +60,10 @@
     .item.active {
         background: var(--itemIsActiveBG, #007aff);
         color: var(--itemIsActiveColor, #fff);
+    }
+
+   .item.notSelectable {
+        color: var(--itemIsNotSelectableColor, #999);
     }
 
     .item.first {

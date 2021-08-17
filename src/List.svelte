@@ -302,7 +302,8 @@
                     {getOptionLabel}
                     isFirst={isItemFirst(i)}
                     isActive={isItemActive(item, value, optionIdentifier)}
-                    isHover={isItemHover(hoverItemIndex, item, i, items)} />
+                    isHover={isItemHover(hoverItemIndex, item, i, items)}
+                    isSelectable={isItemSelectable(item)} />
             </div>
         </svelte:component>
     {:else}
@@ -323,7 +324,8 @@
                         {getOptionLabel}
                         isFirst={isItemFirst(i)}
                         isActive={isItemActive(item, value, optionIdentifier)}
-                        isHover={isItemHover(hoverItemIndex, item, i, items)} />
+                        isHover={isItemHover(hoverItemIndex, item, i, items)}
+                        isSelectable={isItemSelectable(item)} />
                 </div>
             {/if}
         {:else}
