@@ -1248,8 +1248,7 @@ test('clicking group header should not make a selected', async (t) => {
   select.$destroy();
 });
 
-// TODO Remove .only
-test.only('clicking an item with selectable: false should not make a selected', async (t) => {
+test('clicking an item with selectable: false should not make a selected', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1268,11 +1267,10 @@ test.only('clicking an item with selectable: false should not make a selected', 
   await querySelectorClick('.listItem:nth-child(4)')
   t.ok(!select.value);
 
-  //select.$destroy();
+  select.$destroy();
 });
 
-// TODO Remove .only
-test.only('clicking an item with selectable not specified should make a selected', async (t) => {
+test('clicking an item with selectable not specified should make a selected', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1290,8 +1288,7 @@ test.only('clicking an item with selectable not specified should make a selected
   select.$destroy();
 });
 
-// TODO Remove .only
-test.only('clicking an item with selectable: true should make a selected', async (t) => {
+test('clicking an item with selectable: true should make a selected', async (t) => {
   const select = new Select({
     target,
     props: {
