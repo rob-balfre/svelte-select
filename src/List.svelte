@@ -119,9 +119,7 @@
                 hoverItemIndex = hoverItemIndex + increment;
             }
 
-            isNonSelectableItem =
-                items[hoverItemIndex].isGroupHeader &&
-                !items[hoverItemIndex].isSelectable;
+            isNonSelectableItem = !isItemSelectable(items[hoverItemIndex]);
         }
 
         await tick();
@@ -206,6 +204,12 @@
 
     function isItemHover(hoverItemIndex, item, itemIndex, items) {
         return hoverItemIndex === itemIndex || items.length === 1;
+    }
+
+    function isItemSelectable(item) {
+        return (item.isGroupHeader && item.isSelectable) ||
+            item.selectable ||
+            !item.hasOwnProperty('selectable') // Default; if `selectable` was not specified, the object is selectable
     }
 
     let listStyle;
