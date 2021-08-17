@@ -42,6 +42,11 @@ yarn add svelte-select
 <Select {items} {value} on:select={handleSelect}></Select>
 ```
 
+To provide an item that is not selectable, include `selectable: false` in the item. Example:
+
+```javascript
+{value: 'pizza', label: 'Pizza', selectable: false}
+```
 
 ## API
 
