@@ -1248,6 +1248,7 @@ test('clicking group header should not make a selected', async (t) => {
   select.$destroy();
 });
 
+// TODO Remove .only
 test.only('clicking an item with selectable: false should not make a selected', async (t) => {
   const select = new Select({
     target,
@@ -1267,15 +1268,46 @@ test.only('clicking an item with selectable: false should not make a selected', 
   await querySelectorClick('.listItem:nth-child(4)')
   t.ok(!select.value);
 
-  // selectableDefault
-  await querySelectorClick('.listItem:nth-child(2)')
-  t.ok(select.value == 'selectableDefault');
-
-  // selectableDefault
-  await querySelectorClick('.listItem:nth-child(2)')
-  t.ok(select.value == 'selectableTrue');
-
   //select.$destroy();
+});
+
+// TODO Remove .only
+test.only('clicking an item with selectable not specified should make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable
+    }
+  });
+
+  await wait(0);
+
+  // selectableDefault
+  await querySelectorClick('.listItem:nth-child(2)')
+  t.ok(select.value && select.value.value == 'selectableDefault');
+
+  select.$destroy();
+});
+
+// TODO Remove .only
+test.only('clicking an item with selectable: true should make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable
+    }
+  });
+
+  await wait(0);
+
+  // selectableDefault
+  await querySelectorClick('.listItem:nth-child(3)')
+  console.log(select.value)
+  t.ok(select.value && select.value.value == 'selectableTrue');
+
+  select.$destroy();
 });
 
 test('when groupBy, no active item and keydown enter is fired then list should close without selecting item', async (t) => {
