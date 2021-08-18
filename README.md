@@ -42,7 +42,6 @@ yarn add svelte-select
 <Select {items} {value} on:select={handleSelect}></Select>
 ```
 
-
 ## API
 
 - `id: String` Default: `null`. Add an id to the input field.
@@ -81,15 +80,70 @@ yarn add svelte-select
 - `isWaiting: Boolean` Default: `false`. If true then loader shows. `loadOptions` will automatically set this as true until promise resolves.
 - `listOffset: Number` Default: `5`. Controls the spacing offset between the list and the input.
 
+### Items
+
+`items` can be simple arrays or collections.
+
+```html
+<script>
+  let simple = ['one', 'two', 'three'];
+
+  let collection = [
+    { value: 1, label: 'one' },
+    { value: 2, label: 'two' },
+    { value: 3, label: 'three' },
+];
+</script>
+
+<Select items={simple} />
+
+<Select items={collection} />
+```
+
+They can also be grouped and include non-selectable items.
+
+```html
+<script>
+  const items = [
+    {value: 'chocolate', label: 'Chocolate', group: 'Sweet'},
+    {value: 'pizza', label: 'Pizza', group: 'Savory'},
+    {value: 'cake', label: 'Cake', group: 'Sweet', selectable: false},
+    {value: 'chips', label: 'Chips', group: 'Savory'},
+    {value: 'ice-cream', label: 'Ice Cream', group: 'Sweet'}
+  ];
+
+  const groupBy = (item) => item.group;
+</script>
+
+<Select {items} {groupBy} />
+
+```
+
+You can also use custom collections.
+
+```html
+<script>
+  const optionIdentifier = 'id';
+  const labelIdentifier = 'title';
+
+  const items = [
+	  {id: 0, title: 'Foo'},
+	  {id: 1, title: 'Bar'},
+  ];
+</script>
+
+<Select {optionIdentifier} {labelIdentifier} {items} />
+```
+
 ### Exposed methods
-If you really want to get your hands dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
+These internal functions are exposed to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
 
 ```js
 export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
 ```
 
 ```js
-export let groupBy = undefined; // see adv demo for example
+export let groupBy = undefined;
 ```
 
 ```js

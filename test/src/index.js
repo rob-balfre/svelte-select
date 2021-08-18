@@ -114,6 +114,13 @@ const itemsWithGroupIds = [
   {_id: 'ice-cream', name: 'Ice Cream', groupie: 'Sweet'}
 ];
 
+const itemsWithSelectable = [
+  {value: 'notSelectable1', label: 'NotSelectable1', selectable: false},
+  {value: 'selectableDefault', label: 'SelectableDefault'},
+  {value: 'selectableTrue', label: 'SelectableTrue', selectable: true},
+  {value: 'notSelectable2', label: 'NotSelectable2', selectable: false}
+];
+
 function itemsPromise() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -1237,6 +1244,65 @@ test('clicking group header should not make a selected', async (t) => {
   await querySelectorClick('.listGroupTitle');
 
   t.ok(!select.value);
+
+  select.$destroy();
+});
+
+test('clicking an item with selectable: false should not make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable
+    }
+  });
+
+  await wait(0);
+
+  // notSelectable1
+  await querySelectorClick('.listItem:nth-child(1)')
+  t.ok(!select.value);
+
+  // notSelectable2
+  await querySelectorClick('.listItem:nth-child(4)')
+  t.ok(!select.value);
+
+  select.$destroy();
+});
+
+test('clicking an item with selectable not specified should make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable
+    }
+  });
+
+  await wait(0);
+
+  // selectableDefault
+  await querySelectorClick('.listItem:nth-child(2)')
+  t.ok(select.value && select.value.value == 'selectableDefault');
+
+  select.$destroy();
+});
+
+test('clicking an item with selectable: true should make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable
+    }
+  });
+
+  await wait(0);
+
+  // selectableDefault
+  await querySelectorClick('.listItem:nth-child(3)')
+  console.log(select.value)
+  t.ok(select.value && select.value.value == 'selectableTrue');
 
   select.$destroy();
 });

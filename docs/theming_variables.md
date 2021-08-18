@@ -49,6 +49,7 @@ You can override the following variables to style a Select component.
 - `--itemHoverColor`
 - `--itemIsActiveBG`
 - `--itemIsActiveColor`
+- `--itemIsNotSelectableColor`
 - `--itemPadding`
 - `--listBackground`
 - `--listBorder`

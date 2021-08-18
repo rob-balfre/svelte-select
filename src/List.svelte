@@ -94,7 +94,7 @@
 
         if (item.isCreator) {
             dispatch('itemCreated', filterText);
-        } else {
+        } else if (isItemSelectable(item)) {
             activeItemIndex = i;
             hoverItemIndex = i;
             handleSelect(item);
@@ -119,9 +119,7 @@
                 hoverItemIndex = hoverItemIndex + increment;
             }
 
-            isNonSelectableItem =
-                items[hoverItemIndex].isGroupHeader &&
-                !items[hoverItemIndex].isSelectable;
+            isNonSelectableItem = !isItemSelectable(items[hoverItemIndex]);
         }
 
         await tick();
@@ -205,7 +203,13 @@
     }
 
     function isItemHover(hoverItemIndex, item, itemIndex, items) {
-        return hoverItemIndex === itemIndex || items.length === 1;
+        return isItemSelectable(item) && (hoverItemIndex === itemIndex || items.length === 1);
+    }
+
+    function isItemSelectable(item) {
+        return (item.isGroupHeader && item.isSelectable) ||
+            item.selectable ||
+            !item.hasOwnProperty('selectable') // Default; if `selectable` was not specified, the object is selectable
     }
 
     let listStyle;
@@ -298,7 +302,8 @@
                     {getOptionLabel}
                     isFirst={isItemFirst(i)}
                     isActive={isItemActive(item, value, optionIdentifier)}
-                    isHover={isItemHover(hoverItemIndex, item, i, items)} />
+                    isHover={isItemHover(hoverItemIndex, item, i, items)}
+                    isSelectable={isItemSelectable(item)} />
             </div>
         </svelte:component>
     {:else}
@@ -319,7 +324,8 @@
                         {getOptionLabel}
                         isFirst={isItemFirst(i)}
                         isActive={isItemActive(item, value, optionIdentifier)}
-                        isHover={isItemHover(hoverItemIndex, item, i, items)} />
+                        isHover={isItemHover(hoverItemIndex, item, i, items)}
+                        isSelectable={isItemSelectable(item)} />
                 </div>
             {/if}
         {:else}
