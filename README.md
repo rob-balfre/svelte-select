@@ -6,7 +6,7 @@ A select/autocomplete component for Svelte apps.  With support for grouping, fil
 
 🌱 [Simple demo](https://svelte.dev/repl/a859c2ba7d1744af9c95037c48989193?version=3.12.1)
 
-🌻 [Advanced demo](https://svelte.dev/repl/9c79ce1329f749c4a4e84f1c2f480653?version=3.20.1)
+🌻 [Advanced demo](https://svelte.dev/repl/3e032a58c3974d07b7818c0f817a06a3?version=3.20.1)
 
 ## Installation
 
@@ -40,12 +40,6 @@ yarn add svelte-select
 </script>
 
 <Select {items} {value} on:select={handleSelect}></Select>
-```
-
-To provide an item that is not selectable, include `selectable: false` in the item. Example:
-
-```javascript
-{value: 'pizza', label: 'Pizza', selectable: false}
 ```
 
 ## API
@@ -86,15 +80,70 @@ To provide an item that is not selectable, include `selectable: false` in the it
 - `isWaiting: Boolean` Default: `false`. If true then loader shows. `loadOptions` will automatically set this as true until promise resolves.
 - `listOffset: Number` Default: `5`. Controls the spacing offset between the list and the input.
 
+### Items
+
+`items` can be simple arrays or collections.
+
+```html
+<script>
+  let simple = ['one', 'two', 'three'];
+
+  let collection = [
+    { value: 1, label: 'one' },
+    { value: 2, label: 'two' },
+    { value: 3, label: 'three' },
+];
+</script>
+
+<Select items={simple} />
+
+<Select items={collection} />
+```
+
+They can also be grouped and include non-selectable items.
+
+```html
+<script>
+  const items = [
+    {value: 'chocolate', label: 'Chocolate', group: 'Sweet'},
+    {value: 'pizza', label: 'Pizza', group: 'Savory'},
+    {value: 'cake', label: 'Cake', group: 'Sweet', selectable: false},
+    {value: 'chips', label: 'Chips', group: 'Savory'},
+    {value: 'ice-cream', label: 'Ice Cream', group: 'Sweet'}
+  ];
+
+  const groupBy = (item) => item.group;
+</script>
+
+<Select {items} {groupBy} />
+
+```
+
+You can also use custom collections.
+
+```html
+<script>
+  const optionIdentifier = 'id';
+  const labelIdentifier = 'title';
+
+  const items = [
+	  {id: 0, title: 'Foo'},
+	  {id: 1, title: 'Bar'},
+  ];
+</script>
+
+<Select {optionIdentifier} {labelIdentifier} {items} />
+```
+
 ### Exposed methods
-If you really want to get your hands dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
+These internal functions are exposed to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
 
 ```js
 export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
 ```
 
 ```js
-export let groupBy = undefined; // see adv demo for example
+export let groupBy = undefined;
 ```
 
 ```js
