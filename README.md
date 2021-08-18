@@ -86,13 +86,15 @@ yarn add svelte-select
 
 ```html
 <script>
+  import Select from 'svelte-select';
+
   let simple = ['one', 'two', 'three'];
 
   let collection = [
     { value: 1, label: 'one' },
     { value: 2, label: 'two' },
     { value: 3, label: 'three' },
-];
+  ];
 </script>
 
 <Select items={simple} />
@@ -104,6 +106,8 @@ They can also be grouped and include non-selectable items.
 
 ```html
 <script>
+  import Select from 'svelte-select';
+
   const items = [
     {value: 'chocolate', label: 'Chocolate', group: 'Sweet'},
     {value: 'pizza', label: 'Pizza', group: 'Savory'},
@@ -123,16 +127,40 @@ You can also use custom collections.
 
 ```html
 <script>
+  import Select from 'svelte-select';
+
   const optionIdentifier = 'id';
   const labelIdentifier = 'title';
 
   const items = [
-	  {id: 0, title: 'Foo'},
+    {id: 0, title: 'Foo'},
 	  {id: 1, title: 'Bar'},
   ];
 </script>
 
 <Select {optionIdentifier} {labelIdentifier} {items} />
+```
+
+### Async Items
+
+To load items asynchronously then `loadOptions` is the simplest solution. Supply a function that returns a `Promise` that resolves with a list of items. `loadOptions` has debounce baked in and fires each time `filterText` is updated.
+
+```html
+<script>
+  import Select from 'svelte-select';
+
+  import { someApiCall } from './services';
+
+  async function examplePromise(filterText) {
+    // Put your async code here...
+    // For example call an API using filterText as your search params
+    // When your API responds resolve your Promise
+    let res = await someApiCall(filterText);
+    return res;
+  }
+</script>
+
+<Select loadOptions={examplePromise} />
 ```
 
 ### Exposed methods
