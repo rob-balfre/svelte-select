@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 4.4.0
+
+* Added support for non-selectable items - thanks to @mpdaugherty 
+
 ## 4.3.1
 
 * TextFilter bug fix (#291)

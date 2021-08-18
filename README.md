@@ -134,7 +134,7 @@ You can also use custom collections.
 
   const items = [
     {id: 0, title: 'Foo'},
-	  {id: 1, title: 'Bar'},
+    {id: 1, title: 'Bar'},
   ];
 </script>
 
