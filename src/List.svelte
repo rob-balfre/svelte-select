@@ -13,7 +13,9 @@
     export let labelIdentifier = 'label';
     export let getOptionLabel = (option, filterText) => {
         if (option)
-            return option.isCreator ? `Create \"${filterText}\"` : option[labelIdentifier];
+            return option.isCreator
+                ? `Create \"${filterText}\"`
+                : option[labelIdentifier];
     };
     export let getGroupHeaderLabel = null;
     export let itemHeight = 40;
@@ -92,7 +94,7 @@
 
         if (item.isCreator) {
             dispatch('itemCreated', filterText);
-        } else {
+        } else if (isItemSelectable(item)) {
             activeItemIndex = i;
             hoverItemIndex = i;
             handleSelect(item);
@@ -117,9 +119,7 @@
                 hoverItemIndex = hoverItemIndex + increment;
             }
 
-            isNonSelectableItem =
-                items[hoverItemIndex].isGroupHeader &&
-                !items[hoverItemIndex].isSelectable;
+            isNonSelectableItem = !isItemSelectable(items[hoverItemIndex]);
         }
 
         await tick();
@@ -162,7 +162,9 @@
                 break;
             case 'Tab':
                 e.preventDefault();
-                if (items.length === 0) break;
+                if (items.length === 0) {
+                    return closeList();
+                }
                 if (
                     value &&
                     value[optionIdentifier] ===
@@ -201,7 +203,13 @@
     }
 
     function isItemHover(hoverItemIndex, item, itemIndex, items) {
-        return hoverItemIndex === itemIndex || items.length === 1;
+        return isItemSelectable(item) && (hoverItemIndex === itemIndex || items.length === 1);
+    }
+
+    function isItemSelectable(item) {
+        return (item.isGroupHeader && item.isSelectable) ||
+            item.selectable ||
+            !item.hasOwnProperty('selectable') // Default; if `selectable` was not specified, the object is selectable
     }
 
     let listStyle;
@@ -270,11 +278,12 @@
 
 <svelte:window on:keydown={handleKeyDown} on:resize={computePlacement} />
 
-{#if isVirtualList}
-    <div
-        class="listContainer virtualList"
-        bind:this={container}
-        style={listStyle}>
+<div
+    class="listContainer"
+    class:virtualList={isVirtualList}
+    bind:this={container}
+    style={listStyle}>
+    {#if isVirtualList}
         <svelte:component
             this={VirtualList}
             {items}
@@ -283,6 +292,7 @@
             let:i>
             <div
                 on:mouseover={() => handleHover(i)}
+                on:focus={() => handleHover(i)}
                 on:click={(event) => handleClick({ item, i, event })}
                 class="listItem">
                 <svelte:component
@@ -292,22 +302,21 @@
                     {getOptionLabel}
                     isFirst={isItemFirst(i)}
                     isActive={isItemActive(item, value, optionIdentifier)}
-                    isHover={isItemHover(hoverItemIndex, item, i, items)} />
+                    isHover={isItemHover(hoverItemIndex, item, i, items)}
+                    isSelectable={isItemSelectable(item)} />
             </div>
         </svelte:component>
-    </div>
-{/if}
-
-{#if !isVirtualList}
-    <div class="listContainer" bind:this={container} style={listStyle}>
+    {:else}
         {#each items as item, i}
             {#if item.isGroupHeader && !item.isSelectable}
                 <div class="listGroupTitle">{getGroupHeaderLabel(item)}</div>
             {:else}
                 <div
                     on:mouseover={() => handleHover(i)}
+                    on:focus={() => handleHover(i)}
                     on:click={(event) => handleClick({ item, i, event })}
-                    class="listItem">
+                    class="listItem"
+                    tabindex="-1">
                     <svelte:component
                         this={Item}
                         {item}
@@ -315,7 +324,8 @@
                         {getOptionLabel}
                         isFirst={isItemFirst(i)}
                         isActive={isItemActive(item, value, optionIdentifier)}
-                        isHover={isItemHover(hoverItemIndex, item, i, items)} />
+                        isHover={isItemHover(hoverItemIndex, item, i, items)}
+                        isSelectable={isItemSelectable(item)} />
                 </div>
             {/if}
         {:else}
@@ -323,5 +333,5 @@
                 <div class="empty">{noOptionsMessage}</div>
             {/if}
         {/each}
-    </div>
-{/if}
+    {/if}
+</div>

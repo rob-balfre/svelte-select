@@ -1,5 +1,22 @@
 # svelte-select changelog
 
+## 4.4.0
+
+* Added support for non-selectable items - thanks to @mpdaugherty 
+
+## 4.3.1
+
+* TextFilter bug fix (#291)
+
+## 4.3.0
+
+* Added A11y support (#286) - thanks to @fedoskina
+* Added id prop
+
+## 4.2.7
+
+* Bug fixes for #278, #279, #280, #285 - thanks to @davidfou 
+
 ## 4.2.6
 
 * TypeScript declaration in package.json (#277) - thanks to @davidfou

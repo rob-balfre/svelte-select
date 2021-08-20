@@ -3,6 +3,7 @@
     height="100%"
     viewBox="-2 -2 50 50"
     focusable="false"
+    aria-hidden="true"
     role="presentation"
 >
     <path

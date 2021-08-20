@@ -1,4 +1,3 @@
-import './reset.css'
 import getName from '../utils/nameGen';
 import normalizeHtml from '../utils/normalizeHtml';
 
@@ -9,7 +8,6 @@ import TestIcon from './TestIcon.svelte';
 import TestClearIcon from './TestClearIcon.svelte';
 import SelectDefault from './Select/Select--default.svelte'
 import SelectMultiSelected from './Select/Select--multiSelected.svelte'
-import ListDefault from './List/List--default.svelte'
 import ParentContainer from './Select/ParentContainer.svelte'
 import {assert, test, done} from 'tape-modern';
 
@@ -116,10 +114,25 @@ const itemsWithGroupIds = [
   {_id: 'ice-cream', name: 'Ice Cream', groupie: 'Sweet'}
 ];
 
+const itemsWithSelectable = [
+  {value: 'notSelectable1', label: 'NotSelectable1', selectable: false},
+  {value: 'selectableDefault', label: 'SelectableDefault'},
+  {value: 'selectableTrue', label: 'SelectableTrue', selectable: true},
+  {value: 'notSelectable2', label: 'NotSelectable2', selectable: false}
+];
+
 function itemsPromise() {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve(JSON.parse(JSON.stringify(items)));
+    })
+  })
+}
+
+function itemsPromiseEmpty() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve([]);
     })
   })
 }
@@ -139,7 +152,7 @@ assert.arrayEqual = (a, b) => {
   assert.ok(a.every((val, i) => val === b[i]));
 };
 
-// tests
+
 test('with no data creates default elements', async (t) => {
   const testTemplate = new SelectDefault({
     target: testTarget
@@ -432,24 +445,6 @@ test('List starts with first item in hover state', async (t) => {
   await querySelectorClick('.selectContainer');
   t.ok(target.querySelector('.listItem .hover').innerHTML === 'Chocolate');
 
-  select.$destroy();
-});
-
-test('List starts with first item in hover state', async (t) => {
-  const testTemplate = new ListDefault({
-    target: testTarget
-  });
-
-  const select = new Select({
-    target,
-    props: {
-      items,
-    }
-  });
-
-  document.querySelector('.selectContainer').click();
-
-  testTemplate.$destroy();
   select.$destroy();
 });
 
@@ -1248,7 +1243,66 @@ test('clicking group header should not make a selected', async (t) => {
   await wait(0);
   await querySelectorClick('.listGroupTitle');
 
-  t.equal(select.value, undefined);
+  t.ok(!select.value);
+
+  select.$destroy();
+});
+
+test('clicking an item with selectable: false should not make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable
+    }
+  });
+
+  await wait(0);
+
+  // notSelectable1
+  await querySelectorClick('.listItem:nth-child(1)')
+  t.ok(!select.value);
+
+  // notSelectable2
+  await querySelectorClick('.listItem:nth-child(4)')
+  t.ok(!select.value);
+
+  select.$destroy();
+});
+
+test('clicking an item with selectable not specified should make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable
+    }
+  });
+
+  await wait(0);
+
+  // selectableDefault
+  await querySelectorClick('.listItem:nth-child(2)')
+  t.ok(select.value && select.value.value == 'selectableDefault');
+
+  select.$destroy();
+});
+
+test('clicking an item with selectable: true should make a selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable
+    }
+  });
+
+  await wait(0);
+
+  // selectableDefault
+  await querySelectorClick('.listItem:nth-child(3)')
+  console.log(select.value)
+  t.ok(select.value && select.value.value == 'selectableTrue');
 
   select.$destroy();
 });
@@ -1266,7 +1320,7 @@ test('when groupBy, no active item and keydown enter is fired then list should c
   await wait(0);
   await querySelectorClick('.selectContainer');
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.equal(select.value, undefined);
+  t.ok(!select.value);
 
   select.$destroy();
 });
@@ -2225,7 +2279,7 @@ test('when isMulti and textFilter has length and no items in list then enter sho
   });
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.ok(select.value === undefined);
+  t.ok(!select.value);
 
   select.$destroy();
 });
@@ -2522,7 +2576,7 @@ test('When isMulti and an items remove icon is clicked then item should be remov
   await querySelectorClick('.multiSelectItem_clear');
   t.ok(select.value[0].value === 'cake')
   await querySelectorClick('.multiSelectItem_clear');
-  t.ok(select.value === undefined);
+  t.ok(!select.value);
 
   select.$destroy();
 });
@@ -3171,7 +3225,7 @@ test('when switching between isMulti true/false ensure Select continues working'
   select.loadOptions = null;
   select.items = [...items];
 
-  t.ok(select.value === null);
+  t.ok(!select.value);
 
   select.$destroy();
 });
@@ -3224,7 +3278,7 @@ test('when isMulti and placeholderAlwaysShow then always show placeholder text',
   });
 
   await wait(0);
-  let elem = target.querySelector('.selectContainer input');
+  let elem = target.querySelector('.selectContainer input[type="text"]');
   t.ok(elem.placeholder === 'foo bar');
 
   select.$destroy();
@@ -3480,10 +3534,240 @@ test('When isMulti on:select events should fire on each item removal (including 
   await wait(0);
   t.ok(events.length === 2);
   
+  select.$destroy();
+});
+
+
+test('When loadOptions and isCreatable then create new item is active when promise resolves with no items', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      loadOptions: itemsPromiseEmpty,
+      isCreatable: true,
+    },
+  });
+
+  select.filterText = 'Cake';
+  await wait(400);
+  let createText = document.querySelector('.listItem .item').innerHTML;
+  t.equal(createText, 'Create "Cake"');
 
   select.$destroy();
 });
 
+test('When loadOptions and isCreatable then create new item show at bottom of results when promise resolves', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      loadOptions: itemsPromise,
+      isCreatable: true,
+    },
+  });
+
+  select.filterText = 'Cake';
+  await wait(400);
+  let createText = document.querySelector('.listItem:last-child .item').innerHTML;
+  t.equal(createText, 'Create "Cake"');
+
+  select.$destroy();
+});
+
+
+test('When inputAttributes.name supplied, add to hidden input', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      inputAttributes: { name: 'Foods' },
+      items: items,
+      showIndicator: true,
+    },
+  });
+
+  let hidden = document.querySelector('input[type="hidden"]').name;
+  t.equal(hidden, 'Foods');
+
+  select.$destroy();
+});
+
+test('When no value then hidden field should also have no value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      inputAttributes: { name: 'Foods' },
+      items: items,
+      
+    },
+  });
+
+  let hidden = document.querySelector('input[type="hidden"]').value;
+  t.ok(!hidden);
+
+  select.$destroy();
+});
+
+test('When value then hidden field should have value.label', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      value: {value: 'cake', label: 'Cake'},
+    },
+  });
+
+  let hidden = document.querySelector('input[type="hidden"]').value;
+  t.equal(hidden, 'Cake');
+
+  select.$destroy();
+});
+
+test('When isMulti and no value then hidden field should no value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items: items,
+    },
+  });
+
+  let hidden = document.querySelector('input[type="hidden"]').value;
+  t.ok(!hidden);
+
+  select.$destroy();
+});
+
+test('When isMulti and value then hidden fields should list value items', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items: items,
+      value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},]
+    },
+  });
+
+  let hidden = document.querySelectorAll('input[type="hidden"]');
+  t.equal(hidden[0].value, 'Cake');
+  t.equal(hidden[1].value, 'Pizza');
+
+  select.$destroy();
+});
+
+
+test('When listOpen then aria-context describes highlighted item', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      listOpen: true
+    },
+  });
+
+  let aria = document.querySelector('#aria-context');
+  t.ok(aria.innerHTML.includes('Chocolate'));
+  await handleKeyboard('ArrowDown');
+  t.ok(aria.innerHTML.includes('Pizza'));
+  
+  select.$destroy();
+});
+
+test('When listOpen and value then aria-selection describes value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      value: {value: 'cake', label: 'Cake'},
+      isFocused: true
+    },
+  });
+
+  let aria = document.querySelector('#aria-selection');
+  t.ok(aria.innerHTML.includes('Cake'));
+  
+  select.$destroy();
+});
+
+test('When listOpen, value and isMulti then aria-selection describes value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      isMulti: true,
+      items: items,
+      value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},],
+      isFocused: true
+    },
+  });
+
+  let aria = document.querySelector('#aria-selection');
+  t.ok(aria.innerHTML.includes('Cake'));
+  t.ok(aria.innerHTML.includes('Pizza'));
+    
+  select.$destroy();
+});
+
+test('When ariaValues and value supplied, then aria-selection uses default updated', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      value: {value: 'pizza', label: 'Pizza'},
+      isFocused: true,
+      ariaValues: (val) => `Yummy ${val} in my tummy!`
+    },
+  });
+
+  let aria = document.querySelector('#aria-selection');
+  t.equal(aria.innerHTML, 'Yummy Pizza in my tummy!');
+  
+  select.$destroy();
+});
+
+test('When ariaListOpen, listOpen, then aria-context uses default updated', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      listOpen: true,
+      ariaListOpen: (label, count) => `label: ${label}, count: ${count}`
+    },
+  });
+
+  let aria = document.querySelector('#aria-context');
+  t.equal(aria.innerHTML, 'label: Chocolate, count: 5');
+    
+  select.$destroy();
+});
+
+test('When ariaFocused, focused value supplied, then aria-context uses default updated', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: items,
+      isFocused: true,
+      ariaFocused: () => `nothing to see here.`
+    },
+  });
+
+  let aria = document.querySelector('#aria-context');
+  t.equal(aria.innerHTML, 'nothing to see here.');
+    
+  select.$destroy();
+});
+
+
+test('When id supplied then add to input', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      id: 'foods',
+      items: items,
+    },
+  });
+
+  let aria = document.querySelector('input[type="text"]');
+  t.equal(aria.id, 'foods');
+    
+  select.$destroy();
+});
 
 // this allows us to close puppeteer once tests have completed
 window.done = done;

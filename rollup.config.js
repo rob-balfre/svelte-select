@@ -3,22 +3,29 @@ import resolve from 'rollup-plugin-node-resolve';
 import css from 'rollup-plugin-css-only';
 import cleaner from 'rollup-plugin-cleaner';
 import { terser } from 'rollup-plugin-terser';
+import pkg from './package.json';
 
+const name = pkg.name
+    .replace(/^(@\S+\/)?(svelte-)?(\S+)/, '$3')
+    .replace(/^\w/, (m) => m.toUpperCase())
+    .replace(/-\w/g, (m) => m[1].toUpperCase());
 
 export default [
     {
         input: 'src/index.js',
-        output: {
-            dir: './dist',
-        },
+        output: [
+            { file: pkg.module, format: 'es' },
+            { file: pkg.main, format: 'umd', name },
+        ],
+
         plugins: [
             cleaner({
                 targets: ['./dist/'],
             }),
             svelte({
-                emitCss: true,
+                emitCss: false,
             }),
-            css({ output: { dir: './dist' } }),
+            css(),
             terser(),
             resolve(),
         ],
@@ -31,13 +38,13 @@ export default [
         },
         plugins: [
             svelte({
-                emitCss: true,
+                emitCss: false,
                 compilerOptions: {
                     accessors: true,
                     dev: true,
                 },
             }),
-            css({ output: { dir: './test/public' } }),
+            css(),
             resolve(),
         ],
     },

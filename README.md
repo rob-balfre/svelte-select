@@ -42,11 +42,11 @@ yarn add svelte-select
 <Select {items} {value} on:select={handleSelect}></Select>
 ```
 
-
 ## API
 
+- `id: String` Default: `null`. Add an id to the input field.
 - `items: Array` Default: `[]`. List of selectable items that appear in the dropdown.
-- `value: Any` Default: `undefined`. Selected item or items
+- `value: Any` Default: `null`. Selected item or items.
 - `filterText: String` Default: `''`. Text to filter `items` by.
 - `placeholder: String` Default: `'Select...'`. Placeholder text.
 - `noOptionsMessage: String` Default: `'No options'`. Message to display in list when there are no `items`.
@@ -66,7 +66,7 @@ yarn add svelte-select
 - `hasError: Boolean` Default: `false`. Show/hide error styles around select input (red border by default).
 - `listAutoWidth: Boolean` Default: `true`. List width will grow wider than the Select container (depending on list item content length).
 - `showIndicator: Boolean` Default: `false`. If true, the chevron indicator is always shown.
-- `inputAttributes: Object` Default: `{}`. Useful for passing in HTML attributes like `'id'` to the Select input.
+- `inputAttributes: Object` Default: `{}`. Pass in HTML attributes to the Select input.
 - `Item: Component` Default: `Item`. Item component.
 - `Selection: Component` Default: `Selection`. Selection component.
 - `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
@@ -80,15 +80,98 @@ yarn add svelte-select
 - `isWaiting: Boolean` Default: `false`. If true then loader shows. `loadOptions` will automatically set this as true until promise resolves.
 - `listOffset: Number` Default: `5`. Controls the spacing offset between the list and the input.
 
+### Items
+
+`items` can be simple arrays or collections.
+
+```html
+<script>
+  import Select from 'svelte-select';
+
+  let simple = ['one', 'two', 'three'];
+
+  let collection = [
+    { value: 1, label: 'one' },
+    { value: 2, label: 'two' },
+    { value: 3, label: 'three' },
+  ];
+</script>
+
+<Select items={simple} />
+
+<Select items={collection} />
+```
+
+They can also be grouped and include non-selectable items.
+
+```html
+<script>
+  import Select from 'svelte-select';
+
+  const items = [
+    {value: 'chocolate', label: 'Chocolate', group: 'Sweet'},
+    {value: 'pizza', label: 'Pizza', group: 'Savory'},
+    {value: 'cake', label: 'Cake', group: 'Sweet', selectable: false},
+    {value: 'chips', label: 'Chips', group: 'Savory'},
+    {value: 'ice-cream', label: 'Ice Cream', group: 'Sweet'}
+  ];
+
+  const groupBy = (item) => item.group;
+</script>
+
+<Select {items} {groupBy} />
+
+```
+
+You can also use custom collections.
+
+```html
+<script>
+  import Select from 'svelte-select';
+
+  const optionIdentifier = 'id';
+  const labelIdentifier = 'title';
+
+  const items = [
+    {id: 0, title: 'Foo'},
+    {id: 1, title: 'Bar'},
+  ];
+</script>
+
+<Select {optionIdentifier} {labelIdentifier} {items} />
+```
+
+### Async Items
+
+To load items asynchronously then `loadOptions` is the simplest solution. Supply a function that returns a `Promise` that resolves with a list of items. `loadOptions` has debounce baked in and fires each time `filterText` is updated.
+
+```html
+<script>
+  import Select from 'svelte-select';
+
+  import { someApiCall } from './services';
+
+  async function examplePromise(filterText) {
+    // Put your async code here...
+    // For example call an API using filterText as your search params
+    // When your API responds resolve your Promise
+    let res = await someApiCall(filterText);
+    return res;
+  }
+</script>
+
+<Select loadOptions={examplePromise} />
+```
+
 ### Exposed methods
-If you really want to get your hands dirty these internal functions are exposed as props to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
+These internal functions are exposed to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
 
 ```js
 export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
 ```
 
 ```js
-export let groupBy = undefined; // see adv demo for example
+export let groupBy = undefined;
 ```
 
 ```js
@@ -149,6 +232,24 @@ export let loadOptions = undefined; // if used must return a Promise that update
 export const getFilteredItems = () => {
   return filteredItems;
 };
+```
+
+## A11y (Accessibility)
+
+Override these methods to change the `aria-context` and `aria-selection` text.
+
+```js
+export let ariaValues = (values) => {
+  return `Option ${values}, selected.`;
+}
+
+export let ariaListOpen = (label, count) => {
+  return `You are currently focused on option ${label}. There are ${count} results available.`;
+}
+
+export let ariaFocused = () => {
+  return `Select is focused, type to refine list, press down to open the menu.`;
+}
 ```
 
 ## Styling

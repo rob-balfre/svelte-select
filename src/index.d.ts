@@ -1,6 +1,7 @@
 import type { SvelteComponent } from "svelte";
 
 export interface SelectProps {
+  id?: string;
   container?: HTMLElement;
   input?: HTMLInputElement;
   Item?: any;
@@ -50,6 +51,9 @@ export interface SelectProps {
   containerClasses?: string;
   indicatorSvg?: string;
   handleClear?: () => void;
+  ariaValues?: (values: string) => string;
+  ariaListOpen?: (label: string, count:number) => string;
+  ariaFocused?: () => string;
 }
 
 declare class Select extends SvelteComponent {
