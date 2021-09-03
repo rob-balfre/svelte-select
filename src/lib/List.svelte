@@ -1,6 +1,6 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onMount, tick } from 'svelte';
-    import isOutOfViewport from './utils/isOutOfViewport';
+    import isOutOfViewport from './isOutOfViewport';
     import ItemComponent from './Item.svelte';
 
     const dispatch = createEventDispatcher();

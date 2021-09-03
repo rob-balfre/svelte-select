@@ -1,5 +1,11 @@
 # svelte-select changelog
 
+## 5.0.0-alpha.0 (DO NOT USE!!!!!!)
+
+* Convert repo to use SvelteKit
+* Change licence from LIL to ISC
+* Cleaned up package.json 
+
 ## 4.4.1
 
 * Added missing prop 'placeholderAlwaysShow' to TypeScript declaration file (#305) - thanks to @paolotiu

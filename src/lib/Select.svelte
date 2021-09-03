@@ -7,7 +7,7 @@
     import _MultiSelection from './MultiSelection.svelte';
     import _VirtualList from './VirtualList.svelte';
     import _ClearIcon from './ClearIcon.svelte';
-    import debounce from './utils/debounce';
+    import debounce from './debounce';
 
     const dispatch = createEventDispatcher();
 
