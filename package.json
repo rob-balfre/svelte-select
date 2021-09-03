@@ -1,6 +1,6 @@
 {
   "name": "svelte-select",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "repository": "https://rob-balfre@github.com/rob-balfre/svelte-select.git",
   "description": "A <Select> component for Svelte apps",
   "svelte": "src/index.js",
