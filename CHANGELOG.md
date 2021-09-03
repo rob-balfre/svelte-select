@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 4.4.1
+
+* Added missing prop 'placeholderAlwaysShow' to TypeScript declaration file (#305) - thanks to @paolotiu
+
 ## 4.4.0
 
 * Added support for non-selectable items - thanks to @mpdaugherty 
