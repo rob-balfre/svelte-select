@@ -8,7 +8,6 @@
     export let container = undefined;
     export let VirtualList = null;
     export let Item = ItemComponent;
-    export let isVirtualList = false;
     export let items = [];
     export let labelIdentifier = 'label';
     export let getOptionLabel = (option, filterText) => {
@@ -106,7 +105,7 @@
     }
 
     async function updateHoverItem(increment) {
-        if (isVirtualList) return;
+        if (VirtualList) return;
 
         let isNonSelectableItem = true;
 
@@ -178,7 +177,7 @@
     }
 
     function scrollToActiveItem(className) {
-        if (isVirtualList || !container) return;
+        if (VirtualList || !container) return;
 
         let offsetBounding;
         const focusedElemBounding = container.querySelector(
@@ -203,13 +202,18 @@
     }
 
     function isItemHover(hoverItemIndex, item, itemIndex, items) {
-        return isItemSelectable(item) && (hoverItemIndex === itemIndex || items.length === 1);
+        return (
+            isItemSelectable(item) &&
+            (hoverItemIndex === itemIndex || items.length === 1)
+        );
     }
 
     function isItemSelectable(item) {
-        return (item.isGroupHeader && item.isSelectable) ||
+        return (
+            (item.isGroupHeader && item.isSelectable) ||
             item.selectable ||
-            !item.hasOwnProperty('selectable') // Default; if `selectable` was not specified, the object is selectable
+            !item.hasOwnProperty('selectable')
+        );
     }
 
     let listStyle;
@@ -280,10 +284,10 @@
 
 <div
     class="listContainer"
-    class:virtualList={isVirtualList}
+    class:virtualList={VirtualList}
     bind:this={container}
     style={listStyle}>
-    {#if isVirtualList}
+    {#if VirtualList}
         <svelte:component
             this={VirtualList}
             {items}
@@ -294,7 +298,8 @@
                 on:mouseover={() => handleHover(i)}
                 on:focus={() => handleHover(i)}
                 on:click={(event) => handleClick({ item, i, event })}
-                class="listItem">
+                class="listItem"
+                tabindex="-1">
                 <svelte:component
                     this={Item}
                     {item}

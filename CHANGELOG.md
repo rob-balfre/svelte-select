@@ -1,6 +1,11 @@
 # svelte-select changelog
 
-## 5.0.0-alpha.0 (DO NOT USE!!!!!!)
+## unreleased
+
+* VirtualList null by default
+* Removed isVirtualList, will use VirtualList going forward
+
+## 5.0.0-alpha.0
 
 * Convert repo to use SvelteKit
 * Change licence from LIL to ISC
