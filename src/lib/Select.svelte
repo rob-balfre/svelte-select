@@ -4,9 +4,7 @@
     import _List from './List.svelte';
     import _Item from './Item.svelte';
     import _Selection from './Selection.svelte';
-    import _MultiSelection from './MultiSelection.svelte';
     import _ClearIcon from './ClearIcon.svelte';
-    import debounce from './debounce';
 
     const dispatch = createEventDispatcher();
 
@@ -23,7 +21,7 @@
     export let placeholder = 'Select...';
     export let placeholderAlwaysShow = false;
     export let items = null;
-    export let itemFilter = (label, filterText, option) =>
+    export let itemFilter = (label, filterText) =>
         `${label}`.toLowerCase().includes(filterText.toLowerCase());
     export let groupBy = undefined;
     export let groupFilter = (groups) => groups;
@@ -88,8 +86,9 @@
     export let Item = _Item;
     export let List = _List;
     export let Selection = _Selection;
-    export let MultiSelection = _MultiSelection;
+    export let MultiSelection = null;
     export let VirtualList = null;
+    export let debounce = null;
 
     function filterMethod(args) {
         if (args.loadOptions && args.filterText.length > 0) return;
@@ -675,7 +674,6 @@
 
 <style>
     .selectContainer {
-        --padding: 0 16px;
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--borderRadius, 3px);
         box-sizing: border-box;
@@ -683,7 +681,7 @@
         position: relative;
         display: flex;
         align-items: center;
-        padding: var(--padding);
+        padding: var(--padding, 0 16px);
         background: var(--background, #fff);
         margin: var(--margin, 0);
     }
@@ -694,7 +692,7 @@
         color: var(--inputColor, #3f4f5f);
         height: var(--height, 42px);
         line-height: var(--height, 42px);
-        padding: var(--inputPadding, var(--padding));
+        padding: var(--inputPadding, var(--padding, 0 16px));
         width: 100%;
         background: transparent;
         font-size: var(--inputFontSize, 14px);
