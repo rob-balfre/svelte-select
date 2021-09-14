@@ -678,7 +678,7 @@
 
 <style>
     .selectContainer {
-        --padding: 0 16px;
+        --internalPadding: 0 16px;
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--borderRadius, 3px);
         box-sizing: border-box;
@@ -686,7 +686,7 @@
         position: relative;
         display: flex;
         align-items: center;
-        padding: var(--padding);
+        padding: var(--padding, var(--internalPadding));
         background: var(--background, #fff);
         margin: var(--margin, 0);
     }
@@ -697,7 +697,7 @@
         color: var(--inputColor, #3f4f5f);
         height: var(--height, 42px);
         line-height: var(--height, 42px);
-        padding: var(--inputPadding, var(--padding));
+        padding: var(--inputPadding, var(--padding, var(--internalPadding)));
         width: 100%;
         background: transparent;
         font-size: var(--inputFontSize, 14px);
