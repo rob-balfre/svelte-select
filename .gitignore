@@ -7,3 +7,5 @@ node_modules
 /test/public/bundle.css
 /spec/page/public/build
 /test-results
+/.svelte-kit/
+/package/
