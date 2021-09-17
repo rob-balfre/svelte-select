@@ -36,6 +36,7 @@ export interface SelectProps {
   isWaiting?: boolean;
   listPlacement?: "auto" | "top" | "bottom";
   listOpen?: boolean;
+  listOffset?: number;
   list?: any;
   isVirtualList?: boolean;
   loadOptionsInterval?: number;
