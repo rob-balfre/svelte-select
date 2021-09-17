@@ -14,6 +14,7 @@ export interface SelectProps {
   value?: any;
   filterText?: string;
   placeholder?: string;
+  placeholderAlwaysShow?: boolean;
   items?: any[];
   itemFilter?: (label: string, filterText: string, option: any) => boolean;
   groupBy?: (item: any) => any;
