@@ -12,25 +12,6 @@ const name = pkg.name
 
 export default [
     {
-        input: 'src/index.js',
-        output: [
-            { file: pkg.module, format: 'es' },
-            { file: pkg.main, format: 'umd', name },
-        ],
-
-        plugins: [
-            cleaner({
-                targets: ['./dist/'],
-            }),
-            svelte({
-                emitCss: false,
-            }),
-            css(),
-            terser(),
-            resolve(),
-        ],
-    },
-    {
         input: 'test/src/index.js',
         output: {
             dir: './test/public',

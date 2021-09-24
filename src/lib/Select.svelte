@@ -5,6 +5,7 @@
     import _Item from './Item.svelte';
     import _Selection from './Selection.svelte';
     import _ClearIcon from './ClearIcon.svelte';
+    import _debounce from './debounce';
 
     const dispatch = createEventDispatcher();
 
@@ -88,7 +89,7 @@
     export let Selection = _Selection;
     export let MultiSelection = null;
     export let VirtualList = null;
-    export let debounce = null;
+    export let debounce = _debounce;
 
     function filterMethod(args) {
         if (args.loadOptions && args.filterText.length > 0) return;

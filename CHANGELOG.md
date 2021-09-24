@@ -2,6 +2,8 @@
 
 ## unreleased
 
+* debounce method is now exported as a prop
+* MultiSelection component no longer included by default, must be imported going forward
 * VirtualList null by default
 * Removed isVirtualList, will use VirtualList going forward
 
