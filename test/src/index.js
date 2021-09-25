@@ -4,6 +4,7 @@ import Select from '../../src/lib/Select.svelte';
 import MultiSelection from '../../src/lib/MultiSelection.svelte';
 import ChevronIcon from '../../src/lib/ChevronIcon.svelte';
 import ClearIcon from '../../src/lib/ClearIcon.svelte';
+import LoadingIcon from '../../src/lib/LoadingIcon.svelte';
 import TestIcon from './TestIcon.svelte';
 import TestClearIcon from './TestClearIcon.svelte';
 import SelectDefault from './Select/Select--default.svelte'
@@ -1177,19 +1178,20 @@ test('placeholder should be prop value', async (t) => {
   select.$destroy();
 });
 
-test('should display spinner when waiting is enabled', async (t) => {
+test('should display loading icon when waiting is enabled', async (t) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
 
   const select = new Select({
     target,
     props: {
+      LoadingIcon,
       items,
       isWaiting: true
     }
   });
 
-  t.ok(document.querySelector('.spinner'));
+  t.ok(document.querySelector('.loading'));
 
   select.$destroy();
 });

@@ -2,6 +2,7 @@
 
 ## unreleased
 
+* LoadingIcon prop added, must be imported to have a spinner/loader
 * CSS props updates. Added .icons and removed some css vars
 * ClearIcon and ChevronIcon no longer included by default
 * Removed logic to show chevron if isSearchable is false
