@@ -2,6 +2,8 @@ import normalizeHtml from '../utils/normalizeHtml';
 import CustomItem from './CustomItem.svelte';
 import Select from '../../src/lib/Select.svelte';
 import MultiSelection from '../../src/lib/MultiSelection.svelte';
+import ChevronIcon from '../../src/lib/ChevronIcon.svelte';
+import ClearIcon from '../../src/lib/ClearIcon.svelte';
 import TestIcon from './TestIcon.svelte';
 import TestClearIcon from './TestClearIcon.svelte';
 import SelectDefault from './Select/Select--default.svelte'
@@ -1151,23 +1153,6 @@ test('should not be able to search when searching is disabled', async (t) => {
 
   const selectInput = document.querySelector('.selectContainer input');
   t.ok(selectInput.attributes.readonly);
-
-  select.$destroy();
-});
-
-test('should display indicator when searching is disabled', async (t) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-
-  const select = new Select({
-    target,
-    props: {
-      items,
-      isSearchable: false
-    }
-  });
-
-  t.ok(document.querySelector('.indicator'));
 
   select.$destroy();
 });
@@ -2791,7 +2776,7 @@ test('When listAutoWidth is set to false list container should have style of wid
   });
 
   await wait(0);
-  const listWidth = document.querySelectorAll('.selectContainer > div')[0].style.width;
+  const listWidth = document.querySelectorAll('.listContainer')[0].style.width;
   t.ok(listWidth === '100%');
   select.$destroy();
 });
@@ -2848,28 +2833,30 @@ test('When showChevron prop is true and no value show chevron on Select', async 
   const select = new Select({
     target,
     props: {
+      ChevronIcon,
       items,
       showChevron: true
     }
   });
 
-  t.ok(document.querySelectorAll('.indicator')[0]);
+  t.ok(document.querySelectorAll('.chevron')[0]);
 
   select.$destroy();
 });
 
-test('When showIndicator and isClearable is true always show chevron on Select', async (t) => {
+test('When showChevron and isClearable is true always show chevron on Select', async (t) => {
   const select = new Select({
     target,
     props: {
+      ChevronIcon,
       items,
       value: {value: 'chocolate', label: 'Chocolate'},
-      showIndicator: true,
+      showChevron: true,
       isClearable: false
     }
   });
 
-  t.ok(document.querySelectorAll('.indicator')[0]);
+  t.ok(document.querySelectorAll('.chevron')[0]);
 
   select.$destroy();
 });
@@ -3383,28 +3370,6 @@ test('when loadOptions, isMulti and value then filterText should remain on promi
   select.$destroy();
 });
 
-
-test('When isClearable and showIndicator then indicator icon should not show when value', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      items,
-      isClearable: true,
-      showIndicator: true,
-      value: {value: 'chips', label: 'Chips'},
-    },
-  });
-
-  let elem = target.querySelector('.selectContainer .indicator');
-  t.ok(!elem);
-  select.value = null;
-  elem = target.querySelector('.selectContainer .indicator');
-  t.ok(elem);
-
-  select.$destroy();
-});
-
-
 test('When listOffset is set list position offset changes', async (t) => {
   const select = new Select({
     target,
@@ -3623,7 +3588,7 @@ test('When inputAttributes.name supplied, add to hidden input', async (t) => {
     props: {
       inputAttributes: { name: 'Foods' },
       items: items,
-      showIndicator: true,
+      showChevron: true,
     },
   });
 

@@ -4,7 +4,6 @@
     import _List from './List.svelte';
     import _Item from './Item.svelte';
     import _Selection from './Selection.svelte';
-    import _ClearIcon from './ClearIcon.svelte';
     import _debounce from './debounce';
 
     const dispatch = createEventDispatcher();
@@ -78,17 +77,16 @@
     export let Icon = undefined;
     export let iconProps = {};
     export let showChevron = false;
-    export let showIndicator = false;
     export let containerClasses = '';
-    export let indicatorSvg = undefined;
     export let listOffset = 5;
 
-    export let ClearIcon = _ClearIcon;
     export let Item = _Item;
     export let List = _List;
     export let Selection = _Selection;
     export let MultiSelection = null;
     export let VirtualList = null;
+    export let ChevronIcon = null;
+    export let ClearIcon = null;
     export let debounce = _debounce;
 
     function filterMethod(args) {
@@ -389,8 +387,10 @@
         }
     }
 
-    $: showSelectedItem = value && filterText.length === 0;
-    $: showClearIcon =
+    $: hasValue = isMulti ? value && value.length > 1 : value;
+    $: _showChevron = showChevron && ChevronIcon;
+    $: showSelectedItem = hasValue && filterText.length === 0;
+    $: showClear =
         showSelectedItem && isClearable && !isDisabled && !isWaiting;
     $: placeholderText =
         placeholderAlwaysShow && isMulti
@@ -742,45 +742,43 @@
         outline: none;
     }
 
-    .clearSelect {
+    .icons {
         position: absolute;
-        right: var(--clearSelectRight, 10px);
-        top: var(--clearSelectTop, 11px);
-        bottom: var(--clearSelectBottom, 11px);
-        width: var(--clearSelectWidth, 20px);
-        color: var(--clearSelectColor, #c5cacf);
+        display: flex;
+        right: var(--iconsRight, 0);
+        top: var(--iconsTop, 11px);
+        bottom: var(--iconsBottom, 11px);
+        color: var(--iconsColor, #c5cacf);
+    }
+
+    .icons > * {
+        transition: color 0.2s ease-in-out;
+    }
+
+    .selectContainer.focused .icons,
+    .chevron:hover,
+    .clearSelect:hover {
+        color: var(--iconsColorFocused, #2c3e50);
+    }
+
+    .clearSelect {
+        padding: 0 7px;
+        width: var(--clearSelectWidth, 35px);
+        height: 20px;
+        color: var(--clearSelectColor, --iconsColor);
         flex: none !important;
     }
 
-    .clearSelect:hover {
-        color: var(--clearSelectHoverColor, #2c3e50);
-    }
-
-    .selectContainer.focused .clearSelect {
-        color: var(--clearSelectFocusColor, #3f4f5f);
-    }
-
-    .indicator {
-        position: absolute;
-        right: var(--indicatorRight, 10px);
-        top: var(--indicatorTop, 11px);
-        width: var(--indicatorWidth, 20px);
+    .chevron {
+        display: flex;
+        padding: 0 7px;
+        box-shadow: -1px 0 0 0 #c5cacf;
+        width: var(--indicatorWidth, 35px);
         height: var(--indicatorHeight, 20px);
-        color: var(--indicatorColor, #c5cacf);
-    }
-
-    .indicator svg {
-        display: inline-block;
-        fill: var(--indicatorFill, currentcolor);
-        line-height: 1;
-        stroke: var(--indicatorStroke, currentcolor);
-        stroke-width: 0;
+        color: var(--indicatorColor, --iconsColor);
     }
 
     .spinner {
-        position: absolute;
-        right: var(--spinnerRight, 10px);
-        top: var(--spinnerLeft, 11px);
         width: var(--spinnerWidth, 20px);
         height: var(--spinnerHeight, 20px);
         color: var(--spinnerColor, #51ce6c);
@@ -910,52 +908,38 @@
         </div>
     {/if}
 
-    {#if showClearIcon}
-        <div
-            class="clearSelect"
-            on:click|preventDefault={handleClear}
-            aria-hidden="true">
-            <svelte:component this={ClearIcon} />
-        </div>
-    {/if}
+    <div class="icons">
+        {#if showClear}
+            <div
+                class="clearSelect"
+                on:click|preventDefault={handleClear}
+                aria-hidden="true">
+                <svelte:component this={ClearIcon} />
+            </div>
+        {/if}
 
-    {#if !showClearIcon && (showIndicator || (showChevron && !value) || (!isSearchable && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem)))}
-        <div class="indicator" aria-hidden="true">
-            {#if indicatorSvg}
-                {@html indicatorSvg}
-            {:else}
-                <svg
-                    width="100%"
-                    height="100%"
-                    viewBox="0 0 20 20"
-                    focusable="false"
-                    aria-hidden="true">
-                    <path
-                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747
-          3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0
-          1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502
-          0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0
-          0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z" />
+        {#if _showChevron}
+            <div class="chevron" aria-hidden="true">
+                <svelte:component this={ChevronIcon} />
+            </div>
+        {/if}
+
+        {#if isWaiting}
+            <div class="spinner">
+                <svg class="spinner_icon" viewBox="25 25 50 50">
+                    <circle
+                        class="spinner_path"
+                        cx="50"
+                        cy="50"
+                        r="20"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="5"
+                        stroke-miterlimit="10" />
                 </svg>
-            {/if}
-        </div>
-    {/if}
-
-    {#if isWaiting}
-        <div class="spinner">
-            <svg class="spinner_icon" viewBox="25 25 50 50">
-                <circle
-                    class="spinner_path"
-                    cx="50"
-                    cy="50"
-                    r="20"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="5"
-                    stroke-miterlimit="10" />
-            </svg>
-        </div>
-    {/if}
+            </div>
+        {/if}
+    </div>
 
     {#if listOpen}
         <svelte:component

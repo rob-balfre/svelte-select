@@ -2,14 +2,17 @@
 
 ## unreleased
 
-* removed playwright and puppeteer, test now just run in browser with sirv
+* CSS props updates. Added .icons and removed some css vars
+* ClearIcon and ChevronIcon no longer included by default
+* Removed logic to show chevron if isSearchable is false
+* indicator class renamed to chevron 
+* showIndicator renamed showChevron
+* indicatorSvg removed, use ChevronIcon going forward
+* removed playwright and puppeteer, tests now just run in the browser with sirv
 * debounce method is now exported as a prop
 * MultiSelection component no longer included by default, must be imported going forward
 * VirtualList null by default
 * Removed isVirtualList, will use VirtualList going forward
-
-## 5.0.0-alpha.0
-
 * Convert repo to use SvelteKit
 * Change licence from LIL to ISC
 * Cleaned up package.json 

@@ -13,5 +13,6 @@
         type="text"
         aria-autocomplete="list"
         placeholder="Select..." />
+        <div class="icons"></div>
     <input type="hidden" value="" />
 </div>

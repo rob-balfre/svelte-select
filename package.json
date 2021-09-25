@@ -8,7 +8,7 @@
     "build": "svelte-kit build",
     "preview": "svelte-kit preview",
     "dev-tests": "rollup -cw",
-    "test:browser": "sirv test/public -p 3000",
+    "test:browser": "sirv test/public -p 3000 --dev",
     "gen:docs": "node docs/generate_theming_variables_md.js",
     "package": "svelte-kit package"
   },
