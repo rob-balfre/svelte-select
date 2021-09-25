@@ -1,36 +1,31 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onMount, tick } from 'svelte';
     import isOutOfViewport from './isOutOfViewport';
-    import ItemComponent from './Item.svelte';
 
     const dispatch = createEventDispatcher();
 
-    export let container = undefined;
-    export let VirtualList = null;
-    export let Item = ItemComponent;
-    export let items = [];
-    export let labelIdentifier = 'label';
-    export let getOptionLabel = (option, filterText) => {
-        if (option)
-            return option.isCreator
-                ? `Create \"${filterText}\"`
-                : option[labelIdentifier];
-    };
-    export let getGroupHeaderLabel = null;
-    export let itemHeight = 40;
-    export let hoverItemIndex = 0;
-    export let value = undefined;
-    export let optionIdentifier = 'value';
-    export let hideEmptyState = false;
-    export let noOptionsMessage = 'No options';
-    export let isMulti = false;
-    export let activeItemIndex = 0;
-    export let filterText = '';
-    export let parent = null;
-    export let listPlacement = null;
-    export let listAutoWidth = null;
-    export let listOffset = 5;
+    export let Item;
+    export let VirtualList;
+    
+    export let filterText;
+    export let optionIdentifier;
+    export let noOptionsMessage;
+    export let hideEmptyState;
+    export let value;
+    export let isMulti;
+    export let getGroupHeaderLabel;
+    export let items;
+    export let itemHeight;
+    export let getOptionLabel;
+    export let listPlacement;
+    export let parent;
+    export let listAutoWidth;
+    export let listOffset;
 
+    export let hoverItemIndex = 0;
+    export let activeItemIndex = 0;
+
+    let container = undefined;
     let isScrollingTimer = 0;
     let isScrolling = false;
     let prev_items;

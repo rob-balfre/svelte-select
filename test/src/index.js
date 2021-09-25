@@ -1,6 +1,4 @@
-import getName from '../utils/nameGen';
 import normalizeHtml from '../utils/normalizeHtml';
-
 import CustomItem from './CustomItem.svelte';
 import Select from '../../src/lib/Select.svelte';
 import List from '../../src/lib/List.svelte';
@@ -200,32 +198,37 @@ test('when isFocused changes to true input should focus', async (t) => {
 });
 
 test('default empty list', async (t) => {
-  const list = new List({
+  const select = new Select({
     target,
+    props: {
+      listOpen: true
+    }
   });
 
   t.ok(target.querySelector('.empty'));
 
-  list.$destroy();
+  select.$destroy();
 });
 
 test('default list with five items', async (t) => {
-  const list = new List({
+  const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithIndex
     }
   });
 
   t.ok(target.getElementsByClassName('listItem').length);
 
-  list.$destroy();
+  select.$destroy();
 });
 
 test('should highlight active list item', async (t) => {
-  const list = new List({
+  const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithIndex,
       value: {value: 'pizza', label: 'Pizza', index: 1}
     }
@@ -233,7 +236,7 @@ test('should highlight active list item', async (t) => {
 
   t.ok(target.querySelector('.listItem .active').innerHTML === 'Pizza');
 
-  list.$destroy();
+  select.$destroy();
 });
 
 test('list scrolls to active item', async (t) => {
@@ -242,9 +245,11 @@ test('list scrolls to active item', async (t) => {
     {value: 'fried-chicken', label: 'Fried Chicken', index: 6},
     {value: 'sunday-roast', label: 'Sunday Roast', index: 7},
   ];
-  const list = new List({
+
+  const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithIndex.concat(extras),
       value: {value: 'sunday-roast', label: 'Sunday Roast'},
     }
@@ -258,7 +263,7 @@ test('list scrolls to active item', async (t) => {
   }
 
   t.equal(offsetBounding, 0);
-  list.$destroy();
+  select.$destroy();
 });
 
 test('list scrolls to hovered item when navigating with keys', async (t) => {
@@ -267,9 +272,11 @@ test('list scrolls to hovered item when navigating with keys', async (t) => {
     {value: 'fried-chicken', label: 'Fried Chicken', index: 6},
     {value: 'sunday-roast', label: 'Sunday Roast', index: 7},
   ];
-  const list = new List({
+
+  const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithIndex.concat(extras)
     }
   });
@@ -292,68 +299,74 @@ test('list scrolls to hovered item when navigating with keys', async (t) => {
 
 
   t.ok(selectedItemsAreWithinBounds);
-  list.$destroy();
+  select.$destroy();
 });
 
 test('hover item updates on keyUp or keyDown', async (t) => {
-  const list = new List({
+  const select = new Select({
     target,
     props: {
-      items: items,
-      activeItemIndex: 0,
+      listOpen: true,
+      items: items
     }
   });
 
   await handleKeyboard('ArrowDown');
   const focusedElemBounding = target.querySelector('.listItem .hover');
   t.equal(focusedElemBounding.innerHTML.trim(), `Pizza`);
-  list.$destroy();
+  select.$destroy();
 });
 
 test('on enter active item fires a itemSelected event', async (t) => {
-  const list = new List({
+  const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithIndex
     }
   });
 
   let value = undefined;
-  list.$on('itemSelected', event => {
-    value = event;
+
+  select.$on('select', event => {
+    value = JSON.stringify(event.detail);
   });
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.equal(JSON.stringify(value.detail), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
-  list.$destroy();
+  await wait(0);
+  t.equal(value, JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
+  select.$destroy();
 });
 
 test('on tab active item fires a itemSelected event', async (t) => {
-  const list = new List({
+  const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithIndex
     }
   });
 
   let value = undefined;
-  list.$on('itemSelected', event => {
-    value = event;
+  select.$on('select', event => {
+    value = JSON.stringify(event.detail);
   });
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
-  t.equal(JSON.stringify(value.detail), JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
-  list.$destroy();
+  await wait(0);
+  t.equal(value, JSON.stringify({value: 'cake', label: 'Cake', index: 2}));
+  select.$destroy();
 });
 
 test('on selected of current active item does not fire a itemSelected event', async (t) => {
-  const list = new List({
+  const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: itemsWithIndex,
       value: { value: 'chocolate', label: 'Chocolate', index: 0 }
     }
@@ -361,14 +374,14 @@ test('on selected of current active item does not fire a itemSelected event', as
 
   let itemSelectedFired = false;
 
-  list.$on('itemSelected', () => {
+  select.$on('select', () => {
     itemSelectedFired = true;
   });
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
   t.equal(itemSelectedFired, false);
-  list.$destroy();
+  select.$destroy();
 });
 
 test('selected item\'s default view', async (t) => {
@@ -980,9 +993,10 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
   target.style.width = '300px';
   target.style.position = 'relative';
 
-  const list = new List({
+  const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: [
         {
           index: 0,
@@ -1002,7 +1016,7 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
   t.ok(first.scrollWidth > first.clientWidth);
   t.ok(last.scrollWidth === last.clientWidth);
 
-  list.$destroy();
+  select.$destroy();
   target.style.width = '';
 });
 
@@ -1060,9 +1074,10 @@ test('clicking between Selects should close and blur other Select', async (t) =>
 });
 
 test('if only one item in list it should have hover state', async (t) => {
-  const list = new List({
+  const select = new Select({
     target,
     props: {
+      listOpen: true,
       items: [{
         index: 0,
         name: 'test one'
@@ -1072,7 +1087,7 @@ test('if only one item in list it should have hover state', async (t) => {
 
   t.ok(document.querySelector('.listItem .item').classList.contains('hover'));
 
-  list.$destroy();
+  select.$destroy();
 });
 
 test(`hovered item in a filtered list shows hover state`, async (t) => {
@@ -1299,12 +1314,8 @@ test('clicking an item with selectable: true should make a selected', async (t) 
   });
 
   await wait(0);
-
-  // selectableDefault
   await querySelectorClick('.listItem:nth-child(3)')
-  console.log(select.value)
   t.ok(select.value && select.value.value == 'selectableTrue');
-
   select.$destroy();
 });
 
