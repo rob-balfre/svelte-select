@@ -2,6 +2,7 @@
 
 ## unreleased
 
+* removed playwright and puppeteer, test now just run in browser with sirv
 * debounce method is now exported as a prop
 * MultiSelection component no longer included by default, must be imported going forward
 * VirtualList null by default

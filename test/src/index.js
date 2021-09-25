@@ -1,7 +1,6 @@
 import normalizeHtml from '../utils/normalizeHtml';
 import CustomItem from './CustomItem.svelte';
 import Select from '../../src/lib/Select.svelte';
-import List from '../../src/lib/List.svelte';
 import MultiSelection from '../../src/lib/MultiSelection.svelte';
 import TestIcon from './TestIcon.svelte';
 import TestClearIcon from './TestClearIcon.svelte';
@@ -3816,6 +3815,22 @@ test('When id supplied then add to input', async (t) => {
   select.$destroy();
 });
 
-// this allows us to close puppeteer once tests have completed
-window.done = done;
-export default {};
+
+test('allows the user to select an item by clicking with a focusable ancestor', async (t) => {
+  const ancestor = document.createElement("div");
+  ancestor.setAttribute("tabindex", "-1");
+  target.appendChild(ancestor);
+
+  const select = new Select({
+    target: ancestor,
+    props: {
+      items,
+    },
+  });
+
+  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.listItem');
+  t.equal(select.value.label, 'Chocolate');
+
+  select.$destroy();
+});
