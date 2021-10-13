@@ -2,6 +2,8 @@
 
 ## unreleased
 
+* bye bye yarn
+* selectContainer and other CSS class names updated, selectContainer -> select-container for example
 * LoadingIcon prop added, must be imported to have a spinner/loader
 * CSS props updates. Added .icons and removed some css vars
 * ClearIcon and ChevronIcon no longer included by default

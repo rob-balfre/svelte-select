@@ -1,4 +1,4 @@
-<div class="selectContainer">
+<div class="select-container">
     <span
         aria-live="polite"
         aria-atomic="false"

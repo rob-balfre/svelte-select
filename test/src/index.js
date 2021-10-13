@@ -194,7 +194,7 @@ test('when isFocused changes to true input should focus', async (t) => {
     select.$set({isFocused: true});
   };
 
-  const hasFocused = await focus(target.querySelector('.selectContainer input'), setFocus);
+  const hasFocused = await focus(target.querySelector('.select-container input'), setFocus);
   t.ok(hasFocused);
   select.$destroy();
 });
@@ -429,7 +429,7 @@ test('clicking on Select opens List', async (t) => {
     target,
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   const listContainer = document.querySelector('.listContainer');
   t.ok(listContainer);
 
@@ -444,7 +444,7 @@ test('Select opens List populated with items', async (t) => {
     }
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   t.ok(target.querySelector('.listItem'));
 
   select.$destroy();
@@ -458,7 +458,7 @@ test('List starts with first item in hover state', async (t) => {
     }
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   t.ok(target.querySelector('.listItem .hover').innerHTML === 'Chocolate');
 
   select.$destroy();
@@ -472,7 +472,7 @@ test('select item from list', async (t) => {
     }
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   await handleKeyboard('ArrowDown');
   await handleKeyboard('ArrowDown');
   await handleKeyboard('Enter');
@@ -492,7 +492,7 @@ test('when listPosition is set to top list should be above the input', async (t)
   });
 
   const distanceOfListBottomFromViewportTop = document.querySelector('.listContainer').getBoundingClientRect().bottom;
-  const distanceOfInputTopFromViewportTop = document.querySelector('.selectContainer').getBoundingClientRect().top;
+  const distanceOfInputTopFromViewportTop = document.querySelector('.select-container').getBoundingClientRect().top;
 
   t.ok(distanceOfListBottomFromViewportTop <= distanceOfInputTopFromViewportTop);
 
@@ -511,7 +511,7 @@ test('when listPlacement is set to bottom the list should be below the input', a
 
   await wait(0);
   const distanceOfListTopFromViewportTop = document.querySelector('.listContainer').getBoundingClientRect().top;
-  const distanceOfInputBottomFromViewportTop = document.querySelector('.selectContainer').getBoundingClientRect().bottom;
+  const distanceOfInputBottomFromViewportTop = document.querySelector('.select-container').getBoundingClientRect().bottom;
 
   t.ok(distanceOfListTopFromViewportTop >= distanceOfInputBottomFromViewportTop);
 
@@ -533,7 +533,7 @@ test('blur should close list and remove focus from select', async (t) => {
   div.click();
   div.remove();
   t.ok(!document.querySelector('.listContainer'));
-  t.ok(document.querySelector('.selectContainer input') !== document.activeElement);
+  t.ok(document.querySelector('.select-container input') !== document.activeElement);
   select.$destroy();
 });
 
@@ -545,12 +545,12 @@ test('selecting item should close list but keep focus on select', async (t) => {
     }
   });
 
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
   t.ok(!document.querySelector('.listContainer'));
-  t.ok(document.querySelector('.selectContainer.focused'));
+  t.ok(document.querySelector('.select-container.focused'));
   select.$destroy();
 });
 
@@ -562,13 +562,13 @@ test('clicking Select with selected item should open list with item listed as ac
     }
   });
 
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   await wait(0);
   t.ok(document.querySelector('.listItem .hover').innerHTML === 'Cake');
   select.$destroy();
@@ -582,7 +582,7 @@ test('focus on Select input updates focus state', async (t) => {
     }
   });
   
-  document.querySelector('.selectContainer input').focus();
+  document.querySelector('.select-container input').focus();
 
   t.ok(select.isFocused);
   select.$destroy();
@@ -596,7 +596,7 @@ test('key up and down when Select focused opens list', async (t) => {
     }
   });
 
-  document.querySelector('.selectContainer input').focus();
+  document.querySelector('.select-container input').focus();
   await wait(0);
   t.ok(select.isFocused);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
@@ -615,13 +615,13 @@ test('List should keep width of parent Select', async (t) => {
     }
   });
 
-  document.querySelector('.selectContainer input').focus();
+  document.querySelector('.select-container input').focus();
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
-  const selectContainer = document.querySelector('.selectContainer');
+  const select-container = document.querySelector('.select-container');
   const listContainer = document.querySelector('.listContainer');
-  t.equal(selectContainer.offsetWidth, listContainer.offsetWidth);
+  t.equal(select-container.offsetWidth, listContainer.offsetWidth);
 
   select.$destroy();
 });
@@ -637,10 +637,10 @@ test('Placeholder text should reappear when List is closed', async (t) => {
     }
   });
 
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   div.click();
   div.remove();
-  const selectInput = document.querySelector('.selectContainer input');
+  const selectInput = document.querySelector('.select-container input');
   t.equal(selectInput.attributes.placeholder.value, 'Select...');
 
   select.$destroy();
@@ -654,12 +654,12 @@ test('typing in Select filter will hide selected Item', async (t) => {
     }
   });
 
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   select.$set({filterText: 'potato'});
-  t.ok(!document.querySelector('.selectContainer .value'));
+  t.ok(!document.querySelector('.select-container .value'));
 
   select.$destroy();
 });
@@ -672,7 +672,7 @@ test('clearing selected item closes List if open', async (t) => {
     }
   });
 
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
@@ -696,12 +696,12 @@ test('closing List clears Select filter text', async (t) => {
     }
   });
 
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   select.$set({filterText: 'potato'});
   div.click();
   div.remove();
-  const selectInput = document.querySelector('.selectContainer input');
+  const selectInput = document.querySelector('.select-container input');
   t.equal(selectInput.attributes.placeholder.value, 'Select...');
 
   select.$destroy();
@@ -718,12 +718,12 @@ test('closing List clears Select filter text', async (t) => {
     }
   });
 
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   select.$set({filterText: 'potato'});
   div.click();
   div.remove();
-  const selectInput = document.querySelector('.selectContainer input');
+  const selectInput = document.querySelector('.select-container input');
   t.equal(selectInput.attributes.placeholder.value, 'Select...');
 
   select.$destroy();
@@ -740,12 +740,12 @@ test('closing List item clears Select filter text', async (t) => {
     }
   });
 
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   select.$set({filterText: 'potato'});
   div.click();
   div.remove();
-  const selectInput = document.querySelector('.selectContainer input');
+  const selectInput = document.querySelector('.select-container input');
   t.equal(selectInput.attributes.placeholder.value, 'Select...');
 
   select.$destroy();
@@ -760,7 +760,7 @@ test('typing while Select is focused populates Select filter text', async (t) =>
   });
 
   select.$set({isFocused: true});
-  document.querySelector('.selectContainer input').blur();
+  document.querySelector('.select-container input').blur();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 't'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'e'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 's'}));
@@ -779,7 +779,7 @@ test('Select input placeholder wipes while item is selected', async (t) => {
     }
   });
 
-  const selectInput = document.querySelector('.selectContainer input');
+  const selectInput = document.querySelector('.select-container input');
   t.equal(selectInput.attributes.placeholder.value, '');
 
   select.$destroy();
@@ -811,9 +811,9 @@ test('clicking Select toggles List open state', async (t) => {
   });
 
   t.ok(!document.querySelector('.listContainer'));
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   t.ok(document.querySelector('.listContainer'));
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   t.ok(!document.querySelector('.listContainer'));
 
   select.$destroy();
@@ -889,7 +889,7 @@ test('Select container styles can be overridden', async (t) => {
     }
   });
 
-  t.equal(document.querySelector('.selectContainer').style.cssText, `padding-left: 40px;`);
+  t.equal(document.querySelector('.select-container').style.cssText, `padding-left: 40px;`);
   select.$destroy();
 });
 
@@ -902,7 +902,7 @@ test('Select can be disabled', async (t) => {
     }
   });
 
-  t.ok(document.querySelector('.selectContainer.disabled'));
+  t.ok(document.querySelector('.select-container.disabled'));
 
   select.$destroy();
 });
@@ -980,7 +980,7 @@ test(`two way binding between Select and it's parent component`, async (t) => {
   });
 
   t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
@@ -1032,7 +1032,7 @@ test('focusing in an external textarea should close and blur it', async (t) => {
     }
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   t.ok(select.listOpen);
   textarea.focus();
   await wait(0);
@@ -1059,13 +1059,13 @@ test('clicking between Selects should close and blur other Select', async (t) =>
     }
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   t.ok(select.listOpen);
   t.ok(select.isFocused);
   t.ok(!other.isFocused);
   t.ok(!other.isFocused);
 
-  await querySelectorClick('#extra .selectContainer');
+  await querySelectorClick('#extra .select-container');
   t.ok(!select.listOpen);
   t.ok(!select.isFocused);
   t.ok(other.listOpen);
@@ -1118,7 +1118,7 @@ test(`data shouldn't be stripped from item - currently only saves name`, async (
     }
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   await querySelectorClick('.listItem');
   t.equal(JSON.stringify(select.value), JSON.stringify({value: 'chocolate', label: 'Chocolate'}));
 
@@ -1134,7 +1134,7 @@ test('should not be able to clear when clearing is disabled', async (t) => {
     }
   });
 
-  document.querySelector('.selectContainer').click();
+  document.querySelector('.select-container').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
@@ -1152,7 +1152,7 @@ test('should not be able to search when searching is disabled', async (t) => {
     }
   });
 
-  const selectInput = document.querySelector('.selectContainer input');
+  const selectInput = document.querySelector('.select-container input');
   t.ok(selectInput.attributes.readonly);
 
   select.$destroy();
@@ -1172,7 +1172,7 @@ test('placeholder should be prop value', async (t) => {
     }
   });
 
-  const selectInput = document.querySelector('.selectContainer input');
+  const selectInput = document.querySelector('.select-container input');
   t.equal(selectInput.attributes.placeholder.value, placeholder);
 
   select.$destroy();
@@ -1206,7 +1206,7 @@ test('inputStyles prop applies css to select input', async (t) => {
     }
   });
 
-  t.equal(document.querySelector('.selectContainer input').style.cssText, `padding-left: 40px;`);
+  t.equal(document.querySelector('.select-container input').style.cssText, `padding-left: 40px;`);
   select.$destroy();
 });
 
@@ -1316,7 +1316,7 @@ test('when groupBy, no active item and keydown enter is fired then list should c
   });
 
   await wait(0);
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.ok(!select.value);
 
@@ -1455,7 +1455,7 @@ test('when isMulti is true clicking item in List will populate value', async (t)
     }
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   await querySelectorClick('.listItem');
 
   t.equal(JSON.stringify(select.value), JSON.stringify([{value: 'chocolate', label: 'Chocolate'}]));
@@ -1569,7 +1569,7 @@ test('when isMulti and groupBy is active then items should be selectable', async
   });
 
   target.style.maxWidth = '400px';
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   await querySelectorClick('.listItem');
   t.equal(JSON.stringify(select.value), JSON.stringify([{"isGroupItem":true,"value":"chocolate","label":"Chocolate","group":"Sweet"}]));
 
@@ -1587,9 +1587,9 @@ test('when isMulti and selected items reach edge of container then Select height
   });
 
   target.style.maxWidth = '250px';
-  t.ok(document.querySelector('.selectContainer').scrollHeight === 42);
+  t.ok(document.querySelector('.select-container').scrollHeight === 42);
   await handleSet(select, {value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]});
-  t.ok(document.querySelector('.selectContainer').scrollHeight > 44);
+  t.ok(document.querySelector('.select-container').scrollHeight > 44);
   select.$destroy();
 });
 
@@ -1646,7 +1646,7 @@ test('when isMulti and value has items and list opens then first item in list sh
     }
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   await querySelectorClick('.listItem');
   await handleKeyboard('ArrowDown');
 
@@ -1719,7 +1719,7 @@ test('when getValue method is set should use that key to update value', async (t
   });
 
   t.ok(select.value.id === 0);
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.ok(select.value.id === 1);
@@ -2895,7 +2895,7 @@ test('Select container classes can be injected', async (t) => {
   });
 
   t.ok(
-    document.querySelector('.selectContainer').classList.contains('testclass')
+    document.querySelector('.select-container').classList.contains('testclass')
   );
   select.$destroy();
 });
@@ -3208,7 +3208,7 @@ test('clicking outside the Select should close and blur it', async (t) => {
     }
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   t.ok(select.listOpen);
   await querySelectorClick('#extra');
   t.ok(!select.listOpen);
@@ -3226,7 +3226,7 @@ test('clicking on an external textarea should close and blur it', async (t) => {
     }
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   t.ok(select.listOpen);
   await querySelectorClick('textarea');
   t.ok(!select.listOpen);
@@ -3269,7 +3269,7 @@ test('when isSearchable is false then input should be readonly', async (t) => {
     }
   });
 
-  let elem = target.querySelector('.selectContainer input');
+  let elem = target.querySelector('.select-container input');
   t.ok(elem.hasAttribute('readonly'));
 
   select.$destroy();
@@ -3309,7 +3309,7 @@ test('when isMulti and placeholderAlwaysShow then always show placeholder text',
   });
 
   await wait(0);
-  let elem = target.querySelector('.selectContainer input[type="text"]');
+  let elem = target.querySelector('.select-container input[type="text"]');
   t.ok(elem.placeholder === 'foo bar');
 
   select.$destroy();
@@ -3795,7 +3795,7 @@ test('allows the user to select an item by clicking with a focusable ancestor', 
     },
   });
 
-  await querySelectorClick('.selectContainer');
+  await querySelectorClick('.select-container');
   await querySelectorClick('.listItem');
   t.equal(select.value.label, 'Chocolate');
 

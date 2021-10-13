@@ -1,5 +1,5 @@
 <!-- DEV ONLY IMPORTS -->
-<div class="selectContainer multiSelect">
+<div class="select-container multiSelect">
     <div class="multiSelectItem">
       <div class="multiSelectItem_label">
         Pizza
@@ -32,14 +32,14 @@
 </div>
 
 <style>
-  .selectContainer {
+  .select-container {
     border: 1px solid #D8DBDF;
     border-radius: 3px;
     height: 42px;
     position: relative;
   }
 
-  .selectContainer input {
+  .select-container input {
     border: none;
     color: #3F4F5F;
     height: 42px;
@@ -51,15 +51,15 @@
     letter-spacing: -0.08px;
   }
 
-  .selectContainer input::placeholder {
+  .select-container input::placeholder {
     color: #78848F;
   }
 
-  .selectContainer:hover {
+  .select-container:hover {
     border-color: #b2b8bf;
   }
 
-  .selectContainer input:focus {
+  .select-container input:focus {
     outline: none;
   }
 
@@ -94,7 +94,7 @@
     padding: 0 5px 0 10px;
   }
 
-  .selectContainer.multiSelect input {
+  .select-container.multiSelect input {
     width: auto;
     padding: 0;
     flex-grow: 1;

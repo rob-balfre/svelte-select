@@ -13,8 +13,12 @@
     "package": "svelte-kit package"
   },
   "devDependencies": {
-    "@sveltejs/kit": "1.0.0-next.173",
+    "@sveltejs/kit": "1.0.0-next.180",
+    "autoprefixer": "^10.3.7",
+    "cross-env": "^7.0.3",
     "find-in-files": "^0.5.0",
+    "postcss-cli": "^9.0.1",
+    "postcss-import": "^14.0.2",
     "prettier": "~2.2.1",
     "prettier-plugin-svelte": "^2.2.0",
     "rollup": "^2.41.2",
@@ -24,7 +28,9 @@
     "rollup-plugin-svelte": "^7.1.0",
     "sirv-cli": "^1.0.14",
     "svelte": "^3.43.0",
+    "svelte-preprocess": "^4.9.8",
     "svelte2tsx": "^0.4.5",
+    "tailwindcss": "^2.2.16",
     "tape-modern": "^1.1.1",
     "typescript": "^4.4.2"
   },
