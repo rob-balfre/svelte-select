@@ -258,7 +258,7 @@ test('list scrolls to active item', async (t) => {
   });
 
   let offsetBounding;
-  const container = target.querySelector('.listContainer');
+  const container = target.querySelector('.list-container');
   const focusedElemBounding = container.querySelector('.listItem .active');
   if (focusedElemBounding) {
     offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
@@ -283,7 +283,7 @@ test('list scrolls to hovered item when navigating with keys', async (t) => {
     }
   });
 
-  const container = target.querySelector('.listContainer');
+  const container = target.querySelector('.list-container');
   const totalListItems = container.querySelectorAll('.listItem').length;
   let selectedItemsAreWithinBounds = true;
   let loopCount = 1;
@@ -430,7 +430,7 @@ test('clicking on Select opens List', async (t) => {
   });
 
   await querySelectorClick('.select-container');
-  const listContainer = document.querySelector('.listContainer');
+  const listContainer = document.querySelector('.list-container');
   t.ok(listContainer);
 
   select.$destroy();
@@ -491,7 +491,7 @@ test('when listPosition is set to top list should be above the input', async (t)
     }
   });
 
-  const distanceOfListBottomFromViewportTop = document.querySelector('.listContainer').getBoundingClientRect().bottom;
+  const distanceOfListBottomFromViewportTop = document.querySelector('.list-container').getBoundingClientRect().bottom;
   const distanceOfInputTopFromViewportTop = document.querySelector('.select-container').getBoundingClientRect().top;
 
   t.ok(distanceOfListBottomFromViewportTop <= distanceOfInputTopFromViewportTop);
@@ -510,7 +510,7 @@ test('when listPlacement is set to bottom the list should be below the input', a
   });
 
   await wait(0);
-  const distanceOfListTopFromViewportTop = document.querySelector('.listContainer').getBoundingClientRect().top;
+  const distanceOfListTopFromViewportTop = document.querySelector('.list-container').getBoundingClientRect().top;
   const distanceOfInputBottomFromViewportTop = document.querySelector('.select-container').getBoundingClientRect().bottom;
 
   t.ok(distanceOfListTopFromViewportTop >= distanceOfInputBottomFromViewportTop);
@@ -532,7 +532,7 @@ test('blur should close list and remove focus from select', async (t) => {
   select.$set({isFocused: true});
   div.click();
   div.remove();
-  t.ok(!document.querySelector('.listContainer'));
+  t.ok(!document.querySelector('.list-container'));
   t.ok(document.querySelector('.select-container input') !== document.activeElement);
   select.$destroy();
 });
@@ -549,7 +549,7 @@ test('selecting item should close list but keep focus on select', async (t) => {
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
-  t.ok(!document.querySelector('.listContainer'));
+  t.ok(!document.querySelector('.list-container'));
   t.ok(document.querySelector('.select-container.focused'));
   select.$destroy();
 });
@@ -601,7 +601,7 @@ test('key up and down when Select focused opens list', async (t) => {
   t.ok(select.isFocused);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
-  t.ok(document.querySelector('.listContainer'));
+  t.ok(document.querySelector('.list-container'));
 
   select.$destroy();
 });
@@ -620,7 +620,7 @@ test('List should keep width of parent Select', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
   const select-container = document.querySelector('.select-container');
-  const listContainer = document.querySelector('.listContainer');
+  const listContainer = document.querySelector('.list-container');
   t.equal(select-container.offsetWidth, listContainer.offsetWidth);
 
   select.$destroy();
@@ -680,7 +680,7 @@ test('clearing selected item closes List if open', async (t) => {
   await wait(0);
   select.handleClear();
   await wait(0);
-  t.ok(!document.querySelector('.listContainer'));
+  t.ok(!document.querySelector('.list-container'));
 
   select.$destroy();
 });
@@ -795,9 +795,9 @@ test('Select listOpen state controls List', async (t) => {
   });
 
   await wait(0);
-  t.ok(document.querySelector('.listContainer'));
+  t.ok(document.querySelector('.list-container'));
   await handleSet(select, {listOpen: false})
-  t.ok(!document.querySelector('.listContainer'));
+  t.ok(!document.querySelector('.list-container'));
 
   select.$destroy();
 });
@@ -810,11 +810,11 @@ test('clicking Select toggles List open state', async (t) => {
     }
   });
 
-  t.ok(!document.querySelector('.listContainer'));
+  t.ok(!document.querySelector('.list-container'));
   await querySelectorClick('.select-container');
-  t.ok(document.querySelector('.listContainer'));
+  t.ok(document.querySelector('.list-container'));
   await querySelectorClick('.select-container');
-  t.ok(!document.querySelector('.listContainer'));
+  t.ok(!document.querySelector('.list-container'));
 
   select.$destroy();
 });
@@ -860,7 +860,7 @@ test('Typing in the Select filter opens List', async (t) => {
   });
 
   await handleSet(select, {filterText: '5'})
-  t.ok(document.querySelector('.listContainer'));
+  t.ok(document.querySelector('.list-container'));
   select.$destroy();
 });
 
@@ -1224,7 +1224,7 @@ test('items should be grouped by groupBy expression', async (t) => {
     return item.group;
   }
 
-  let title = document.querySelector('.listGroupTitle').innerHTML;
+  let title = document.querySelector('.list-group-title').innerHTML;
   t.ok(title === 'Sweet');
   let item = document.querySelector('.listItem .item').innerHTML; 
   t.ok(item === 'Chocolate');
@@ -1243,7 +1243,7 @@ test('clicking group header should not make a selected', async (t) => {
   });
 
   await wait(0);
-  await querySelectorClick('.listGroupTitle');
+  await querySelectorClick('.list-group-title');
 
   t.ok(!select.value);
 
@@ -1383,7 +1383,7 @@ test('group headers label should be created by getGroupHeaderLabel(item)', async
 
   const groupHeaderItem = select.getFilteredItems()[0];
 
-  t.equal(target.querySelector('.listGroupTitle').textContent, getGroupHeaderLabel(groupHeaderItem));
+  t.equal(target.querySelector('.list-group-title').textContent, getGroupHeaderLabel(groupHeaderItem));
 
   select.$destroy();
 });
@@ -1401,7 +1401,7 @@ test('groups should be sorted by expression', async (t) => {
 
   await wait();
 
-  t.ok(target.querySelector('.listGroupTitle').textContent.trim() === 'Savory');
+  t.ok(target.querySelector('.list-group-title').textContent.trim() === 'Savory');
   t.ok(target.querySelector('.listItem').textContent.trim() === 'Pizza');
 
   select.$destroy();
@@ -2440,7 +2440,7 @@ test('When isCreatable disabled, creator is not displayed', async (t) => {
 
   await wait(0);
 
-  t.ok(document.querySelector('.listContainer > .empty'));
+  t.ok(document.querySelector('.list-container > .empty'));
 
   select.$destroy();
 });
@@ -2468,7 +2468,7 @@ test('When isCreatable enabled, creator displays getOptionLabel for isCreator', 
   await wait(0);
   select.$set({ filterText });
   await wait(0);
-  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  const listItems = document.querySelectorAll('.list-container > .listItem');
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, getOptionLabel(creatorItem, filterText));
 
   select.$destroy();
@@ -2494,7 +2494,7 @@ test('When isCreatable enabled, creator is not displayed when duplicate item val
   select.$set({ filterText: dupeValueForCheck });
   await wait(0);
 
-  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  const listItems = document.querySelectorAll('.list-container > .listItem');
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, dupeValueForCheck);
 
   select.$destroy();
@@ -2642,7 +2642,7 @@ test('When isCreatable with non-default item structure, item creator displays ge
   await wait(0);
   select.$set({ filterText });
   await wait(0);
-  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  const listItems = document.querySelectorAll('.list-container > .listItem');
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, creatorLabel(filterText));
 
   select.$destroy();
@@ -2668,7 +2668,7 @@ test('When isCreatable and isMulti and optionIdentifier is supplied creator disp
   await wait(0);
   select.$set({ filterText });
   await wait(0);
-  const listItems = document.querySelectorAll('.listContainer > .listItem');
+  const listItems = document.querySelectorAll('.list-container > .listItem');
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, `Create \"${ filterText }\"`);
 
   select.$destroy();
@@ -2778,7 +2778,7 @@ test('When listAutoWidth is set to false list container should have style of wid
   });
 
   await wait(0);
-  const listWidth = document.querySelectorAll('.listContainer')[0].style.width;
+  const listWidth = document.querySelectorAll('.list-container')[0].style.width;
   t.ok(listWidth === '100%');
   select.$destroy();
 });
@@ -2795,7 +2795,7 @@ test('When item is already active and is selected from list then close list', as
   });
 
   await wait(0);
-  await querySelectorClick('.listContainer > .listItem > .item.active');
+  await querySelectorClick('.list-container > .listItem > .item.active');
   await wait(0);
   t.ok(select.value.value === 'pizza');
   select.$destroy();
@@ -3382,7 +3382,7 @@ test('When listOffset is set list position offset changes', async (t) => {
     },
   });
 
-  let elem = target.querySelector('.listContainer');
+  let elem = target.querySelector('.list-container');
   t.ok(elem.style.top === '42px');
 
   select.$destroy();
@@ -3482,7 +3482,7 @@ test('When groupBy, optionIdentifier and labelIdentifier then ensure list displa
     },
   });
 
-  let titles = document.querySelectorAll('.listGroupTitle');
+  let titles = document.querySelectorAll('.list-group-title');
   let items = document.querySelectorAll('.listItem .item');
   t.equal(titles[0].innerHTML, 'Sweet');
   t.equal(titles[1].innerHTML, 'Savory');
@@ -3510,7 +3510,7 @@ test('When groupBy, optionIdentifier, labelIdentifier and createGroupHeaderItem 
     },
   });
 
-  let titles = document.querySelectorAll('.listGroupTitle');
+  let titles = document.querySelectorAll('.list-group-title');
   let items = document.querySelectorAll('.listItem .item');
   t.equal(titles[0].innerHTML, 'XXX Sweet XXX Chocolate');
   t.equal(titles[1].innerHTML, 'XXX Savory XXX Pizza');

@@ -7,6 +7,7 @@
     export let Item;
     export let VirtualList;
 
+    export let listClass;
     export let filterText;
     export let optionIdentifier;
     export let noOptionsMessage;
@@ -238,8 +239,8 @@
 <svelte:window on:keydown={handleKeyDown} on:resize={computePlacement} />
 
 <div
-    class="listContainer"
-    class:virtualList={VirtualList}
+    class={listClass}
+    class:virtual-list={VirtualList}
     bind:this={container}
     style={listStyle}>
     {#if VirtualList}
@@ -269,7 +270,7 @@
     {:else}
         {#each items as item, i}
             {#if item.isGroupHeader && !item.isSelectable}
-                <div class="listGroupTitle">{getGroupHeaderLabel(item)}</div>
+                <div class="list-group-title">{getGroupHeaderLabel(item)}</div>
             {:else}
                 <div
                     on:mouseover={() => handleHover(i)}
@@ -297,7 +298,7 @@
 </div>
 
 <style>
-    .listContainer {
+    .list-container {
         box-shadow: var(--listShadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
         border-radius: var(--listBorderRadius, 4px);
         max-height: var(--listMaxHeight, 250px);
@@ -311,11 +312,11 @@
         right: var(--listRight, 0);
     }
 
-    .virtualList {
+    .list-container.virtual-list {
         height: var(--virtualListHeight, 200px);
     }
 
-    .listGroupTitle {
+    .list-group-title {
         color: var(--groupTitleColor, #8f8f8f);
         cursor: default;
         font-size: var(--groupTitleFontSize, 12px);

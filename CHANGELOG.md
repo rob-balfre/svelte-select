@@ -2,6 +2,10 @@
 
 ## unreleased
 
+* listGroupTitle -> list-group-title
+* virtualList -> virtual-list
+* listContainer -> list-container
+* listClass prop added
 * bye bye yarn
 * selectContainer and other CSS class names updated, selectContainer -> select-container for example
 * LoadingIcon prop added, must be imported to have a spinner/loader

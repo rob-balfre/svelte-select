@@ -17,7 +17,8 @@
         {ClearIcon}
         isClearable
         {value}
-        class="tw-select" />
+        class="tw-select"
+        listClass="tw-list" />
 </div>
 
 <div class="flex-it">
@@ -94,6 +95,10 @@
 
     .a11yText {
         @apply sr-only;
+    }
+
+    .tw-list {
+        @apply shadow-md rounded-sm max-h-64 overflow-y-auto bg-white border-none absolute z-10 w-full left-0 right-0;
     }
 
     .flex-it {
