@@ -6,7 +6,7 @@
 
     export let Item;
     export let VirtualList;
-    
+
     export let filterText;
     export let optionIdentifier;
     export let noOptionsMessage;
@@ -235,46 +235,6 @@
     }
 </script>
 
-<style>
-    .listContainer {
-        box-shadow: var(--listShadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
-        border-radius: var(--listBorderRadius, 4px);
-        max-height: var(--listMaxHeight, 250px);
-        overflow-y: auto;
-        background: var(--listBackground, #fff);
-        border: var(--listBorder, none);
-        position: var(--listPosition, absolute);
-        z-index: var(--listZIndex, 2);
-        width: 100%;
-        left: var(--listLeft, 0);
-        right: var(--listRight, 0);
-    }
-
-    .virtualList {
-        height: var(--virtualListHeight, 200px);
-    }
-
-    .listGroupTitle {
-        color: var(--groupTitleColor, #8f8f8f);
-        cursor: default;
-        font-size: var(--groupTitleFontSize, 12px);
-        font-weight: var(--groupTitleFontWeight, 600);
-        height: var(--height, 42px);
-        line-height: var(--height, 42px);
-        padding: var(--groupTitlePadding, 0 20px);
-        text-overflow: ellipsis;
-        overflow-x: hidden;
-        white-space: nowrap;
-        text-transform: var(--groupTitleTextTransform, uppercase);
-    }
-
-    .empty {
-        text-align: var(--listEmptyTextAlign, center);
-        padding: var(--listEmptyPadding, 20px 0);
-        color: var(--listEmptyColor, #78848f);
-    }
-</style>
-
 <svelte:window on:keydown={handleKeyDown} on:resize={computePlacement} />
 
 <div
@@ -335,3 +295,43 @@
         {/each}
     {/if}
 </div>
+
+<style>
+    .listContainer {
+        box-shadow: var(--listShadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
+        border-radius: var(--listBorderRadius, 4px);
+        max-height: var(--listMaxHeight, 250px);
+        overflow-y: auto;
+        background: var(--listBackground, #fff);
+        border: var(--listBorder, none);
+        position: var(--listPosition, absolute);
+        z-index: var(--listZIndex, 2);
+        width: 100%;
+        left: var(--listLeft, 0);
+        right: var(--listRight, 0);
+    }
+
+    .virtualList {
+        height: var(--virtualListHeight, 200px);
+    }
+
+    .listGroupTitle {
+        color: var(--groupTitleColor, #8f8f8f);
+        cursor: default;
+        font-size: var(--groupTitleFontSize, 12px);
+        font-weight: var(--groupTitleFontWeight, 600);
+        height: var(--height, 42px);
+        line-height: var(--height, 42px);
+        padding: var(--groupTitlePadding, 0 20px);
+        text-overflow: ellipsis;
+        overflow-x: hidden;
+        white-space: nowrap;
+        text-transform: var(--groupTitleTextTransform, uppercase);
+    }
+
+    .empty {
+        text-align: var(--listEmptyTextAlign, center);
+        padding: var(--listEmptyPadding, 20px 0);
+        color: var(--listEmptyColor, #78848f);
+    }
+</style>
