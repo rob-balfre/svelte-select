@@ -1,28 +1,45 @@
 <script>
     import Select from '$lib/Select.svelte';
-    import MultiSelection from '$lib/MultiSelection.svelte';
-    import debounce from '$lib/debounce';
     import ChevronIcon from '$lib/ChevronIcon.svelte';
     import ClearIcon from '$lib/ClearIcon.svelte';
 
-    let items = ['one', 'two', 'three', 'four'];
+    const itemsWithGroup = [
+        { value: 'pizza', label: 'Pizza', group: 'Savory' },
+        { value: 'cake', label: 'Cake', group: 'Sweet' },
+        { value: 'chips', label: 'Chips', group: 'Savory' },
+        { value: 'ice-cream', label: 'Ice Cream', group: 'Sweet' },
+    ];
+
+    function groupBy(item) {
+        return item.group;
+    }
+
     let value = null;
 </script>
 
 <div class="flex-it">
     <Select
-        {items}
+        {groupBy}
+        items={itemsWithGroup}
         showChevron
         {ChevronIcon}
         {ClearIcon}
         isClearable
         {value}
         class="tw-select"
-        listClass="tw-list" />
+        listClass="tw-list"
+        itemClass="tw-item" />
 </div>
 
 <div class="flex-it">
-    <Select {items} showChevron {ChevronIcon} {ClearIcon} isClearable {value} />
+    <Select
+        {groupBy}
+        items={itemsWithGroup}
+        showChevron
+        {ChevronIcon}
+        {ClearIcon}
+        isClearable
+        {value} />
 </div>
 
 <style global lang="postcss">
@@ -99,6 +116,42 @@
 
     .tw-list {
         @apply shadow-md rounded-sm max-h-64 overflow-y-auto bg-white border-none absolute z-10 w-full left-0 right-0;
+    }
+
+    .tw-list .list-group-title {
+        @apply text-gray-400 cursor-default text-sm font-medium h-10 leading-10 px-5 overflow-ellipsis whitespace-nowrap uppercase;
+    }
+
+    .tw-list .empty {
+        @apply text-center py-5 text-gray-500;
+    }
+
+    .tw-item {
+        @apply cursor-default h-10 leading-10 px-5 text-gray-500 overflow-ellipsis overflow-hidden whitespace-nowrap;
+    }
+
+    .tw-item.group-item {
+        @apply px-10;
+    }
+
+    .tw-item:active {
+        @apply bg-blue-200;
+    }
+
+    .tw-item.active {
+        @apply bg-blue-600 text-white;
+    }
+
+    .tw-item.not-selectable {
+        @apply text-gray-300;
+    }
+
+    .tw-item.first {
+        @apply rounded-t-sm;
+    }
+
+    .tw-item.hover:not(.active) {
+        @apply bg-blue-100 text-current;
     }
 
     .flex-it {

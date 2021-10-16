@@ -8,6 +8,7 @@
     export let VirtualList;
 
     export let listClass;
+    export let itemClass;
     export let filterText;
     export let optionIdentifier;
     export let noOptionsMessage;
@@ -259,6 +260,7 @@
                 <svelte:component
                     this={Item}
                     {item}
+                    {itemClass}
                     {filterText}
                     {getOptionLabel}
                     isFirst={isItemFirst(i)}
@@ -281,6 +283,7 @@
                     <svelte:component
                         this={Item}
                         {item}
+                        {itemClass}
                         {filterText}
                         {getOptionLabel}
                         isFirst={isItemFirst(i)}
@@ -298,7 +301,7 @@
 </div>
 
 <style>
-    .list-container {
+    .list {
         box-shadow: var(--listShadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
         border-radius: var(--listBorderRadius, 4px);
         max-height: var(--listMaxHeight, 250px);
@@ -312,11 +315,11 @@
         right: var(--listRight, 0);
     }
 
-    .list-container.virtual-list {
+    .list.virtual-list {
         height: var(--virtualListHeight, 200px);
     }
 
-    .list-group-title {
+    .list .list-group-title {
         color: var(--groupTitleColor, #8f8f8f);
         cursor: default;
         font-size: var(--groupTitleFontSize, 12px);
@@ -330,7 +333,7 @@
         text-transform: var(--groupTitleTextTransform, uppercase);
     }
 
-    .empty {
+    .list .empty {
         text-align: var(--listEmptyTextAlign, center);
         padding: var(--listEmptyPadding, 20px 0);
         color: var(--listEmptyColor, #78848f);

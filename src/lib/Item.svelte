@@ -6,32 +6,18 @@
     export let getOptionLabel = undefined;
     export let item = undefined;
     export let filterText = '';
-
-    let itemClasses = '';
-
-    $: {
-        const classes = [];
-        if (isActive) {
-            classes.push('active');
-        }
-        if (isFirst) {
-            classes.push('first');
-        }
-        if (isHover) {
-            classes.push('hover');
-        }
-        if (item.isGroupHeader) {
-            classes.push('groupHeader');
-        }
-        if (item.isGroupItem) {
-            classes.push('groupItem');
-        }
-        if (!isSelectable) {
-            classes.push('notSelectable');
-        }
-        itemClasses = classes.join(' ');
-    }
+    export let itemClass = 'item';
 </script>
+
+<div
+    class={itemClass}
+    class:active={isActive}
+    class:first={isFirst}
+    class:hover={isHover}
+    class:group-item={item.isGroupItem}
+    class:not-selectable={!isSelectable}>
+    {@html getOptionLabel(item, filterText)}
+</div>
 
 <style>
     .item {
@@ -45,11 +31,7 @@
         white-space: nowrap;
     }
 
-    .groupHeader {
-        text-transform: var(--groupTitleTextTransform, uppercase);
-    }
-
-    .groupItem {
+    .item.group-item {
         padding-left: var(--groupItemPaddingLeft, 40px);
     }
 
@@ -62,7 +44,7 @@
         color: var(--itemIsActiveColor, #fff);
     }
 
-   .item.notSelectable {
+    .item.not-selectable {
         color: var(--itemIsNotSelectableColor, #999);
     }
 
@@ -75,7 +57,3 @@
         color: var(--itemHoverColor, inherit);
     }
 </style>
-
-<div class="item {itemClasses}">
-    {@html getOptionLabel(item, filterText)}
-</div>

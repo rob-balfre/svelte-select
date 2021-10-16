@@ -88,7 +88,8 @@
     export let ChevronIcon = null;
     export let ClearIcon = null;
     export let LoadingIcon = null;
-    export let listClass = 'list-container';
+    export let listClass = 'list';
+    export let itemClass = 'item';
     export let debounce = _debounce;
 
     function filterMethod(args) {
@@ -581,7 +582,8 @@
         parent: container,
         listAutoWidth,
         listOffset,
-        listClass
+        listClass,
+        itemClass
     };
 
     function itemSelected(event) {

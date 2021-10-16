@@ -2,9 +2,10 @@
 
 ## unreleased
 
+* itemClass prop added
 * listGroupTitle -> list-group-title
 * virtualList -> virtual-list
-* listContainer -> list-container
+* listContainer -> list
 * listClass prop added
 * bye bye yarn
 * selectContainer and other CSS class names updated, selectContainer -> select-container for example
