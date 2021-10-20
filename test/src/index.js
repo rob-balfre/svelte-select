@@ -3834,24 +3834,28 @@ test('default searchScore scores string matches higher', async (t) => {
     target,
     props: {
       items: [
+        {value: 'buzzolat', label: 'buzzolat'},
         {value: 'buzz', label: 'buzz'},
         {value: 'choclate', label: 'Choclate'},
+        {value: 'fuzzz', label: 'fuzzz'},
+        {value: 'chofuzzz', label: 'chofuzzz'},
         {value: 'chocolatte', label: 'Chocolatte'},
         {value: 'chocolate', label: 'Chocolate'},
         {value: 'chacolate', label: 'chacolate'},
       ],
+      searchResults: 4,
+      minSearchScore: 4,
       isSearchable: true
     }
   });
 
-  t.equal(select.getFilteredItems().length, 5);
+  t.equal(select.getFilteredItems().length, 8);
   select.filterText = 'chocolate';
-  t.equal(select.getFilteredItems().length, 5);
+  t.equal(select.getFilteredItems().length, 4);
   t.equal(select.getFilteredItems()[0].value, 'chocolate');
   t.equal(select.getFilteredItems()[1].value, 'chocolatte');
   t.equal(select.getFilteredItems()[2].value, 'chacolate');
-  t.equal(select.getFilteredItems()[3].value, 'choclate');
-  t.equal(select.getFilteredItems()[4].value, 'buzz');
+  t.equal(select.getFilteredItems()[3].value, 'buzzolat');
 
   select.$destroy();
 });
