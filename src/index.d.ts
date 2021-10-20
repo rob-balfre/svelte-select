@@ -31,6 +31,7 @@ export interface SelectProps {
   createGroupHeaderItem?: (groupValue: any) => any;
   createItem?: (filterText: string) => any;
   isSearchable?: boolean;
+  isFilterable?: boolean;
   inputStyles?: string;
   isClearable?: boolean;
   isWaiting?: boolean;

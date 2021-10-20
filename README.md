@@ -60,7 +60,8 @@ yarn add svelte-select
 - `isCreatable: Boolean` Default: `false`. Can create new item(s) to be added to `value`.
 - `isDisabled: Boolean` Default: `false`. Disable select.
 - `isMulti: Boolean` Default: `false`. Enable multi-select, `value` becomes an array of selected items.
-- `isSearchable: Boolean` Default: `true`. Enable search/filtering of `items` via `filterText`.
+- `isFilterable: Boolean` Default: `true`. Enable filtering of `items` via `filterText`.
+- `isSearchable: Boolean` Default: `true`. Enable searching of `items` via `filterText`.
 - `isGroupHeaderSelectable: Boolean` Default: `false`. Enable selectable group headers in `items` (see adv demo).
 - `listPlacement: String` Default: `'auto'`. When `'auto'` displays either `'top'` or `'bottom'` depending on viewport.
 - `hasError: Boolean` Default: `false`. Show/hide error styles around select input (red border by default).

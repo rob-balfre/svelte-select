@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 4.5.0
+
+* Renamed option `isSearchable` to `isFilterable`. `isSearchable` is now deprecated
+    and will have different behaviour in the future.
+
 ## 4.4.3
 
 * listOffset was missing from typings - thanks to @blake-regalia
@@ -14,7 +19,7 @@
 
 ## 4.4.0
 
-* Added support for non-selectable items - thanks to @mpdaugherty 
+* Added support for non-selectable items - thanks to @mpdaugherty
 
 ## 4.3.1
 
@@ -27,7 +32,7 @@
 
 ## 4.2.7
 
-* Bug fixes for #278, #279, #280, #285 - thanks to @davidfou 
+* Bug fixes for #278, #279, #280, #285 - thanks to @davidfou
 
 ## 4.2.6
 
