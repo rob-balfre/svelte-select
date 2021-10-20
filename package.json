@@ -33,8 +33,8 @@
     "rollup-plugin-terser": "^7.0.2",
     "sirv": "^0.2.2",
     "svelte": "^3.38.3",
-    "tap-diff": "^0.1.1",
-    "tap-dot": "^2.0.0",
+    "tap-diff": "^0.0.0",
+    "tap-dot": "^1.0.0",
     "tape-modern": "^1.1.1"
   },
   "author": "rob-balfre",
