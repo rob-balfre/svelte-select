@@ -1130,7 +1130,7 @@ test('should not be able to search when searching is disabled', async (t) => {
     target,
     props: {
       items,
-      isSearchable: false
+      isFilterable: false
     }
   });
 
@@ -1148,7 +1148,7 @@ test('should display indicator when searching is disabled', async (t) => {
     target,
     props: {
       items,
-      isSearchable: false
+      isFilterable: false
     }
   });
 
@@ -3230,12 +3230,12 @@ test('when switching between isMulti true/false ensure Select continues working'
   select.$destroy();
 });
 
-test('when isSearchable is false then input should be readonly', async (t) => {
+test('when isFilterable is false then input should be readonly', async (t) => {
   const select = new Select({
     target,
     props: {
       items,
-      isSearchable: false
+      isFilterable: false
     }
   });
 
