@@ -1125,12 +1125,13 @@ test('should not be able to clear when clearing is disabled', async (t) => {
   select.$destroy();
 });
 
-test('should not be able to search when searching is disabled', async (t) => {
+test('should not be able to search when filtering and searching are disabled', async (t) => {
   const select = new Select({
     target,
     props: {
       items,
-      isFilterable: false
+      isFilterable: false,
+      isSearchable: false
     }
   });
 
@@ -1140,7 +1141,7 @@ test('should not be able to search when searching is disabled', async (t) => {
   select.$destroy();
 });
 
-test('should display indicator when searching is disabled', async (t) => {
+test('should display indicator when searching and filtering are disabled', async (t) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
 
@@ -1148,7 +1149,8 @@ test('should display indicator when searching is disabled', async (t) => {
     target,
     props: {
       items,
-      isFilterable: false
+      isFilterable: false,
+      isSearchable: false
     }
   });
 
@@ -3230,12 +3232,13 @@ test('when switching between isMulti true/false ensure Select continues working'
   select.$destroy();
 });
 
-test('when isFilterable is false then input should be readonly', async (t) => {
+test('when isFilterable and isSearchable are false then input should be readonly', async (t) => {
   const select = new Select({
     target,
     props: {
       items,
-      isFilterable: false
+      isFilterable: false,
+      isSearchable: false
     }
   });
 
