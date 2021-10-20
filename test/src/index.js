@@ -3849,8 +3849,8 @@ test('default searchScore scores string matches higher', async (t) => {
   t.equal(select.getFilteredItems().length, 5);
   t.equal(select.getFilteredItems()[0].value, 'chocolate');
   t.equal(select.getFilteredItems()[1].value, 'chocolatte');
-  t.equal(select.getFilteredItems()[2].value, 'choclate');
-  t.equal(select.getFilteredItems()[3].value, 'chacolate');
+  t.equal(select.getFilteredItems()[2].value, 'chacolate');
+  t.equal(select.getFilteredItems()[3].value, 'choclate');
   t.equal(select.getFilteredItems()[4].value, 'buzz');
 
   select.$destroy();
