@@ -3840,8 +3840,7 @@ test('default searchScore scores string matches higher', async (t) => {
         {value: 'chacolate', label: 'chacolate'},
         {value: 'buzz', label: 'buzz'},
       ],
-      isSearchable: true,
-      searchScore: (label, filterText, item) => label.length
+      isSearchable: true
     }
   });
 
