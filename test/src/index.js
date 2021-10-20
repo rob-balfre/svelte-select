@@ -3834,11 +3834,11 @@ test('default searchScore scores string matches higher', async (t) => {
     target,
     props: {
       items: [
-        {value: 'chocolate', label: 'Chocolate'},
-        {value: 'chocolatte', label: 'Chocolatte'},
-        {value: 'choclate', label: 'Choclate'},
-        {value: 'chacolate', label: 'chacolate'},
         {value: 'buzz', label: 'buzz'},
+        {value: 'choclate', label: 'Choclate'},
+        {value: 'chocolatte', label: 'Chocolatte'},
+        {value: 'chocolate', label: 'Chocolate'},
+        {value: 'chacolate', label: 'chacolate'},
       ],
       isSearchable: true
     }
