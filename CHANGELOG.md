@@ -1,5 +1,13 @@
 # svelte-select changelog
 
+## <next>
+
+* Added option `isSearchable` that enables search functionality as opposed to filtering.
+* Added method `searchScore` that calculates a search score for a given item against the filterText.
+* Added option `searchResults` that restricts search results to the top n search results.
+    Defaults to `5` when searching is enabled.
+* Added option `minSearchScore` that puts a lower search boundary which hides results below that score.
+
 ## 4.4.3
 
 * listOffset was missing from typings - thanks to @blake-regalia

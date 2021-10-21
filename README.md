@@ -47,7 +47,7 @@ yarn add svelte-select
 - `id: String` Default: `null`. Add an id to the input field.
 - `items: Array` Default: `[]`. List of selectable items that appear in the dropdown.
 - `value: Any` Default: `null`. Selected item or items.
-- `filterText: String` Default: `''`. Text to filter `items` by.
+- `filterText: String` Default: `''`. Text to filtering and searching `items` by.
 - `placeholder: String` Default: `'Select...'`. Placeholder text.
 - `noOptionsMessage: String` Default: `'No options'`. Message to display in list when there are no `items`.
 - `optionIdentifier: String` Default: `'value'`. Override default identifier.
@@ -168,6 +168,19 @@ These internal functions are exposed to override if needed. See the adv demo or 
 
 ```js
 export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
+```
+
+```js
+export let searchScore = (label, filterText, item) => {
+    if (filterText === '') return Number.MAX_VALUE;
+    label = label.toLowerCase().trim();
+    filterText = filterText.toLowerCase().trim();
+    let matches = 0;
+    for (let i = 0; i < label.length && i < filterText.length; ++i) {
+        if (label[i] === filterText[i]) matches++;
+    }
+    return matches;
+};
 ```
 
 ```js
@@ -315,6 +328,15 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 
 <Select {items} on:select={handleSelect} on:clear={handleClear}></Select>
 ```
+
+## Filtering and searching
+
+There are is an important distinction between filtering and searching. Filtering
+is binary - an item is either shown or hidden. Search results are displayed sorted
+according to a numeric score between the item and the `textFilter`. The default
+implementation of the search function is pretty basic and is not very flexible in
+terms of fuzzy string search, but an external library that provides a fuzzy string 
+search scoring mechanism could be used instead.
 
 ## Development
 
