@@ -3849,7 +3849,7 @@ test('default searchScore scores string matches higher', async (t) => {
     }
   });
 
-  t.equal(select.getFilteredItems().length, 8);
+  t.equal(select.getFilteredItems().length, 4);
   select.filterText = 'chocolate';
   t.equal(select.getFilteredItems().length, 4);
   t.equal(select.getFilteredItems()[0].value, 'chocolate');
