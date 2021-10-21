@@ -883,7 +883,9 @@
         class="a11yText">
         {#if isFocused}
             <span id="aria-selection">{ariaSelection}</span>
-            <span id="aria-context"> {ariaContext} </span>
+            <span id="aria-context">
+                {ariaContext}
+            </span>
         {/if}
     </span>
 

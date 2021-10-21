@@ -565,7 +565,7 @@ test('focus on Select input updates focus state', async (t) => {
       items
     }
   });
-
+  
   document.querySelector('.selectContainer input').focus();
 
   t.ok(select.isFocused);
@@ -1224,7 +1224,7 @@ test('items should be grouped by groupBy expression', async (t) => {
 
   let title = document.querySelector('.listGroupTitle').innerHTML;
   t.ok(title === 'Sweet');
-  let item = document.querySelector('.listItem .item').innerHTML;
+  let item = document.querySelector('.listItem .item').innerHTML; 
   t.ok(item === 'Chocolate');
   select.$destroy();
 });
@@ -2925,7 +2925,7 @@ test('When loadOptions promise is resolved then dispatch loaded', async (t) => {
   await wait(0);
   select.$set({filterText: 'test'});
   await wait(500);
-
+  
   t.equal(loadedEventData.detail.items[0].value, 'a');
   t.equal(errorEventData, undefined);
 
@@ -3062,7 +3062,7 @@ test('When isMulti and multiFullItemClearable then clicking anywhere on the item
   await querySelectorClick('.multiSelectItem');
   await wait(0);
   t.ok(multiSelect.value[0].label === 'Pizza');
-
+  
   multiSelect.$destroy();
 });
 
@@ -3077,7 +3077,7 @@ test('When isMulti and filterText then items should filter out already selected 
   });
 
   t.ok(multiSelect.getFilteredItems().length === 3);
-
+  
   multiSelect.$destroy();
 });
 
@@ -3087,7 +3087,7 @@ test('when loadOptions and items is supplied then list should close on blur', as
   let items=[{value:1, label:1}, {value:2, label:2}];
 	let loadOptions = async(filterText) => {
 		const res = await fetch(`https://api.punkapi.com/v2/beers?beer_name=${filterText}`)
-		const data = await res.json();
+		const data = await res.json();    
     return data.map((beer)=> ({value: beer.id, label: beer.name}));
 	}
 
@@ -3121,7 +3121,7 @@ test('when isCreatable and item created then event "itemCreated" should dispatch
       isMulti: true
     }
   });
-
+  
   let eventDetail;
   select.$on('itemCreated', (event) => {
     eventDetail = event.detail;
@@ -3150,7 +3150,7 @@ test('when loadOptions response returns cancelled true then dont end loading sta
 
   select.$set({filterText: 'Juniper'});
   await wait(0);
-
+  
 
   select.$destroy();
 });
@@ -3164,7 +3164,7 @@ test('when ClearItem replace clear icon', async (t) => {
       value: {value: 'chips', label: 'Chips'}
     }
   });
-
+  
   t.ok(target.querySelector('.testClearIcon'));
 
   select.$destroy();
@@ -3220,7 +3220,7 @@ test('when switching between isMulti true/false ensure Select continues working'
 
   t.ok(JSON.stringify(select.value) === JSON.stringify([{value: 'chips', label: 'Chips'}]));
   t.ok(Array.isArray(select.value));
-
+  
   select.isMulti = false;
   select.loadOptions = null;
   select.items = [...items];
@@ -3308,7 +3308,7 @@ test('when loadOptions and value then items should show on promise resolve',asyn
 
   await wait(300);
   t.ok(select.getFilteredItems().length === 3);
-
+  
   select.$destroy();
 });
 
@@ -3336,7 +3336,7 @@ test('when loadOptions, isMulti and value then filterText should remain on promi
 
   await wait(300);
   t.ok(select.filterText === 'test');
-
+  
   select.$destroy();
 });
 
@@ -3394,7 +3394,7 @@ test('When items are updated post onMount ensure filtering still works', async (
 
   t.ok(select.getFilteredItems().length === 1);
   t.ok(select.getFilteredItems()[0].value === 'Two');
-
+  
   select.$destroy();
 });
 
@@ -3415,8 +3415,8 @@ test('When grouped items are updated post onMount ensure filtering still works',
   t.ok(select.getFilteredItems().length === 2);
   t.ok(select.getFilteredItems()[0].label === '2nd Group');
   t.ok(select.getFilteredItems()[1].label === 'Two');
-
-
+  
+  
   select.$destroy();
 });
 
@@ -3427,7 +3427,7 @@ test('When groupBy and value selected ensure filtering still works', async (t) =
     props: {
       items: itemsWithGroup,
       groupBy: (item) => item.group,
-
+      
     },
   });
 
@@ -3453,7 +3453,7 @@ test('When value selected and filterText then ensure selecting the active value 
   select.listOpen = true;
   select.filterText = 'Cake';
   document.querySelector('.listItem .item').click();
-
+  
   t.ok(select.filterText.length === 0);
 
   select.$destroy();
@@ -3533,7 +3533,7 @@ test('When isMulti on:select events should fire on each item removal (including 
   document.querySelector('.multiSelectItem_clear').click();
   await wait(0);
   t.ok(events.length === 2);
-
+  
   select.$destroy();
 });
 
@@ -3595,7 +3595,7 @@ test('When no value then hidden field should also have no value', async (t) => {
     props: {
       inputAttributes: { name: 'Foods' },
       items: items,
-
+      
     },
   });
 
@@ -3666,7 +3666,7 @@ test('When listOpen then aria-context describes highlighted item', async (t) => 
   t.ok(aria.innerHTML.includes('Chocolate'));
   await handleKeyboard('ArrowDown');
   t.ok(aria.innerHTML.includes('Pizza'));
-
+  
   select.$destroy();
 });
 
@@ -3682,7 +3682,7 @@ test('When listOpen and value then aria-selection describes value', async (t) =>
 
   let aria = document.querySelector('#aria-selection');
   t.ok(aria.innerHTML.includes('Cake'));
-
+  
   select.$destroy();
 });
 
@@ -3700,7 +3700,7 @@ test('When listOpen, value and isMulti then aria-selection describes value', asy
   let aria = document.querySelector('#aria-selection');
   t.ok(aria.innerHTML.includes('Cake'));
   t.ok(aria.innerHTML.includes('Pizza'));
-
+    
   select.$destroy();
 });
 
@@ -3717,7 +3717,7 @@ test('When ariaValues and value supplied, then aria-selection uses default updat
 
   let aria = document.querySelector('#aria-selection');
   t.equal(aria.innerHTML, 'Yummy Pizza in my tummy!');
-
+  
   select.$destroy();
 });
 
@@ -3733,7 +3733,7 @@ test('When ariaListOpen, listOpen, then aria-context uses default updated', asyn
 
   let aria = document.querySelector('#aria-context');
   t.equal(aria.innerHTML, 'label: Chocolate, count: 5');
-
+    
   select.$destroy();
 });
 
@@ -3749,7 +3749,7 @@ test('When ariaFocused, focused value supplied, then aria-context uses default u
 
   let aria = document.querySelector('#aria-context');
   t.equal(aria.innerHTML, 'nothing to see here.');
-
+    
   select.$destroy();
 });
 
@@ -3765,7 +3765,7 @@ test('When id supplied then add to input', async (t) => {
 
   let aria = document.querySelector('input[type="text"]');
   t.equal(aria.id, 'foods');
-
+    
   select.$destroy();
 });
 
