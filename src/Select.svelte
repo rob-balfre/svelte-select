@@ -26,6 +26,16 @@
     export let items = null;
     export let itemFilter = (label, filterText, option) =>
         `${label}`.toLowerCase().includes(filterText.toLowerCase());
+    export let searchScore = (label, filterText, item) => {
+        if (filterText === '') return Number.MAX_VALUE;
+        label = label.toLowerCase().trim();
+        filterText = filterText.toLowerCase().trim();
+        let matches = 0;
+        for (let i = 0; i < label.length && i < filterText.length; ++i) {
+            if (label[i] === filterText[i]) matches++;
+        }
+        return matches;
+    };
     export let groupBy = undefined;
     export let groupFilter = (groups) => groups;
     export let isGroupHeaderSelectable = false;
@@ -65,7 +75,10 @@
         return filteredItems;
     };
 
-    export let isSearchable = true;
+    export let isFilterable = true;
+    export let isSearchable = false;
+    export let searchResults = 5;
+    export let minSearchScore = Number.MIN_VALUE;
     export let inputStyles = '';
     export let isClearable = true;
     export let isWaiting = false;
@@ -93,6 +106,12 @@
     export let MultiSelection = _MultiSelection;
     export let VirtualList = _VirtualList;
 
+    $: {
+        if (isSearchable) {
+            isFilterable = false;
+        }
+    }
+
     function filterMethod(args) {
         if (args.loadOptions && args.filterText.length > 0) return;
         if (!args.items) return [];
@@ -105,28 +124,57 @@
             args.items = convertStringItemsToObjects(args.items);
         }
 
-        let filterResults = args.items.filter((item) => {
-            let matchesFilter = itemFilter(
-                getOptionLabel(item, args.filterText),
-                args.filterText,
-                item
-            );
+        let filterResults;
 
-            if (
-                matchesFilter &&
-                args.isMulti &&
-                args.value &&
-                Array.isArray(args.value)
-            ) {
-                matchesFilter = !args.value.some((x) => {
-                    return (
-                        x[args.optionIdentifier] === item[args.optionIdentifier]
-                    );
-                });
+        if (isFilterable) {
+            filterResults = args.items.filter((item) => {
+                let matchesFilter = itemFilter(
+                    getOptionLabel(item, args.filterText),
+                    args.filterText,
+                    item
+                );
+
+                if (
+                    matchesFilter &&
+                    args.isMulti &&
+                    args.value &&
+                    Array.isArray(args.value)
+                ) {
+                    matchesFilter = !args.value.some((x) => {
+                        return (
+                            x[args.optionIdentifier] ===
+                            item[args.optionIdentifier]
+                        );
+                    });
+                }
+
+                return matchesFilter;
+            });
+        } else if (isSearchable) {
+            filterResults = [];
+            for (let i = 0; i < args.items.length; ++i) {
+                let item = args.items[i];
+                item._score = searchScore(
+                    getOptionLabel(item, args.filterText),
+                    args.filterText,
+                    item
+                );
+                if (item._score >= minSearchScore) {
+                    filterResults.push(item);
+                }
             }
 
-            return matchesFilter;
-        });
+            filterResults = filterResults.sort((left, right) => {
+                return right._score - left._score;
+            });
+
+            if (searchResults > 0) {
+                filterResults = filterResults.slice(0, searchResults);
+            }
+            filterResults.forEach((item) => {
+                delete item._score;
+            });
+        }
 
         if (args.groupBy) {
             filterResults = filterGroupedItems(filterResults);
@@ -236,7 +284,7 @@
             _inputAttributes.id = id;
         }
 
-        if (!isSearchable) {
+        if (!(isFilterable || isSearchable)) {
             _inputAttributes.readonly = true;
         }
     }
@@ -333,7 +381,8 @@
     }
 
     $: {
-        if (inputAttributes || !isSearchable) assignInputAttributes();
+        if (inputAttributes || !(isFilterable || isSearchable))
+            assignInputAttributes();
     }
 
     $: {
@@ -873,9 +922,7 @@
         class="a11yText">
         {#if isFocused}
             <span id="aria-selection">{ariaSelection}</span>
-            <span id="aria-context">
-                {ariaContext}
-            </span>
+            <span id="aria-context"> {ariaContext} </span>
         {/if}
     </span>
 
@@ -896,7 +943,7 @@
     {/if}
 
     <input
-        readOnly={!isSearchable}
+        readOnly={!(isFilterable || isSearchable)}
         {..._inputAttributes}
         bind:this={input}
         on:focus={handleFocus}
@@ -923,7 +970,7 @@
         </div>
     {/if}
 
-    {#if !showClearIcon && (showIndicator || (showChevron && !value) || (!isSearchable && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem)))}
+    {#if !showClearIcon && (showIndicator || (showChevron && !value) || (!(isFilterable || isSearchable) && !isDisabled && !isWaiting && ((showSelectedItem && !isClearable) || !showSelectedItem)))}
         <div class="indicator" aria-hidden="true">
             {#if indicatorSvg}
                 {@html indicatorSvg}
