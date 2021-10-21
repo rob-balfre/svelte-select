@@ -15,8 +15,6 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
 
-      - uses: microsoft/playwright-github-action@v1
-
       - run: yarn install
       - run: yarn audit
       - run: yarn test

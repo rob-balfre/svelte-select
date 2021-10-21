@@ -1,7 +1,7 @@
 module.exports = {
   use: {
     // Browser options
-    headless: false,
+    headless: true,
     slowMo: 50,
 
     // Context options
