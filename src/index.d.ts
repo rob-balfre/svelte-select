@@ -47,6 +47,7 @@ export interface SelectProps {
   listAutoWidth?: boolean;
   itemHeight?: number;
   Icon?: any;
+  listOutsideParentContainer: boolean;
   iconProps?: object;
   showChevron?: boolean;
   showIndicator?: boolean;

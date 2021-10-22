@@ -71,6 +71,7 @@
     export let isWaiting = false;
     export let listPlacement = 'auto';
     export let listOpen = false;
+    export let listOutsideParentContainer = false;
     export let isVirtualList = false;
     export let loadOptionsInterval = 300;
     export let noOptionsMessage = 'No options';
@@ -965,6 +966,7 @@
         <svelte:component
             this={List}
             {...listProps}
+            {listOutsideParentContainer}
             bind:hoverItemIndex
             on:itemSelected={itemSelected}
             on:itemCreated={itemCreated}

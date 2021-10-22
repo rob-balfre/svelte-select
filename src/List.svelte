@@ -31,6 +31,7 @@
     export let listPlacement = null;
     export let listAutoWidth = null;
     export let listOffset = 5;
+    export let listOutsideParentContainer;
 
     let isScrollingTimer = 0;
     let isScrolling = false;
@@ -214,20 +215,31 @@
 
     let listStyle;
     function computePlacement() {
-        const { top, height, width } = parent.getBoundingClientRect();
+        const { left, top, height, width } = parent.getBoundingClientRect();
 
         listStyle = '';
-        listStyle += `min-width:${width}px;width:${
-            listAutoWidth ? 'auto' : '100%'
-        };`;
 
-        if (
-            listPlacement === 'top' ||
-            (listPlacement === 'auto' && isOutOfViewport(parent).bottom)
-        ) {
-            listStyle += `bottom:${height + listOffset}px;`;
+        if (!listOutsideParentContainer) {
+            if (
+                listPlacement === 'top' ||
+                (listPlacement === 'auto' && isOutOfViewport(parent).bottom)
+            ) {
+                listStyle += `bottom:${height + listOffset}px;`;
+            } else {
+                listStyle += `top:${height + listOffset}px;`;
+            }
         } else {
-            listStyle += `top:${height + listOffset}px;`;
+            if (
+                listPlacement === 'top' ||
+                (listPlacement === 'auto' && isOutOfViewport(parent).bottom)
+            ) {
+                listStyle += `bottom:${bottom + parent.offsetHeight + listOffset}px;`;
+            } else {
+                listStyle += `top:${top + parent.offsetHeight + listOffset}px;`;
+            }
+            listStyle += `left:${left}px;`;
+            listStyle += `position: fixed;`;
+            listStyle += `width:${width}px;`;
         }
     }
 
