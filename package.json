@@ -1,37 +1,22 @@
 {
-  "_from": "svelte-select",
-  "_id": "svelte-select@4.4.3",
-  "_inBundle": false,
-  "_integrity": "sha512-cH11qwT4XTbeypFbRqGbBlJxmksib4jshGvjuLwKWBY2G5YieI1aNoO/W7fLyKGbq1erOiKDWsbgDKFhil4dWw==",
-  "_location": "/svelte-select",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "tag",
-    "registry": true,
-    "raw": "svelte-select",
-    "name": "svelte-select",
-    "escapedName": "svelte-select",
-    "rawSpec": "",
-    "saveSpec": null,
-    "fetchSpec": "latest"
-  },
-  "_requiredBy": [
-    "#USER",
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/svelte-select/-/svelte-select-4.4.3.tgz",
-  "_shasum": "9c243ff46b518fc08cb2ceedf6b36d9d7127e493",
-  "_spec": "svelte-select",
-  "_where": "C:\\Users\\mroje\\Documents\\Sites\\fidrygalki_employee_purchases",
-  "author": {
-    "name": "rob-balfre"
-  },
-  "bugs": {
-    "url": "https://github.com/rob-balfre/svelte-select/issues"
-  },
-  "bundleDependencies": false,
-  "deprecated": false,
+  "name": "svelte-select",
+  "version": "4.4.3",
+  "repository": "https://rob-balfre@github.com/rob-balfre/svelte-select.git",
   "description": "A <Select> component for Svelte apps",
+  "svelte": "src/index.js",
+  "module": "dist/index.mjs",
+  "main": "dist/index.js",
+  "types": "./src/index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -cw",
+    "prepublishOnly": "npm run build",
+    "test": "node test/runner.js",
+    "test:browser": "npm run build && serve test/public",
+    "test:playwright": "playwright test",
+    "gen:docs": "node docs/generate_theming_variables_md.js",
+    "pretest": "npm run build"
+  },
   "devDependencies": {
     "@babel/polyfill": "7.12.1",
     "@playwright/test": "1.12.3",
@@ -52,33 +37,13 @@
     "tap-dot": "^2.0.0",
     "tape-modern": "^1.1.1"
   },
-  "files": [
-    "src",
-    "dist"
-  ],
-  "homepage": "https://github.com/rob-balfre/svelte-select#readme",
+  "author": "rob-balfre",
+  "license": "LIL",
   "keywords": [
     "svelte"
   ],
-  "license": "LIL",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "name": "svelte-select",
-  "repository": {
-    "type": "git",
-    "url": "git+https://rob-balfre@github.com/rob-balfre/svelte-select.git"
-  },
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -cw",
-    "gen:docs": "node docs/generate_theming_variables_md.js",
-    "prepublishOnly": "npm run build",
-    "pretest": "npm run build",
-    "test": "node test/runner.js",
-    "test:browser": "npm run build && serve test/public",
-    "test:playwright": "playwright test"
-  },
-  "svelte": "src/index.js",
-  "types": "./src/index.d.ts",
-  "version": "4.4.3"
+  "files": [
+    "src",
+    "dist"
+  ]
 }
