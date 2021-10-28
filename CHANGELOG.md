@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 4.4.3
+
+* listOffset was missing from typings - thanks to @blake-regalia
+
 ## 4.4.2
 
 * Bug fixe for #309 - thanks to @ABarnob
