@@ -21,6 +21,14 @@
     }
 </script>
 
+<div class="customItem {itemClasses}">
+    <img src={item.image_url} alt={item.name} />
+    <div class="customItem_title">
+        <div class="customItem_name">{item.name}</div>
+        <div class="customItem_tagline">{item.tagline}</div>
+    </div>
+</div>
+
 <style>
     .customItem {
         display: flex;
@@ -73,11 +81,3 @@
         display: inline-block;
     }
 </style>
-
-<div class="customItem {itemClasses}">
-    <img src={item.image_url} alt={item.name} />
-    <div class="customItem_title">
-        <div class="customItem_name">{item.name}</div>
-        <div class="customItem_tagline">{item.tagline}</div>
-    </div>
-</div>

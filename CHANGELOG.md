@@ -2,6 +2,10 @@
 
 ## unreleased
 
+* added postcss to example, tests
+* tailwind css option
+* moved styles into separate CSS file
+* containerClasses -> class
 * itemClass prop added
 * listGroupTitle -> list-group-title
 * virtualList -> virtual-list

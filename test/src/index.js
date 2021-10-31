@@ -3,14 +3,16 @@ import CustomItem from './CustomItem.svelte';
 import Select from '../../src/lib/Select.svelte';
 import MultiSelection from '../../src/lib/MultiSelection.svelte';
 import ChevronIcon from '../../src/lib/ChevronIcon.svelte';
-import ClearIcon from '../../src/lib/ClearIcon.svelte';
 import LoadingIcon from '../../src/lib/LoadingIcon.svelte';
 import TestIcon from './TestIcon.svelte';
 import TestClearIcon from './TestClearIcon.svelte';
 import SelectDefault from './Select/Select--default.svelte'
 import SelectMultiSelected from './Select/Select--multiSelected.svelte'
 import ParentContainer from './Select/ParentContainer.svelte'
-import {assert, test, done} from 'tape-modern';
+import {assert, test} from 'tape-modern';
+
+// import "../../src/lib/default.css";
+import "../../src/lib/tailwind.css";
 
 function querySelectorClick(selector) {
   document.querySelector(selector).click();
@@ -394,7 +396,7 @@ test('selected item\'s default view', async (t) => {
     }
   });
 
-  t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'Chips');
+  t.ok(target.querySelector('.selected-item .selection').innerHTML === 'Chips');
   select.$destroy();
 });
 
@@ -404,7 +406,7 @@ test('select view updates with value updates', async (t) => {
   });
 
   await handleSet(select, {value: {value: 'chips', label: 'Chips'}});
-  t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'Chips');
+  t.ok(target.querySelector('.selected-item .selection').innerHTML === 'Chips');
 
   select.$destroy();
 });
@@ -419,7 +421,7 @@ test('clear wipes value and updates view', async (t) => {
 
   await wait(0);
   await handleSet(select, {value: undefined});
-  t.ok(!target.querySelector('.selectedItem .selection'));
+  t.ok(!target.querySelector('.selected-item .selection'));
 
   select.$destroy();
 });
@@ -619,9 +621,9 @@ test('List should keep width of parent Select', async (t) => {
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
-  const select-container = document.querySelector('.select-container');
+  const selectContainer = document.querySelector('.select-container');
   const listContainer = document.querySelector('.list');
-  t.equal(select-container.offsetWidth, listContainer.offsetWidth);
+  t.equal(selectContainer.offsetWidth, listContainer.offsetWidth);
 
   select.$destroy();
 });
@@ -1576,7 +1578,7 @@ test('when isMulti and groupBy is active then items should be selectable', async
   select.$destroy();
 });
 
-test('when isMulti and selected items reach edge of container then Select height should increase and selected items should wrap to new line', async (t) => {
+test.only('when isMulti and selected items reach edge of container then Select height should increase and selected items should wrap to new line', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1590,7 +1592,7 @@ test('when isMulti and selected items reach edge of container then Select height
   t.ok(document.querySelector('.select-container').scrollHeight === 42);
   await handleSet(select, {value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]});
   t.ok(document.querySelector('.select-container').scrollHeight > 44);
-  select.$destroy();
+  // select.$destroy();
 });
 
 test('when isMulti and value is populated then navigating with LeftArrow updates activeValue', async (t) => {
@@ -2339,7 +2341,7 @@ test('When list is open, filterText applied and Enter/Tab key pressed should sel
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.equal(select.value.value, 'A5');
   await wait(0);
-  t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'A5');
+  t.ok(target.querySelector('.selected-item .selection').innerHTML === 'A5');
 
   select.$destroy();
 });
@@ -2374,7 +2376,7 @@ test('when items and value supplied as just strings then value should render cor
     }
   });
 
-  t.equal(document.querySelector('.selectedItem .selection').innerHTML, 'Pizza');
+  t.equal(document.querySelector('.selected-item .selection').innerHTML, 'Pizza');
 
   select.$destroy();
 });
@@ -2889,8 +2891,8 @@ test('Select container classes can be injected', async (t) => {
     target,
     props: {
       items,
-      value: { name: 'Item #2' },
-      containerClasses: 'testclass',
+      value: {value: 'cake', label: 'Cake'},
+      class: 'select-container testclass',
     },
   });
 
@@ -3014,7 +3016,7 @@ test('When items change then value should also update', async (t) => {
   await wait(0);
 
   t.ok(select.value.label === 'Loaded Fries');
-  t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'Loaded Fries');
+  t.ok(target.querySelector('.selected-item .selection').innerHTML === 'Loaded Fries');
 
   select.$destroy();
 
@@ -3070,7 +3072,7 @@ test('When items change then value should also update but only if found in items
   await wait(0);
 
   t.ok(select.value.label === 'Chips');
-  t.ok(target.querySelector('.selectedItem .selection').innerHTML === 'Chips');
+  t.ok(target.querySelector('.selected-item .selection').innerHTML === 'Chips');
 
   select.$destroy();
 });
@@ -3801,3 +3803,4 @@ test('allows the user to select an item by clicking with a focusable ancestor', 
 
   select.$destroy();
 });
+

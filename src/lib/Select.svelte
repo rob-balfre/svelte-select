@@ -8,8 +8,6 @@
 
     const dispatch = createEventDispatcher();
 
-    export { containerClasses as class };
-
     export let id = null;
     export let container = undefined;
     export let input = undefined;
@@ -88,8 +86,11 @@
     export let ChevronIcon = null;
     export let ClearIcon = null;
     export let LoadingIcon = null;
+
+    export { containerClasses as class };
     export let listClass = 'list';
     export let itemClass = 'item';
+    
     export let debounce = _debounce;
 
     function filterMethod(args) {
@@ -787,145 +788,3 @@
         {/each}
     {/if}
 </div>
-
-<style>
-    .select-container {
-        border: var(--border, 1px solid #d8dbdf);
-        border-radius: var(--borderRadius, 3px);
-        box-sizing: border-box;
-        height: var(--height, 42px);
-        position: relative;
-        display: flex;
-        align-items: center;
-        padding: var(--padding, 0 16px);
-        background: var(--background, #fff);
-        margin: var(--margin, 0);
-        width: var(--width, 100%);
-    }
-
-    .select-container input {
-        cursor: default;
-        border: none;
-        color: var(--inputColor, #3f4f5f);
-        height: var(--height, 42px);
-        line-height: var(--height, 42px);
-        padding: var(--inputPadding, var(--padding, 0 16px));
-        width: 100%;
-        background: transparent;
-        font-size: var(--inputFontSize, 14px);
-        letter-spacing: var(--inputLetterSpacing, inherit);
-        position: absolute;
-        left: var(--inputLeft, 0);
-        margin: var(--inputMargin, 0);
-    }
-
-    .select-container input::placeholder {
-        color: var(--placeholderColor, #78848f);
-        opacity: var(--placeholderOpacity, 1);
-    }
-
-    .select-container input:focus {
-        outline: none;
-    }
-
-    .select-container:hover {
-        border-color: var(--borderHoverColor, #b2b8bf);
-    }
-
-    .select-container.focused {
-        border-color: var(--borderFocusColor, #006fe8);
-    }
-
-    .select-container.disabled {
-        background: var(--disabledBackground, #ebedef);
-        border-color: var(--disabledBorderColor, #ebedef);
-        color: var(--disabledColor, #c1c6cc);
-    }
-
-    .select-container.disabled input::placeholder {
-        color: var(--disabledPlaceholderColor, #c1c6cc);
-        opacity: var(--disabledPlaceholderOpacity, 1);
-    }
-
-    .select-container .selected-item {
-        line-height: var(--height, 42px);
-        height: var(--height, 42px);
-        overflow-x: hidden;
-        padding: var(--selected-item-padding, 0 20px 0 0);
-    }
-
-    .select-container .selected-item:focus {
-        outline: none;
-    }
-
-    .select-container .icons {
-        position: absolute;
-        display: flex;
-        right: var(--iconsRight, 0);
-        top: var(--iconsTop, 11px);
-        bottom: var(--iconsBottom, 11px);
-        color: var(--iconsColor, #c5cacf);
-    }
-
-    .select-container .icons > * {
-        transition: color 0.2s ease-in-out;
-    }
-
-    .select-container.focused .icons,
-    .select-container .chevron:hover,
-    .select-container .clearSelect:hover {
-        color: var(--iconsColorFocused, #2c3e50);
-    }
-
-    .select-container .clearSelect {
-        padding: 0 7px;
-        width: var(--clearSelectWidth, 35px);
-        height: 20px;
-        color: var(--clearSelectColor, --iconsColor);
-        flex: none !important;
-    }
-
-    .select-container .chevron {
-        display: flex;
-        padding: 0 7px;
-        box-shadow: -1px 0 0 0 #c5cacf;
-        width: var(--indicatorWidth, 35px);
-        height: var(--indicatorHeight, 20px);
-        color: var(--indicatorColor, --iconsColor);
-    }
-
-    .select-container.multi {
-        padding: var(--multiSelectPadding, 0 35px 0 16px);
-        height: auto;
-        flex-wrap: wrap;
-        align-items: stretch;
-    }
-
-    .select-container.multi > * {
-        flex: 1 1 auto;
-        width: 50px;
-    }
-
-    .select-container.multi input {
-        padding: var(--multiSelectInputPadding, 0);
-        position: relative;
-        margin: var(--multiSelectInputMargin, 0);
-    }
-
-    .select-container.error {
-        border: var(--errorBorder, 1px solid #ff2d55);
-        background: var(--errorBackground, #fff);
-    }
-
-    .a11yText {
-        z-index: 9999;
-        border: 0px;
-        clip: rect(1px, 1px, 1px, 1px);
-        height: 1px;
-        width: 1px;
-        position: absolute;
-        overflow: hidden;
-        padding: 0px;
-        white-space: nowrap;
-    }
-</style>

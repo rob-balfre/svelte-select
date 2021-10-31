@@ -3,6 +3,10 @@
     export let item = undefined;
 </script>
 
+<div class="selection">
+    {@html getSelectionLabel(item)}
+</div>
+
 <style>
     .selection {
         text-overflow: ellipsis;
@@ -10,7 +14,3 @@
         white-space: nowrap;
     }
 </style>
-
-<div class="selection">
-    {@html getSelectionLabel(item)}
-</div>
