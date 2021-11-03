@@ -1,3 +1,20 @@
+<div align="center">
+  <img src="https://i.imgur.com/2Us5A4j.png" alt="Svelte Select" width="150" />
+</div>
+
+<br />
+
+<div align="center">
+  <a href="https://npmjs.org/package/svelte-select">
+    <img src="https://badgen.now.sh/npm/v/svelte-select" alt="version" />
+  </a>
+  <a href="https://npmjs.org/package/svelte-select">
+    <img src="https://badgen.now.sh/npm/dm/svelte-select" alt="downloads" />
+  </a>
+</div>
+
+<br />
+
 # svelte-select
 
 A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
@@ -11,11 +28,8 @@ A select/autocomplete component for Svelte apps.  With support for grouping, fil
 ## Installation
 
 ```bash
-yarn add svelte-select
+npm install svelte-select
 ```
-
-**Note:** Install as a dev dependency (yarn add svelte-select --dev) if using [Sapper](https://sapper.svelte.dev/) to avoid a SSR error.
-
 
 ## Usage
 
@@ -69,7 +83,7 @@ yarn add svelte-select
 - `inputAttributes: Object` Default: `{}`. Pass in HTML attributes to the Select input.
 - `Item: Component` Default: `Item`. Item component.
 - `Selection: Component` Default: `Selection`. Selection component.
-- `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
+- `Multi: Component` Default: `Multi`. Multi selection component.
 - `Icon: Component` Default: `Icon`. Icon component.
 - `iconProps: Object` Default: `{}`. Icon props.
 - `indicatorSvg: @html` Default: `undefined`. Override default SVG chevron indicator.

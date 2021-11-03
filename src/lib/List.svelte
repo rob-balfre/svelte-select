@@ -178,7 +178,7 @@
 
         let offsetBounding;
         const focusedElemBounding = container.querySelector(
-            `.listItem .${className}`
+            `.list-item .${className}`
         );
 
         if (focusedElemBounding) {
@@ -255,7 +255,7 @@
                 on:mouseover={() => handleHover(i)}
                 on:focus={() => handleHover(i)}
                 on:click={(event) => handleClick({ item, i, event })}
-                class="listItem"
+                class="list-item"
                 tabindex="-1">
                 <svelte:component
                     this={Item}
@@ -278,7 +278,7 @@
                     on:mouseover={() => handleHover(i)}
                     on:focus={() => handleHover(i)}
                     on:click={(event) => handleClick({ item, i, event })}
-                    class="listItem"
+                    class="list-item"
                     tabindex="-1">
                     <svelte:component
                         this={Item}

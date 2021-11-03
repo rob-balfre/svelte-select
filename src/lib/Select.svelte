@@ -1,10 +1,17 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onMount } from 'svelte';
 
-    import _List from './List.svelte';
-    import _Item from './Item.svelte';
-    import _Selection from './Selection.svelte';
-    import _debounce from './debounce';
+    // import _List from './List.svelte';
+    // import _Item from './Item.svelte';
+    // import _Selection from './Selection.svelte';
+    // import _debounce from './debounce';
+
+    export const config = {
+        List: null,
+        Item: null,
+        Selection: null,
+        debounce: null
+    };
 
     const dispatch = createEventDispatcher();
 
@@ -78,10 +85,12 @@
     export let iconProps = {};
     export let showChevron = false;
     export let listOffset = 5;
-    export let Item = _Item;
-    export let List = _List;
-    export let Selection = _Selection;
-    export let MultiSelection = null;
+    
+    const { Item, List, Selection, debounce } = config;
+    // const List = config.List;
+    // const Selection = config.Selection;
+
+    export let Multi = null;
     export let VirtualList = null;
     export let ChevronIcon = null;
     export let ClearIcon = null;
@@ -91,7 +100,7 @@
     export let listClass = 'list';
     export let itemClass = 'item';
     
-    export let debounce = _debounce;
+    // let debounce = config.debounce;
 
     function filterMethod(args) {
         if (args.loadOptions && args.filterText.length > 0) return;
@@ -712,7 +721,7 @@
 
     {#if showMultiSelect}
         <svelte:component
-            this={MultiSelection}
+            this={Multi}
             {value}
             {getSelectionLabel}
             {activeValue}
