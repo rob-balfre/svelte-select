@@ -1078,7 +1078,7 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
   target.style.width = '';
 });
 
-test.only('focusing in an external textarea should close and blur it', async (t) => {
+test('focusing in an external textarea should close and blur it', async (t) => {
   const textarea = document.createElement('textarea');
   document.body.appendChild(textarea);
   
@@ -1091,22 +1091,15 @@ test.only('focusing in an external textarea should close and blur it', async (t)
     }
   });
 
-  // await querySelectorClick('.select-container');
   const input = document.querySelector('.select-container input');
   input.focus();
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  t.ok(select.listOpen);
-
-  // await wait(100);
-  // document.querySelector('.select-container input').blur();
-  
+  t.ok(select.listOpen);  
   await wait(0);
-  
   textarea.focus();
-  // await wait(0);
-  // t.ok(!select.listOpen);
-  // textarea.remove();
-  // select.$destroy();
+  t.ok(!select.listOpen);
+  textarea.remove();
+  select.$destroy();
 });
 
 test('clicking between Selects should close and blur other Select', async (t) => {
@@ -1340,12 +1333,9 @@ test('clicking an item with selectable: false should not make a selected', async
   });
 
   await wait(0);
-
-  // notSelectable1
-  await querySelectorClick('.list-item:nth-child(1)')
+  await querySelectorClick('.list-item:nth-child(1)');
   t.ok(!select.value);
-
-  // notSelectable2
+  select.listOpen = true;
   await querySelectorClick('.list-item:nth-child(4)')
   t.ok(!select.value);
 
@@ -1692,8 +1682,10 @@ test('when isMulti and value is populated then navigating with LeftArrow updates
   });
 
   target.style.maxWidth = '100%';
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+
+  const input = document.querySelector('.select-container input');
+  input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+  input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
 
   t.ok(select.$capture_state().activeValue === 1);
 
