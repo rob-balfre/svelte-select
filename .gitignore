@@ -4,7 +4,7 @@ node_modules
 .nova
 /dist/
 /test/public/index.js
-/test/public/bundle.css
+/test/public/index.css
 /spec/page/public/build
 /test-results
 /build

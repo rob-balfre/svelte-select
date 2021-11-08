@@ -1,17 +1,9 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onMount } from 'svelte';
 
-    // import _List from './List.svelte';
-    // import _Item from './Item.svelte';
-    // import _Selection from './Selection.svelte';
-    // import _debounce from './debounce';
+    export let config = {};
 
-    export const config = {
-        List: null,
-        Item: null,
-        Selection: null,
-        debounce: null
-    };
+    const { Item, List, Selection, Multi, debounce } = config;
 
     const dispatch = createEventDispatcher();
 
@@ -28,8 +20,7 @@
     export let placeholder = 'Select...';
     export let placeholderAlwaysShow = false;
     export let items = null;
-    export let itemFilter = (label, filterText) =>
-        `${label}`.toLowerCase().includes(filterText.toLowerCase());
+    export let itemFilter = (label, filterText) => `${label}`.toLowerCase().includes(filterText.toLowerCase());
     export let groupBy = undefined;
     export let groupFilter = (groups) => groups;
     export let isGroupHeaderSelectable = false;
@@ -38,9 +29,7 @@
     };
     export let labelIdentifier = 'label';
     export let getOptionLabel = (option, filterText) => {
-        return option.isCreator
-            ? `Create \"${filterText}\"`
-            : option[labelIdentifier];
+        return option.isCreator ? `Create \"${filterText}\"` : option[labelIdentifier];
     };
     export let optionIdentifier = 'value';
     export let loadOptions = undefined;
@@ -75,7 +64,7 @@
     export let isWaiting = false;
     export let listPlacement = 'auto';
     export let listOpen = false;
-    export let loadOptionsInterval = 300;
+    // export let loadOptionsInterval = 300;
     export let noOptionsMessage = 'No options';
     export let hideEmptyState = false;
     export let inputAttributes = {};
@@ -85,12 +74,7 @@
     export let iconProps = {};
     export let showChevron = false;
     export let listOffset = 5;
-    
-    const { Item, List, Selection, debounce } = config;
-    // const List = config.List;
-    // const Selection = config.Selection;
 
-    export let Multi = null;
     export let VirtualList = null;
     export let ChevronIcon = null;
     export let ClearIcon = null;
@@ -99,38 +83,21 @@
     export { containerClasses as class };
     export let listClass = 'list';
     export let itemClass = 'item';
-    
-    // let debounce = config.debounce;
 
     function filterMethod(args) {
         if (args.loadOptions && args.filterText.length > 0) return;
         if (!args.items) return [];
 
-        if (
-            args.items &&
-            args.items.length > 0 &&
-            typeof args.items[0] !== 'object'
-        ) {
+        if (args.items && args.items.length > 0 && typeof args.items[0] !== 'object') {
             args.items = convertStringItemsToObjects(args.items);
         }
 
         let filterResults = args.items.filter((item) => {
-            let matchesFilter = itemFilter(
-                getOptionLabel(item, args.filterText),
-                args.filterText,
-                item
-            );
+            let matchesFilter = itemFilter(getOptionLabel(item, args.filterText), args.filterText, item);
 
-            if (
-                matchesFilter &&
-                args.isMulti &&
-                args.value &&
-                Array.isArray(args.value)
-            ) {
+            if (matchesFilter && args.isMulti && args.value && Array.isArray(args.value)) {
                 matchesFilter = !args.value.some((x) => {
-                    return (
-                        x[args.optionIdentifier] === item[args.optionIdentifier]
-                    );
+                    return x[args.optionIdentifier] === item[args.optionIdentifier];
                 });
             }
 
@@ -151,8 +118,7 @@
     function addCreatableItem(_items, _filterText) {
         if (_filterText.length === 0) return _items;
         const itemToCreate = createItem(_filterText);
-        if (_items[0] && _filterText === _items[0][labelIdentifier])
-            return _items;
+        if (_items[0] && _filterText === _items[0][labelIdentifier]) return _items;
         itemToCreate.isCreator = true;
         return [..._items, itemToCreate];
     }
@@ -168,14 +134,6 @@
         isCreatable,
     });
 
-    export let selectedValue = null;
-    $: {
-        if (selectedValue)
-            console.warn(
-                'selectedValue is no longer used. Please use value instead.'
-            );
-    }
-
     let containerClasses = 'select-container';
     let activeValue;
     let prev_value;
@@ -184,33 +142,33 @@
     let prev_isMulti;
     let hoverItemIndex;
 
-    const getItems = debounce(async () => {
-        isWaiting = true;
-        let res = await loadOptions(filterText).catch((err) => {
-            console.warn('svelte-select loadOptions error :>> ', err);
-            dispatch('error', { type: 'loadOptions', details: err });
-        });
+    // const getItems = debounce(async () => {
+    //     isWaiting = true;
+    //     let res = await loadOptions(filterText).catch((err) => {
+    //         console.warn('svelte-select loadOptions error :>> ', err);
+    //         dispatch('error', { type: 'loadOptions', details: err });
+    //     });
 
-        if (res && !res.cancelled) {
-            if (res) {
-                if (res && res.length > 0 && typeof res[0] !== 'object') {
-                    res = convertStringItemsToObjects(res);
-                }
-                filteredItems = [...res];
-                dispatch('loaded', { items: filteredItems });
-            } else {
-                filteredItems = [];
-            }
+    //     if (res && !res.cancelled) {
+    //         if (res) {
+    //             if (res && res.length > 0 && typeof res[0] !== 'object') {
+    //                 res = convertStringItemsToObjects(res);
+    //             }
+    //             filteredItems = [...res];
+    //             dispatch('loaded', { items: filteredItems });
+    //         } else {
+    //             filteredItems = [];
+    //         }
 
-            if (isCreatable) {
-                filteredItems = addCreatableItem(filteredItems, filterText);
-            }
+    //         if (isCreatable) {
+    //             filteredItems = addCreatableItem(filteredItems, filterText);
+    //         }
 
-            isWaiting = false;
-            isFocused = true;
-            listOpen = true;
-        }
-    }, loadOptionsInterval);
+    //         isWaiting = false;
+    //         isFocused = true;
+    //         listOpen = true;
+    //     }
+    // }, loadOptionsInterval);
 
     $: updateValueDisplay(items);
 
@@ -221,9 +179,7 @@
                 label: value,
             };
         } else if (isMulti && Array.isArray(value) && value.length > 0) {
-            value = value.map((item) =>
-                typeof item === 'string' ? { value: item, label: item } : item
-            );
+            value = value.map((item) => (typeof item === 'string' ? { value: item, label: item } : item));
         }
     }
 
@@ -283,9 +239,7 @@
                 }
             }
 
-            groups[groupValue].push(
-                Object.assign({ isGroupItem: !!groupValue }, item)
-            );
+            groups[groupValue].push(Object.assign({ isGroupItem: !!groupValue }, item));
         });
 
         const sortedGroupedItems = [];
@@ -307,11 +261,7 @@
             return;
         }
 
-        if (
-            !prev_value ||
-            JSON.stringify(value[optionIdentifier]) !==
-                JSON.stringify(prev_value[optionIdentifier])
-        ) {
+        if (!prev_value || JSON.stringify(value[optionIdentifier]) !== JSON.stringify(prev_value[optionIdentifier])) {
             dispatch('select', value);
         }
     }
@@ -391,7 +341,7 @@
         listOpen = true;
 
         if (loadOptions) {
-            getItems();
+            // getItems();
         } else {
             listOpen = true;
 
@@ -405,12 +355,7 @@
     $: _showChevron = showChevron && ChevronIcon;
     $: showSelectedItem = hasValue && filterText.length === 0;
     $: showClear = showSelectedItem && isClearable && !isDisabled && !isWaiting;
-    $: placeholderText =
-        placeholderAlwaysShow && isMulti
-            ? placeholder
-            : value
-            ? ''
-            : placeholder;
+    $: placeholderText = placeholderAlwaysShow && isMulti ? placeholder : value ? '' : placeholder;
     $: showMultiSelect = isMulti && value && value.length > 0;
 
     beforeUpdate(async () => {
@@ -441,28 +386,13 @@
     }
 
     function findItem(selection) {
-        let matchTo = selection
-            ? selection[optionIdentifier]
-            : value[optionIdentifier];
+        let matchTo = selection ? selection[optionIdentifier] : value[optionIdentifier];
         return items.find((item) => item[optionIdentifier] === matchTo);
     }
 
     function updateValueDisplay(items) {
-        if (
-            !items ||
-            items.length === 0 ||
-            items.some((item) => typeof item !== 'object')
-        )
-            return;
-        if (
-            !value ||
-            (isMulti
-                ? value.some(
-                      (selection) => !selection || !selection[optionIdentifier]
-                  )
-                : !value[optionIdentifier])
-        )
-            return;
+        if (!items || items.length === 0 || items.some((item) => typeof item !== 'object')) return;
+        if (!value || (isMulti ? value.some((selection) => !selection || !selection[optionIdentifier]) : !value[optionIdentifier])) return;
 
         if (Array.isArray(value)) {
             value = value.map((selection) => findItem(selection) || selection);
@@ -490,6 +420,9 @@
         if (!isFocused) return;
 
         switch (e.key) {
+            case 'Enter':
+                e.preventDefault();
+                break;
             case 'ArrowDown':
                 e.preventDefault();
                 listOpen = true;
@@ -506,16 +439,9 @@
             case 'Backspace':
                 if (!isMulti || filterText.length > 0) return;
                 if (isMulti && value && value.length > 0) {
-                    handleMultiItemClear(
-                        activeValue !== undefined
-                            ? activeValue
-                            : value.length - 1
-                    );
+                    handleMultiItemClear(activeValue !== undefined ? activeValue : value.length - 1);
                     if (activeValue === 0 || activeValue === undefined) break;
-                    activeValue =
-                        value.length > activeValue
-                            ? activeValue - 1
-                            : undefined;
+                    activeValue = value.length > activeValue ? activeValue - 1 : undefined;
                 }
                 break;
             case 'ArrowLeft':
@@ -527,12 +453,7 @@
                 }
                 break;
             case 'ArrowRight':
-                if (
-                    !isMulti ||
-                    filterText.length > 0 ||
-                    activeValue === undefined
-                )
-                    return;
+                if (!isMulti || filterText.length > 0 || activeValue === undefined) return;
                 if (activeValue === value.length - 1) {
                     activeValue = undefined;
                 } else if (activeValue < value.length - 1) {
@@ -547,21 +468,20 @@
         if (input) input.focus();
     }
 
-    function handleWindowEvent(event) {
-        if (!container) return;
-        const eventTarget =
-            event.path && event.path.length > 0 ? event.path[0] : event.target;
-        if (container.contains(eventTarget)) return;
+    function handleBlur(e) {
         isFocused = false;
-        listOpen = false;
         activeValue = undefined;
-        if (input) input.blur();
+
+        if (!container.contains(e.relatedTarget)) {
+            closeList();
+        }
     }
 
     function handleClick() {
         if (isDisabled) return;
         isFocused = true;
         listOpen = !listOpen;
+        if (listOpen) handleFocus();
     }
 
     export function handleClear() {
@@ -593,7 +513,7 @@
         listAutoWidth,
         listOffset,
         listClass,
-        itemClass
+        itemClass,
     };
 
     function itemSelected(event) {
@@ -665,8 +585,7 @@
     }
 
     function handleAriaContent() {
-        if (!isFocused || !filteredItems || filteredItems.length === 0)
-            return '';
+        if (!isFocused || !filteredItems || filteredItems.length === 0) return '';
 
         let _item = filteredItems[hoverItemIndex];
         if (listOpen && _item) {
@@ -680,33 +599,11 @@
     }
 
     $: ariaSelection = value ? handleAriaSelection(isMulti) : '';
-    $: ariaContext = handleAriaContent(
-        filteredItems,
-        hoverItemIndex,
-        isFocused,
-        listOpen
-    );
+    $: ariaContext = handleAriaContent(filteredItems, hoverItemIndex, isFocused, listOpen);
 </script>
 
-<svelte:window
-    on:click={handleWindowEvent}
-    on:focusin={handleWindowEvent}
-    on:keydown={handleKeyDown} />
-
-<div
-    class={containerClasses}
-    class:error={hasError}
-    class:multi={isMulti}
-    class:disabled={isDisabled}
-    class:focused={isFocused}
-    style={containerStyles}
-    on:click={handleClick}
-    bind:this={container}>
-    <span
-        aria-live="polite"
-        aria-atomic="false"
-        aria-relevant="additions text"
-        class="a11yText">
+<div class={containerClasses} class:error={hasError} class:multi={isMulti} class:disabled={isDisabled} class:focused={isFocused} style={containerStyles} on:click={handleClick} bind:this={container}>
+    <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" class="a11yText">
         {#if isFocused}
             <span id="aria-selection">{ariaSelection}</span>
             <span id="aria-context">
@@ -720,42 +617,32 @@
     {/if}
 
     {#if showMultiSelect}
-        <svelte:component
-            this={Multi}
-            {value}
-            {getSelectionLabel}
-            {activeValue}
-            {isDisabled}
-            {multiFullItemClearable}
-            on:multiItemClear={handleMultiItemClear}
-            on:focus={handleFocus} />
+        <svelte:component this={Multi} {value} {getSelectionLabel} {activeValue} {isDisabled} {multiFullItemClearable} on:multiItemClear={handleMultiItemClear} on:focus={handleFocus} />
     {/if}
 
     <input
+        on:keydown={handleKeyDown}
+
+        on:blur={handleBlur}
+        on:focus={handleFocus}
+
         readOnly={!isSearchable}
         {..._inputAttributes}
         bind:this={input}
-        on:focus={handleFocus}
         bind:value={filterText}
         placeholder={placeholderText}
         style={inputStyles}
         disabled={isDisabled} />
 
     {#if !isMulti && showSelectedItem}
-        <div class="selected-item" on:focus={handleFocus}>
-            <svelte:component
-                this={Selection}
-                item={value}
-                {getSelectionLabel} />
+        <div class="selected-item">
+            <svelte:component this={Selection} item={value} {getSelectionLabel} />
         </div>
     {/if}
 
     <div class="icons">
         {#if showClear}
-            <div
-                class="clearSelect"
-                on:click|preventDefault={handleClear}
-                aria-hidden="true">
+            <div class="clearSelect" on:click|preventDefault={handleClear} aria-hidden="true">
                 <svelte:component this={ClearIcon} />
             </div>
         {/if}
@@ -772,28 +659,16 @@
     </div>
 
     {#if listOpen}
-        <svelte:component
-            this={List}
-            {...listProps}
-            bind:hoverItemIndex
-            on:itemSelected={itemSelected}
-            on:itemCreated={itemCreated}
-            on:closeList={closeList} />
+        <svelte:component this={List} {...listProps} bind:hoverItemIndex on:itemSelected={itemSelected} on:itemCreated={itemCreated} on:closeList={closeList} />
     {/if}
 
     {#if !isMulti || (isMulti && !showMultiSelect)}
-        <input
-            name={inputAttributes.name}
-            type="hidden"
-            value={value ? getSelectionLabel(value) : null} />
+        <input name={inputAttributes.name} type="hidden" value={value ? getSelectionLabel(value) : null} />
     {/if}
 
     {#if isMulti && showMultiSelect}
         {#each value as item}
-            <input
-                name={inputAttributes.name}
-                type="hidden"
-                value={item ? getSelectionLabel(item) : null} />
+            <input name={inputAttributes.name} type="hidden" value={item ? getSelectionLabel(item) : null} />
         {/each}
     {/if}
 </div>

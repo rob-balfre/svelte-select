@@ -2,6 +2,8 @@
     "useTabs": false,
     "singleQuote": true,
     "tabWidth": 4,
+    "printWidth": 200,
+    "bracketSameLine": true,
     "overrides": [
         {
             "files": ["*.svelte"],

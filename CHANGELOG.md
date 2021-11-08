@@ -2,6 +2,8 @@
 
 ## unreleased
 
+* selectedValue removed
+* borrowed some code from svelte-materialify for the clickOutside function
 * MultiSelection -> Multi
 * added postcss to example, tests
 * tailwind css option

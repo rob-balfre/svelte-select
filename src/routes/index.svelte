@@ -1,8 +1,7 @@
 <script>
     import Select from '$lib/Select.svelte';
-  
 
-    import { tailwind } from '$lib/presets';
+    import config from '$lib/presets/vanilla';
 
     const itemsWithGroup = [
         { value: 'pizza', label: 'Pizza', group: 'Savory' },
@@ -17,8 +16,8 @@
 
     // let value = null;
 
-    
-
 </script>
 
-<Select config={tailwind} items={itemsWithGroup} />
+<form>
+    <Select {config} items={itemsWithGroup} isMulti />
+</form>

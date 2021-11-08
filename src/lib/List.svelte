@@ -1,6 +1,7 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onMount, tick } from 'svelte';
     import isOutOfViewport from './isOutOfViewport';
+    import clickOutside from './clickOutside';
 
     const dispatch = createEventDispatcher();
 
@@ -34,9 +35,7 @@
 
     onMount(() => {
         if (items.length > 0 && !isMulti && value) {
-            const _hoverItemIndex = items.findIndex(
-                (item) => item[optionIdentifier] === value[optionIdentifier]
-            );
+            const _hoverItemIndex = items.findIndex((item) => item[optionIdentifier] === value[optionIdentifier]);
 
             if (_hoverItemIndex) {
                 hoverItemIndex = _hoverItemIndex;
@@ -79,14 +78,9 @@
 
     function handleClick(args) {
         const { item, i, event } = args;
-        event.stopPropagation();
+        // event.stopPropagation();
 
-        if (
-            value &&
-            !isMulti &&
-            value[optionIdentifier] === item[optionIdentifier]
-        )
-            return closeList();
+        if (value && !isMulti && value[optionIdentifier] === item[optionIdentifier]) return closeList();
 
         if (item.isCreator) {
             dispatch('itemCreated', filterText);
@@ -97,8 +91,8 @@
         }
     }
 
-    function closeList() {
-        dispatch('closeList');
+    function closeList(args) {
+        dispatch('closeList', args);
     }
 
     async function updateHoverItem(increment) {
@@ -141,11 +135,7 @@
                 e.preventDefault();
                 if (items.length === 0) break;
                 const hoverItem = items[hoverItemIndex];
-                if (
-                    value &&
-                    !isMulti &&
-                    value[optionIdentifier] === hoverItem[optionIdentifier]
-                ) {
+                if (value && !isMulti && value[optionIdentifier] === hoverItem[optionIdentifier]) {
                     closeList();
                     break;
                 }
@@ -161,12 +151,7 @@
                 if (items.length === 0) {
                     return closeList();
                 }
-                if (
-                    value &&
-                    value[optionIdentifier] ===
-                        items[hoverItemIndex][optionIdentifier]
-                )
-                    return closeList();
+                if (value && value[optionIdentifier] === items[hoverItemIndex][optionIdentifier]) return closeList();
                 activeItemIndex = hoverItemIndex;
                 handleSelect(items[hoverItemIndex]);
                 break;
@@ -177,14 +162,10 @@
         if (VirtualList || !container) return;
 
         let offsetBounding;
-        const focusedElemBounding = container.querySelector(
-            `.list-item .${className}`
-        );
+        const focusedElemBounding = container.querySelector(`.list-item .${className}`);
 
         if (focusedElemBounding) {
-            offsetBounding =
-                container.getBoundingClientRect().bottom -
-                focusedElemBounding.getBoundingClientRect().bottom;
+            offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
         }
 
         container.scrollTop -= offsetBounding;
@@ -199,18 +180,15 @@
     }
 
     function isItemHover(hoverItemIndex, item, itemIndex, items) {
-        return (
-            isItemSelectable(item) &&
-            (hoverItemIndex === itemIndex || items.length === 1)
-        );
+        return isItemSelectable(item) && (hoverItemIndex === itemIndex || items.length === 1);
     }
 
     function isItemSelectable(item) {
-        return (
-            (item.isGroupHeader && item.isSelectable) ||
-            item.selectable ||
-            !item.hasOwnProperty('selectable')
-        );
+        return (item.isGroupHeader && item.isSelectable) || item.selectable || !item.hasOwnProperty('selectable');
+    }
+
+    function handleClickOutside() {
+        closeList({ isOutside: true });
     }
 
     let listStyle;
@@ -218,14 +196,9 @@
         const { top, height, width } = parent.getBoundingClientRect();
 
         listStyle = '';
-        listStyle += `min-width:${width}px;width:${
-            listAutoWidth ? 'auto' : '100%'
-        };`;
+        listStyle += `min-width:${width}px;width:${listAutoWidth ? 'auto' : '100%'};`;
 
-        if (
-            listPlacement === 'top' ||
-            (listPlacement === 'auto' && isOutOfViewport(parent).bottom)
-        ) {
+        if (listPlacement === 'top' || (listPlacement === 'auto' && isOutOfViewport(parent).bottom)) {
             listStyle += `bottom:${height + listOffset}px;`;
         } else {
             listStyle += `top:${height + listOffset}px;`;
@@ -235,28 +208,16 @@
     $: {
         if (parent && container) computePlacement();
     }
+
+    
 </script>
 
 <svelte:window on:keydown={handleKeyDown} on:resize={computePlacement} />
 
-<div
-    class={listClass}
-    class:virtual-list={VirtualList}
-    bind:this={container}
-    style={listStyle}>
+<div use:clickOutside={parent} on:clickOutside={handleClickOutside} class={listClass} class:virtual-list={VirtualList} bind:this={container} style={listStyle}>
     {#if VirtualList}
-        <svelte:component
-            this={VirtualList}
-            {items}
-            {itemHeight}
-            let:item
-            let:i>
-            <div
-                on:mouseover={() => handleHover(i)}
-                on:focus={() => handleHover(i)}
-                on:click={(event) => handleClick({ item, i, event })}
-                class="list-item"
-                tabindex="-1">
+        <svelte:component this={VirtualList} {items} {itemHeight} let:item let:i>
+            <div on:mouseover={() => handleHover(i)} on:focus={() => handleHover(i)} on:click={(event) => handleClick({ item, i, event })} class="list-item" tabindex="-1">
                 <svelte:component
                     this={Item}
                     {item}
@@ -274,12 +235,7 @@
             {#if item.isGroupHeader && !item.isSelectable}
                 <div class="list-group-title">{getGroupHeaderLabel(item)}</div>
             {:else}
-                <div
-                    on:mouseover={() => handleHover(i)}
-                    on:focus={() => handleHover(i)}
-                    on:click={(event) => handleClick({ item, i, event })}
-                    class="list-item"
-                    tabindex="-1">
+                <div on:mouseover={() => handleHover(i)} on:focus={() => handleHover(i)} on:click={(event) => handleClick({ item, i, event })} class="list-item" tabindex="-1">
                     <svelte:component
                         this={Item}
                         {item}
