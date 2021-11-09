@@ -3,7 +3,7 @@
 
     export let config = {};
 
-    const { Item, List, Selection, Multi, VirtualList, debounce } = config;
+    const { Item, List, Selection, Multi, VirtualList, debounce, filter } = config;
 
     const dispatch = createEventDispatcher();
 
@@ -83,37 +83,6 @@
     export let listClass = 'list';
     export let itemClass = 'item';
 
-    function filterMethod(args) {
-        if (args.loadOptions && args.filterText.length > 0) return;
-        if (!args.items) return [];
-
-        if (args.items && args.items.length > 0 && typeof args.items[0] !== 'object') {
-            args.items = convertStringItemsToObjects(args.items);
-        }
-
-        let filterResults = args.items.filter((item) => {
-            let matchesFilter = itemFilter(getOptionLabel(item, args.filterText), args.filterText, item);
-
-            if (matchesFilter && args.isMulti && args.value && Array.isArray(args.value)) {
-                matchesFilter = !args.value.some((x) => {
-                    return x[args.optionIdentifier] === item[args.optionIdentifier];
-                });
-            }
-
-            return matchesFilter;
-        });
-
-        if (args.groupBy) {
-            filterResults = filterGroupedItems(filterResults);
-        }
-
-        if (args.isCreatable) {
-            filterResults = addCreatableItem(filterResults, args.filterText);
-        }
-
-        return filterResults;
-    }
-
     function addCreatableItem(_items, _filterText) {
         if (_filterText.length === 0) return _items;
         const itemToCreate = createItem(_filterText);
@@ -122,15 +91,20 @@
         return [..._items, itemToCreate];
     }
 
-    $: filteredItems = filterMethod({
+    $: filteredItems = filter({
         loadOptions,
         filterText,
         items,
-        value,
         isMulti,
+        value,
         optionIdentifier,
         groupBy,
         isCreatable,
+        itemFilter,
+        convertStringItemsToObjects,
+        filterGroupedItems,
+        addCreatableItem,
+        getOptionLabel
     });
 
     let containerClasses = 'select-container';
@@ -392,7 +366,11 @@
 
     function updateValueDisplay(items) {
         if (!items || items.length === 0 || items.some((item) => typeof item !== 'object')) return;
-        if (!value || (isMulti ? value.some((selection) => !selection || !selection[optionIdentifier]) : !value[optionIdentifier])) return;
+        if (
+            !value ||
+            (isMulti ? value.some((selection) => !selection || !selection[optionIdentifier]) : !value[optionIdentifier])
+        )
+            return;
 
         if (Array.isArray(value)) {
             value = value.map((selection) => findItem(selection) || selection);
@@ -602,7 +580,15 @@
     $: ariaContext = handleAriaContent(filteredItems, hoverItemIndex, isFocused, listOpen);
 </script>
 
-<div class={containerClasses} class:error={hasError} class:multi={isMulti} class:disabled={isDisabled} class:focused={isFocused} style={containerStyles} on:click={handleClick} bind:this={container}>
+<div
+    class={containerClasses}
+    class:error={hasError}
+    class:multi={isMulti}
+    class:disabled={isDisabled}
+    class:focused={isFocused}
+    style={containerStyles}
+    on:click={handleClick}
+    bind:this={container}>
     <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" class="a11yText">
         {#if isFocused}
             <span id="aria-selection">{ariaSelection}</span>
@@ -617,7 +603,15 @@
     {/if}
 
     {#if showMultiSelect}
-        <svelte:component this={Multi} {value} {getSelectionLabel} {activeValue} {isDisabled} {multiFullItemClearable} on:multiItemClear={handleMultiItemClear} on:focus={handleFocus} />
+        <svelte:component
+            this={Multi}
+            {value}
+            {getSelectionLabel}
+            {activeValue}
+            {isDisabled}
+            {multiFullItemClearable}
+            on:multiItemClear={handleMultiItemClear}
+            on:focus={handleFocus} />
     {/if}
 
     <input
@@ -657,7 +651,13 @@
     </div>
 
     {#if listOpen}
-        <svelte:component this={List} {...listProps} bind:hoverItemIndex on:itemSelected={itemSelected} on:itemCreated={itemCreated} on:closeList={closeList} />
+        <svelte:component
+            this={List}
+            {...listProps}
+            bind:hoverItemIndex
+            on:itemSelected={itemSelected}
+            on:itemCreated={itemCreated}
+            on:closeList={closeList} />
     {/if}
 
     {#if !isMulti || (isMulti && !showMultiSelect)}

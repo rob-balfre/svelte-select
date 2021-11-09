@@ -1,8 +1,7 @@
 <div align="center">
-  <img src="https://i.imgur.com/2Us5A4j.png" alt="Svelte Select" width="150" />
+  <img src="https://raw.githubusercontent.com/rob-balfre/svelte-select/feature/v5/svelte-select.png" alt="Svelte Select" width="150" />
+  <h1>Svelte Select</h1>
 </div>
-
-<br />
 
 <div align="center">
   <a href="https://npmjs.org/package/svelte-select">
@@ -12,12 +11,8 @@
     <img src="https://badgen.now.sh/npm/dm/svelte-select" alt="downloads" />
   </a>
 </div>
-
-<br />
-
-# svelte-select
-
-A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
+<div align="center">A select/autocomplete/typeahead Svelte component. <br />
+  Lightweight, feature-rich and modular by design.</div>
 
 ## Demos
 
