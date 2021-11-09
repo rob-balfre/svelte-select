@@ -3,7 +3,7 @@
 
     export let config = {};
 
-    const { Item, List, Selection, Multi, debounce } = config;
+    const { Item, List, Selection, Multi, VirtualList, debounce } = config;
 
     const dispatch = createEventDispatcher();
 
@@ -64,7 +64,7 @@
     export let isWaiting = false;
     export let listPlacement = 'auto';
     export let listOpen = false;
-    // export let loadOptionsInterval = 300;
+    export let debounceWait = 300;
     export let noOptionsMessage = 'No options';
     export let hideEmptyState = false;
     export let inputAttributes = {};
@@ -75,7 +75,6 @@
     export let showChevron = false;
     export let listOffset = 5;
 
-    export let VirtualList = null;
     export let ChevronIcon = null;
     export let ClearIcon = null;
     export let LoadingIcon = null;
@@ -142,33 +141,34 @@
     let prev_isMulti;
     let hoverItemIndex;
 
-    // const getItems = debounce(async () => {
-    //     isWaiting = true;
-    //     let res = await loadOptions(filterText).catch((err) => {
-    //         console.warn('svelte-select loadOptions error :>> ', err);
-    //         dispatch('error', { type: 'loadOptions', details: err });
-    //     });
+    const getItems = debounce(async () => {
+        isWaiting = true;
 
-    //     if (res && !res.cancelled) {
-    //         if (res) {
-    //             if (res && res.length > 0 && typeof res[0] !== 'object') {
-    //                 res = convertStringItemsToObjects(res);
-    //             }
-    //             filteredItems = [...res];
-    //             dispatch('loaded', { items: filteredItems });
-    //         } else {
-    //             filteredItems = [];
-    //         }
+        let res = await loadOptions(filterText).catch((err) => {
+            console.warn('svelte-select loadOptions error :>> ', err);
+            dispatch('error', { type: 'loadOptions', details: err });
+        });
 
-    //         if (isCreatable) {
-    //             filteredItems = addCreatableItem(filteredItems, filterText);
-    //         }
+        if (res && !res.cancelled) {
+            if (res) {
+                if (res && res.length > 0 && typeof res[0] !== 'object') {
+                    res = convertStringItemsToObjects(res);
+                }
+                filteredItems = [...res];
+                dispatch('loaded', { items: filteredItems });
+            } else {
+                filteredItems = [];
+            }
 
-    //         isWaiting = false;
-    //         isFocused = true;
-    //         listOpen = true;
-    //     }
-    // }, loadOptionsInterval);
+            if (isCreatable) {
+                filteredItems = addCreatableItem(filteredItems, filterText);
+            }
+
+            isWaiting = false;
+            isFocused = true;
+            listOpen = true;
+        }
+    }, debounceWait);
 
     $: updateValueDisplay(items);
 
@@ -341,7 +341,7 @@
         listOpen = true;
 
         if (loadOptions) {
-            // getItems();
+            getItems();
         } else {
             listOpen = true;
 
@@ -622,10 +622,8 @@
 
     <input
         on:keydown={handleKeyDown}
-
         on:blur={handleBlur}
         on:focus={handleFocus}
-
         readOnly={!isSearchable}
         {..._inputAttributes}
         bind:this={input}

@@ -2,6 +2,11 @@
 
 ## unreleased
 
+* added support for svelte-tiny-virtual-list
+* removed virtual-list class and css props
+* moved VirtualList to config
+* moved debounce to config
+* loadOptionsInterval -> debounceWait
 * selectedValue removed
 * borrowed some code from svelte-materialify for the clickOutside function
 * MultiSelection -> Multi

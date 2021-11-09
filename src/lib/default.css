@@ -26,6 +26,7 @@
     position: absolute;
     left: var(--inputLeft, 0);
     margin: var(--inputMargin, 0);
+    box-sizing: border-box;
 }
 
 .select-container input::placeholder {
@@ -150,10 +151,6 @@
     width: 100%;
     left: var(--listLeft, 0);
     right: var(--listRight, 0);
-}
-
-.list.virtual-list {
-    height: var(--virtualListHeight, 200px);
 }
 
 .list .list-group-title {

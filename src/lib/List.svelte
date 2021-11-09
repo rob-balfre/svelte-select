@@ -96,8 +96,6 @@
     }
 
     async function updateHoverItem(increment) {
-        if (VirtualList) return;
-
         let isNonSelectableItem = true;
 
         while (isNonSelectableItem) {
@@ -214,20 +212,20 @@
 
 <svelte:window on:keydown={handleKeyDown} on:resize={computePlacement} />
 
-<div use:clickOutside={parent} on:clickOutside={handleClickOutside} class={listClass} class:virtual-list={VirtualList} bind:this={container} style={listStyle}>
+<div use:clickOutside={parent} on:clickOutside={handleClickOutside} class={listClass} bind:this={container} style={listStyle}>
     {#if VirtualList}
-        <svelte:component this={VirtualList} {items} {itemHeight} let:item let:i>
-            <div on:mouseover={() => handleHover(i)} on:focus={() => handleHover(i)} on:click={(event) => handleClick({ item, i, event })} class="list-item" tabindex="-1">
+        <svelte:component this={VirtualList} width="100%" height={250} itemCount={items.length} itemSize={itemHeight} scrollToIndex={hoverItemIndex}>
+            <div slot="item" let:index let:style {style} on:mouseover={() => handleHover(index)} on:focus={() => handleHover(index)} on:click={(event) => handleClick({ item:items[index], i:index, event })} class="list-item" tabindex="-1">
                 <svelte:component
                     this={Item}
-                    {item}
+                    item={items[index]}
                     {itemClass}
                     {filterText}
                     {getOptionLabel}
-                    isFirst={isItemFirst(i)}
-                    isActive={isItemActive(item, value, optionIdentifier)}
-                    isHover={isItemHover(hoverItemIndex, item, i, items)}
-                    isSelectable={isItemSelectable(item)} />
+                    isFirst={isItemFirst(index)}
+                    isActive={isItemActive(items[index], value, optionIdentifier)}
+                    isHover={isItemHover(hoverItemIndex, items[index], index, items)}
+                    isSelectable={isItemSelectable(items[index])} />
             </div>
         </svelte:component>
     {:else}
