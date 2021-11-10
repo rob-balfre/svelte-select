@@ -214,7 +214,7 @@
 
     let listStyle;
     function computePlacement() {
-        const { top, height, width } = parent.getBoundingClientRect();
+        const { height, width } = parent.getBoundingClientRect();
 
         listStyle = '';
         listStyle += `min-width:${width}px;width:${
@@ -223,7 +223,7 @@
 
         if (
             listPlacement === 'top' ||
-            (listPlacement === 'auto' && isOutOfViewport(parent).bottom)
+            (listPlacement === 'auto' && isOutOfViewport(container).bottom)
         ) {
             listStyle += `bottom:${height + listOffset}px;`;
         } else {
