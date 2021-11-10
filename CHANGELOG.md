@@ -2,6 +2,8 @@
 
 ## unreleased
 
+* new debounce method
+* moved getItems into config
 * filterMethod changed to filter and added via config
 * added support for svelte-tiny-virtual-list
 * removed virtual-list class and css props

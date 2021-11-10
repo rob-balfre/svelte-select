@@ -1,21 +1,7 @@
-export default function debounce(func, wait, immediate) {
+export default function debounce(fn, wait = 1) {
     let timeout;
-
-    return function executedFunction() {
-        let context = this;
-        let args = arguments;
-
-        let later = function () {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        };
-
-        let callNow = immediate && !timeout;
-
+    return function (...args) {
         clearTimeout(timeout);
-
-        timeout = setTimeout(later, wait);
-
-        if (callNow) func.apply(context, args);
+        timeout = setTimeout(() => fn.apply(this, ...args), wait);
     };
 }

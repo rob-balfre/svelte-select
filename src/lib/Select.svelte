@@ -3,7 +3,7 @@
 
     export let config = {};
 
-    const { Item, List, Selection, Multi, VirtualList, debounce, filter } = config;
+    const { Item, List, Selection, Multi, VirtualList, debounce, filter, getItems } = config;
 
     const dispatch = createEventDispatcher();
 
@@ -104,7 +104,7 @@
         convertStringItemsToObjects,
         filterGroupedItems,
         addCreatableItem,
-        getOptionLabel
+        getOptionLabel,
     });
 
     let containerClasses = 'select-container';
@@ -114,35 +114,6 @@
     let prev_isFocused;
     let prev_isMulti;
     let hoverItemIndex;
-
-    const getItems = debounce(async () => {
-        isWaiting = true;
-
-        let res = await loadOptions(filterText).catch((err) => {
-            console.warn('svelte-select loadOptions error :>> ', err);
-            dispatch('error', { type: 'loadOptions', details: err });
-        });
-
-        if (res && !res.cancelled) {
-            if (res) {
-                if (res && res.length > 0 && typeof res[0] !== 'object') {
-                    res = convertStringItemsToObjects(res);
-                }
-                filteredItems = [...res];
-                dispatch('loaded', { items: filteredItems });
-            } else {
-                filteredItems = [];
-            }
-
-            if (isCreatable) {
-                filteredItems = addCreatableItem(filteredItems, filterText);
-            }
-
-            isWaiting = false;
-            isFocused = true;
-            listOpen = true;
-        }
-    }, debounceWait);
 
     $: updateValueDisplay(items);
 
@@ -315,7 +286,33 @@
         listOpen = true;
 
         if (loadOptions) {
-            getItems();
+            const load = async function () {
+                isWaiting = true;
+                let res = await getItems({
+                    dispatch,
+                    loadOptions,
+                    convertStringItemsToObjects,
+                    filteredItems,
+                    filterText,
+                });
+
+                if (res) {
+                    isWaiting = res.isWaiting;
+                    isFocused = res.isFocused;
+                    listOpen = res.listOpen;
+                    filteredItems = res.filteredItems;
+                } else {
+                    isWaiting = false;
+                    isFocused = true;
+                    listOpen = true;
+                }
+
+                if (isCreatable) {
+                    filteredItems = addCreatableItem(filteredItems, filterText);
+                }
+            };
+
+            debounce(load(), debounceWait);
         } else {
             listOpen = true;
 

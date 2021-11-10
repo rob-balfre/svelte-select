@@ -4,6 +4,7 @@ import Item from '../Item.svelte';
 import Selection from '../Selection.svelte';
 import debounce from '../debounce';
 import filter from '../filter';
+import getItems from '../getItems';
 
 export default {
     theme: defaultStyles,
@@ -11,5 +12,6 @@ export default {
     Item,
     Selection,
     debounce,
-    filter
+    filter,
+    getItems
 }
