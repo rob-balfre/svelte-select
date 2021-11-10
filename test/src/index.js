@@ -483,10 +483,10 @@ test('when listPosition is set to top list should be above the input', async (t)
   select.$destroy();
 });
 
-test('when listPosition is set to auto and at the bottom the list should be above the input', async (t) => {
+test('when listPosition is set to auto and container at the bottom, the list should be above the input', async (t) => {
   const testTarget = document.createElement('div');
   testTarget.style.position = 'fixed';
-  testTarget.style.bottom = '0';
+  testTarget.style.bottom = '100px';
   testTarget.style.width = '100%';
   document.body.appendChild(testTarget);
   const select = new Select({

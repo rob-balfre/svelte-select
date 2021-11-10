@@ -5,7 +5,7 @@ export default function (elem) {
     out.top = bounding.top < 0;
     out.left = bounding.left < 0;
     out.bottom =
-        bounding.bottom >
+        bounding.bottom + bounding.height >
         (window.innerHeight || document.documentElement.clientHeight);
     out.right =
         bounding.right >
