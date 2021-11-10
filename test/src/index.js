@@ -483,6 +483,29 @@ test('when listPosition is set to top list should be above the input', async (t)
   select.$destroy();
 });
 
+test('when listPosition is set to auto and at the bottom the list should be above the input', async (t) => {
+  const testTarget = document.createElement('div');
+  testTarget.style.position = 'fixed';
+  testTarget.style.bottom = '0';
+  testTarget.style.width = '100%';
+  document.body.appendChild(testTarget);
+  const select = new Select({
+    target: testTarget,
+    props: {
+      items,
+      listOpen: true,
+      listPlacement: 'auto'
+    }
+  });
+
+  const distanceOfListTopFromViewportTop = document.querySelector('.listContainer').getBoundingClientRect().top;
+  const distanceOfInputTopFromViewportTop = document.querySelector('.selectContainer').getBoundingClientRect().top;
+
+  t.ok(distanceOfListTopFromViewportTop <= distanceOfInputTopFromViewportTop);
+
+  select.$destroy();
+});
+
 test('when listPlacement is set to bottom the list should be below the input', async (t) => {
   const select = new Select({
     target,
