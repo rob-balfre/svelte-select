@@ -1,12 +1,16 @@
 # svelte-select changelog
 
+## 4.4.4
+
+* Bug fix for #346 out of viewport - thanks to @nickyrferry
+
 ## 4.4.3
 
 * listOffset was missing from typings - thanks to @blake-regalia
 
 ## 4.4.2
 
-* Bug fixe for #309 - thanks to @ABarnob
+* Bug fix for #309 - thanks to @ABarnob
 
 ## 4.4.1
 
