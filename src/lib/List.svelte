@@ -23,7 +23,6 @@
     export let listAutoWidth;
     export let listOffset;
     export let list = undefined;
-
     export let hoverItemIndex = 0;
     export let activeItemIndex = 0;
 
@@ -183,8 +182,8 @@
         return (item.isGroupHeader && item.isSelectable) || item.selectable || !item.hasOwnProperty('selectable');
     }
 
-    $: listStyle = computePlacement(parent, list);
 
+    let listStyle;
     function computePlacement() {
         if (!parent || !list) return;
 
@@ -211,7 +210,11 @@
             }
         }
 
-        return styles;
+        listStyle = styles;
+    }
+
+    $: {
+        if (parent && list) computePlacement();
     }
 </script>
 

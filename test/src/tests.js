@@ -1943,27 +1943,27 @@ test('when a custom Selection component is supplied then use to display selectio
   select.$destroy();
 });
 
-// test.only('when loadOptions method is supplied, isMulti is true and filterText has length then items should populate via promise resolve', async (t) => {
-//   const select = new Select({
-//     target,
-//     props: {
-//       config: { ...config, Item: CustomItem},
-//       getOptionLabel: (option) => option.name,
-//       getSelectionLabel: (option) => option.name,
-//       loadOptions: getPosts,
-//       optionIdentifier: 'id',
-//       isMulti: true
-//     }
-//   });
+test('when loadOptions method is supplied, isMulti is true and filterText has length then items should populate via promise resolve', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      config: { ...config, Item: CustomItem, Multi},
+      getOptionLabel: (option) => option.name,
+      getSelectionLabel: (option) => option.name,
+      loadOptions: getPosts,
+      optionIdentifier: 'id',
+      isMulti: true
+    }
+  });
 
-//   // await wait(0);
-//   // await handleSet(select, {filterText: 'Juniper'});
-//   // await wait(600);
-//   // await handleKeyboard('ArrowDown', select.input);
-//   // await handleKeyboard('Enter', select.input);
-//   // t.ok(document.querySelector('.multiSelectItem_label').innerHTML === 'Juniper Wheat Beer');
-//   // select.$destroy();
-// });
+  await wait(0);
+  await handleSet(select, {filterText: 'Juniper'});
+  await wait(600);
+  await handleKeyboard('ArrowDown', select.input);
+  await handleKeyboard('Enter');
+  t.ok(document.querySelector('.multiSelectItem_label').innerHTML === 'Juniper Wheat Beer');
+  select.$destroy();
+});
 
 test('when getSelectionLabel contains HTML then render the HTML', async (t) => {
   const select = new Select({
@@ -3920,3 +3920,81 @@ test('allows the user to select an item by clicking with a focusable ancestor', 
   select.$destroy();
 });
 
+
+test('when listOpen true on page load then list should show onMount', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      config,
+      items,
+      listOpen: true,
+    },
+  });
+
+  let list = document.querySelector('.list');
+  
+  t.ok(list);
+
+  select.$destroy();
+});
+
+test('when listOpen true on page load then list should show onMount', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      config,
+      items,
+      listOpen: true,
+    },
+  });
+
+  let list = document.querySelector('.list');
+  
+  t.ok(list);
+
+  select.$destroy();
+});
+
+
+test('when suggestions and no filterText then list should show suggestions', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      config,
+      loadOptions: () => {
+        return Promise.resolve(['foo'])
+      },
+      listOpen: true,
+      suggestions: ['one', 'two', 'three'],
+    },
+  });
+
+  let item = document.querySelector('.item');
+  t.equal(item.innerHTML, 'one');
+
+  select.$destroy();
+});
+
+test('when suggestions items is selected, list should stay open and filterText show become suggestion and loadOptions should run', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      config,
+      loadOptions: () => {
+        return Promise.resolve(['foo'])
+      },
+      listOpen: true,
+      suggestions: ['one', 'two', 'three'],
+    },
+  });
+
+  let item = document.querySelector('.item');
+  t.equal(item.innerHTML, 'one');
+  item.click();
+  t.equal(select.filterText, 'one');
+  await wait(0);
+  item = document.querySelector('.item');
+  t.equal(item.innerHTML, 'foo');
+
+  select.$destroy();
+});

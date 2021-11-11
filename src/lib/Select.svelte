@@ -74,6 +74,7 @@
     export let iconProps = {};
     export let showChevron = false;
     export let listOffset = 5;
+    export let suggestions = null;
 
     export let ChevronIcon = null;
     export let ClearIcon = null;
@@ -94,7 +95,7 @@
     $: filteredItems = filter({
         loadOptions,
         filterText,
-        items,
+        items: suggestionMode ? suggestions : items,
         isMulti,
         value,
         optionIdentifier,
@@ -467,8 +468,10 @@
         handleFocus();
     }
 
+    let mounted;
     onMount(() => {
         if (isFocused && input) input.focus();
+        mounted = true;
     });
 
     $: listProps = {
@@ -492,7 +495,14 @@
         itemClass,
     };
 
+    $: suggestionMode = suggestions && filterText.length === 0;
+
     function itemSelected(event) {
+        if (suggestionMode) {
+            filterText = event.detail.value;
+            return;
+        }
+
         const { detail } = event;
 
         if (detail) {
@@ -659,7 +669,7 @@
     {/if}
 </div>
 
-{#if listOpen}
+{#if mounted && listOpen}
     <svelte:component
         this={List}
         {...listProps}

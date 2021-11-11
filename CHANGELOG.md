@@ -2,7 +2,7 @@
 
 ## unreleased
 
-
+* Added suggestions feature
 * computePlacement now computes to fixed list
 * removed isOutOfViewport and clickOutside
 * new debounce method
