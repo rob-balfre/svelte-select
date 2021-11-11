@@ -121,7 +121,8 @@
 
     function setValue() {
         if (typeof value === 'string') {
-            value = {
+            let item = items.find((item) => item[optionIdentifier] === value);
+            value = item || {
                 [optionIdentifier]: value,
                 label: value,
             };

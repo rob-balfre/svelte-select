@@ -4024,3 +4024,20 @@ test('when VirtualList and no results then show noOptionsMessage', async (t) => 
 
   select.$destroy();
 });
+
+
+test('when value is set check from item and show correct label', async (t) => { 
+  const select = new Select({
+    target,
+    props: {
+      config: { ...config },
+      items,
+      listOpen: true,
+      
+    }
+  });
+
+  select.value = 'cake';
+  t.equal(select.value.label, 'Cake');
+  select.$destroy();
+});
