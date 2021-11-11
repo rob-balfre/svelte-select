@@ -3998,3 +3998,29 @@ test('when suggestions items is selected, list should stay open and filterText s
 
   select.$destroy();
 });
+
+test('when VirtualList and no results then show noOptionsMessage', async (t) => {
+  function fill(len, fn) {
+    return Array(len).fill().map((_, i) => fn(i));
+  }
+
+  const items = fill(10000, (i) => {
+      const name = getName();
+      return name
+  });
+
+  const select = new Select({
+    target,
+    props: {
+      config: { ...config, VirtualList },
+      items,
+      listOpen: true,
+      filterText: 'zzzzz'
+    }
+  });
+
+  await wait(0);
+  t.ok(document.querySelector('.empty'));
+
+  select.$destroy();
+});
