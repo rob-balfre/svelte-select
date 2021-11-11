@@ -1,7 +1,5 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onMount, tick } from 'svelte';
-    import isOutOfViewport from './isOutOfViewport';
-    import clickOutside from './clickOutside';
 
     const dispatch = createEventDispatcher();
 
@@ -24,11 +22,11 @@
     export let parent;
     export let listAutoWidth;
     export let listOffset;
+    export let list = undefined;
 
     export let hoverItemIndex = 0;
     export let activeItemIndex = 0;
 
-    let container = undefined;
     let isScrollingTimer = 0;
     let isScrolling = false;
     let prev_items;
@@ -44,7 +42,7 @@
 
         scrollToActiveItem('active');
 
-        container.addEventListener(
+        list.addEventListener(
             'scroll',
             () => {
                 clearTimeout(isScrollingTimer);
@@ -157,16 +155,16 @@
     }
 
     function scrollToActiveItem(className) {
-        if (VirtualList || !container) return;
+        if (VirtualList || !list) return;
 
         let offsetBounding;
-        const focusedElemBounding = container.querySelector(`.list-item .${className}`);
+        const focusedElemBounding = list.querySelector(`.list-item .${className}`);
 
         if (focusedElemBounding) {
-            offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
+            offsetBounding = list.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
         }
 
-        container.scrollTop -= offsetBounding;
+        list.scrollTop -= offsetBounding;
     }
 
     function isItemActive(item, value, optionIdentifier) {
@@ -185,37 +183,59 @@
         return (item.isGroupHeader && item.isSelectable) || item.selectable || !item.hasOwnProperty('selectable');
     }
 
-    function handleClickOutside() {
-        closeList({ isOutside: true });
-    }
+    $: listStyle = computePlacement(parent, list);
 
-    let listStyle;
     function computePlacement() {
-        const { top, height, width } = parent.getBoundingClientRect();
+        if (!parent || !list) return;
 
-        listStyle = '';
-        listStyle += `min-width:${width}px;width:${listAutoWidth ? 'auto' : '100%'};`;
+        const { top, bottom, left, height, width } = parent.getBoundingClientRect();
 
-        if (listPlacement === 'top' || (listPlacement === 'auto' && isOutOfViewport(parent).bottom)) {
-            listStyle += `bottom:${height + listOffset}px;`;
+        let styles;
+
+        const base = `position:fixed;left:${left}px;min-width:${width}px;width:${
+            listAutoWidth ? width + 'px' : '100%'
+        };`;
+
+        const _top = `bottom:${window.innerHeight - bottom + height + listOffset}px;`;
+        const _bottom = `top:${top + height + listOffset}px;`;
+
+        if (listPlacement === 'top') {
+            styles = base + _top;
+        } else if (listPlacement === 'bottom') {
+            styles = base + _bottom;
         } else {
-            listStyle += `top:${height + listOffset}px;`;
+            styles = base + _bottom;
+
+            if (bottom + listOffset + list.offsetHeight > window.innerHeight) {
+                styles = base + _top;
+            }
         }
-    }
 
-    $: {
-        if (parent && container) computePlacement();
+        return styles;
     }
-
-    
 </script>
 
-<svelte:window on:keydown={handleKeyDown} on:resize={computePlacement} />
+<svelte:window on:keydown={handleKeyDown} on:scroll={computePlacement} on:resize={computePlacement} />
 
-<div use:clickOutside={parent} on:clickOutside={handleClickOutside} class={listClass} bind:this={container} style={listStyle}>
+<div class={listClass} bind:this={list} style={listStyle}>
     {#if VirtualList}
-        <svelte:component this={VirtualList} width="100%" height={250} itemCount={items.length} itemSize={itemHeight} scrollToIndex={hoverItemIndex}>
-            <div slot="item" let:index let:style {style} on:mouseover={() => handleHover(index)} on:focus={() => handleHover(index)} on:click={(event) => handleClick({ item:items[index], i:index, event })} class="list-item" tabindex="-1">
+        <svelte:component
+            this={VirtualList}
+            width="100%"
+            height={250}
+            itemCount={items.length}
+            itemSize={itemHeight}
+            scrollToIndex={hoverItemIndex}>
+            <div
+                slot="item"
+                let:index
+                let:style
+                {style}
+                on:mouseover={() => handleHover(index)}
+                on:focus={() => handleHover(index)}
+                on:click={(event) => handleClick({ item: items[index], i: index, event })}
+                class="list-item"
+                tabindex="-1">
                 <svelte:component
                     this={Item}
                     item={items[index]}
@@ -233,7 +253,12 @@
             {#if item.isGroupHeader && !item.isSelectable}
                 <div class="list-group-title">{getGroupHeaderLabel(item)}</div>
             {:else}
-                <div on:mouseover={() => handleHover(i)} on:focus={() => handleHover(i)} on:click={(event) => handleClick({ item, i, event })} class="list-item" tabindex="-1">
+                <div
+                    on:mouseover={() => handleHover(i)}
+                    on:focus={() => handleHover(i)}
+                    on:click={(event) => handleClick({ item, i, event })}
+                    class="list-item"
+                    tabindex="-1">
                     <svelte:component
                         this={Item}
                         {item}

@@ -3292,7 +3292,7 @@ test('when ClearItem replace clear icon', async (t) => {
   select.$destroy();
 });
 
-test('clicking outside the Select should close and blur it', async (t) => {
+test('losing focus of Select should close list', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -3303,7 +3303,7 @@ test('clicking outside the Select should close and blur it', async (t) => {
 
   await querySelectorClick('.select-container');
   t.ok(select.listOpen);
-  await querySelectorClick('#extra');
+  document.querySelector('.select-container input').blur();
   t.ok(!select.listOpen);
 
   select.$destroy();
@@ -3322,7 +3322,7 @@ test('clicking on an external textarea should close and blur it', async (t) => {
 
   await querySelectorClick('.select-container');
   t.ok(select.listOpen);
-  await querySelectorClick('textarea');
+  document.querySelector('textarea').focus();
   t.ok(!select.listOpen);
 
   textarea.remove();
@@ -3482,7 +3482,7 @@ test('When listOffset is set list position offset changes', async (t) => {
   });
 
   let elem = target.querySelector('.list');
-  t.ok(elem.style.top === '42px');
+  t.ok(elem.style.top === '50px');
 
   select.$destroy();
 });

@@ -114,6 +114,7 @@
     let prev_isFocused;
     let prev_isMulti;
     let hoverItemIndex;
+    let list;
 
     $: updateValueDisplay(items);
 
@@ -447,7 +448,7 @@
         isFocused = false;
         activeValue = undefined;
 
-        if (!container.contains(e.relatedTarget)) {
+        if (list && !container.contains(e.relatedTarget) && !list.contains(e.relatedTarget)) {
             closeList();
         }
     }
@@ -647,16 +648,6 @@
         {/if}
     </div>
 
-    {#if listOpen}
-        <svelte:component
-            this={List}
-            {...listProps}
-            bind:hoverItemIndex
-            on:itemSelected={itemSelected}
-            on:itemCreated={itemCreated}
-            on:closeList={closeList} />
-    {/if}
-
     {#if !isMulti || (isMulti && !showMultiSelect)}
         <input name={inputAttributes.name} type="hidden" value={value ? getSelectionLabel(value) : null} />
     {/if}
@@ -667,3 +658,14 @@
         {/each}
     {/if}
 </div>
+
+{#if listOpen}
+    <svelte:component
+        this={List}
+        {...listProps}
+        bind:hoverItemIndex
+        bind:list
+        on:itemSelected={itemSelected}
+        on:itemCreated={itemCreated}
+        on:closeList={closeList} />
+{/if}

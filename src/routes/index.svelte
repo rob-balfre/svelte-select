@@ -15,9 +15,27 @@
     // }
 
     // let value = null;
-
 </script>
 
 <form>
-    <Select {config} items={itemsWithGroup} isMulti />
+    <Select {config} items={itemsWithGroup} listOpen={true} />
 </form>
+
+<style>
+    form {
+        /* height: 80px; */
+        overflow: hidden;
+        width: 400px;
+        display: flex;
+        padding: 20px;
+        background: red;
+    }
+
+    :global(body) {
+        box-sizing: border-box;
+        display: flex;
+        align-items: flex-end;
+        min-height: 100vh;
+        background: blue;
+    }
+</style>

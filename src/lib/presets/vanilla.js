@@ -13,5 +13,5 @@ export default {
     Selection,
     debounce,
     filter,
-    getItems
+    getItems,
 }

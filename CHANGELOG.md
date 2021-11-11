@@ -2,6 +2,9 @@
 
 ## unreleased
 
+
+* computePlacement now computes to fixed list
+* removed isOutOfViewport and clickOutside
 * new debounce method
 * moved getItems into config
 * filterMethod changed to filter and added via config
