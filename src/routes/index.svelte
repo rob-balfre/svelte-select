@@ -1,7 +1,7 @@
 <script>
     import Select from '$lib/Select.svelte';
 
-    import config from '$lib/presets/vanilla';
+    import imports from '$lib/presets/vanilla';
     import SuggestionHeader from '$lib/SuggestionHeader.svelte';
 
     const itemsWithGroup = [
@@ -35,7 +35,7 @@
 </script>
 
 <form>
-    <Select {config} suggestions={suggestions} listOpen={true} loadOptions={getResults} on:select={setSuggestion} bind:value filterText={suggestion}>
+    <Select {imports} suggestions={suggestions} listOpen={true} loadOptions={getResults} on:select={setSuggestion} bind:value filterText={suggestion}>
     </Select>
 </form>
 

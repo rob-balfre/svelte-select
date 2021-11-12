@@ -3,11 +3,11 @@
 
   export let value;
   export let items;
-  export let config;
+  export let imports;
 </script>
 
 <div class="container">
-  <Select bind:value {items} {config}></Select>
+  <Select bind:value {items} {imports}></Select>
 
   <p class="result">{value.label}</p>
 </div>

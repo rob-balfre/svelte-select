@@ -2,6 +2,8 @@
 
 ## unreleased
 
+* renamed 'config' to 'imports'
+* ChevronIcon moved to config,
 * Added suggestions feature
 * computePlacement now computes to fixed list
 * removed isOutOfViewport and clickOutside

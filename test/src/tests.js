@@ -12,7 +12,7 @@ import {assert, test} from 'tape-modern';
 import VirtualList from 'svelte-tiny-virtual-list';
 import getName from '../utils/nameGen';
 
-import config from '../../src/lib/presets/vanilla';
+import imports from '../../src/lib/presets/vanilla';
 
 import "../../src/lib/default.css";
 // import "../../src/lib/tailwind.css";
@@ -167,7 +167,7 @@ test('with no data creates default elements', async (t) => {
   const select = new Select({
     target,
     props: {
-      config
+      imports
     }
   });
 
@@ -181,7 +181,7 @@ test('when isFocused true container adds focused class', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       isFocused: true
     }
   });
@@ -195,7 +195,7 @@ test('when isFocused changes to true input should focus', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       isFocused: false
     }
   });
@@ -213,7 +213,7 @@ test('default empty list', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true
     }
   });
@@ -227,7 +227,7 @@ test('default list with five items', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithIndex
     }
@@ -242,7 +242,7 @@ test('should highlight active list item', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithIndex,
       value: {value: 'pizza', label: 'Pizza', index: 1}
@@ -264,7 +264,7 @@ test('list scrolls to active item', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithIndex.concat(extras),
       value: {value: 'sunday-roast', label: 'Sunday Roast'},
@@ -292,7 +292,7 @@ test('list scrolls to hovered item when navigating with keys', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithIndex.concat(extras)
     }
@@ -323,7 +323,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: items
     }
@@ -339,7 +339,7 @@ test('on enter active item fires a itemSelected event', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithIndex
     }
@@ -363,7 +363,7 @@ test('on tab active item fires a itemSelected event', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithIndex
     }
@@ -386,7 +386,7 @@ test('on selected of current active item does not fire a itemSelected event', as
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithIndex,
       value: { value: 'chocolate', label: 'Chocolate', index: 0 }
@@ -409,7 +409,7 @@ test('selected item\'s default view', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       value: {value: 'chips', label: 'Chips'},
     }
   });
@@ -422,7 +422,7 @@ test('select view updates with value updates', async (t) => {
   const select = new Select({
     target,
     props: {
-      config
+      imports
     }
   });
 
@@ -436,7 +436,7 @@ test('clear wipes value and updates view', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       value: {value: 'chips', label: 'Chips'},
     }
   });
@@ -452,7 +452,7 @@ test('clicking on Select opens List', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
     }
   });
 
@@ -467,7 +467,7 @@ test('Select opens List populated with items', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -482,7 +482,7 @@ test('List starts with first item in hover state', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -497,7 +497,7 @@ test('select item from list', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
     }
   });
@@ -515,7 +515,7 @@ test('when listPosition is set to top list should be above the input', async (t)
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOpen: true,
       listPlacement: 'top'
@@ -534,7 +534,7 @@ test('when listPlacement is set to bottom the list should be below the input', a
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOpen: true,
       listPlacement: 'bottom'
@@ -557,7 +557,7 @@ test('blur should close list and remove focus from select', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -574,7 +574,7 @@ test('selecting item should close list but keep focus on select', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -592,7 +592,7 @@ test('clicking Select with selected item should open list with item listed as ac
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -613,7 +613,7 @@ test('focus on Select input updates focus state', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -628,7 +628,7 @@ test('key up and down when Select focused opens list', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -648,7 +648,7 @@ test('List should keep width of parent Select', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isFocused: true
     }
@@ -672,7 +672,7 @@ test('Placeholder text should reappear when List is closed', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -690,7 +690,7 @@ test('typing in Select filter will hide selected Item', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -709,7 +709,7 @@ test('clearing selected item closes List if open', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -734,7 +734,7 @@ test('closing List clears Select filter text', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -757,7 +757,7 @@ test('closing List clears Select filter text', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -780,7 +780,7 @@ test('closing List item clears Select filter text', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -800,7 +800,7 @@ test('typing while Select is focused populates Select filter text', async (t) =>
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -820,7 +820,7 @@ test('Select input placeholder wipes while item is selected', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: {name: 'Item #2'},
     }
@@ -836,7 +836,7 @@ test('Select listOpen state controls List', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOpen: true
     }
@@ -854,7 +854,7 @@ test('clicking Select toggles List open state', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -872,7 +872,7 @@ test('Select filter text filters list', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -888,7 +888,7 @@ test('Select filter text filters list with itemFilter', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       itemFilter: (label, filterText, option) => label === 'Ice Cream'
     }
@@ -905,7 +905,7 @@ test('Typing in the Select filter opens List', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isFocused: true
     }
@@ -920,7 +920,7 @@ test('While filtering, the first item in List should receive hover class', async
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isFocused: true
     }
@@ -936,7 +936,7 @@ test('Select container styles can be overridden', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: {name: 'Item #2'},
       containerStyles: `padding-left: 40px;`
@@ -951,7 +951,7 @@ test('Select can be disabled', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isDisabled: true,
     }
@@ -966,7 +966,7 @@ test('Select List closes when you click enter', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isFocused: true
     }
@@ -984,7 +984,7 @@ test('tabbing should move between tabIndexes and others Selects', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isFocused: false
     }
@@ -993,7 +993,7 @@ test('tabbing should move between tabIndexes and others Selects', async (t) => {
   const other = new Select({
     target: extraTarget,
     props: {
-      config,
+      imports,
       items,
       isFocused: false
     }
@@ -1010,7 +1010,7 @@ test(`shouldn't be able to clear a disabled Select`, async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isDisabled: true,
       value: {name: 'Item #4'}
@@ -1027,7 +1027,7 @@ test(`two way binding between Select and it's parent component`, async (t) => {
   const parent = new ParentContainer({
     target,
     props: {
-      config,
+      imports,
       items,
       value: {value: 'chips', label: 'Chips'},
     }
@@ -1058,7 +1058,7 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: [
         {
@@ -1090,7 +1090,7 @@ test('focusing in an external textarea should close and blur it', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
 
     }
@@ -1111,7 +1111,7 @@ test('clicking between Selects should close and blur other Select', async (t) =>
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isFocused: false
     }
@@ -1120,7 +1120,7 @@ test('clicking between Selects should close and blur other Select', async (t) =>
   const other = new Select({
     target: extraTarget,
     props: {
-      config,
+      imports,
       items,
       isFocused: false
     }
@@ -1146,7 +1146,7 @@ test('if only one item in list it should have hover state', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: [{
         index: 0,
@@ -1164,7 +1164,7 @@ test(`hovered item in a filtered list shows hover state`, async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -1183,7 +1183,7 @@ test(`data shouldn't be stripped from item - currently only saves name`, async (
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items
     }
   });
@@ -1199,7 +1199,7 @@ test('should not be able to clear when clearing is disabled', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isClearable: false
     }
@@ -1218,7 +1218,7 @@ test('should not be able to search when searching is disabled', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isSearchable: false
     }
@@ -1239,7 +1239,7 @@ test('placeholder should be prop value', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: itemsWithGroup,
       placeholder
     }
@@ -1258,7 +1258,7 @@ test('should display loading icon when waiting is enabled', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       LoadingIcon,
       items,
       isWaiting: true
@@ -1274,7 +1274,7 @@ test('inputStyles prop applies css to select input', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: {value: 'pizza', label: 'Pizza'},
       inputStyles: `padding-left: 40px;`
@@ -1289,7 +1289,7 @@ test('items should be grouped by groupBy expression', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithGroup,
       groupBy
@@ -1312,7 +1312,7 @@ test('clicking group header should not make a selected', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group
@@ -1331,7 +1331,7 @@ test('clicking an item with selectable: false should not make a selected', async
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithSelectable
     }
@@ -1351,7 +1351,7 @@ test('clicking an item with selectable not specified should make a selected', as
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithSelectable
     }
@@ -1370,7 +1370,7 @@ test('clicking an item with selectable: true should make a selected', async (t) 
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithSelectable
     }
@@ -1386,7 +1386,7 @@ test('when groupBy, no active item and keydown enter is fired then list should c
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group
@@ -1405,7 +1405,7 @@ test('when isGroupHeaderSelectable clicking group header should select createGro
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithGroup,
       isGroupHeaderSelectable: true,
@@ -1443,7 +1443,7 @@ test('group headers label should be created by getGroupHeaderLabel(item)', async
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithGroup,
       groupBy,
@@ -1472,7 +1472,7 @@ test('groups should be sorted by expression', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group,
@@ -1492,7 +1492,7 @@ test('when isMulti is true show each item in value', async (t) => {
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [
@@ -1513,7 +1513,7 @@ test('when isMulti is true and value is undefined show placeholder text', async 
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: undefined
@@ -1529,7 +1529,7 @@ test('when isMulti is true clicking item in List will populate value', async (t)
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: undefined
@@ -1548,7 +1548,7 @@ test('when isMulti is true items in value will not appear in List', async (t) =>
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}]
@@ -1571,7 +1571,7 @@ test('when isMulti is true both value and filterText filters List', async (t) =>
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       listOpen: true,
       isMulti: true,
       items,
@@ -1592,7 +1592,7 @@ test('when isMulti is true clicking X on a selected item will remove it from val
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]
@@ -1609,7 +1609,7 @@ test('when isMulti is true and all selected items have been removed then placeho
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}]
@@ -1625,7 +1625,7 @@ test('when isMulti is true and items are selected then clear all should wipe all
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]
@@ -1642,7 +1642,7 @@ test('when isMulti and groupBy is active then items should be selectable', async
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group
@@ -1661,7 +1661,7 @@ test('when isMulti and selected items reach edge of container then Select height
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items
     }
@@ -1678,7 +1678,7 @@ test('when isMulti and value is populated then navigating with LeftArrow updates
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}, {value: 'chips', label: 'Chips'},],
@@ -1701,7 +1701,7 @@ test('when isMulti and value is populated then navigating with ArrowRight update
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}, {value: 'chips', label: 'Chips'},],
@@ -1723,7 +1723,7 @@ test('when isMulti and value has items and list opens then first item in list sh
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       isFocused: true
@@ -1744,7 +1744,7 @@ test('when isMulti, isDisabled, and value has items then items should be locked'
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       isDisabled: true,
@@ -1761,7 +1761,7 @@ test('when isMulti is true show each item in value if simple arrays are used', a
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items: ['pizza', 'chips', 'chocolate'],
       value: ['pizza', 'chocolate']
@@ -1780,7 +1780,7 @@ test('when labelIdentifier is set you can pass a string and see the right label'
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: [{id: 0, name: 'ONE'}, {id: 1, name: 'TWO'}],
       value: {id: 0, name: 'ONE'},
       optionIdentifier: 'id',
@@ -1798,7 +1798,7 @@ test('when getValue method is set should use that key to update value', async (t
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: [{id: 0, label: 'ONE'}, {id: 1, label: 'TWO'}],
       value: {id: 0, label: 'ONE'},
       optionIdentifier: 'id'
@@ -1818,7 +1818,7 @@ test('when loadOptions method is supplied and filterText has length then items s
   const select = new Select({
     target,
     props: {
-      config: { ...config, Item: CustomItem, Selection: CustomItem },
+      imports: { ...imports, Item: CustomItem, Selection: CustomItem },
       getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
@@ -1838,7 +1838,7 @@ test('when noOptionsMessage is set and there are no items then show message', as
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       noOptionsMessage: 'SO SO SO SCANDALOUS',
       listOpen: true
     }
@@ -1853,7 +1853,7 @@ test('when getSelectionLabel method is supplied and value are no items then disp
  const select = new Select({
     target,
     props: {
-      config,
+      imports,
       getSelectionLabel: (option) => option.notLabel,
       value: {notLabel: 'This is not a label', value: 'not important'},
     }
@@ -1869,7 +1869,7 @@ test('when getOptionLabel method and items is supplied then display result of ge
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       getOptionLabel: (option) => option.notLabel,
       isFocused: true,
       items: [{notLabel: 'This is not a label', value: 'not important #1'}, {notLabel: 'This is not also not a label', value: 'not important #2'}],
@@ -1886,7 +1886,7 @@ test('when getOptionLabel method and items is supplied then display result of ge
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       getOptionLabel: (option) => option.notLabel,
       isFocused: true,
       items: [{notLabel: 'This is not a label', value: 'not important #1'}, {notLabel: 'This is not also not a label', value: 'not important #2'}],
@@ -1904,7 +1904,7 @@ test('when a custom Item component is supplied then use to display each item', a
   const select = new Select({
     target,
     props: {
-      config: { ...config, Item: CustomItem},
+      imports: { ...imports, Item: CustomItem},
       getOptionLabel: (option) => option.name,
       isFocused: true,
       items: [{
@@ -1923,7 +1923,7 @@ test('when a custom Selection component is supplied then use to display selectio
   const select = new Select({
     target,
     props: {
-      config: { ...config, 
+      imports: { ...imports, 
         Item: CustomItem,
         Selection: CustomItem
       },
@@ -1947,7 +1947,7 @@ test('when loadOptions method is supplied, isMulti is true and filterText has le
   const select = new Select({
     target,
     props: {
-      config: { ...config, Item: CustomItem, Multi},
+      imports: { ...imports, Item: CustomItem, Multi},
       getOptionLabel: (option) => option.name,
       getSelectionLabel: (option) => option.name,
       loadOptions: getPosts,
@@ -1969,7 +1969,7 @@ test('when getSelectionLabel contains HTML then render the HTML', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       value: items[0],
       getSelectionLabel: (option) => `<p>${option.label}</p>`,
     }
@@ -1984,7 +1984,7 @@ test('when getOptionLabel contains HTML then render the HTML', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       getOptionLabel: (option) => `<p>${option.label}</p>`,
       isFocused: true
@@ -2001,7 +2001,7 @@ test('when isMulti is true, value populated and arrowLeft is pressed then no ite
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [
@@ -2022,7 +2022,7 @@ test('when hideEmptyState true then do not show "no options" div ', async (t) =>
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOpen: true,
       filterText: 'x',
@@ -2041,7 +2041,7 @@ test('when value changes then select event should fire', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
     }
   });
@@ -2065,7 +2065,7 @@ test('when value is cleared the clear event is fired', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: items[0],
     }
@@ -2088,7 +2088,7 @@ test('when multi item is cleared the clear event is fired with removed item', as
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [itemToRemove]
@@ -2111,7 +2111,7 @@ test('when items in list filter or update then first item in list should highlig
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isFocused: true
     }
@@ -2132,7 +2132,7 @@ test('when item is selected or state changes then check value[optionIdentifier] 
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: {value: 'cake', label: 'Cake'}
     }
@@ -2154,7 +2154,7 @@ test('when isMulti and item is selected or state changes then check value[option
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [
@@ -2183,7 +2183,7 @@ test('when isFocused turns to false then check Select is no longer in focus', as
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       isFocused: true,
       items,
     }
@@ -2192,7 +2192,7 @@ test('when isFocused turns to false then check Select is no longer in focus', as
   const selectSecond = new Select({
     target: extraTarget,
     props: {
-      config,
+      imports,
       isFocused: false,
       items,
     }
@@ -2228,7 +2228,7 @@ test('when items and loadOptions method are both supplied then fallback to items
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       getOptionLabel: (option) => option.name,
       getSelectionLabel: (option) => option.name,
       loadOptions: getPosts,
@@ -2254,7 +2254,7 @@ test('when items is just an array of strings then render list', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOpen: true
     }
@@ -2272,7 +2272,7 @@ test('when items are just strings then value should render', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: {value: 'one', label: 'one', index: 0}
     }
@@ -2295,7 +2295,7 @@ test('when VirtualList then render list', async (t) => {
   const select = new Select({
     target,
     props: {
-      config: { ...config, VirtualList },
+      imports: { ...imports, VirtualList },
       items,
       listOpen: true
     }
@@ -2311,7 +2311,7 @@ test('when isMulti and value has items then check each item is unique', async (t
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [
@@ -2331,7 +2331,7 @@ test('when isMulti and textFilter has length then enter should select item', asy
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       isFocused: true,
@@ -2351,7 +2351,7 @@ test('when isMulti and textFilter has length and no items in list then enter sho
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       isFocused: true,
@@ -2370,7 +2370,7 @@ test('When isMulti and no selected item then delete should do nothing', async (t
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       isFocused: true,
@@ -2389,7 +2389,7 @@ test('When list is open, filterText applied and Enter/Tab key pressed should sel
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       listOpen: true,
       isFocused: true,
       filterText: 'A5',
@@ -2412,7 +2412,7 @@ test('When inputAttributes is supplied each attribute is placed on the Select in
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       inputAttributes: {
         id: 'testId',
@@ -2433,7 +2433,7 @@ test('when items and value supplied as just strings then value should render cor
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: ['Pizza', 'Chocolate', 'Crisps'],
       value: 'Pizza'
     }
@@ -2448,7 +2448,7 @@ test('when isMulti with items and value supplied as just strings then value shou
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items: ['Pizza', 'Chocolate', 'Crisps'],
       value: ['Pizza']
@@ -2472,7 +2472,7 @@ test('when isMulti, groupBy and value are supplied then list should be filtered'
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items: _items,
       groupBy: (item) => item.group,
@@ -2495,7 +2495,7 @@ test('When isCreatable disabled, creator is not displayed', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isFocused: true,
       listOpen: true
@@ -2523,7 +2523,7 @@ test('When isCreatable enabled, creator displays getOptionLabel for isCreator', 
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isCreatable: true,
       isFocused: true,
@@ -2551,7 +2551,7 @@ test('When isCreatable enabled, creator is not displayed when duplicate item val
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: [item],
       isCreatable: true,
       listOpen: true
@@ -2574,7 +2574,7 @@ test('When creator selected, selected item is set to created item', async (t) =>
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isCreatable: true,
       isFocused: true,
@@ -2600,7 +2600,7 @@ test('When creator is selected, created item it added to multi selection', async
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isCreatable: true,
       isFocused: true,
@@ -2628,7 +2628,7 @@ test('When creator is selected multiple times, items are all added to multi sele
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isCreatable: true,
       isFocused: true,
@@ -2657,7 +2657,7 @@ test('When isMulti and an items remove icon is clicked then item should be remov
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       items,
       isCreatable: true,
       value: [
@@ -2696,7 +2696,7 @@ test('When isCreatable with non-default item structure, item creator displays ge
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       optionIdentifier: 'food',
       getOptionLabel: itemDisplay,
       getSelectionLabel: itemDisplay,
@@ -2730,7 +2730,7 @@ test('When isCreatable and isMulti and optionIdentifier is supplied creator disp
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       optionIdentifier: 'foo',
       isMulti: true,
       items: _items,
@@ -2767,7 +2767,7 @@ test('When isCreatable and isMulti and optionIdentifier is supplied multiple cre
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       optionIdentifier,
       isMulti: true,
       items: _items,
@@ -2807,7 +2807,7 @@ test('When isCreatable and item is created then createItem method should only ru
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       isCreatable: true,
       items,
       createItem
@@ -2828,7 +2828,7 @@ test('When items are collection and value a string then lookup item using option
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: 'cake'
     }
@@ -2846,7 +2846,7 @@ test('When listAutoWidth is set to false list container should have style of wid
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listAutoWidth: false,
       listOpen: true
@@ -2864,7 +2864,7 @@ test('When item is already active and is selected from list then close list', as
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOpen: true,
       value: 'pizza'
@@ -2883,7 +2883,7 @@ test('When Icon prop is supplied then render on Select', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       Icon: TestIcon
     }
@@ -2898,7 +2898,7 @@ test('When showChevron prop is true only show chevron when there is no value on 
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: {value: 'chocolate', label: 'Chocolate'},
       showChevron: true
@@ -2914,8 +2914,7 @@ test('When showChevron prop is true and no value show chevron on Select', async 
   const select = new Select({
     target,
     props: {
-      config,
-      ChevronIcon,
+      imports: {...imports, ChevronIcon},
       items,
       showChevron: true
     }
@@ -2930,8 +2929,7 @@ test('When showChevron and isClearable is true always show chevron on Select', a
   const select = new Select({
     target,
     props: {
-      config,
-      ChevronIcon,
+      imports: {...imports, ChevronIcon},
       items,
       value: {value: 'chocolate', label: 'Chocolate'},
       showChevron: true,
@@ -2948,7 +2946,7 @@ test('When items and loadItems then listOpen should be false', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       getSelectionLabel: (option) => option.name,
       getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
@@ -2970,7 +2968,7 @@ test('Select container classes can be injected', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: {value: 'cake', label: 'Cake'},
       class: 'select-container testclass',
@@ -2988,7 +2986,7 @@ test('When noOptionsMessage is changed after List component has been created the
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
@@ -3018,7 +3016,7 @@ test('When loadOptions promise is resolved then dispatch loaded', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       loadOptions: resolvePromise,
     },
   });
@@ -3050,7 +3048,7 @@ test('When loadOptions promise is rejected then dispatch error', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       loadOptions: rejectPromise,
     },
   });
@@ -3082,7 +3080,7 @@ test('When items change then value should also update', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: {value: 'chips', label: 'Chips'},
     },
@@ -3110,7 +3108,7 @@ test('When items change then value should also update', async (t) => {
   const multiSelect = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [{value: 'chips', label: 'Chips'}, {value: 'pizza', label: 'Pizza'}],
@@ -3139,7 +3137,7 @@ test('When items change then value should also update but only if found in items
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       value: {value: 'chips', label: 'Chips'},
     },
@@ -3167,7 +3165,7 @@ test('When isMulti and multiFullItemClearable then clicking anywhere on the item
   const multiSelect = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       multiFullItemClearable: true,
@@ -3187,7 +3185,7 @@ test('When isMulti and filterText then items should filter out already selected 
   const multiSelect = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items,
       value: [{value: 'chips', label: 'Chips'}, {value: 'pizza', label: 'Pizza'}],
@@ -3212,7 +3210,7 @@ test('when loadOptions and items is supplied then list should close on blur', as
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       loadOptions,
     }
@@ -3233,7 +3231,7 @@ test('when isCreatable and item created then event "itemCreated" should dispatch
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isCreatable: true,
       isFocused: true,
@@ -3264,7 +3262,7 @@ test('when loadOptions response returns cancelled true then dont end loading sta
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       loadOptions: getCancelledRes,
     }
   });
@@ -3280,7 +3278,7 @@ test('when ClearItem replace clear icon', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       ClearIcon: TestClearIcon,
       value: {value: 'chips', label: 'Chips'}
@@ -3296,7 +3294,7 @@ test('losing focus of Select should close list', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
     }
   });
@@ -3315,7 +3313,7 @@ test('clicking on an external textarea should close and blur it', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
     }
   });
@@ -3333,7 +3331,7 @@ test('when switching between isMulti true/false ensure Select continues working'
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOpen: true,
       value: {value: 'chips', label: 'Chips'}
@@ -3359,7 +3357,7 @@ test('when isSearchable is false then input should be readonly', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       isSearchable: false
     }
@@ -3376,7 +3374,7 @@ test('when esc key pressed should close list', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOpen: true
     }
@@ -3395,7 +3393,7 @@ test('when isMulti and placeholderAlwaysShow then always show placeholder text',
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       items,
       value: [{value: 'chocolate', label: 'Chocolate'},
       {value: 'pizza', label: 'Pizza'},],
@@ -3425,7 +3423,7 @@ test('when loadOptions and value then items should show on promise resolve',asyn
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       value: {
         value: 'chocolate', label: 'Chocolate'
       },
@@ -3453,7 +3451,7 @@ test('when loadOptions, isMulti and value then filterText should remain on promi
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       value: {
         value: 'chocolate', label: 'Chocolate'
@@ -3474,7 +3472,7 @@ test('When listOffset is set list position offset changes', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOffset: 0,
       listOpen: true
@@ -3491,7 +3489,7 @@ test('When items are updated post onMount ensure filtering still works', async (
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: null
     },
   });
@@ -3512,7 +3510,7 @@ test('When grouped items are updated post onMount ensure filtering still works',
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       groupBy: item => item.group
     },
   });
@@ -3536,7 +3534,7 @@ test('When groupBy and value selected ensure filtering still works', async (t) =
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: itemsWithGroup,
       groupBy: (item) => item.group,
       
@@ -3555,7 +3553,7 @@ test('When value selected and filterText then ensure selecting the active value 
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
     },
   });
@@ -3577,7 +3575,7 @@ test('When groupBy, optionIdentifier and labelIdentifier then ensure list displa
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: itemsWithGroupIds,
       optionIdentifier: '_id',
       labelIdentifier: 'name',
@@ -3601,7 +3599,7 @@ test('When groupBy, optionIdentifier, labelIdentifier and createGroupHeaderItem 
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: itemsWithGroupIds,
       optionIdentifier: '_id',
       labelIdentifier: 'name',
@@ -3631,7 +3629,7 @@ test('When isMulti on:select events should fire on each item removal (including 
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       items,
       isMulti: true,
       value: ['Cake', 'Chips']
@@ -3658,7 +3656,7 @@ test('When loadOptions and isCreatable then create new item is active when promi
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       loadOptions: itemsPromiseEmpty,
       isCreatable: true,
     },
@@ -3676,7 +3674,7 @@ test('When loadOptions and isCreatable then create new item show at bottom of re
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       loadOptions: itemsPromise,
       isCreatable: true,
     },
@@ -3695,7 +3693,7 @@ test('When inputAttributes.name supplied, add to hidden input', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       inputAttributes: { name: 'Foods' },
       items: items,
       showChevron: true,
@@ -3712,7 +3710,7 @@ test('When no value then hidden field should also have no value', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       inputAttributes: { name: 'Foods' },
       items: items,
       
@@ -3729,7 +3727,7 @@ test('When value then hidden field should have value.label', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: items,
       value: {value: 'cake', label: 'Cake'},
     },
@@ -3745,7 +3743,7 @@ test('When isMulti and no value then hidden field should no value', async (t) =>
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items: items,
     },
@@ -3761,7 +3759,7 @@ test('When isMulti and value then hidden fields should list value items', async 
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items: items,
       value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},]
@@ -3780,7 +3778,7 @@ test('When listOpen then aria-context describes highlighted item', async (t) => 
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: items,
       listOpen: true
     },
@@ -3798,7 +3796,7 @@ test('When listOpen and value then aria-selection describes value', async (t) =>
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: items,
       value: {value: 'cake', label: 'Cake'},
       isFocused: true
@@ -3815,7 +3813,7 @@ test('When listOpen, value and isMulti then aria-selection describes value', asy
   const select = new Select({
     target,
     props: {
-      config: {...config, Multi},
+      imports: {...imports, Multi},
       isMulti: true,
       items: items,
       value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},],
@@ -3834,7 +3832,7 @@ test('When ariaValues and value supplied, then aria-selection uses default updat
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: items,
       value: {value: 'pizza', label: 'Pizza'},
       isFocused: true,
@@ -3852,7 +3850,7 @@ test('When ariaListOpen, listOpen, then aria-context uses default updated', asyn
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: items,
       listOpen: true,
       ariaListOpen: (label, count) => `label: ${label}, count: ${count}`
@@ -3869,7 +3867,7 @@ test('When ariaFocused, focused value supplied, then aria-context uses default u
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items: items,
       isFocused: true,
       ariaFocused: () => `nothing to see here.`
@@ -3887,7 +3885,7 @@ test('When id supplied then add to input', async (t) => {
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       id: 'foods',
       items: items,
     },
@@ -3908,7 +3906,7 @@ test('allows the user to select an item by clicking with a focusable ancestor', 
   const select = new Select({
     target: ancestor,
     props: {
-      config,
+      imports,
       items,
     },
   });
@@ -3925,7 +3923,7 @@ test('when listOpen true on page load then list should show onMount', async (t) 
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOpen: true,
     },
@@ -3942,7 +3940,7 @@ test('when listOpen true on page load then list should show onMount', async (t) 
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       items,
       listOpen: true,
     },
@@ -3960,7 +3958,7 @@ test('when suggestions and no filterText then list should show suggestions', asy
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       loadOptions: () => {
         return Promise.resolve(['foo'])
       },
@@ -3979,7 +3977,7 @@ test('when suggestions items is selected, list should stay open and filterText s
   const select = new Select({
     target,
     props: {
-      config,
+      imports,
       loadOptions: () => {
         return Promise.resolve(['foo'])
       },
@@ -4012,7 +4010,7 @@ test('when VirtualList and no results then show noOptionsMessage', async (t) => 
   const select = new Select({
     target,
     props: {
-      config: { ...config, VirtualList },
+      imports: { ...imports, VirtualList },
       items,
       listOpen: true,
       filterText: 'zzzzz'
@@ -4030,7 +4028,7 @@ test('when value is set check from item and show correct label', async (t) => {
   const select = new Select({
     target,
     props: {
-      config: { ...config },
+      imports: { ...imports },
       items,
       listOpen: true,
       
@@ -4039,5 +4037,24 @@ test('when value is set check from item and show correct label', async (t) => {
 
   select.value = 'cake';
   t.equal(select.value.label, 'Cake');
+  select.$destroy();
+});
+
+test('if ChevronIcon and showChevron show chevron and allow click', async (t) => { 
+  const select = new Select({
+    target,
+    props: {
+      imports: { ...imports, ChevronIcon},
+      items,
+      
+      showChevron: true
+      
+    }
+  });
+
+  let chevron = document.querySelector('.chevron');
+  t.ok(chevron);
+  chevron.click();
+  t.ok(select.listOpen);
   select.$destroy();
 });

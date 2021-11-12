@@ -1,9 +1,9 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onMount } from 'svelte';
 
-    export let config = {};
+    export let imports = {};
 
-    const { Item, List, Selection, Multi, VirtualList, debounce, filter, getItems } = config;
+    const { Item, List, Selection, Multi, VirtualList, ChevronIcon, debounce, filter, getItems } = imports;
 
     const dispatch = createEventDispatcher();
 
@@ -76,7 +76,6 @@
     export let listOffset = 5;
     export let suggestions = null;
 
-    export let ChevronIcon = null;
     export let ClearIcon = null;
     export let LoadingIcon = null;
 
