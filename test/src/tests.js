@@ -4058,3 +4058,51 @@ test('if ChevronIcon and showChevron show chevron and allow click', async (t) =>
   t.ok(select.listOpen);
   select.$destroy();
 });
+
+test('when component focuses fire on:focus event', async (t) => { 
+  const select = new Select({
+    target,
+    props: {
+      imports,
+      items
+    }
+  });
+
+  let f = false;
+  select.$on('focus', () => {
+    f = true;
+  });
+
+  let ele = document.querySelector('.select-container input');
+  ele.focus();
+
+  t.ok(f);
+
+  select.$destroy();
+});
+
+
+test('when component blurs fire on:blur event', async (t) => { 
+  const select = new Select({
+    target,
+    props: {
+      imports,
+      items,
+      isFocused: true
+    }
+  });
+
+  let b = false;
+  select.$on('blur', () => {
+    b = true;
+  });
+
+  let ele = document.querySelector('.select-container input');
+  ele.blur();
+
+  t.ok(b);
+
+  select.$destroy();
+});
+
+

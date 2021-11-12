@@ -2,6 +2,7 @@
 
 ## unreleased
 
+* added blur and focus events
 * renamed 'config' to 'imports'
 * ChevronIcon moved to config,
 * Added suggestions feature

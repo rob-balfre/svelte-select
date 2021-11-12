@@ -440,12 +440,16 @@
         }
     }
 
-    function handleFocus() {
+    function handleFocus(e) {
+        dispatch('focus', e);
+
         isFocused = true;
         if (input) input.focus();
     }
 
     function handleBlur(e) {
+        dispatch('blur', e);
+
         isFocused = false;
         activeValue = undefined;
 
