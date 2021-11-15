@@ -10,10 +10,10 @@
     "dev-tests": "rollup -cw",
     "test:browser": "sirv test/public -p 3000 --dev",
     "gen:docs": "node docs/generate_theming_variables_md.js",
-    "package": "svelte-kit package"
+    "prepare": "svelte-kit package"
   },
   "devDependencies": {
-    "@sveltejs/kit": "1.0.0-next.195",
+    "@sveltejs/kit": "1.0.0-next.196",
     "autoprefixer": "^10.4.0",
     "cross-env": "^7.0.3",
     "find-in-files": "^0.5.0",
@@ -21,8 +21,8 @@
     "postcss-cli": "^9.0.2",
     "postcss-import": "^14.0.2",
     "prettier": "~2.4.1",
-    "prettier-plugin-svelte": "^2.4.0",
-    "rollup": "^2.59.0",
+    "prettier-plugin-svelte": "^2.5.0",
+    "rollup": "^2.60.0",
     "rollup-plugin-cleaner": "^1.0.0",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
@@ -31,6 +31,7 @@
     "sirv-cli": "^1.0.14",
     "svelte": "^3.44.1",
     "svelte-preprocess": "^4.9.8",
+    "svelte-select": "^5.0.0-alpha.2",
     "svelte-tiny-virtual-list": "^1.1.7",
     "svelte2tsx": "^0.4.8",
     "tailwindcss": "^2.2.19",

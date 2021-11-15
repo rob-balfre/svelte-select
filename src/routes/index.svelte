@@ -1,8 +1,7 @@
 <script>
-    import Select from '$lib/Select.svelte';
+    import Select from 'svelte-select';
 
-    import imports from '$lib/presets/vanilla';
-    import SuggestionHeader from '$lib/SuggestionHeader.svelte';
+    import imports from 'svelte-select/presets/vanilla';
 
     const itemsWithGroup = [
         { value: 'pizza', label: 'Pizza', group: 'Savory' },
@@ -15,12 +14,8 @@
 
     let value;
     let suggestion;
-
-    async function setSuggestion(e) {
-        suggestion = e.detail.value;
-        
-        value = null;
-    }
+    
+    
 
 
     // function groupBy(item) {
@@ -35,7 +30,7 @@
 </script>
 
 <form>
-    <Select {imports} suggestions={suggestions} listOpen={true} loadOptions={getResults} on:select={setSuggestion} bind:value filterText={suggestion}>
+    <Select {imports} suggestions={suggestions} listOpen={true} loadOptions={getResults} bind:value filterText={suggestion}>
     </Select>
 </form>
 
