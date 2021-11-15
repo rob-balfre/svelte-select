@@ -16,4 +16,4 @@ jobs:
       - run: npm ci
       - run: npm publish ./package --tag alpha
         env:
-          npm: ${{secrets.npm_token}}
+          npm: ${{secrets.NPM_TOKEN}}
