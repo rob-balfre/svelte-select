@@ -43,5 +43,8 @@
   "keywords": [
     "svelte"
   ],
-  "type": "module"
+  "type": "module",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
 }
