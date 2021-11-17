@@ -540,7 +540,8 @@
         if (!container) return;
         const eventTarget =
             event.path && event.path.length > 0 ? event.path[0] : event.target;
-        if (container.contains(eventTarget)) return;
+        const relatedTarget = event.relatedTarget;
+        if (container.contains(eventTarget) || container.contains(relatedTarget)) return;
         isFocused = false;
         listOpen = false;
         activeValue = undefined;
@@ -864,7 +865,7 @@
     class:disabled={isDisabled}
     class:focused={isFocused}
     style={containerStyles}
-    on:click={handleClick}
+    on:click|preventDefault={handleClick}
     bind:this={container}>
     <span
         aria-live="polite"
