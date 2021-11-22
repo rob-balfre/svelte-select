@@ -1,6 +1,10 @@
+:root {
+    --border: 1px solid #d8dbdf;
+}
+
 .select-container {
-    border: var(--border, 1px solid #d8dbdf);
-    border-radius: var(--borderRadius, 3px);
+    border: var(--border);
+    border-radius: var(--border-radius, 3px);
     box-sizing: border-box;
     height: var(--height, 42px);
     position: relative;
@@ -15,23 +19,23 @@
 .select-container input {
     cursor: default;
     border: none;
-    color: var(--inputColor, #3f4f5f);
+    color: var(--input-color, #3f4f5f);
     height: var(--height, 42px);
     line-height: var(--height, 42px);
-    padding: var(--inputPadding, var(--padding, 0 16px));
+    padding: var(--input-padding, var(--padding, 0 16px));
     width: 100%;
     background: transparent;
-    font-size: var(--inputFontSize, 14px);
-    letter-spacing: var(--inputLetterSpacing, inherit);
+    font-size: var(--input-font-size, 14px);
+    letter-spacing: var(--input-letter-spacing, inherit);
     position: absolute;
-    left: var(--inputLeft, 0);
-    margin: var(--inputMargin, 0);
+    left: var(--input-left, 0);
+    margin: var(--input-margin, 0);
     box-sizing: border-box;
 }
 
 .select-container input::placeholder {
-    color: var(--placeholderColor, #78848f);
-    opacity: var(--placeholderOpacity, 1);
+    color: var(--placeholder-color, #78848f);
+    opacity: var(--placeholder-opacity, 1);
 }
 
 .select-container input:focus {
@@ -39,17 +43,17 @@
 }
 
 .select-container:hover {
-    border-color: var(--borderHoverColor, #b2b8bf);
+    border-color: var(--border-hover-color, #b2b8bf);
 }
 
 .select-container.focused {
-    border-color: var(--borderFocusColor, #006fe8);
+    border-color: var(--border-focus-color, #006fe8);
 }
 
 .select-container.disabled {
-    background: var(--disabledBackground, #ebedef);
-    border-color: var(--disabledBorderColor, #ebedef);
-    color: var(--disabledColor, #c1c6cc);
+    background: var(--disabled-background, #ebedef);
+    border-color: var(--disabled-border-color, #ebedef);
+    color: var(--disabled-color, #c1c6cc);
 }
 
 .select-container.disabled input::placeholder {
@@ -106,14 +110,15 @@
 
 .select-container.multi {
     padding: var(--multiSelectPadding, 0 35px 0 16px);
-    height: auto;
+    min-height: 38px;
+    /* height: inherit; */
     flex-wrap: wrap;
     align-items: stretch;
 }
 
 .select-container.multi > * {
-    flex: 1 1 auto;
-    width: 50px;
+    /* flex: 1 1 auto; */
+    /* width: auto; */
 }
 
 .select-container.multi input {
@@ -145,12 +150,14 @@
     max-height: var(--listMaxHeight, 250px);
     overflow-y: auto;
     background: var(--listBackground, #fff);
-    border: var(--listBorder, none);
+    
     position: var(--listPosition, absolute);
     z-index: var(--listZIndex, 2);
-    width: 100%;
-    left: var(--listLeft, 0);
-    right: var(--listRight, 0);
+    border: var(--list-border, --border);
+
+    /* width: 100%; */
+    /* left: var(--listLeft, 0); */
+    /* right: var(--listRight, 0); */
 }
 
 .list .list-group-title {
@@ -208,4 +215,10 @@
 .item.hover:not(.active) {
     background: var(--itemHoverBG, #e7f2ff);
     color: var(--itemHoverColor, inherit);
+}
+
+.selection {
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
 }

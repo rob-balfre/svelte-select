@@ -3,7 +3,19 @@
 
     export let imports = {};
 
-    const { Item, List, Selection, Multi, VirtualList, ChevronIcon, debounce, filter, getItems } = imports;
+    const {
+        Item,
+        List,
+        Selection,
+        Multi,
+        VirtualList,
+        ChevronIcon,
+        ClearIcon,
+        LoadingIcon,
+        debounce,
+        filter,
+        getItems,
+    } = imports;
 
     const dispatch = createEventDispatcher();
 
@@ -16,8 +28,9 @@
     export let isCreatable = false;
     export let isFocused = false;
     export let value = null;
+    export let justValue = null;
     export let filterText = '';
-    export let placeholder = 'Select...';
+    export let placeholder = 'Please select';
     export let placeholderAlwaysShow = false;
     export let items = null;
     export let itemFilter = (label, filterText) => `${label}`.toLowerCase().includes(filterText.toLowerCase());
@@ -76,12 +89,7 @@
     export let listOffset = 5;
     export let suggestions = null;
 
-    export let ClearIcon = null;
-    export let LoadingIcon = null;
-
     export { containerClasses as class };
-    export let listClass = 'list';
-    export let itemClass = 'item';
 
     function addCreatableItem(_items, _filterText) {
         if (_filterText.length === 0) return _items;
@@ -91,22 +99,6 @@
         return [..._items, itemToCreate];
     }
 
-    $: filteredItems = filter({
-        loadOptions,
-        filterText,
-        items: suggestionMode ? suggestions : items,
-        isMulti,
-        value,
-        optionIdentifier,
-        groupBy,
-        isCreatable,
-        itemFilter,
-        convertStringItemsToObjects,
-        filterGroupedItems,
-        addCreatableItem,
-        getOptionLabel,
-    });
-
     let containerClasses = 'select-container';
     let activeValue;
     let prev_value;
@@ -115,8 +107,6 @@
     let prev_isMulti;
     let hoverItemIndex;
     let list;
-
-    $: updateValueDisplay(items);
 
     function setValue() {
         if (typeof value === 'string') {
@@ -235,51 +225,15 @@
         if (value) value = null;
     }
 
-    $: {
-        if (value) setValue();
-    }
-
-    $: {
-        if (inputAttributes || !isSearchable) assignInputAttributes();
-    }
-
-    $: {
-        if (isMulti) {
-            setupMulti();
-        }
-
-        if (prev_isMulti && !isMulti) {
-            setupSingle();
-        }
-    }
-
-    $: {
-        if (isMulti && value && value.length > 1) {
-            checkValueForDuplicates();
-        }
-    }
-
-    $: {
-        if (value) dispatchSelectedItem();
-    }
-
-    $: {
-        if (!value && isMulti && prev_value) {
-            dispatch('select', value);
-        }
-    }
-
-    $: {
-        if (isFocused !== prev_isFocused) {
-            setupFocus();
-        }
-    }
-
-    $: {
-        if (filterText !== prev_filterText) {
-            setupFilterText();
-        }
-    }
+    $: if ((items, value)) setValue();
+    $: if (inputAttributes || !isSearchable) assignInputAttributes();
+    $: if (isMulti) setupMulti();
+    $: if (prev_isMulti && !isMulti) setupSingle();
+    $: if (isMulti && value && value.length > 1) checkValueForDuplicates();
+    $: if (value) dispatchSelectedItem();
+    $: if (!value && isMulti && prev_value) dispatch('select', value);
+    $: if (isFocused !== prev_isFocused) setupFocus();
+    $: if (filterText !== prev_filterText) setupFilterText();
 
     function setupFilterText() {
         if (filterText.length === 0) return;
@@ -330,6 +284,46 @@
     $: showClear = showSelectedItem && isClearable && !isDisabled && !isWaiting;
     $: placeholderText = placeholderAlwaysShow && isMulti ? placeholder : value ? '' : placeholder;
     $: showMultiSelect = isMulti && value && value.length > 0;
+    $: suggestionMode = suggestions && filterText.length === 0;
+    $: ariaSelection = value ? handleAriaSelection(isMulti) : '';
+    $: ariaContext = handleAriaContent(filteredItems, hoverItemIndex, isFocused, listOpen);
+    $: updateValueDisplay(items);
+    $: if (value) justValue = value ? value[optionIdentifier] : value;
+    $: if (isMulti && !Multi) console.warn('isMulti is true but Multi is not imported');
+    $: listProps = {
+        Item,
+        filterText,
+        optionIdentifier,
+        noOptionsMessage,
+        hideEmptyState,
+        VirtualList,
+        value,
+        isMulti,
+        getGroupHeaderLabel,
+        items: filteredItems,
+        itemHeight,
+        getOptionLabel,
+        listPlacement,
+        parent: container,
+        listAutoWidth,
+        listOffset,
+        suggestionMode,
+    };
+    $: filteredItems = filter({
+        loadOptions,
+        filterText,
+        items: suggestionMode ? suggestions : items,
+        isMulti,
+        value,
+        optionIdentifier,
+        groupBy,
+        isCreatable,
+        itemFilter,
+        convertStringItemsToObjects,
+        filterGroupedItems,
+        addCreatableItem,
+        getOptionLabel,
+    });
 
     beforeUpdate(async () => {
         prev_value = value;
@@ -478,29 +472,6 @@
         mounted = true;
     });
 
-    $: listProps = {
-        Item,
-        filterText,
-        optionIdentifier,
-        noOptionsMessage,
-        hideEmptyState,
-        VirtualList,
-        value,
-        isMulti,
-        getGroupHeaderLabel,
-        items: filteredItems,
-        itemHeight,
-        getOptionLabel,
-        listPlacement,
-        parent: container,
-        listAutoWidth,
-        listOffset,
-        listClass,
-        itemClass,
-    };
-
-    $: suggestionMode = suggestions && filterText.length === 0;
-
     function itemSelected(event) {
         if (suggestionMode) {
             filterText = event.detail.value;
@@ -587,9 +558,6 @@
             return ariaFocused();
         }
     }
-
-    $: ariaSelection = value ? handleAriaSelection(isMulti) : '';
-    $: ariaContext = handleAriaContent(filteredItems, hoverItemIndex, isFocused, listOpen);
 </script>
 
 <div

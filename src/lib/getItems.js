@@ -1,4 +1,4 @@
-export default async function ({ dispatch, loadOptions, convertStringItemsToObjects, filterText }) {
+export default async function getItems({ dispatch, loadOptions, convertStringItemsToObjects, filterText }) {
     let res = await loadOptions(filterText).catch((err) => {
         console.warn('svelte-select loadOptions error :>> ', err);
         dispatch('error', { type: 'loadOptions', details: err });

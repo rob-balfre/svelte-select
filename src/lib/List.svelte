@@ -6,8 +6,6 @@
     export let Item;
     export let VirtualList;
 
-    export let listClass;
-    export let itemClass;
     export let filterText;
     export let optionIdentifier;
     export let noOptionsMessage;
@@ -25,6 +23,7 @@
     export let list = undefined;
     export let hoverItemIndex = 0;
     export let activeItemIndex = 0;
+    export let suggestionMode;
 
     let isScrollingTimer = 0;
     let isScrolling = false;
@@ -212,14 +211,12 @@
         listStyle = styles;
     }
 
-    $: {
-        if (parent && list) computePlacement();
-    }
+    $: if (parent && list) computePlacement();
 </script>
 
 <svelte:window on:keydown={handleKeyDown} on:scroll={computePlacement} on:resize={computePlacement} />
 
-<div class={listClass} bind:this={list} style={listStyle}>
+<div class="list" class:suggestions={suggestionMode} bind:this={list} style={listStyle}>
     {#if items.length > 0}
         {#if VirtualList}
             <svelte:component
@@ -242,7 +239,6 @@
                     <svelte:component
                         this={Item}
                         item={items[index]}
-                        {itemClass}
                         {filterText}
                         {getOptionLabel}
                         isFirst={isItemFirst(index)}
@@ -265,7 +261,6 @@
                         <svelte:component
                             this={Item}
                             {item}
-                            {itemClass}
                             {filterText}
                             {getOptionLabel}
                             isFirst={isItemFirst(i)}

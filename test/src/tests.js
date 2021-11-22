@@ -3,7 +3,6 @@ import CustomItem from './CustomItem.svelte';
 import Select from '../../src/lib/Select.svelte';
 import Multi from '../../src/lib/Multi.svelte';
 import ChevronIcon from '../../src/lib/ChevronIcon.svelte';
-import LoadingIcon from '../../src/lib/LoadingIcon.svelte';
 import TestIcon from './TestIcon.svelte';
 import TestClearIcon from './TestClearIcon.svelte';
 import SelectDefault from './Select/Select--default.svelte'
@@ -681,7 +680,7 @@ test('Placeholder text should reappear when List is closed', async (t) => {
   div.click();
   div.remove();
   const selectInput = document.querySelector('.select-container input');
-  t.equal(selectInput.attributes.placeholder.value, 'Select...');
+  t.equal(selectInput.attributes.placeholder.value, 'Please select');
 
   select.$destroy();
 });
@@ -745,7 +744,7 @@ test('closing List clears Select filter text', async (t) => {
   div.click();
   div.remove();
   const selectInput = document.querySelector('.select-container input');
-  t.equal(selectInput.attributes.placeholder.value, 'Select...');
+  t.equal(selectInput.attributes.placeholder.value, 'Please select');
 
   select.$destroy();
 });
@@ -768,7 +767,7 @@ test('closing List clears Select filter text', async (t) => {
   div.click();
   div.remove();
   const selectInput = document.querySelector('.select-container input');
-  t.equal(selectInput.attributes.placeholder.value, 'Select...');
+  t.equal(selectInput.attributes.placeholder.value, 'Please select');
 
   select.$destroy();
 });
@@ -791,7 +790,7 @@ test('closing List item clears Select filter text', async (t) => {
   div.click();
   div.remove();
   const selectInput = document.querySelector('.select-container input');
-  t.equal(selectInput.attributes.placeholder.value, 'Select...');
+  t.equal(selectInput.attributes.placeholder.value, 'Please select');
 
   select.$destroy();
 });
@@ -1259,7 +1258,6 @@ test('should display loading icon when waiting is enabled', async (t) => {
     target,
     props: {
       imports,
-      LoadingIcon,
       items,
       isWaiting: true
     }
@@ -2018,7 +2016,7 @@ test('when isMulti is true, value populated and arrowLeft is pressed then no ite
   select.$destroy();
 });
 
-test('when hideEmptyState true then do not show "no options" div ', async (t) => {
+test('when hideEmptyState true then do not show "no items" div ', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -3274,13 +3272,12 @@ test('when loadOptions response returns cancelled true then dont end loading sta
   select.$destroy();
 });
 
-test('when ClearItem replace clear icon', async (t) => {
+test('when ClearIcon replace clear icon', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      imports: {...imports, ClearIcon: TestClearIcon},
       items,
-      ClearIcon: TestClearIcon,
       value: {value: 'chips', label: 'Chips'}
     }
   });
@@ -4105,4 +4102,4 @@ test('when component blurs fire on:blur event', async (t) => {
   select.$destroy();
 });
 
-
+ // suggestions tests here...

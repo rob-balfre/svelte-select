@@ -2,6 +2,11 @@
 
 ## unreleased
 
+
+* Placeholder default change from 'Select...' to 'Please select'
+* breaking: `value` just binds to selected option value
+* updated readme
+* LoadingIcon
 * added blur and focus events
 * renamed 'config' to 'imports'
 * ChevronIcon moved to config,
@@ -17,17 +22,14 @@
 * moved debounce to config
 * loadOptionsInterval -> debounceWait
 * selectedValue removed
-* borrowed some code from svelte-materialify for the clickOutside function
 * MultiSelection -> Multi
 * added postcss to example, tests
 * tailwind css option
 * moved styles into separate CSS file
-* containerClasses -> class
-* itemClass prop added
+* breaking: containerClasses -> class
 * listGroupTitle -> list-group-title
 * virtualList -> virtual-list
 * listContainer -> list
-* listClass prop added
 * bye bye yarn
 * selectContainer and other CSS class names updated, selectContainer -> select-container for example
 * LoadingIcon prop added, must be imported to have a spinner/loader

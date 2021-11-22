@@ -1,7 +1,9 @@
 <script>
-    import Select from 'svelte-select';
+    import Select from '$lib/Select.svelte';
 
-    import imports from 'svelte-select/presets/vanilla';
+    import vanilla from '$lib/presets/vanilla';
+
+    import Multi from '$lib/Multi.svelte';
 
     const itemsWithGroup = [
         { value: 'pizza', label: 'Pizza', group: 'Savory' },
@@ -14,9 +16,8 @@
 
     let value;
     let suggestion;
-    
-    
 
+    let imports = {...vanilla, Multi}
 
     // function groupBy(item) {
     //     return item.group;
@@ -27,21 +28,23 @@
     function getResults() {
         return Promise.resolve(['foo', 'boo', 'fee']);
     }
+
+    let justValue;
+
 </script>
 
 <form>
-    <Select {imports} suggestions={suggestions} listOpen={true} loadOptions={getResults} bind:value filterText={suggestion}>
-    </Select>
+    <Select bind:justValue {imports} items={itemsWithGroup} bind:value isMulti  />
 </form>
 
 <style>
     form {
-        /* height: 80px; */
+        height: 150vh;
         overflow: hidden;
         width: 400px;
         display: flex;
         padding: 20px;
-        background: red;
+        
     }
 
     h1 {

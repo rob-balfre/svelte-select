@@ -53,41 +53,66 @@ npm install svelte-select
 
 ## API
 
-- `id: String` Default: `null`. Add an id to the input field.
-- `items: Array` Default: `[]`. List of selectable items that appear in the dropdown.
-- `value: Any` Default: `null`. Selected item or items.
-- `filterText: String` Default: `''`. Text to filter `items` by.
-- `placeholder: String` Default: `'Select...'`. Placeholder text.
-- `noOptionsMessage: String` Default: `'No options'`. Message to display in list when there are no `items`.
-- `optionIdentifier: String` Default: `'value'`. Override default identifier.
-- `labelIdentifier: String` Default: `'label'`. Override default identifier.
-- `listOpen: Boolean` Default: `false`. Open/close list.
-- `hideEmptyState: Boolean` Default: `false`. Hide list and don't show `noOptionsMessage` when there are no `items`.
-- `containerClasses: String` Default: `''`. Add extra container classes, for example 'global-x local-y'.
-- `containerStyles: String` Default: `''`. Add inline styles to container.
-- `isClearable: Boolean` Default: `true`. Enable clearing of selected items.
-- `isCreatable: Boolean` Default: `false`. Can create new item(s) to be added to `value`.
-- `isDisabled: Boolean` Default: `false`. Disable select.
+
+| Prop             | Type      | Default         | Description                                             |
+| ---------------- | --------- | --------------- | ------------------------------------------------------- |
+| items            | `array`   | `[]`            | Array items available to display / filter               |
+| value            | `any`     | `null`          | Selected value(s)                                       |
+| justValue        | `any`     | `null`          | Selected value(s) excluding container object            |
+| optionIdentifier | `string`  | `value`         | Override default identifier                             |
+| labelIdentifier  | `string`  | `label`         | Override default identifier                             |
+| id               | `string`  | `null`          | Add an id to the filter input field                     |
+| filterText       | `string`  | `''`            | Text to filter `items` by                               |
+| placeholder      | `string`  | `Please select` | Placeholder text                                        |
+| noOptionsMessage | `string`  | `No options`    | Message displayed when no items                         |
+| hideEmptyState   | `boolean` | `false`         | When no items hide list and `noOptionsMessage`          |
+| listOpen         | `boolean` | `false`         | Open/close list                                         |
+| class            | `string`  | `''`            | container classes                                       |
+| containerStyles  | `string`  | `''`            | Add inline styles to container                          |
+| isClearable      | `boolean` | `true`          | Enable clearing of value(s)                             |
+| isCreatable      | `boolean` | `false`         | Can create new item(s) to be added to `value`           |
+| isDisabled       | `boolean` | `false`         | Disable select                                          |
+| isMulti          | `boolean` | `false`         | Enable multi-select (must include `Multi` in `imports`) |
+| imports          | `object`  | `{}`            | Optional imports                                        |
+
+
+
+### Optional imports
+
+| Import      | Type        | Description                                            |
+| ----------- | ----------- | ------------------------------------------------------ |
+| VirtualList | `component` | Virtual list support (uses `svelte-tiny-virtual-list`) |
+| Multi       | `component` | Multi select support                                   |
+| ChevronIcon | `component` | Chevron Icon                                           |
+| ClearIcon   | `component` | Clear Icon                                             |
+| LoadingIcon | `component` | Spinning Loading Icon                                  |
+| debounce    | `function`  | Debounce function                                      |
+| filter      | `function`  | Filter options function                                |
+| getItems    | `function`  | Async get items function                               |
+
+
+
 - `isMulti: Boolean` Default: `false`. Enable multi-select, `value` becomes an array of selected items.
 - `isSearchable: Boolean` Default: `true`. Enable search/filtering of `items` via `filterText`.
 - `isGroupHeaderSelectable: Boolean` Default: `false`. Enable selectable group headers in `items` (see adv demo).
 - `listPlacement: String` Default: `'auto'`. When `'auto'` displays either `'top'` or `'bottom'` depending on viewport.
 - `hasError: Boolean` Default: `false`. Show/hide error styles around select input (red border by default).
 - `listAutoWidth: Boolean` Default: `true`. List width will grow wider than the Select container (depending on list item content length).
-- `showIndicator: Boolean` Default: `false`. If true, the chevron indicator is always shown.
+- `showChevron: Boolean` Default: `false`. If true, the chevron indicator is always shown.
 - `inputAttributes: Object` Default: `{}`. Pass in HTML attributes to the Select input.
 - `Item: Component` Default: `Item`. Item component.
 - `Selection: Component` Default: `Selection`. Selection component.
 - `Multi: Component` Default: `Multi`. Multi selection component.
 - `Icon: Component` Default: `Icon`. Icon component.
 - `iconProps: Object` Default: `{}`. Icon props.
-- `indicatorSvg: @html` Default: `undefined`. Override default SVG chevron indicator.
 - `ClearIcon` Default: `ClearIcon`. ClearIcon component.
-- `isVirtualList: Boolean` Default: `false`. Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental).
 - `filteredItems: Array` Default: `[]`. List of items that are filtered by `filterText`
 - `placeholderAlwaysShow: Boolean` Default: `false`. When `isMulti` then placeholder text will always still show.
 - `isWaiting: Boolean` Default: `false`. If true then loader shows. `loadOptions` will automatically set this as true until promise resolves.
 - `listOffset: Number` Default: `5`. Controls the spacing offset between the list and the input.
+- `debounceWait`
+- `suggestions`
+
 
 ### Items
 
@@ -300,12 +325,12 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 
 ## Events
 
-| Event Name | Callback | Description |
-|------|------|----------|
-| select | { detail } | fires when value changes
-| clear | { detail } | fires when clear all is invoked or item is removed (by user) from multi select
-| loaded | { items } | fires when `loadOptions` resolves
-| error | { type, details } | fires when error is caught
+| Event Name | Callback          | Description                                                                    |
+| ---------- | ----------------- | ------------------------------------------------------------------------------ |
+| select     | { detail }        | fires when value changes                                                       |
+| clear      | { detail }        | fires when clear all is invoked or item is removed (by user) from multi select |
+| loaded     | { options }       | fires when `loadOptions` resolves                                              |
+| error      | { type, details } | fires when error is caught                                                     |
 
 ```html
 <script>

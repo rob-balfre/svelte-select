@@ -6,11 +6,10 @@
     export let getOptionLabel = undefined;
     export let item = undefined;
     export let filterText = '';
-    export let itemClass = 'item';
 </script>
 
 <div
-    class={itemClass}
+    class='item'
     class:active={isActive}
     class:first={isFirst}
     class:hover={isHover}
