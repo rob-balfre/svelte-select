@@ -1,8 +1,12 @@
 # svelte-select changelog
 
+# 4.4.6
+
+Bug fix for isOutOfViewport - thanks to @alexkuzmin
+
 ## 4.4.5
 
-* Bug fix for isOutOfViewport - thanks to @alexkuzmin
+* NPM blunder (sorry!)
 
 
 ## 4.4.4
