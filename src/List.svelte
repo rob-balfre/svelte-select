@@ -223,7 +223,7 @@
 
         if (
             listPlacement === 'top' ||
-            (listPlacement === 'auto' && isOutOfViewport(container).bottom)
+            (listPlacement === 'auto' && isOutOfViewport(parent, container).bottom)
         ) {
             listStyle += `bottom:${height + listOffset}px;`;
         } else {
