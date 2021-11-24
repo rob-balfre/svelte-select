@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 4.4.5
+
+* Bug fix for isOutOfViewport - thanks to @alexkuzmin
+
+
 ## 4.4.4
 
 * Bug fix for #346 out of viewport - thanks to @nickyrferry
