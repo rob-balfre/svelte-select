@@ -10,8 +10,7 @@ import ParentContainer from './Select/ParentContainer.svelte'
 import {assert, test} from 'tape-modern';
 import VirtualList from 'svelte-tiny-virtual-list';
 import getName from '../utils/nameGen';
-
-import imports from '../../src/lib/presets/vanilla';
+import imports from '../../src/lib/imports';
 
 import "../../src/lib/default.css";
 // import "../../src/lib/tailwind.css";
@@ -1017,7 +1016,7 @@ test(`shouldn't be able to clear a disabled Select`, async (t) => {
   });
 
 
-  t.ok(!document.querySelector('.clearSelect'));
+  t.ok(!document.querySelector('.clear-select'));
 
   select.$destroy();
 });
@@ -1208,7 +1207,7 @@ test('should not be able to clear when clearing is disabled', async (t) => {
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
-  t.ok(!document.querySelector('.clearSelect'));
+  t.ok(!document.querySelector('.clear-select'));
 
   select.$destroy();
 });
@@ -1500,7 +1499,7 @@ test('when isMulti is true show each item in value', async (t) => {
     }
   });
 
-  const all = target.querySelectorAll('.multiSelectItem .multiSelectItem_label');
+  const all = target.querySelectorAll('.multi-item .multi-item_label');
   t.ok(all[0].innerHTML === 'Pizza');
   t.ok(all[1].innerHTML === 'Chips');
 
@@ -1518,7 +1517,7 @@ test('when isMulti is true and value is undefined show placeholder text', async 
     }
   });
 
-  t.ok(!target.querySelector('.multiSelectItem'));
+  t.ok(!target.querySelector('.multi-item'));
 
   select.$destroy();
 });
@@ -1597,7 +1596,7 @@ test('when isMulti is true clicking X on a selected item will remove it from val
     }
   });
 
-  document.querySelector('.multiSelectItem_clear').click();
+  document.querySelector('.multi-item_clear').click();
   t.equal(JSON.stringify(select.value), JSON.stringify([{value: 'pizza', label: 'Pizza'}]));
 
   select.$destroy();
@@ -1614,7 +1613,7 @@ test('when isMulti is true and all selected items have been removed then placeho
     }
   });
 
-  document.querySelector('.multiSelectItem_clear').click();
+  document.querySelector('.multi-item_clear').click();
 
   select.$destroy();
 });
@@ -1630,7 +1629,7 @@ test('when isMulti is true and items are selected then clear all should wipe all
     }
   });
 
-  document.querySelector('.clearSelect').click();
+  document.querySelector('.clear-select').click();
   t.equal(select.value, undefined);
 
   select.$destroy();
@@ -1750,7 +1749,7 @@ test('when isMulti, isDisabled, and value has items then items should be locked'
     }
   });
 
-  t.ok(document.querySelector('.multiSelectItem.disabled'));
+  t.ok(document.querySelector('.multi-item.disabled'));
 
   select.$destroy();
 });
@@ -1766,7 +1765,7 @@ test('when isMulti is true show each item in value if simple arrays are used', a
     }
   });
 
-  const all = target.querySelectorAll('.multiSelectItem .multiSelectItem_label');
+  const all = target.querySelectorAll('.multi-item .multi-item_label');
   t.ok(all[0].innerHTML === 'pizza');
   t.ok(all[1].innerHTML === 'chocolate');
 
@@ -1959,7 +1958,7 @@ test('when loadOptions method is supplied, isMulti is true and filterText has le
   await wait(600);
   await handleKeyboard('ArrowDown', select.input);
   await handleKeyboard('Enter');
-  t.ok(document.querySelector('.multiSelectItem_label').innerHTML === 'Juniper Wheat Beer');
+  t.ok(document.querySelector('.multi-item_label').innerHTML === 'Juniper Wheat Beer');
   select.$destroy();
 });
 
@@ -2074,7 +2073,7 @@ test('when value is cleared the clear event is fired', async (t) => {
     clearEvent = true;
   });
 
-  document.querySelector('.clearSelect').click();
+  document.querySelector('.clear-select').click();
   t.ok(clearEvent);
 
   select.$destroy();
@@ -2099,7 +2098,7 @@ test('when multi item is cleared the clear event is fired with removed item', as
     removedItem = event.detail;
   });
 
-  document.querySelector('.multiSelectItem_clear').click();
+  document.querySelector('.multi-item_clear').click();
   t.equal(JSON.stringify(removedItem), JSON.stringify(itemToRemove));
 
   select.$destroy();
@@ -2453,7 +2452,7 @@ test('when isMulti with items and value supplied as just strings then value shou
     }
   });
 
-  t.equal(document.querySelector('.multiSelectItem_label').innerHTML, 'Pizza');
+  t.equal(document.querySelector('.multi-item_label').innerHTML, 'Pizza');
 
   select.$destroy();
 });
@@ -2666,9 +2665,9 @@ test('When isMulti and an items remove icon is clicked then item should be remov
     }
   });
 
-  await querySelectorClick('.multiSelectItem_clear');
+  await querySelectorClick('.multi-item_clear');
   t.ok(select.value[0].value === 'cake')
-  await querySelectorClick('.multiSelectItem_clear');
+  await querySelectorClick('.multi-item_clear');
   t.ok(!select.value);
 
   select.$destroy();
@@ -3172,7 +3171,7 @@ test('When isMulti and multiFullItemClearable then clicking anywhere on the item
   });
 
   await wait(0);
-  await querySelectorClick('.multiSelectItem');
+  await querySelectorClick('.multi-item');
   await wait(0);
   t.ok(multiSelect.value[0].label === 'Pizza');
   
@@ -3639,9 +3638,9 @@ test('When isMulti on:select events should fire on each item removal (including 
     events.push('event fired');
   });
 
-  document.querySelector('.multiSelectItem_clear').click();
+  document.querySelector('.multi-item_clear').click();
   await wait(0);
-  document.querySelector('.multiSelectItem_clear').click();
+  document.querySelector('.multi-item_clear').click();
   await wait(0);
   t.ok(events.length === 2);
   

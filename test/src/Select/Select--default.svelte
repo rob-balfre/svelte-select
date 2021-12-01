@@ -3,7 +3,7 @@
         aria-live="polite"
         aria-atomic="false"
         aria-relevant="additions text"
-        class="a11yText" />
+        class="a11y-text" />
     <input
         autocapitalize="none"
         autocomplete="off"

@@ -37,11 +37,11 @@
 
 .select-container.focused .icons,
 .select-container .chevron:hover,
-.select-container .clearSelect:hover {
+.select-container .clear-select:hover {
     @apply text-gray-600;
 }
 
-.select-container .clearSelect {
+.select-container .clear-select {
     @apply px-2 h-5 text-gray-300 flex-none w-9;
 }
 
@@ -65,7 +65,7 @@
     @apply border-red-500 bg-white;
 }
 
-.a11yText {
+.a11y-text {
     @apply sr-only;
 }
 

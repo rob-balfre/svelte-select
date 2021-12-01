@@ -12,3 +12,11 @@
     l3.641,3.641L27.641,22.688L38.564,33.61L34.923,37.251z"
     />
 </svg>
+
+<style>
+    svg {
+        width: var(--clear-icon-width, 20px);
+        height: var(--clear-icon-width, 20px);
+        color: var(--clear-icon-colour, #c5cacf);
+    }
+</style>

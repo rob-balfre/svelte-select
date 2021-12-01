@@ -1,9 +1,7 @@
 <script>
     import Select from '$lib/Select.svelte';
 
-    import vanilla from '$lib/presets/vanilla';
-
-    import Multi from '$lib/Multi.svelte';
+    import imports from '$lib/imports';
 
     const itemsWithGroup = [
         { value: 'pizza', label: 'Pizza', group: 'Savory' },
@@ -13,11 +11,6 @@
     ];
 
     const suggestions = ['one', 'two', 'three'];
-
-    let value;
-    let suggestion;
-
-    let imports = {...vanilla, Multi}
 
     // function groupBy(item) {
     //     return item.group;
@@ -29,33 +22,37 @@
         return Promise.resolve(['foo', 'boo', 'fee']);
     }
 
-    let justValue;
+    // let value = [
+    //     { value: 'pizza', label: 'Pizza', group: 'Savory' },
+    //     { value: 'cake', label: 'Cake', group: 'Sweet' },
+    //     { value: 'chips', label: 'Chips', group: 'Savory' },
+    //     { value: 'ice-cream', label: 'Ice Cream', group: 'Sweet' },
+    // ];
 
+    let value = 
+        { value: 'pizza', label: 'Pizza', group: 'Savory' }
+       
+    ;
 </script>
 
 <form>
-    <Select bind:justValue {imports} items={itemsWithGroup} bind:value isMulti  />
+    <Select {imports} items={itemsWithGroup} bind:value showChevron />
 </form>
 
 <style>
+    :global(body, input) {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+            'Helvetica Neue', sans-serif;
+    }
+
     form {
-        height: 150vh;
-        overflow: hidden;
-        width: 400px;
+        padding: 40px;
         display: flex;
-        padding: 20px;
-        
+        width: 400px;
+        background: violet;
     }
 
     h1 {
         font-size: 12px;
     }
-
-    /* :global(body) {
-        box-sizing: border-box;
-        display: flex;
-        align-items: flex-end;
-        min-height: 100vh;
-        background: blue;
-    } */
 </style>

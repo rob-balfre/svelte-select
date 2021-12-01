@@ -13,7 +13,7 @@ const VARIABLE_SECTION_PATTERN = /(<!-- List start -->)(.|\n)*(<!-- List end -->
   const searchResults = await find(
     VARIABLE_USAGE_PATTERN,
     SOURCE_FOLDER,
-    ".svelte$"
+    ".css$"
   );
   const justTheMatchedParts = Object.keys(searchResults).reduce(
     (accumulator, nextKey) => [

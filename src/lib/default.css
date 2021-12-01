@@ -3,7 +3,7 @@
 }
 
 .select-container {
-    --internalPadding: 0 16px;
+    --internal-padding: 0 16px;
     border: var(--border);
     border-radius: var(--border-radius, 3px);
     box-sizing: border-box;
@@ -11,7 +11,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    padding: var(--padding, var(--internalPadding));
+    padding: var(--padding, var(--internal-padding));
     background: var(--background, #fff);
     margin: var(--margin, 0);
     width: var(--width, 100%);
@@ -23,7 +23,7 @@
     color: var(--input-color, #3f4f5f);
     height: var(--height, 42px);
     line-height: var(--height, 42px);
-    padding: var(--inputPadding, var(--padding, var(--internalPadding)));
+    padding: var(--input-padding, var(--padding, var(--internal-padding)));
     width: 100%;
     background: transparent;
     font-size: var(--input-font-size, 14px);
@@ -58,8 +58,8 @@
 }
 
 .select-container.disabled input::placeholder {
-    color: var(--disabledPlaceholderColor, #c1c6cc);
-    opacity: var(--disabledPlaceholderOpacity, 1);
+    color: var(--disabled-placeholder-color, #c1c6cc);
+    opacity: var(--disabled-placeholder-opacity, 1);
 }
 
 .select-container .selected-item {
@@ -74,66 +74,66 @@
 }
 
 .select-container .icons {
+    pointer-events: none;
     position: absolute;
     display: flex;
-    right: var(--iconsRight, 0);
-    top: var(--iconsTop, 11px);
-    bottom: var(--iconsBottom, 11px);
-    color: var(--iconsColor, #c5cacf);
-}
-
-.select-container .icons > * {
-    transition: color 0.2s ease-in-out;
+    align-items: center;
+    justify-items: center;
+    right: var(--icons-right, 0);
+    top: var(--icons-top, 11px);
+    bottom: var(--icons-bottom, 11px);
+    color: var(--icons-color, #c5cacf);
 }
 
 .select-container.focused .icons,
-.select-container .chevron:hover,
-.select-container .clearSelect:hover {
-    color: var(--iconsColorFocused, #2c3e50);
+.select-container .icons svg:hover {
+    color: var(--icons-color-focused, #2c3e50);
 }
 
-.select-container .clearSelect {
-    padding: 0 7px;
-    width: var(--clearSelectWidth, 35px);
-    height: 20px;
-    color: var(--clearSelectColor, --iconsColor);
-    flex: none !important;
+.select-container .clear-select {
+    display: flex;
+    align-items: center;
+    width: var(--clear-select-width, 30px);
+    color: var(--clear-select-color, --icons-color);
+    pointer-events: all;
+    
 }
 
 .select-container .chevron {
     display: flex;
-    padding: 0 7px;
     box-shadow: -1px 0 0 0 #c5cacf;
-    width: var(--indicatorWidth, 35px);
-    height: var(--indicatorHeight, 20px);
-    color: var(--indicatorColor, --iconsColor);
+    width: var(--indicator-width, 35px);
+    height: var(--indicator-height, 20px);
+    color: var(--indicator-color, --icons-color);
+    pointer-events: all;
+}
+
+.select-container.list-open .chevron {
+	pointer-events: none;
+    
 }
 
 .select-container.multi {
-    padding: var(--multiSelectPadding, 0 35px 0 16px);
+    padding: var(--multi-select-padding, 0 35px 0 16px);
     min-height: 38px;
-    /* height: inherit; */
     flex-wrap: wrap;
     align-items: stretch;
-}
-
-.select-container.multi > * {
-    /* flex: 1 1 auto; */
-    /* width: auto; */
+    display: flex;
+    height: auto;
 }
 
 .select-container.multi input {
-    padding: var(--multiSelectInputPadding, 0);
+    padding: var(--multi-select-input-padding, 0);
     position: relative;
-    margin: var(--multiSelectInputMargin, 0);
+    margin: var(--multi-select-input-margin, 0);
 }
 
 .select-container.error {
-    border: var(--errorBorder, 1px solid #ff2d55);
-    background: var(--errorBackground, #fff);
+    border: var(--error-border, 1px solid #ff2d55);
+    background: var(--error-background, #fff);
 }
 
-.a11yText {
+.a11y-text {
     z-index: 9999;
     border: 0px;
     clip: rect(1px, 1px, 1px, 1px);
@@ -146,80 +146,109 @@
 }
 
 .list {
-    box-shadow: var(--listShadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
-    border-radius: var(--listBorderRadius, 4px);
-    max-height: var(--listMaxHeight, 250px);
+    box-shadow: var(--list-shadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
+    border-radius: var(--list-border-radius, 4px);
+    max-height: var(--list-max-height, 250px);
     overflow-y: auto;
-    background: var(--listBackground, #fff);
-    
-    position: var(--listPosition, absolute);
-    z-index: var(--listZIndex, 2);
+    background: var(--list-background, #fff);
+    position: var(--list-position, absolute);
+    z-index: var(--list-z-index, 2);
     border: var(--list-border, --border);
-
-    /* width: 100%; */
-    /* left: var(--listLeft, 0); */
-    /* right: var(--listRight, 0); */
 }
 
 .list .list-group-title {
-    color: var(--groupTitleColor, #8f8f8f);
+    color: var(--group-title-color, #8f8f8f);
     cursor: default;
-    font-size: var(--groupTitleFontSize, 12px);
-    font-weight: var(--groupTitleFontWeight, 600);
+    font-size: var(--group-title-font-size, 12px);
+    font-weight: var(--group-title-font-weight, 600);
     height: var(--height, 42px);
     line-height: var(--height, 42px);
-    padding: var(--groupTitlePadding, 0 20px);
+    padding: var(--group-title-padding, 0 20px);
     text-overflow: ellipsis;
     overflow-x: hidden;
     white-space: nowrap;
-    text-transform: var(--groupTitleTextTransform, uppercase);
+    text-transform: var(--group-title-text-transform, uppercase);
 }
 
 .list .empty {
-    text-align: var(--listEmptyTextAlign, center);
-    padding: var(--listEmptyPadding, 20px 0);
-    color: var(--listEmptyColor, #78848f);
+    text-align: var(--list-empty-text-align, center);
+    padding: var(--list-empty-padding, 20px 0);
+    color: var(--list-empty-color, #78848f);
 }
 
 .item {
     cursor: default;
     height: var(--height, 42px);
     line-height: var(--height, 42px);
-    padding: var(--itemPadding, 0 20px);
-    color: var(--itemColor, inherit);
+    padding: var(--item-padding, 0 20px);
+    color: var(--item-color, inherit);
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
 
 .item.group-item {
-    padding-left: var(--groupItemPaddingLeft, 40px);
+    padding-left: var(--group-item-padding-left, 40px);
 }
 
 .item:active {
-    background: var(--itemActiveBackground, #b9daff);
+    background: var(--item-active-background, #b9daff);
 }
 
 .item.active {
-    background: var(--itemIsActiveBG, #007aff);
-    color: var(--itemIsActiveColor, #fff);
+    background: var(--item-is-active-bg, #007aff);
+    color: var(--item-is-active-color, #fff);
 }
 
 .item.not-selectable {
-    color: var(--itemIsNotSelectableColor, #999);
+    color: var(--item-is-not-selectable-color, #999);
 }
 
 .item.first {
-    border-radius: var(--itemFirstBorderRadius, 4px 4px 0 0);
+    border-radius: var(--item-first-border-radius, 4px 4px 0 0);
 }
 
 .item.hover:not(.active) {
-    background: var(--itemHoverBG, #e7f2ff);
-    color: var(--itemHoverColor, inherit);
+    background: var(--item-hover-bg, #e7f2ff);
+    color: var(--item-hover-color, inherit);
 }
 
 .selection {
     text-overflow: ellipsis;
     overflow-x: hidden;
     white-space: nowrap;
+}
+
+.multi input {
+    flex: 1 1 40px;
+}
+
+.multi-item {
+    background: var(--multi-item-bg, #ebedef);
+    margin: var(--multi-item-margin, 5px 5px 0 0);
+    border-radius: var(--multi-item-border-radius, 4px);
+    height: var(--multi-item-height, 32px);
+    line-height: var(--multi-item-height, 32px);
+    display: flex;
+    cursor: default;
+    padding: var(--multi-item-padding, 0 10px 0 6px);
+    max-width: 100%;
+}
+
+.multi-item_label {
+    margin: var(--multi-label-margin, 0 5px 0 0);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.multi-item.disabled:hover {
+    background: var(--multi-item-disabled-hover-bg, #ebedef);
+    color: var(--multi-item-disabled-hover-color, #c1c6cc);
+}
+
+.multi-item_clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

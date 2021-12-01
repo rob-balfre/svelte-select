@@ -566,10 +566,11 @@
     class:multi={isMulti}
     class:disabled={isDisabled}
     class:focused={isFocused}
+    class:list-open={listOpen}
     style={containerStyles}
     on:click={handleClick}
     bind:this={container}>
-    <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" class="a11yText">
+    <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" class="a11y-text">
         {#if isFocused}
             <span id="aria-selection">{ariaSelection}</span>
             <span id="aria-context">
@@ -589,6 +590,7 @@
             {getSelectionLabel}
             {activeValue}
             {isDisabled}
+            {ClearIcon}
             {multiFullItemClearable}
             on:multiItemClear={handleMultiItemClear}
             on:focus={handleFocus} />
@@ -614,7 +616,7 @@
 
     <div class="icons">
         {#if showClear}
-            <div class="clearSelect" on:click|preventDefault={handleClear} aria-hidden="true">
+            <div class="clear-select" on:click|preventDefault={handleClear} aria-hidden="true">
                 <svelte:component this={ClearIcon} />
             </div>
         {/if}
