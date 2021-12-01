@@ -281,7 +281,7 @@
     $: hasValue = isMulti ? value && value.length > 1 : value;
     $: _showChevron = showChevron && ChevronIcon;
     $: showSelectedItem = hasValue && filterText.length === 0;
-    $: showClear = showSelectedItem && isClearable && !isDisabled && !isWaiting;
+    $: showClear = !isMulti && showSelectedItem && isClearable && !isDisabled && !isWaiting;
     $: placeholderText = placeholderAlwaysShow && isMulti ? placeholder : value ? '' : placeholder;
     $: showMultiSelect = isMulti && value && value.length > 0;
     $: suggestionMode = suggestions && filterText.length === 0;
