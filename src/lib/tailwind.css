@@ -28,11 +28,15 @@
 }
 
 .select-container .icons {
-    @apply absolute flex right-0 translate-y-0 text-gray-200;
+    @apply absolute flex right-0 translate-y-0 text-gray-200 pointer-events-none;
 }
 
 .select-container .icons > * {
     @apply transition-colors ease-in-out duration-200;
+}
+
+.select-container .clear-select {
+    @apply pointer-events-auto;
 }
 
 .select-container.focused .icons,
