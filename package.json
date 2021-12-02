@@ -46,8 +46,8 @@
     "svelte"
   ],
   "release-it": {
-    "npm": {
-      "publishPath": "package"
+    "hooks": {
+      "before:init": ["svelte-kit package && cd package"]
     },
     "github": {
       "release": true
