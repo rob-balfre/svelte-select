@@ -1,12 +1,8 @@
 node_modules
 .DS_Store
-.idea
-.nova
-/dist/
 /test/public/tests.js
 /test/public/tests.css
 /spec/page/public/build
-/test-results
-/build
 /.svelte-kit
 /package
+.env
