@@ -391,7 +391,7 @@
         }
     }
 
-    $: showSelectedItem = value && filterText.length === 0;
+    $: showSelectedItem = value && filterText.length === 0 && !placeholderAlwaysShow;
     $: showClearIcon =
         showSelectedItem && isClearable && !isDisabled && !isWaiting;
     $: placeholderText =
