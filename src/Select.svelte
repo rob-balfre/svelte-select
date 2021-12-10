@@ -395,7 +395,7 @@
     $: showClearIcon =
         showSelectedItem && isClearable && !isDisabled && !isWaiting;
     $: placeholderText =
-        placeholderAlwaysShow && isMulti
+        placeholderAlwaysShow || isMulti
             ? placeholder
             : value
             ? ''
