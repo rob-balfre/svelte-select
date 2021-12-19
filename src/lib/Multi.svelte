@@ -30,3 +30,38 @@
         {/if}
     </div>
 {/each}
+
+
+<style>
+    .multi-item {
+        background: var(--multi-item-bg, #ebedef);
+        margin: var(--multi-item-margin, 4px 5px 0 0);
+        border: var(--multi-item-border, 1px solid #ddd);
+        border-radius: var(--multi-item-border-radius, 4px);
+        height: var(--multi-item-height, 32px);
+        line-height: var(--multi-item-height, 32px);
+        display: flex;
+        cursor: default;
+        padding: var(--multi-item-padding, 0 6px 0 6px);
+        max-width: 100%;
+    }
+
+    .multi-item_label {
+        margin: var(--multi-label-margin, 0 5px 0 0);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .multi-item.disabled:hover {
+        background: var(--multi-item-disabled-hover-bg, #ebedef);
+        color: var(--multi-item-disabled-hover-color, #c1c6cc);
+    }
+
+    .multi-item_clear {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        --clear-icon-colour: var(--multi-item-clear-icon-color, #000);
+    }
+</style>

@@ -1,23 +1,29 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onMount } from 'svelte';
-
-    export let imports = {};
-
-    const {
-        Item,
-        List,
-        Selection,
-        Multi,
-        VirtualList,
-        ChevronIcon,
-        ClearIcon,
-        LoadingIcon,
-        debounce,
-        filter,
-        getItems,
-    } = imports;
-
     const dispatch = createEventDispatcher();
+
+    import _Item from './Item.svelte';
+    import _List from './List.svelte';
+    import _Selection from './Selection.svelte';
+    import _ClearIcon from './ClearIcon.svelte';
+    import _Multi from './Multi.svelte';
+    import _ChevronIcon from './ChevronIcon.svelte';
+    import _LoadingIcon from './LoadingIcon.svelte';
+    import _filter from './filter';
+    import _getItems from './getItems';
+
+    export let Item = _Item;
+    export let List = _List;
+    export let Selection = _Selection;
+    export let filter = _filter;
+    export let getItems = _getItems;
+
+    export let Multi = _Multi;
+    export let ChevronIcon = _ChevronIcon;
+    export let ClearIcon = _ClearIcon;
+    export let LoadingIcon = _LoadingIcon;
+    export let VirtualList = null;
+    export let Icon = undefined;
 
     export let id = null;
     export let container = undefined;
@@ -77,13 +83,19 @@
     export let isWaiting = false;
     export let listPlacement = 'auto';
     export let listOpen = false;
+    export function debounce(fn, wait = 1) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fn.apply(this, ...args), wait);
+        };
+    }
     export let debounceWait = 300;
     export let noOptionsMessage = 'No options';
     export let hideEmptyState = false;
     export let inputAttributes = {};
     export let listAutoWidth = true;
     export let itemHeight = 40;
-    export let Icon = undefined;
     export let iconProps = {};
     export let showChevron = false;
     export let listOffset = 5;
@@ -99,7 +111,7 @@
         return [..._items, itemToCreate];
     }
 
-    let containerClasses = 'select-container';
+    let containerClasses = '';
     let activeValue;
     let prev_value;
     let prev_filterText;
@@ -281,7 +293,7 @@
     $: hasValue = isMulti ? value && value.length > 1 : value;
     $: _showChevron = showChevron && ChevronIcon;
     $: showSelectedItem = hasValue && filterText.length === 0;
-    $: showClear = !isMulti && showSelectedItem && isClearable && !isDisabled && !isWaiting;
+    $: showClear = showSelectedItem && isClearable && !isDisabled && !isWaiting;
     $: placeholderText = placeholderAlwaysShow && isMulti ? placeholder : value ? '' : placeholder;
     $: showMultiSelect = isMulti && value && value.length > 0;
     $: suggestionMode = suggestions && filterText.length === 0;
@@ -561,12 +573,14 @@
 </script>
 
 <div
-    class={containerClasses}
+    class="svelte-select {containerClasses}"
     class:error={hasError}
     class:multi={isMulti}
     class:disabled={isDisabled}
     class:focused={isFocused}
     class:list-open={listOpen}
+    class:two-icons={_showChevron && showClear}
+    class:show-chevron={_showChevron}
     style={containerStyles}
     on:click={handleClick}
     bind:this={container}>
@@ -653,3 +667,159 @@
         on:itemCreated={itemCreated}
         on:closeList={closeList} />
 {/if}
+
+<style>
+    .svelte-select {
+        --internal-padding: 0 16px;
+        border: var(--border, 1px solid #d8dbdf);
+        border-radius: var(--border-radius, 3px);
+        box-sizing: border-box;
+        height: var(--height, 42px);
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: var(--padding, var(--internal-padding));
+        background: var(--background, #fff);
+        margin: var(--margin, 0);
+        width: var(--width, 100%);
+    }
+
+    .svelte-select input {
+        cursor: default;
+        border: none;
+        color: var(--input-color, #3f4f5f);
+        height: var(--height, 42px);
+        line-height: var(--height, 42px);
+        padding: var(--input-padding, var(--padding, var(--internal-padding)));
+        width: 100%;
+        background: transparent;
+        font-size: var(--input-font-size, 14px);
+        letter-spacing: var(--input-letter-spacing, inherit);
+        position: absolute;
+        left: var(--input-left, 0);
+        margin: var(--input-margin, 0);
+        box-sizing: border-box;
+    }
+
+    .svelte-select input::placeholder {
+        color: var(--placeholder-color, #78848f);
+        opacity: var(--placeholder-opacity, 1);
+    }
+
+    .svelte-select input:focus {
+        outline: none;
+    }
+
+    .svelte-select:hover {
+        border-color: var(--border-hover-color, #b2b8bf);
+    }
+
+    .svelte-select.focused {
+        border-color: var(--border-focus-color, #006fe8);
+    }
+
+    .svelte-select.disabled {
+        background: var(--disabled-background, #ebedef);
+        border-color: var(--disabled-border-color, #ebedef);
+        color: var(--disabled-color, #c1c6cc);
+    }
+
+    .svelte-select.disabled input::placeholder {
+        color: var(--disabled-placeholder-color, #c1c6cc);
+        opacity: var(--disabled-placeholder-opacity, 1);
+    }
+
+    .svelte-select .selected-item {
+        line-height: var(--height, 42px);
+        height: var(--height, 42px);
+        overflow-x: hidden;
+        padding: var(--selected-item-padding, 0 20px 0 0);
+    }
+
+    .svelte-select .selected-item:focus {
+        outline: none;
+    }
+
+    .svelte-select .icons {
+        pointer-events: none;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-items: center;
+        right: var(--icons-right, 0);
+        top: var(--icons-top, 11px);
+        bottom: var(--icons-bottom, 11px);
+        color: var(--icons-color, #c5cacf);
+    }
+
+    .svelte-select.focused .icons,
+    .svelte-select .icons svg:hover {
+        color: var(--icons-color-focused, #2c3e50);
+    }
+
+    .svelte-select .clear-select {
+        display: flex;
+        align-items: center;
+        width: var(--clear-select-width, 30px);
+        color: var(--clear-select-color, --icons-color);
+        pointer-events: all;
+    }
+
+    .svelte-select .chevron {
+        display: flex;
+        box-shadow: -1px 0 0 0 #c5cacf;
+        width: var(--indicator-width, 35px);
+        height: var(--indicator-height, 20px);
+        color: var(--indicator-color, --icons-color);
+        pointer-events: all;
+    }
+
+    .svelte-select.list-open .chevron {
+        pointer-events: none;
+    }
+
+    .svelte-select.multi.two-icons {
+        padding-right: 60px;
+    }
+
+    .svelte-select.show-chevron,
+    .svelte-select.show-chevron input {
+        padding-right: 40px;
+    }
+
+    .svelte-select.multi {
+        padding: var(--multi-select-padding, 0 35px 0 16px);
+        min-height: 38px;
+        flex-wrap: wrap;
+        align-items: stretch;
+        display: flex;
+        height: auto;
+    }
+
+    .svelte-select.multi input {
+        padding: var(--multi-select-input-padding, 0);
+        position: relative;
+        margin: var(--multi-select-input-margin, 0);
+    }
+
+    .svelte-select.error {
+        border: var(--error-border, 1px solid #ff2d55);
+        background: var(--error-background, #fff);
+    }
+
+    .a11y-text {
+        z-index: 9999;
+        border: 0px;
+        clip: rect(1px, 1px, 1px, 1px);
+        height: 1px;
+        width: 1px;
+        position: absolute;
+        overflow: hidden;
+        padding: 0px;
+        white-space: nowrap;
+    }
+
+    .multi input {
+        flex: 1 1 40px;
+    }    
+</style>

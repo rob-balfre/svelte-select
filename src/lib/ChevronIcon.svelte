@@ -12,3 +12,11 @@
           0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0
           0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z" />
 </svg>
+
+<style>
+  svg {
+      width: var(--chevron-icon-width, 20px);
+      height: var(--chevron-icon-width, 20px);
+      color: var(--chevron-icon-colour, currentColor);
+  }
+</style>

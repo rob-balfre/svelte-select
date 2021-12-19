@@ -2,9 +2,11 @@
 
 ## unreleased
 
-
+* select-container -> svelte-select
+* removed imports prop, not worth it for the annoyance
+* removed clear all from multi select
+* added justValue
 * Placeholder default change from 'Select...' to 'Please select'
-* breaking: `value` just binds to selected option value
 * updated readme
 * LoadingIcon
 * added blur and focus events
@@ -31,7 +33,7 @@
 * virtualList -> virtual-list
 * listContainer -> list
 * bye bye yarn
-* selectContainer and other CSS class names updated, selectContainer -> select-container for example
+* selectContainer and other CSS class names updated, selectContainer -> svelte-select for example
 * LoadingIcon prop added, must be imported to have a spinner/loader
 * CSS props updates. Added .icons and removed some css vars
 * ClearIcon and ChevronIcon no longer included by default
@@ -41,12 +43,11 @@
 * indicatorSvg removed, use ChevronIcon going forward
 * removed playwright and puppeteer, tests now just run in the browser with sirv
 * debounce method is now exported as a prop
-* Multi component no longer included by default, must be imported going forward
 * VirtualList null by default
 * Removed isVirtualList, will use VirtualList going forward
 * Convert repo to use SvelteKit
 * Change licence from LIL to ISC
-* Cleaned up package.json 
+
 
 ## 4.4.1
 

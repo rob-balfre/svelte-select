@@ -1,4 +1,4 @@
-<div class="select-container">
+<div class="svelte-select">
     <span
         aria-live="polite"
         aria-atomic="false"

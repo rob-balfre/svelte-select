@@ -13,9 +13,9 @@
 <style>
     .loading {
         padding: 0 5px;
-        width: var(--spinnerWidth, 35px);
-        height: var(--spinnerHeight, 20px);
-        color: var(--spinnerColor, #51ce6c);
+        width: var(--spinner-width, 35px);
+        height: var(--spinner-height, 20px);
+        color: var(--spinner-color, #51ce6c);
         animation: rotate 0.75s linear infinite;
         transform-origin: center center;
         margin: auto;

@@ -1,7 +1,6 @@
 import svelte from 'rollup-plugin-svelte';
 import resolve from 'rollup-plugin-node-resolve';
 import css from 'rollup-plugin-css-only';
-import postcss from 'rollup-plugin-postcss'
 
 
 export default [
@@ -19,10 +18,7 @@ export default [
                     dev: true,
                 },
             }),
-            postcss({
-                extract: true
-            }),
-            // css(),
+            css(),
             resolve(),
         ],
     },

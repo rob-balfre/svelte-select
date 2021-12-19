@@ -10,10 +10,7 @@ import ParentContainer from './Select/ParentContainer.svelte'
 import {assert, test} from 'tape-modern';
 import VirtualList from 'svelte-tiny-virtual-list';
 import getName from '../utils/nameGen';
-import imports from '../../src/lib/imports';
 
-import "../../src/lib/default.css";
-// import "../../src/lib/tailwind.css";
 
 function querySelectorClick(selector) {
   document.querySelector(selector).click();
@@ -164,9 +161,6 @@ test('with no data creates default elements', async (t) => {
 
   const select = new Select({
     target,
-    props: {
-      imports
-    }
   });
 
   t.htmlEqual(target.innerHTML, testTarget.innerHTML);
@@ -179,7 +173,7 @@ test('when isFocused true container adds focused class', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       isFocused: true
     }
   });
@@ -193,7 +187,7 @@ test('when isFocused changes to true input should focus', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       isFocused: false
     }
   });
@@ -202,7 +196,7 @@ test('when isFocused changes to true input should focus', async (t) => {
     select.$set({isFocused: true});
   };
 
-  const hasFocused = await focus(target.querySelector('.select-container input'), setFocus);
+  const hasFocused = await focus(target.querySelector('.svelte-select input'), setFocus);
   t.ok(hasFocused);
   select.$destroy();
 });
@@ -211,7 +205,7 @@ test('default empty list', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true
     }
   });
@@ -225,7 +219,7 @@ test('default list with five items', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithIndex
     }
@@ -240,7 +234,7 @@ test('should highlight active list item', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithIndex,
       value: {value: 'pizza', label: 'Pizza', index: 1}
@@ -262,7 +256,7 @@ test('list scrolls to active item', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithIndex.concat(extras),
       value: {value: 'sunday-roast', label: 'Sunday Roast'},
@@ -290,7 +284,7 @@ test('list scrolls to hovered item when navigating with keys', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithIndex.concat(extras)
     }
@@ -321,7 +315,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: items
     }
@@ -337,7 +331,7 @@ test('on enter active item fires a itemSelected event', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithIndex
     }
@@ -361,7 +355,7 @@ test('on tab active item fires a itemSelected event', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithIndex
     }
@@ -384,7 +378,7 @@ test('on selected of current active item does not fire a itemSelected event', as
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithIndex,
       value: { value: 'chocolate', label: 'Chocolate', index: 0 }
@@ -407,7 +401,7 @@ test('selected item\'s default view', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       value: {value: 'chips', label: 'Chips'},
     }
   });
@@ -418,10 +412,7 @@ test('selected item\'s default view', async (t) => {
 
 test('select view updates with value updates', async (t) => {
   const select = new Select({
-    target,
-    props: {
-      imports
-    }
+    target
   });
 
   await handleSet(select, {value: {value: 'chips', label: 'Chips'}});
@@ -434,7 +425,7 @@ test('clear wipes value and updates view', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       value: {value: 'chips', label: 'Chips'},
     }
   });
@@ -450,11 +441,11 @@ test('clicking on Select opens List', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
     }
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   const listContainer = document.querySelector('.list');
   t.ok(listContainer);
 
@@ -465,12 +456,12 @@ test('Select opens List populated with items', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   t.ok(target.querySelector('.list-item'));
 
   select.$destroy();
@@ -480,12 +471,12 @@ test('List starts with first item in hover state', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   t.ok(target.querySelector('.list-item .hover').innerHTML === 'Chocolate');
 
   select.$destroy();
@@ -495,12 +486,12 @@ test('select item from list', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
     }
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   await handleKeyboard('ArrowDown');
   await handleKeyboard('ArrowDown');
   await handleKeyboard('Enter');
@@ -513,7 +504,7 @@ test('when listPosition is set to top list should be above the input', async (t)
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOpen: true,
       listPlacement: 'top'
@@ -521,7 +512,7 @@ test('when listPosition is set to top list should be above the input', async (t)
   });
 
   const distanceOfListBottomFromViewportTop = document.querySelector('.list').getBoundingClientRect().bottom;
-  const distanceOfInputTopFromViewportTop = document.querySelector('.select-container').getBoundingClientRect().top;
+  const distanceOfInputTopFromViewportTop = document.querySelector('.svelte-select').getBoundingClientRect().top;
 
   t.ok(distanceOfListBottomFromViewportTop <= distanceOfInputTopFromViewportTop);
 
@@ -532,7 +523,7 @@ test('when listPlacement is set to bottom the list should be below the input', a
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOpen: true,
       listPlacement: 'bottom'
@@ -541,7 +532,7 @@ test('when listPlacement is set to bottom the list should be below the input', a
 
   await wait(0);
   const distanceOfListTopFromViewportTop = document.querySelector('.list').getBoundingClientRect().top;
-  const distanceOfInputBottomFromViewportTop = document.querySelector('.select-container').getBoundingClientRect().bottom;
+  const distanceOfInputBottomFromViewportTop = document.querySelector('.svelte-select').getBoundingClientRect().bottom;
 
   t.ok(distanceOfListTopFromViewportTop >= distanceOfInputBottomFromViewportTop);
 
@@ -555,7 +546,7 @@ test('blur should close list and remove focus from select', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
@@ -564,7 +555,7 @@ test('blur should close list and remove focus from select', async (t) => {
   div.click();
   div.remove();
   t.ok(!document.querySelector('.list'));
-  t.ok(document.querySelector('.select-container input') !== document.activeElement);
+  t.ok(document.querySelector('.svelte-select input') !== document.activeElement);
   select.$destroy();
 });
 
@@ -572,17 +563,17 @@ test('selecting item should close list but keep focus on select', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
   t.ok(!document.querySelector('.list'));
-  t.ok(document.querySelector('.select-container.focused'));
+  t.ok(document.querySelector('.svelte-select.focused'));
   select.$destroy();
 });
 
@@ -590,18 +581,18 @@ test('clicking Select with selected item should open list with item listed as ac
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   await wait(0);
   t.ok(document.querySelector('.list-item .hover').innerHTML === 'Cake');
   select.$destroy();
@@ -611,12 +602,12 @@ test('focus on Select input updates focus state', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
   
-  document.querySelector('.select-container input').focus();
+  document.querySelector('.svelte-select input').focus();
 
   t.ok(select.isFocused);
   select.$destroy();
@@ -626,12 +617,12 @@ test('key up and down when Select focused opens list', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  const input = document.querySelector('.select-container input');
+  const input = document.querySelector('.svelte-select input');
   input.focus();
   await wait(0);
   t.ok(select.isFocused);
@@ -646,17 +637,17 @@ test('List should keep width of parent Select', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isFocused: true
     }
   });
 
-  const input = document.querySelector('.select-container input');
+  const input = document.querySelector('.svelte-select input');
   input.focus();
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
-  const selectContainer = document.querySelector('.select-container');
+  const selectContainer = document.querySelector('.svelte-select');
   const listContainer = document.querySelector('.list');
   t.equal(selectContainer.offsetWidth, listContainer.offsetWidth);
 
@@ -670,15 +661,15 @@ test('Placeholder text should reappear when List is closed', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   div.click();
   div.remove();
-  const selectInput = document.querySelector('.select-container input');
+  const selectInput = document.querySelector('.svelte-select input');
   t.equal(selectInput.attributes.placeholder.value, 'Please select');
 
   select.$destroy();
@@ -688,17 +679,17 @@ test('typing in Select filter will hide selected Item', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   select.$set({filterText: 'potato'});
-  t.ok(!document.querySelector('.select-container .value'));
+  t.ok(!document.querySelector('.svelte-select .value'));
 
   select.$destroy();
 });
@@ -707,12 +698,12 @@ test('clearing selected item closes List if open', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
@@ -732,17 +723,17 @@ test('closing List clears Select filter text', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   select.$set({filterText: 'potato'});
   div.click();
   div.remove();
-  const selectInput = document.querySelector('.select-container input');
+  const selectInput = document.querySelector('.svelte-select input');
   t.equal(selectInput.attributes.placeholder.value, 'Please select');
 
   select.$destroy();
@@ -755,17 +746,17 @@ test('closing List clears Select filter text', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   select.$set({filterText: 'potato'});
   div.click();
   div.remove();
-  const selectInput = document.querySelector('.select-container input');
+  const selectInput = document.querySelector('.svelte-select input');
   t.equal(selectInput.attributes.placeholder.value, 'Please select');
 
   select.$destroy();
@@ -778,17 +769,17 @@ test('closing List item clears Select filter text', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   select.$set({filterText: 'potato'});
   div.click();
   div.remove();
-  const selectInput = document.querySelector('.select-container input');
+  const selectInput = document.querySelector('.svelte-select input');
   t.equal(selectInput.attributes.placeholder.value, 'Please select');
 
   select.$destroy();
@@ -798,13 +789,13 @@ test('typing while Select is focused populates Select filter text', async (t) =>
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
   select.$set({isFocused: true});
-  document.querySelector('.select-container input').blur();
+  document.querySelector('.svelte-select input').blur();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 't'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'e'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 's'}));
@@ -818,13 +809,13 @@ test('Select input placeholder wipes while item is selected', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: {name: 'Item #2'},
     }
   });
 
-  const selectInput = document.querySelector('.select-container input');
+  const selectInput = document.querySelector('.svelte-select input');
   t.equal(selectInput.attributes.placeholder.value, '');
 
   select.$destroy();
@@ -834,7 +825,7 @@ test('Select listOpen state controls List', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOpen: true
     }
@@ -852,15 +843,15 @@ test('clicking Select toggles List open state', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
   t.ok(!document.querySelector('.list'));
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   t.ok(document.querySelector('.list'));
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   t.ok(!document.querySelector('.list'));
 
   select.$destroy();
@@ -870,7 +861,7 @@ test('Select filter text filters list', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
@@ -886,7 +877,7 @@ test('Select filter text filters list with itemFilter', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       itemFilter: (label, filterText, option) => label === 'Ice Cream'
     }
@@ -903,7 +894,7 @@ test('Typing in the Select filter opens List', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isFocused: true
     }
@@ -918,7 +909,7 @@ test('While filtering, the first item in List should receive hover class', async
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isFocused: true
     }
@@ -934,14 +925,14 @@ test('Select container styles can be overridden', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: {name: 'Item #2'},
       containerStyles: `padding-left: 40px;`
     }
   });
 
-  t.equal(document.querySelector('.select-container').style.cssText, `padding-left: 40px;`);
+  t.equal(document.querySelector('.svelte-select').style.cssText, `padding-left: 40px;`);
   select.$destroy();
 });
 
@@ -949,13 +940,13 @@ test('Select can be disabled', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isDisabled: true,
     }
   });
 
-  t.ok(document.querySelector('.select-container.disabled'));
+  t.ok(document.querySelector('.svelte-select.disabled'));
 
   select.$destroy();
 });
@@ -964,7 +955,7 @@ test('Select List closes when you click enter', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isFocused: true
     }
@@ -982,7 +973,7 @@ test('tabbing should move between tabIndexes and others Selects', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isFocused: false
     }
@@ -991,7 +982,7 @@ test('tabbing should move between tabIndexes and others Selects', async (t) => {
   const other = new Select({
     target: extraTarget,
     props: {
-      imports,
+      
       items,
       isFocused: false
     }
@@ -1008,7 +999,7 @@ test(`shouldn't be able to clear a disabled Select`, async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isDisabled: true,
       value: {name: 'Item #4'}
@@ -1025,7 +1016,7 @@ test(`two way binding between Select and it's parent component`, async (t) => {
   const parent = new ParentContainer({
     target,
     props: {
-      imports,
+      
       items,
       value: {value: 'chips', label: 'Chips'},
     }
@@ -1038,7 +1029,7 @@ test(`two way binding between Select and it's parent component`, async (t) => {
   });
 
   t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
@@ -1056,7 +1047,7 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: [
         {
@@ -1088,13 +1079,13 @@ test('focusing in an external textarea should close and blur it', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
 
     }
   });
 
-  const input = document.querySelector('.select-container input');
+  const input = document.querySelector('.svelte-select input');
   input.focus();
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   t.ok(select.listOpen);  
@@ -1109,7 +1100,7 @@ test('clicking between Selects should close and blur other Select', async (t) =>
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isFocused: false
     }
@@ -1118,19 +1109,19 @@ test('clicking between Selects should close and blur other Select', async (t) =>
   const other = new Select({
     target: extraTarget,
     props: {
-      imports,
+      
       items,
       isFocused: false
     }
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   t.ok(select.listOpen);
   t.ok(select.isFocused);
   t.ok(!other.isFocused);
   t.ok(!other.isFocused);
 
-  await querySelectorClick('#extra .select-container');
+  await querySelectorClick('#extra .svelte-select');
   t.ok(!select.listOpen);
   t.ok(!select.isFocused);
   t.ok(other.listOpen);
@@ -1144,7 +1135,7 @@ test('if only one item in list it should have hover state', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: [{
         index: 0,
@@ -1162,7 +1153,7 @@ test(`hovered item in a filtered list shows hover state`, async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
@@ -1181,12 +1172,12 @@ test(`data shouldn't be stripped from item - currently only saves name`, async (
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   await querySelectorClick('.list-item');
   t.equal(JSON.stringify(select.value), JSON.stringify({value: 'chocolate', label: 'Chocolate'}));
 
@@ -1197,13 +1188,13 @@ test('should not be able to clear when clearing is disabled', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isClearable: false
     }
   });
 
-  document.querySelector('.select-container').click();
+  document.querySelector('.svelte-select').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
@@ -1216,13 +1207,13 @@ test('should not be able to search when searching is disabled', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isSearchable: false
     }
   });
 
-  const selectInput = document.querySelector('.select-container input');
+  const selectInput = document.querySelector('.svelte-select input');
   t.ok(selectInput.attributes.readonly);
 
   select.$destroy();
@@ -1237,13 +1228,13 @@ test('placeholder should be prop value', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: itemsWithGroup,
       placeholder
     }
   });
 
-  const selectInput = document.querySelector('.select-container input');
+  const selectInput = document.querySelector('.svelte-select input');
   t.equal(selectInput.attributes.placeholder.value, placeholder);
 
   select.$destroy();
@@ -1256,7 +1247,7 @@ test('should display loading icon when waiting is enabled', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isWaiting: true
     }
@@ -1271,14 +1262,14 @@ test('inputStyles prop applies css to select input', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: {value: 'pizza', label: 'Pizza'},
       inputStyles: `padding-left: 40px;`
     }
   });
 
-  t.equal(document.querySelector('.select-container input').style.cssText, `padding-left: 40px;`);
+  t.equal(document.querySelector('.svelte-select input').style.cssText, `padding-left: 40px;`);
   select.$destroy();
 });
 
@@ -1286,7 +1277,7 @@ test('items should be grouped by groupBy expression', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithGroup,
       groupBy
@@ -1309,7 +1300,7 @@ test('clicking group header should not make a selected', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group
@@ -1328,7 +1319,7 @@ test('clicking an item with selectable: false should not make a selected', async
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithSelectable
     }
@@ -1348,7 +1339,7 @@ test('clicking an item with selectable not specified should make a selected', as
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithSelectable
     }
@@ -1367,7 +1358,7 @@ test('clicking an item with selectable: true should make a selected', async (t) 
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithSelectable
     }
@@ -1383,7 +1374,7 @@ test('when groupBy, no active item and keydown enter is fired then list should c
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group
@@ -1391,7 +1382,7 @@ test('when groupBy, no active item and keydown enter is fired then list should c
   });
 
   await wait(0);
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.ok(!select.value);
 
@@ -1402,7 +1393,7 @@ test('when isGroupHeaderSelectable clicking group header should select createGro
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithGroup,
       isGroupHeaderSelectable: true,
@@ -1440,7 +1431,7 @@ test('group headers label should be created by getGroupHeaderLabel(item)', async
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithGroup,
       groupBy,
@@ -1469,7 +1460,7 @@ test('groups should be sorted by expression', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group,
@@ -1489,7 +1480,7 @@ test('when isMulti is true show each item in value', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [
@@ -1510,7 +1501,7 @@ test('when isMulti is true and value is undefined show placeholder text', async 
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: undefined
@@ -1526,14 +1517,14 @@ test('when isMulti is true clicking item in List will populate value', async (t)
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: undefined
     }
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   await querySelectorClick('.list-item');
 
   t.equal(JSON.stringify(select.value), JSON.stringify([{value: 'chocolate', label: 'Chocolate'}]));
@@ -1545,7 +1536,7 @@ test('when isMulti is true items in value will not appear in List', async (t) =>
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}]
@@ -1568,7 +1559,7 @@ test('when isMulti is true both value and filterText filters List', async (t) =>
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       listOpen: true,
       isMulti: true,
       items,
@@ -1589,7 +1580,7 @@ test('when isMulti is true clicking X on a selected item will remove it from val
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]
@@ -1606,7 +1597,7 @@ test('when isMulti is true and all selected items have been removed then placeho
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}]
@@ -1622,7 +1613,7 @@ test('when isMulti is true and items are selected then clear all should wipe all
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]
@@ -1639,7 +1630,7 @@ test('when isMulti and groupBy is active then items should be selectable', async
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group
@@ -1647,7 +1638,7 @@ test('when isMulti and groupBy is active then items should be selectable', async
   });
 
   target.style.maxWidth = '400px';
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   await querySelectorClick('.list-item');
   t.equal(JSON.stringify(select.value), JSON.stringify([{"isGroupItem":true,"value":"chocolate","label":"Chocolate","group":"Sweet"}]));
 
@@ -1658,16 +1649,16 @@ test('when isMulti and selected items reach edge of container then Select height
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items
     }
   });
 
   target.style.maxWidth = '250px';
-  t.ok(document.querySelector('.select-container').scrollHeight === 42);
+  t.ok(document.querySelector('.svelte-select').scrollHeight === 42);
   await handleSet(select, {value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]});
-  t.ok(document.querySelector('.select-container').scrollHeight > 44);
+  t.ok(document.querySelector('.svelte-select').scrollHeight > 44);
   select.$destroy();
 });
 
@@ -1675,7 +1666,7 @@ test('when isMulti and value is populated then navigating with LeftArrow updates
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}, {value: 'chips', label: 'Chips'},],
@@ -1685,7 +1676,7 @@ test('when isMulti and value is populated then navigating with LeftArrow updates
 
   target.style.maxWidth = '100%';
 
-  const input = document.querySelector('.select-container input');
+  const input = document.querySelector('.svelte-select input');
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
 
@@ -1698,7 +1689,7 @@ test('when isMulti and value is populated then navigating with ArrowRight update
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}, {value: 'chips', label: 'Chips'},],
@@ -1706,7 +1697,7 @@ test('when isMulti and value is populated then navigating with ArrowRight update
     }
   });
 
-  const input = document.querySelector('.select-container input');
+  const input = document.querySelector('.svelte-select input');
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
@@ -1720,17 +1711,17 @@ test('when isMulti and value has items and list opens then first item in list sh
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       isFocused: true
     }
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   await querySelectorClick('.list-item');
 
-  const input = document.querySelector('.select-container input');
+  const input = document.querySelector('.svelte-select input');
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
   t.ok(document.querySelector('.list-item .hover'));
@@ -1741,7 +1732,7 @@ test('when isMulti, isDisabled, and value has items then items should be locked'
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       isDisabled: true,
@@ -1758,7 +1749,7 @@ test('when isMulti is true show each item in value if simple arrays are used', a
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items: ['pizza', 'chips', 'chocolate'],
       value: ['pizza', 'chocolate']
@@ -1777,7 +1768,7 @@ test('when labelIdentifier is set you can pass a string and see the right label'
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: [{id: 0, name: 'ONE'}, {id: 1, name: 'TWO'}],
       value: {id: 0, name: 'ONE'},
       optionIdentifier: 'id',
@@ -1795,7 +1786,7 @@ test('when getValue method is set should use that key to update value', async (t
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: [{id: 0, label: 'ONE'}, {id: 1, label: 'TWO'}],
       value: {id: 0, label: 'ONE'},
       optionIdentifier: 'id'
@@ -1803,7 +1794,7 @@ test('when getValue method is set should use that key to update value', async (t
   });
 
   t.ok(select.value.id === 0);
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.ok(select.value.id === 1);
@@ -1815,7 +1806,8 @@ test('when loadOptions method is supplied and filterText has length then items s
   const select = new Select({
     target,
     props: {
-      imports: { ...imports, Item: CustomItem, Selection: CustomItem },
+      Item: CustomItem, 
+      Selection: CustomItem,
       getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
@@ -1835,7 +1827,7 @@ test('when noOptionsMessage is set and there are no items then show message', as
   const select = new Select({
     target,
     props: {
-      imports,
+      
       noOptionsMessage: 'SO SO SO SCANDALOUS',
       listOpen: true
     }
@@ -1850,7 +1842,7 @@ test('when getSelectionLabel method is supplied and value are no items then disp
  const select = new Select({
     target,
     props: {
-      imports,
+      
       getSelectionLabel: (option) => option.notLabel,
       value: {notLabel: 'This is not a label', value: 'not important'},
     }
@@ -1866,7 +1858,7 @@ test('when getOptionLabel method and items is supplied then display result of ge
   const select = new Select({
     target,
     props: {
-      imports,
+      
       getOptionLabel: (option) => option.notLabel,
       isFocused: true,
       items: [{notLabel: 'This is not a label', value: 'not important #1'}, {notLabel: 'This is not also not a label', value: 'not important #2'}],
@@ -1883,7 +1875,7 @@ test('when getOptionLabel method and items is supplied then display result of ge
   const select = new Select({
     target,
     props: {
-      imports,
+      
       getOptionLabel: (option) => option.notLabel,
       isFocused: true,
       items: [{notLabel: 'This is not a label', value: 'not important #1'}, {notLabel: 'This is not also not a label', value: 'not important #2'}],
@@ -1901,7 +1893,7 @@ test('when a custom Item component is supplied then use to display each item', a
   const select = new Select({
     target,
     props: {
-      imports: { ...imports, Item: CustomItem},
+      Item: CustomItem,
       getOptionLabel: (option) => option.name,
       isFocused: true,
       items: [{
@@ -1920,10 +1912,8 @@ test('when a custom Selection component is supplied then use to display selectio
   const select = new Select({
     target,
     props: {
-      imports: { ...imports, 
-        Item: CustomItem,
-        Selection: CustomItem
-      },
+      Item: CustomItem,
+      Selection: CustomItem,
       getOptionLabel: (option) => option.name,
       isFocused: true,
       items: [{
@@ -1944,7 +1934,8 @@ test('when loadOptions method is supplied, isMulti is true and filterText has le
   const select = new Select({
     target,
     props: {
-      imports: { ...imports, Item: CustomItem, Multi},
+      Item: CustomItem,
+      Multi,
       getOptionLabel: (option) => option.name,
       getSelectionLabel: (option) => option.name,
       loadOptions: getPosts,
@@ -1966,7 +1957,7 @@ test('when getSelectionLabel contains HTML then render the HTML', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       value: items[0],
       getSelectionLabel: (option) => `<p>${option.label}</p>`,
     }
@@ -1981,7 +1972,7 @@ test('when getOptionLabel contains HTML then render the HTML', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       getOptionLabel: (option) => `<p>${option.label}</p>`,
       isFocused: true
@@ -1998,7 +1989,7 @@ test('when isMulti is true, value populated and arrowLeft is pressed then no ite
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [
@@ -2019,7 +2010,7 @@ test('when hideEmptyState true then do not show "no items" div ', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOpen: true,
       filterText: 'x',
@@ -2038,7 +2029,7 @@ test('when value changes then select event should fire', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
     }
   });
@@ -2062,7 +2053,7 @@ test('when value is cleared the clear event is fired', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: items[0],
     }
@@ -2085,7 +2076,7 @@ test('when multi item is cleared the clear event is fired with removed item', as
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [itemToRemove]
@@ -2108,7 +2099,7 @@ test('when items in list filter or update then first item in list should highlig
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isFocused: true
     }
@@ -2129,7 +2120,7 @@ test('when item is selected or state changes then check value[optionIdentifier] 
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: {value: 'cake', label: 'Cake'}
     }
@@ -2151,7 +2142,7 @@ test('when isMulti and item is selected or state changes then check value[option
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [
@@ -2180,7 +2171,7 @@ test('when isFocused turns to false then check Select is no longer in focus', as
   const select = new Select({
     target,
     props: {
-      imports,
+      
       isFocused: true,
       items,
     }
@@ -2189,7 +2180,7 @@ test('when isFocused turns to false then check Select is no longer in focus', as
   const selectSecond = new Select({
     target: extraTarget,
     props: {
-      imports,
+      
       isFocused: false,
       items,
     }
@@ -2225,7 +2216,7 @@ test('when items and loadOptions method are both supplied then fallback to items
   const select = new Select({
     target,
     props: {
-      imports,
+      
       getOptionLabel: (option) => option.name,
       getSelectionLabel: (option) => option.name,
       loadOptions: getPosts,
@@ -2251,7 +2242,7 @@ test('when items is just an array of strings then render list', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOpen: true
     }
@@ -2269,7 +2260,7 @@ test('when items are just strings then value should render', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: {value: 'one', label: 'one', index: 0}
     }
@@ -2292,7 +2283,7 @@ test('when VirtualList then render list', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports: { ...imports, VirtualList },
+      VirtualList,
       items,
       listOpen: true
     }
@@ -2308,7 +2299,7 @@ test('when isMulti and value has items then check each item is unique', async (t
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [
@@ -2328,7 +2319,7 @@ test('when isMulti and textFilter has length then enter should select item', asy
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       isFocused: true,
@@ -2348,7 +2339,7 @@ test('when isMulti and textFilter has length and no items in list then enter sho
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       isFocused: true,
@@ -2367,7 +2358,7 @@ test('When isMulti and no selected item then delete should do nothing', async (t
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       isFocused: true,
@@ -2386,7 +2377,7 @@ test('When list is open, filterText applied and Enter/Tab key pressed should sel
   const select = new Select({
     target,
     props: {
-      imports,
+      
       listOpen: true,
       isFocused: true,
       filterText: 'A5',
@@ -2409,7 +2400,7 @@ test('When inputAttributes is supplied each attribute is placed on the Select in
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       inputAttributes: {
         id: 'testId',
@@ -2430,7 +2421,7 @@ test('when items and value supplied as just strings then value should render cor
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: ['Pizza', 'Chocolate', 'Crisps'],
       value: 'Pizza'
     }
@@ -2445,7 +2436,7 @@ test('when isMulti with items and value supplied as just strings then value shou
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items: ['Pizza', 'Chocolate', 'Crisps'],
       value: ['Pizza']
@@ -2469,7 +2460,7 @@ test('when isMulti, groupBy and value are supplied then list should be filtered'
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items: _items,
       groupBy: (item) => item.group,
@@ -2492,7 +2483,7 @@ test('When isCreatable disabled, creator is not displayed', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isFocused: true,
       listOpen: true
@@ -2520,7 +2511,7 @@ test('When isCreatable enabled, creator displays getOptionLabel for isCreator', 
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isCreatable: true,
       isFocused: true,
@@ -2548,7 +2539,7 @@ test('When isCreatable enabled, creator is not displayed when duplicate item val
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: [item],
       isCreatable: true,
       listOpen: true
@@ -2571,7 +2562,7 @@ test('When creator selected, selected item is set to created item', async (t) =>
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isCreatable: true,
       isFocused: true,
@@ -2597,7 +2588,7 @@ test('When creator is selected, created item it added to multi selection', async
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isCreatable: true,
       isFocused: true,
@@ -2625,7 +2616,7 @@ test('When creator is selected multiple times, items are all added to multi sele
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isCreatable: true,
       isFocused: true,
@@ -2654,7 +2645,7 @@ test('When isMulti and an items remove icon is clicked then item should be remov
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       items,
       isCreatable: true,
       value: [
@@ -2693,7 +2684,7 @@ test('When isCreatable with non-default item structure, item creator displays ge
   const select = new Select({
     target,
     props: {
-      imports,
+      
       optionIdentifier: 'food',
       getOptionLabel: itemDisplay,
       getSelectionLabel: itemDisplay,
@@ -2727,7 +2718,7 @@ test('When isCreatable and isMulti and optionIdentifier is supplied creator disp
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       optionIdentifier: 'foo',
       isMulti: true,
       items: _items,
@@ -2764,7 +2755,7 @@ test('When isCreatable and isMulti and optionIdentifier is supplied multiple cre
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       optionIdentifier,
       isMulti: true,
       items: _items,
@@ -2804,7 +2795,7 @@ test('When isCreatable and item is created then createItem method should only ru
   const select = new Select({
     target,
     props: {
-      imports,
+      
       isCreatable: true,
       items,
       createItem
@@ -2825,7 +2816,7 @@ test('When items are collection and value a string then lookup item using option
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: 'cake'
     }
@@ -2839,11 +2830,11 @@ test('When items are collection and value a string then lookup item using option
   select.$destroy();
 });
 
-test('When listAutoWidth is set to false list container should have style of width:100%', async (t) => {
+test('When listAutoWidth is set to false list container should have style of width:auto', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listAutoWidth: false,
       listOpen: true
@@ -2852,7 +2843,7 @@ test('When listAutoWidth is set to false list container should have style of wid
 
   await wait(0);
   const listWidth = document.querySelectorAll('.list')[0].style.width;
-  t.ok(listWidth === '100%');
+  t.ok(listWidth === 'auto');
   select.$destroy();
 });
 
@@ -2861,7 +2852,7 @@ test('When item is already active and is selected from list then close list', as
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOpen: true,
       value: 'pizza'
@@ -2880,7 +2871,7 @@ test('When Icon prop is supplied then render on Select', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       Icon: TestIcon
     }
@@ -2895,7 +2886,7 @@ test('When showChevron prop is true only show chevron when there is no value on 
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: {value: 'chocolate', label: 'Chocolate'},
       showChevron: true
@@ -2911,7 +2902,7 @@ test('When showChevron prop is true and no value show chevron on Select', async 
   const select = new Select({
     target,
     props: {
-      imports: {...imports, ChevronIcon},
+      ChevronIcon,
       items,
       showChevron: true
     }
@@ -2926,7 +2917,7 @@ test('When showChevron and isClearable is true always show chevron on Select', a
   const select = new Select({
     target,
     props: {
-      imports: {...imports, ChevronIcon},
+      ChevronIcon,
       items,
       value: {value: 'chocolate', label: 'Chocolate'},
       showChevron: true,
@@ -2943,7 +2934,7 @@ test('When items and loadItems then listOpen should be false', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       getSelectionLabel: (option) => option.name,
       getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
@@ -2965,15 +2956,15 @@ test('Select container classes can be injected', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: {value: 'cake', label: 'Cake'},
-      class: 'select-container testclass',
+      class: 'svelte-select testclass',
     },
   });
 
   t.ok(
-    document.querySelector('.select-container').classList.contains('testclass')
+    document.querySelector('.svelte-select').classList.contains('testclass')
   );
   select.$destroy();
 });
@@ -2983,7 +2974,7 @@ test('When noOptionsMessage is changed after List component has been created the
   const select = new Select({
     target,
     props: {
-      imports,
+      
       getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
@@ -3013,7 +3004,7 @@ test('When loadOptions promise is resolved then dispatch loaded', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       loadOptions: resolvePromise,
     },
   });
@@ -3045,7 +3036,7 @@ test('When loadOptions promise is rejected then dispatch error', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       loadOptions: rejectPromise,
     },
   });
@@ -3077,7 +3068,7 @@ test('When items change then value should also update', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: {value: 'chips', label: 'Chips'},
     },
@@ -3105,7 +3096,7 @@ test('When items change then value should also update', async (t) => {
   const multiSelect = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [{value: 'chips', label: 'Chips'}, {value: 'pizza', label: 'Pizza'}],
@@ -3134,7 +3125,7 @@ test('When items change then value should also update but only if found in items
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       value: {value: 'chips', label: 'Chips'},
     },
@@ -3162,7 +3153,7 @@ test('When isMulti and multiFullItemClearable then clicking anywhere on the item
   const multiSelect = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       multiFullItemClearable: true,
@@ -3182,7 +3173,7 @@ test('When isMulti and filterText then items should filter out already selected 
   const multiSelect = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items,
       value: [{value: 'chips', label: 'Chips'}, {value: 'pizza', label: 'Pizza'}],
@@ -3207,7 +3198,7 @@ test('when loadOptions and items is supplied then list should close on blur', as
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       loadOptions,
     }
@@ -3228,7 +3219,7 @@ test('when isCreatable and item created then event "itemCreated" should dispatch
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isCreatable: true,
       isFocused: true,
@@ -3259,7 +3250,7 @@ test('when loadOptions response returns cancelled true then dont end loading sta
   const select = new Select({
     target,
     props: {
-      imports,
+      
       loadOptions: getCancelledRes,
     }
   });
@@ -3275,7 +3266,7 @@ test('when ClearIcon replace clear icon', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports: {...imports, ClearIcon: TestClearIcon},
+      ClearIcon: TestClearIcon,
       items,
       value: {value: 'chips', label: 'Chips'}
     }
@@ -3290,14 +3281,14 @@ test('losing focus of Select should close list', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
     }
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   t.ok(select.listOpen);
-  document.querySelector('.select-container input').blur();
+  document.querySelector('.svelte-select input').blur();
   t.ok(!select.listOpen);
 
   select.$destroy();
@@ -3309,12 +3300,12 @@ test('clicking on an external textarea should close and blur it', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
     }
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   t.ok(select.listOpen);
   document.querySelector('textarea').focus();
   t.ok(!select.listOpen);
@@ -3327,7 +3318,7 @@ test('when switching between isMulti true/false ensure Select continues working'
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOpen: true,
       value: {value: 'chips', label: 'Chips'}
@@ -3353,13 +3344,13 @@ test('when isSearchable is false then input should be readonly', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       isSearchable: false
     }
   });
 
-  let elem = target.querySelector('.select-container input');
+  let elem = target.querySelector('.svelte-select input');
   t.ok(elem.hasAttribute('readonly'));
 
   select.$destroy();
@@ -3370,7 +3361,7 @@ test('when esc key pressed should close list', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOpen: true
     }
@@ -3389,7 +3380,7 @@ test('when isMulti and placeholderAlwaysShow then always show placeholder text',
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'},
       {value: 'pizza', label: 'Pizza'},],
@@ -3400,7 +3391,7 @@ test('when isMulti and placeholderAlwaysShow then always show placeholder text',
   });
 
   await wait(0);
-  let elem = target.querySelector('.select-container input[type="text"]');
+  let elem = target.querySelector('.svelte-select input[type="text"]');
   t.ok(elem.placeholder === 'foo bar');
 
   select.$destroy();
@@ -3419,7 +3410,7 @@ test('when loadOptions and value then items should show on promise resolve',asyn
   const select = new Select({
     target,
     props: {
-      imports,
+      
       value: {
         value: 'chocolate', label: 'Chocolate'
       },
@@ -3447,7 +3438,7 @@ test('when loadOptions, isMulti and value then filterText should remain on promi
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       value: {
         value: 'chocolate', label: 'Chocolate'
@@ -3468,7 +3459,7 @@ test('When listOffset is set list position offset changes', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOffset: 0,
       listOpen: true
@@ -3485,7 +3476,7 @@ test('When items are updated post onMount ensure filtering still works', async (
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: null
     },
   });
@@ -3506,7 +3497,7 @@ test('When grouped items are updated post onMount ensure filtering still works',
   const select = new Select({
     target,
     props: {
-      imports,
+      
       groupBy: item => item.group
     },
   });
@@ -3530,7 +3521,7 @@ test('When groupBy and value selected ensure filtering still works', async (t) =
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: itemsWithGroup,
       groupBy: (item) => item.group,
       
@@ -3549,7 +3540,7 @@ test('When value selected and filterText then ensure selecting the active value 
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
     },
   });
@@ -3571,7 +3562,7 @@ test('When groupBy, optionIdentifier and labelIdentifier then ensure list displa
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: itemsWithGroupIds,
       optionIdentifier: '_id',
       labelIdentifier: 'name',
@@ -3595,7 +3586,7 @@ test('When groupBy, optionIdentifier, labelIdentifier and createGroupHeaderItem 
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: itemsWithGroupIds,
       optionIdentifier: '_id',
       labelIdentifier: 'name',
@@ -3625,7 +3616,7 @@ test('When isMulti on:select events should fire on each item removal (including 
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       items,
       isMulti: true,
       value: ['Cake', 'Chips']
@@ -3652,7 +3643,7 @@ test('When loadOptions and isCreatable then create new item is active when promi
   const select = new Select({
     target,
     props: {
-      imports,
+      
       loadOptions: itemsPromiseEmpty,
       isCreatable: true,
     },
@@ -3670,7 +3661,7 @@ test('When loadOptions and isCreatable then create new item show at bottom of re
   const select = new Select({
     target,
     props: {
-      imports,
+      
       loadOptions: itemsPromise,
       isCreatable: true,
     },
@@ -3689,7 +3680,7 @@ test('When inputAttributes.name supplied, add to hidden input', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       inputAttributes: { name: 'Foods' },
       items: items,
       showChevron: true,
@@ -3706,7 +3697,7 @@ test('When no value then hidden field should also have no value', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       inputAttributes: { name: 'Foods' },
       items: items,
       
@@ -3723,7 +3714,7 @@ test('When value then hidden field should have value.label', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: items,
       value: {value: 'cake', label: 'Cake'},
     },
@@ -3739,7 +3730,7 @@ test('When isMulti and no value then hidden field should no value', async (t) =>
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items: items,
     },
@@ -3755,7 +3746,7 @@ test('When isMulti and value then hidden fields should list value items', async 
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items: items,
       value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},]
@@ -3774,7 +3765,7 @@ test('When listOpen then aria-context describes highlighted item', async (t) => 
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: items,
       listOpen: true
     },
@@ -3792,7 +3783,7 @@ test('When listOpen and value then aria-selection describes value', async (t) =>
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: items,
       value: {value: 'cake', label: 'Cake'},
       isFocused: true
@@ -3809,7 +3800,7 @@ test('When listOpen, value and isMulti then aria-selection describes value', asy
   const select = new Select({
     target,
     props: {
-      imports: {...imports, Multi},
+      Multi,
       isMulti: true,
       items: items,
       value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},],
@@ -3828,7 +3819,7 @@ test('When ariaValues and value supplied, then aria-selection uses default updat
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: items,
       value: {value: 'pizza', label: 'Pizza'},
       isFocused: true,
@@ -3846,7 +3837,7 @@ test('When ariaListOpen, listOpen, then aria-context uses default updated', asyn
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: items,
       listOpen: true,
       ariaListOpen: (label, count) => `label: ${label}, count: ${count}`
@@ -3863,7 +3854,7 @@ test('When ariaFocused, focused value supplied, then aria-context uses default u
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items: items,
       isFocused: true,
       ariaFocused: () => `nothing to see here.`
@@ -3881,7 +3872,7 @@ test('When id supplied then add to input', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       id: 'foods',
       items: items,
     },
@@ -3902,12 +3893,12 @@ test('allows the user to select an item by clicking with a focusable ancestor', 
   const select = new Select({
     target: ancestor,
     props: {
-      imports,
+      
       items,
     },
   });
 
-  await querySelectorClick('.select-container');
+  await querySelectorClick('.svelte-select');
   await querySelectorClick('.list-item');
   t.equal(select.value.label, 'Chocolate');
 
@@ -3919,7 +3910,7 @@ test('when listOpen true on page load then list should show onMount', async (t) 
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOpen: true,
     },
@@ -3936,7 +3927,7 @@ test('when listOpen true on page load then list should show onMount', async (t) 
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items,
       listOpen: true,
     },
@@ -3954,7 +3945,7 @@ test('when suggestions and no filterText then list should show suggestions', asy
   const select = new Select({
     target,
     props: {
-      imports,
+      
       loadOptions: () => {
         return Promise.resolve(['foo'])
       },
@@ -3973,7 +3964,7 @@ test('when suggestions items is selected, list should stay open and filterText s
   const select = new Select({
     target,
     props: {
-      imports,
+      
       loadOptions: () => {
         return Promise.resolve(['foo'])
       },
@@ -4006,7 +3997,7 @@ test('when VirtualList and no results then show noOptionsMessage', async (t) => 
   const select = new Select({
     target,
     props: {
-      imports: { ...imports, VirtualList },
+      VirtualList,
       items,
       listOpen: true,
       filterText: 'zzzzz'
@@ -4024,7 +4015,6 @@ test('when value is set check from item and show correct label', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports: { ...imports },
       items,
       listOpen: true,
       
@@ -4040,11 +4030,9 @@ test('if ChevronIcon and showChevron show chevron and allow click', async (t) =>
   const select = new Select({
     target,
     props: {
-      imports: { ...imports, ChevronIcon},
+      ChevronIcon,
       items,
-      
       showChevron: true
-      
     }
   });
 
@@ -4059,7 +4047,7 @@ test('when component focuses fire on:focus event', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
+      
       items
     }
   });
@@ -4069,7 +4057,7 @@ test('when component focuses fire on:focus event', async (t) => {
     f = true;
   });
 
-  let ele = document.querySelector('.select-container input');
+  let ele = document.querySelector('.svelte-select input');
   ele.focus();
 
   t.ok(f);
@@ -4082,7 +4070,6 @@ test('when component blurs fire on:blur event', async (t) => {
   const select = new Select({
     target,
     props: {
-      imports,
       items,
       isFocused: true
     }
@@ -4093,7 +4080,7 @@ test('when component blurs fire on:blur event', async (t) => {
     b = true;
   });
 
-  let ele = document.querySelector('.select-container input');
+  let ele = document.querySelector('.svelte-select input');
   ele.blur();
 
   t.ok(b);
@@ -4101,4 +4088,4 @@ test('when component blurs fire on:blur event', async (t) => {
   select.$destroy();
 });
 
- // suggestions tests here...
+ // TODO: suggestions tests

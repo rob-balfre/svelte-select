@@ -190,7 +190,7 @@
         let styles;
 
         const base = `position:fixed;left:${left}px;min-width:${width}px;width:${
-            listAutoWidth ? width + 'px' : '100%'
+            listAutoWidth ? width + 'px' : 'auto'
         };`;
 
         const _top = `bottom:${window.innerHeight - bottom + height + listOffset}px;`;
@@ -275,3 +275,38 @@
         <div class="empty">{noOptionsMessage}</div>
     {/if}
 </div>
+
+
+<style>
+    .list {
+        box-shadow: var(--list-shadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
+        border-radius: var(--list-border-radius, 4px);
+        max-height: var(--list-max-height, 250px);
+        overflow-y: auto;
+        background: var(--list-background, #fff);
+        position: var(--list-position, absolute);
+        z-index: var(--list-z-index, 2);
+        border: var(--list-border);
+        box-sizing: border-box;
+    }
+
+    .list .list-group-title {
+        color: var(--group-title-color, #8f8f8f);
+        cursor: default;
+        font-size: var(--group-title-font-size, 12px);
+        font-weight: var(--group-title-font-weight, 600);
+        height: var(--height, 42px);
+        line-height: var(--height, 42px);
+        padding: var(--group-title-padding, 0 20px);
+        text-overflow: ellipsis;
+        overflow-x: hidden;
+        white-space: nowrap;
+        text-transform: var(--group-title-text-transform, uppercase);
+    }
+
+    .list .empty {
+        text-align: var(--list-empty-text-align, center);
+        padding: var(--list-empty-padding, 20px 0);
+        color: var(--list-empty-color, #78848f);
+    }
+</style>
