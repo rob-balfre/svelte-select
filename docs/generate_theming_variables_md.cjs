@@ -4,7 +4,7 @@ const path = require("path");
 const { find } = require("find-in-files");
 
 const VARIABLE_USAGE_PATTERN = "var\\(--([A-Za-z\\-_]*)";
-const SOURCE_FOLDER = path.join(__dirname, "..", "src");
+const SOURCE_FOLDER = path.join(__dirname, "..", "src/lib");
 
 const DOC_FILE_PATH = path.join(__dirname, "theming_variables.md");
 const VARIABLE_SECTION_PATTERN = /(<!-- List start -->)(.|\n)*(<!-- List end -->)/gm;
@@ -13,7 +13,7 @@ const VARIABLE_SECTION_PATTERN = /(<!-- List start -->)(.|\n)*(<!-- List end -->
   const searchResults = await find(
     VARIABLE_USAGE_PATTERN,
     SOURCE_FOLDER,
-    ".css$"
+    ".svelte"
   );
   const justTheMatchedParts = Object.keys(searchResults).reduce(
     (accumulator, nextKey) => [

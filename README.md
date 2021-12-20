@@ -43,16 +43,16 @@ Removed `isVirtualList` instead `npm i svelte-tiny-virtual-list -D` and
 CSS classes and custom properties converted from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`
 
 ### Other CSS class name changes:
-`selectContainer` → `svelte-select`
-`listContainer` → `list`
-`indicator` → `chevron`
+`selectContainer` → `svelte-select`<br/>
+`listContainer` → `list`<br/>
+`indicator` → `chevron`<br/>
 `virtual-list` removed
 
 ### Prop changes:
-`containerClasses` → `class`
-`MultiSelection` → `Multi`
-`indicatorSvg` → `ChevronIcon`
-`selectedValue` removed (was already deprecated in v4 in favour of `value`)
+`containerClasses` → `class`<br/>
+`MultiSelection` → `Multi`<br/>
+`indicatorSvg` → `ChevronIcon`<br/>
+`selectedValue` removed (was already deprecated in v4 in favour of `value`)<br/>
 `loadOptionsInterval` → `debounceWait`
 
 
@@ -324,6 +324,9 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 <Select {items} inputStyles="box-sizing: border-box;"></Select>
 ```
 
+### Replace styles (Tailwind, Bootstrap, Bulma etc)
+If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles/Select.svelte'`. Then add you own somewhere in your code or build pipeline. There is a tailwind stylesheet via `import 'tailwind.css'`. It uses `@extend` so PostCSS is required (experimental - looking for PRs to improve). 
+
 ## Events
 
 | Event Name | Callback          | Description                                                                    |
@@ -340,10 +343,10 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 ```bash
 npm i
 npm run dev-tests
-yarn test:browser
+npm test:browser
 ```
 
-In your browser go to http://localhost:3000 and open devtools and see the console output. When developing it's useful to see the component on the page; comment out the `select.$destroy();` on the last test in /test/src/index.js or use the `test.only()` to target just one test.
+Open http://localhost:3000 and see devtools console output. When developing it's useful to see the component on the page; comment out the `select.$destroy();` on test your debugging in /test/src/index.js and use `test.only()` to target just one test.
 
 For example:
 

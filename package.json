@@ -12,7 +12,7 @@
     "gen:docs": "node docs/generate_theming_variables_md.cjs",
     "preprepare": "node src/remove-styles.cjs",
     "prepare": "svelte-kit package",
-    "postprepare": "node src/post-prepare.cjs",
+    "postprepare": "node src/post-prepare.cjs && npm run gen:docs",
     "release": "release-it --dry-run"
   },
   "devDependencies": {
@@ -46,11 +46,11 @@
   "release-it": {
     "hooks": {
       "before:init": [
-        "svelte-kit package && cd package"
+        "npm run prepare && cd package"
       ]
     },
     "github": {
-      "release": true
+      "release": false
     }
   },
   "type": "module"

@@ -8,6 +8,10 @@ You can override the following variables to style a Select component.
 - `--border-focus-color`
 - `--border-hover-color`
 - `--border-radius`
+- `--chevron-icon-colour`
+- `--chevron-icon-width`
+- `--clear-icon-colour`
+- `--clear-icon-width`
 - `--clear-select-color`
 - `--clear-select-width`
 - `--disabled-background`
@@ -54,13 +58,21 @@ You can override the following variables to style a Select component.
 - `--list-empty-color`
 - `--list-empty-padding`
 - `--list-empty-text-align`
-- `--list-left`
 - `--list-max-height`
 - `--list-position`
-- `--list-right`
 - `--list-shadow`
 - `--list-z-index`
 - `--margin`
+- `--multi-item-bg`
+- `--multi-item-border`
+- `--multi-item-border-radius`
+- `--multi-item-clear-icon-color`
+- `--multi-item-disabled-hover-bg`
+- `--multi-item-disabled-hover-color`
+- `--multi-item-height`
+- `--multi-item-margin`
+- `--multi-item-padding`
+- `--multi-label-margin`
 - `--multi-select-input-margin`
 - `--multi-select-input-padding`
 - `--multi-select-padding`
@@ -68,5 +80,8 @@ You can override the following variables to style a Select component.
 - `--placeholder-color`
 - `--placeholder-opacity`
 - `--selected-item-padding`
+- `--spinner-color`
+- `--spinner-height`
+- `--spinner-width`
 - `--width`
 <!-- List end -->
