@@ -1,6 +1,6 @@
 {
   "name": "svelte-select",
-  "version": "5.0.0-alpha.5",
+  "version": "5.0.0-alpha.4",
   "repository": "https://rob-balfre@github.com/rob-balfre/svelte-select.git",
   "description": "A <Select> component for Svelte apps",
   "scripts": {
@@ -13,7 +13,7 @@
     "preprepare": "node src/remove-styles.cjs",
     "prepare": "svelte-kit package",
     "postprepare": "node src/post-prepare.cjs && npm run gen:docs",
-    "release": "release-it --dry-run"
+    "release": "release-it"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.8",
