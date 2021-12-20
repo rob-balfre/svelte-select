@@ -45,13 +45,10 @@
   ],
   "release-it": {
     "hooks": {
-      "before:init": "npm run prepare"
+      "before:init": "npm run prepare && cd package"
     },
     "github": {
       "release": false
-    },
-    "npm": {
-      "publishPath": "./package"
     }
   },
   "type": "module"
