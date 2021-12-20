@@ -24,7 +24,6 @@
 
 ```bash
 npm install svelte-select
-npm install svelte-select
 ```
 
 ## Migrating for v4 to v5

@@ -1,7 +1,8 @@
 import svelte from 'rollup-plugin-svelte';
 import resolve from 'rollup-plugin-node-resolve';
 import css from 'rollup-plugin-css-only';
-
+import alias from '@rollup/plugin-alias';
+import path from 'path';
 
 export default [
     {
@@ -11,6 +12,15 @@ export default [
             inlineDynamicImports: true,
         },
         plugins: [
+            alias({
+                resolve: ['.svelte', '.js'],
+                entries: [
+                    {
+                        find: /\$lib\/(.*)/,
+                        replacement: path.join(__dirname, 'src/lib/$1'),
+                    },
+                ],
+            }),
             svelte({
                 emitCss: false,
                 compilerOptions: {

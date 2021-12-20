@@ -2,15 +2,15 @@
     import { beforeUpdate, createEventDispatcher, onMount } from 'svelte';
     const dispatch = createEventDispatcher();
 
-    import _Item from './Item.svelte';
-    import _List from './List.svelte';
-    import _Selection from './Selection.svelte';
-    import _ClearIcon from './ClearIcon.svelte';
-    import _Multi from './Multi.svelte';
-    import _ChevronIcon from './ChevronIcon.svelte';
-    import _LoadingIcon from './LoadingIcon.svelte';
-    import _filter from './filter';
-    import _getItems from './getItems';
+    import _Item from '$lib/Item.svelte';
+    import _List from '$lib/List.svelte';
+    import _Selection from '$lib/Selection.svelte';
+    import _ClearIcon from '$lib/ClearIcon.svelte';
+    import _Multi from '$lib/Multi.svelte';
+    import _ChevronIcon from '$lib/ChevronIcon.svelte';
+    import _LoadingIcon from '$lib/LoadingIcon.svelte';
+    import _filter from '$lib/filter';
+    import _getItems from '$lib/getItems';
 
     export let Item = _Item;
     export let List = _List;

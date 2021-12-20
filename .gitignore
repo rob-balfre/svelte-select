@@ -5,4 +5,5 @@ node_modules
 /spec/page/public/build
 /.svelte-kit
 /package
+/src/lib/no-styles
 .env
