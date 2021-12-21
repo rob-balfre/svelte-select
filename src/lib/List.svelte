@@ -250,7 +250,7 @@
         {:else}
             {#each items as item, i}
                 {#if item.isGroupHeader && !item.isSelectable}
-                    <div class="list-group-title">{getGroupHeaderLabel(item)}</div>
+                    <div class="list-group-title">{@html getGroupHeaderLabel(item)}</div>
                 {:else}
                     <div
                         on:mouseover={() => handleHover(i)}
