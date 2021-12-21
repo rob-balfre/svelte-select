@@ -1,6 +1,6 @@
 {
   "name": "svelte-select",
-  "version": "5.0.0-alpha.5",
+  "version": "5.0.0-alpha.7",
   "repository": "https://rob-balfre@github.com/rob-balfre/svelte-select.git",
   "description": "A <Select> component for Svelte apps",
   "scripts": {
@@ -45,7 +45,7 @@
   ],
   "release-it": {
     "hooks": {
-      "before:init": "npm run prepare"
+      "after:bump": "npm run prepare"
     },
     "github": {
       "release": false
