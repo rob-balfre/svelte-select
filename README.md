@@ -40,7 +40,7 @@ Removed `isVirtualList` instead `npm i svelte-tiny-virtual-list -D` and
 <Select VirtualList />
 ```
 
-CSS classes and custom properties converted from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`
+CSS classes and custom properties changed (just depreciated in v5) from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`
 
 ### Other CSS class name changes:
 `selectContainer` → `svelte-select`<br/>

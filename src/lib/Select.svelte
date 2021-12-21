@@ -695,13 +695,13 @@
         --groupTitleFontWeight: --group-title-font-weight;
         --groupTitlePadding: --group-title-padding;
         --groupTitleTextTransform: --group-title-text-transform;
-        --indicatorColor: --indicator-color;
-        --indicatorFill: --indicator-fill;
-        --indicatorHeight: --indicator-height;
-        --indicatorRight: --indicator-right;
-        --indicatorStroke: --indicator-stroke;
-        --indicatorTop: --indicator-top;
-        --indicatorWidth: --indicator-width;
+        --indicatorColor: --chevron-color;
+        --indicatorFill: --chevron-fill;
+        --indicatorHeight: --chevron-height;
+        --indicatorRight: --chevron-right;
+        --indicatorStroke: --chevron-stroke;
+        --indicatorTop: --chevron-top;
+        --indicatorWidth: --chevron-width;
         --inputColor: --input-color;
         --inputFontSize: --input-font-size;
         --inputLeft: --input-left;
@@ -844,27 +844,31 @@
         top: var(--icons-top, 11px);
         bottom: var(--icons-bottom, 11px);
         color: var(--icons-color, #c5cacf);
+        padding: var(--icon-padding, 0);
     }
 
     .svelte-select.focused .icons,
-    .svelte-select .icons svg:hover {
+    .svelte-select .clear-select:hover,
+    .svelte-select .chevron:hover {
         color: var(--icons-color-focused, #2c3e50);
     }
 
     .svelte-select .clear-select {
         display: flex;
         align-items: center;
-        width: var(--clear-select-width, 30px);
+        width: var(--clear-select-width, 20px);
         color: var(--clear-select-color, --icons-color);
+        margin: var(--clear-select-margin, 0 8px 0 0);
         pointer-events: all;
     }
 
     .svelte-select .chevron {
         display: flex;
-        box-shadow: -1px 0 0 0 #c5cacf;
-        width: var(--indicator-width, 35px);
-        height: var(--indicator-height, 20px);
-        color: var(--indicator-color, --icons-color);
+        width: var(--chevron-width, 20px);
+        height: var(--chevron-height, 20px);
+        color: var(--chevron-color, --icons-color);
+        box-shadow: var(--chevron-box-shadow, -1px 0 0 0 #c5cacf);
+        padding: var(--chevron-padding, 0 8px);
         pointer-events: all;
     }
 
