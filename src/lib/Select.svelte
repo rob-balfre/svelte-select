@@ -856,7 +856,7 @@
     .svelte-select .clear-select {
         display: flex;
         align-items: center;
-        width: var(--clear-select-width, 20px);
+        min-width: var(--clear-select-width, 20px);
         color: var(--clear-select-color, --icons-color);
         margin: var(--clear-select-margin, 0 8px 0 0);
         pointer-events: all;
@@ -864,7 +864,7 @@
 
     .svelte-select .chevron {
         display: flex;
-        width: var(--chevron-width, 20px);
+        min-width: var(--chevron-width, 20px);
         height: var(--chevron-height, 20px);
         color: var(--chevron-color, --icons-color);
         box-shadow: var(--chevron-box-shadow, -1px 0 0 0 #c5cacf);
