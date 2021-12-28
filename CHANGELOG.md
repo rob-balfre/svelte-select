@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+# 4.4.7
+
+Temp fix for SvelteKit and scrollbar issues - thanks to @sethvincent
+
 # 4.4.6
 
 Bug fix for isOutOfViewport - thanks to @alexkuzmin
