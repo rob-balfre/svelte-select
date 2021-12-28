@@ -540,7 +540,9 @@
         if (!container) return;
         const eventTarget =
             event.path && event.path.length > 0 ? event.path[0] : event.target;
-        if (container.contains(eventTarget)) return;
+        if (container.contains(eventTarget) || container.contains(event.relatedTarget)) {
+            return;
+        }
         isFocused = false;
         listOpen = false;
         activeValue = undefined;
