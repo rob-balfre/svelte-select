@@ -13,6 +13,7 @@ You can override the following variables to style a Select component.
 - `--clearSelectFocusColor`
 - `--clearSelectHoverColor`
 - `--clearSelectRight`
+- `--clearSelectLeft`
 - `--clearSelectTop`
 - `--clearSelectWidth`
 - `--disabledBackground`

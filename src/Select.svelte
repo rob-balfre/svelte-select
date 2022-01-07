@@ -751,6 +751,7 @@
     .clearSelect {
         position: absolute;
         right: var(--clearSelectRight, 10px);
+        right: var(--clearSelectLeft, auto);
         top: var(--clearSelectTop, 11px);
         bottom: var(--clearSelectBottom, 11px);
         width: var(--clearSelectWidth, 20px);
