@@ -8,6 +8,7 @@
         text-overflow: ellipsis;
         overflow-x: hidden;
         white-space: nowrap;
+        color: var(--selectedItemColor);
     }
 </style>
 
