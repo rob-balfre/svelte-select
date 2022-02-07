@@ -11,8 +11,7 @@
     <img src="https://badgen.now.sh/npm/dm/svelte-select" alt="downloads" />
   </a>
 </div>
-<div align="center">A select/autocomplete/typeahead Svelte component. <br />
-  Lightweight, feature-rich and modular by design.</div>
+<div align="center">A select/autocomplete/typeahead Svelte component.</div>
 
 ## Demos
 
@@ -325,7 +324,7 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 ```
 
 ### Replace styles (Tailwind, Bootstrap, Bulma etc)
-If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles/Select.svelte'`. Then add you own somewhere in your code or build pipeline. There is a tailwind stylesheet via `import 'tailwind.css'`. It uses `@extend` so PostCSS is required (experimental - looking for PRs to improve). 
+If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles/Select.svelte'`. Then add you own somewhere in your code or build pipeline. There is a tailwind stylesheet via `import 'tailwind.css'`. It uses `@extend` so PostCSS is required (experimental, feedback welcome). 
 
 ## Events
 

@@ -153,7 +153,6 @@ assert.arrayEqual = (a, b) => {
   assert.ok(a.every((val, i) => val === b[i]));
 };
 
-
 test('with no data creates default elements', async (t) => {
   const testTemplate = new SelectDefault({
     target: testTarget
@@ -1655,7 +1654,7 @@ test('when isMulti and selected items reach edge of container then Select height
     }
   });
 
-  target.style.maxWidth = '250px';
+  target.style.maxWidth = '252px';
   t.ok(document.querySelector('.svelte-select').scrollHeight === 42);
   await handleSet(select, {value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]});
   t.ok(document.querySelector('.svelte-select').scrollHeight > 44);
@@ -3977,7 +3976,7 @@ test('when suggestions items is selected, list should stay open and filterText s
   t.equal(item.innerHTML, 'one');
   item.click();
   t.equal(select.filterText, 'one');
-  await wait(0);
+  await wait(400);
   item = document.querySelector('.item');
   t.equal(item.innerHTML, 'foo');
 
@@ -4087,5 +4086,3 @@ test('when component blurs fire on:blur event', async (t) => {
 
   select.$destroy();
 });
-
- // TODO: suggestions tests

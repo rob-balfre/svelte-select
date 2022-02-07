@@ -1,53 +1,39 @@
 # svelte-select changelog
 
-## unreleased
+## 5.0.0-beta.0
 
 * select-container -> svelte-select
-* removed imports prop, not worth it for the annoyance
-* removed clear all from multi select
 * added justValue
 * Placeholder default change from 'Select...' to 'Please select'
-* updated readme
-* LoadingIcon
 * added blur and focus events
-* renamed 'config' to 'imports'
-* ChevronIcon moved to config,
 * Added suggestions feature
 * computePlacement now computes to fixed list
 * removed isOutOfViewport and clickOutside
 * new debounce method
-* moved getItems into config
-* filterMethod changed to filter and added via config
+* filterMethod changed to filter
 * added support for svelte-tiny-virtual-list
 * removed virtual-list class and css props
-* moved VirtualList to config
-* moved debounce to config
 * loadOptionsInterval -> debounceWait
 * selectedValue removed
 * MultiSelection -> Multi
 * added postcss to example, tests
 * tailwind css option
-* moved styles into separate CSS file
 * breaking: containerClasses -> class
 * listGroupTitle -> list-group-title
 * virtualList -> virtual-list
-* listContainer -> list
-* bye bye yarn
+* listContainer -> list 
 * selectContainer and other CSS class names updated, selectContainer -> svelte-select for example
-* LoadingIcon prop added, must be imported to have a spinner/loader
+* LoadingIcon prop added
 * CSS props updates. Added .icons and removed some css vars
-* ClearIcon and ChevronIcon no longer included by default
 * Removed logic to show chevron if isSearchable is false
 * indicator class renamed to chevron 
 * showIndicator renamed showChevron
 * indicatorSvg removed, use ChevronIcon going forward
 * removed playwright and puppeteer, tests now just run in the browser with sirv
 * debounce method is now exported as a prop
-* VirtualList null by default
 * Removed isVirtualList, will use VirtualList going forward
 * Convert repo to use SvelteKit
 * Change licence from LIL to ISC
-
 
 ## 4.4.1
 

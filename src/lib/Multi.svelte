@@ -8,7 +8,7 @@
     export let isDisabled = false;
     export let multiFullItemClearable = false;
     export let getSelectionLabel = undefined;
-    export let ClearIcon;
+    export let ClearIcon = null;
 
     function handleClear(i, event) {
         event.stopPropagation();
@@ -23,7 +23,7 @@
         <div class="multi-item_label">
             {@html getSelectionLabel(item)}
         </div>
-        {#if !isDisabled && !multiFullItemClearable}
+        {#if !isDisabled && !multiFullItemClearable && ClearIcon}
             <div class="multi-item_clear" on:click={(event) => handleClear(i, event)}>
                 <svelte:component this={ClearIcon} />
             </div>
@@ -43,7 +43,8 @@
         display: flex;
         cursor: default;
         padding: var(--multi-item-padding, 0 6px 0 6px);
-        max-width: 100%;
+        max-width: var(--multi-max-width, calc(100% - 8px));
+        box-sizing: border-box;
     }
 
     .multi-item_label {

@@ -34,8 +34,8 @@
         display: flex;
         align-items: center;
         cursor: default;
-        height: 40px;
-        line-height: 40px;
+        height: 42px;
+        line-height: 42px;
         padding: 0 16px;
         text-overflow: ellipsis;
         overflow: hidden;

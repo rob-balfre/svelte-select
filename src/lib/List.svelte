@@ -216,13 +216,13 @@
 
 <svelte:window on:keydown={handleKeyDown} on:scroll={computePlacement} on:resize={computePlacement} />
 
-<div class="list" class:suggestions={suggestionMode} bind:this={list} style={listStyle}>
+<div class="list" class:suggestions={suggestionMode} bind:this={list} style={listStyle} on:mousedown|preventDefault>
     {#if items.length > 0}
         {#if VirtualList}
             <svelte:component
                 this={VirtualList}
                 width="100%"
-                height={250}
+                height={252}
                 itemCount={items.length}
                 itemSize={itemHeight}
                 scrollToIndex={hoverItemIndex}>
@@ -281,7 +281,7 @@
     .list {
         box-shadow: var(--list-shadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
         border-radius: var(--list-border-radius, 4px);
-        max-height: var(--list-max-height, 250px);
+        max-height: var(--list-max-height, 252px);
         overflow-y: auto;
         background: var(--list-background, #fff);
         position: var(--list-position, absolute);

@@ -84,19 +84,19 @@
     export let isWaiting = false;
     export let listPlacement = 'auto';
     export let listOpen = false;
+    
+    let timeout;
     export function debounce(fn, wait = 1) {
-        let timeout;
-        return function (...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => fn.apply(this, ...args), wait);
-        };
+        clearTimeout(timeout);
+        setTimeout(fn, wait);
     }
+
     export let debounceWait = 300;
     export let noOptionsMessage = 'No options';
     export let hideEmptyState = false;
     export let inputAttributes = {};
     export let listAutoWidth = true;
-    export let itemHeight = 40;
+    export let itemHeight = 42;
     export let iconProps = {};
     export let showChevron = false;
     export let listOffset = 5;
@@ -255,7 +255,7 @@
         listOpen = true;
 
         if (loadOptions) {
-            const load = async function () {
+            debounce(async function () {
                 isWaiting = true;
                 let res = await getItems({
                     dispatch,
@@ -279,9 +279,7 @@
                 if (isCreatable) {
                     filteredItems = addCreatableItem(filteredItems, filterText);
                 }
-            };
-
-            debounce(load(), debounceWait);
+            }, debounceWait);
         } else {
             listOpen = true;
 
