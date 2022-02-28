@@ -77,6 +77,7 @@ You can override the following variables to style a Select component.
 - `--multi-item-margin`
 - `--multi-item-padding`
 - `--multi-label-margin`
+- `--multi-max-width`
 - `--multi-select-input-margin`
 - `--multi-select-input-padding`
 - `--multi-select-padding`
