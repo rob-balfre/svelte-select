@@ -60,7 +60,7 @@
         else return null;
     };
 
-    export let createGroupHeaderItem = (groupValue) => {
+    export let createGroupHeaderItem = (groupValue, item) => {
         return {
             value: groupValue,
             label: groupValue,
@@ -88,7 +88,7 @@
     let timeout;
     export function debounce(fn, wait = 1) {
         clearTimeout(timeout);
-        setTimeout(fn, wait);
+        timeout = setTimeout(fn, wait);
     }
 
     export let debounceWait = 300;
@@ -149,11 +149,11 @@
         );
 
         if (id) {
-            _inputAttributes.id = id;
+            _inputAttributes['id'] = id;
         }
 
         if (!isSearchable) {
-            _inputAttributes.readonly = true;
+            _inputAttributes['readonly'] = true;
         }
     }
 
@@ -261,7 +261,6 @@
                     dispatch,
                     loadOptions,
                     convertStringItemsToObjects,
-                    filteredItems,
                     filterText,
                 });
 
@@ -297,7 +296,7 @@
     $: showMultiSelect = isMulti && value && value.length > 0;
     $: suggestionMode = suggestions && filterText.length === 0;
     $: ariaSelection = value ? handleAriaSelection(isMulti) : '';
-    $: ariaContext = handleAriaContent(filteredItems, hoverItemIndex, isFocused, listOpen);
+    $: ariaContext = handleAriaContent({filteredItems, hoverItemIndex, isFocused, listOpen});
     $: updateValueDisplay(items);
     $: if (value) justValue = value ? value[optionIdentifier] : value;
     $: if (isMulti && !Multi) console.warn('isMulti is true but Multi is not imported');
@@ -544,10 +543,10 @@
         return `Select is focused, type to refine list, press down to open the menu.`;
     };
 
-    function handleAriaSelection() {
+    function handleAriaSelection(_isMulti) {
         let selected = undefined;
 
-        if (isMulti && value.length > 0) {
+        if (_isMulti && value.length > 0) {
             selected = value.map((v) => getSelectionLabel(v)).join(', ');
         } else {
             selected = getSelectionLabel(value);
@@ -556,7 +555,7 @@
         return ariaValues(selected);
     }
 
-    function handleAriaContent() {
+    function handleAriaContent(args) {
         if (!isFocused || !filteredItems || filteredItems.length === 0) return '';
 
         let _item = filteredItems[hoverItemIndex];
