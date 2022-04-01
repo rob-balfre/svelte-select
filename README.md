@@ -50,6 +50,7 @@ yarn add svelte-select
 - `filterText: String` Default: `''`. Text to filter `items` by.
 - `placeholder: String` Default: `'Select...'`. Placeholder text.
 - `noOptionsMessage: String` Default: `'No options'`. Message to display in list when there are no `items`.
+- `createMessage: String` Default: `'Create '`. Message to display before the new element when creating a new value (use alongside `isCreatable`).
 - `optionIdentifier: String` Default: `'value'`. Override default identifier.
 - `labelIdentifier: String` Default: `'label'`. Override default identifier.
 - `listOpen: Boolean` Default: `false`. Open/close list.
