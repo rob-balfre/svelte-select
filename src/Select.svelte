@@ -35,7 +35,7 @@
     export let labelIdentifier = 'label';
     export let getOptionLabel = (option, filterText) => {
         return option.isCreator
-            ? `Create \"${filterText}\"`
+            ? `${createMessage}\"${filterText}\"`
             : option[labelIdentifier];
     };
     export let optionIdentifier = 'value';
@@ -74,6 +74,7 @@
     export let isVirtualList = false;
     export let loadOptionsInterval = 300;
     export let noOptionsMessage = 'No options';
+    export let createMessage = "Create ";
     export let hideEmptyState = false;
     export let inputAttributes = {};
     export let listAutoWidth = true;
