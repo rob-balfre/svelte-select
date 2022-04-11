@@ -90,7 +90,7 @@ CSS classes and custom properties changed (just depreciated in v5) from camel to
 | isWaiting               | `boolean` | `false`         | Show LoadingIcon. `loadOptions` will override this |
 | listOffset              | `number`  | `5`             | `px` space between select and list                 |
 | debounceWait            | `number`  | `300`           | `milliseconds` debounce wait                       |
-| suggestions             | `boolean` | `false`         | Show search suggestions before user input          |
+| suggestions             | `array`   | `null`          | Show search suggestions before user input          |
 
 
 ### Replaceable components
@@ -324,7 +324,7 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 ```
 
 ### Replace styles (Tailwind, Bootstrap, Bulma etc)
-If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles/Select.svelte'`. Then add you own somewhere in your code or build pipeline. There is a tailwind stylesheet via `import 'tailwind.css'`. It uses `@extend` so PostCSS is required (experimental, feedback welcome). 
+If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles/Select.svelte'`. Then somewhere in your code or build pipeline add your own. There is a tailwind stylesheet via `import 'svelte-select/tailwind.css'`. It uses `@extend` so PostCSS is required (experimental, feedback welcome). 
 
 ## Events
 
