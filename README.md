@@ -34,7 +34,7 @@ Removed `isVirtualList` instead `npm i svelte-tiny-virtual-list -D` and
   import VirtualList from 'svelte-tiny-virtual-list';
 </script>
 
-<Select VirtualList />
+<Select {VirtualList} />
 ```
 
 CSS classes and custom properties changed (ONLY depreciated in v5, no need to update to use v5) from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`
