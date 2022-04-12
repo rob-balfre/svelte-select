@@ -15,7 +15,9 @@
 
 ## Demo
 
-[✨ REPL Demo ✨](https://svelte.dev/repl/c3bbe052fdfc4e87a46ccd9091ee002b?version=3.47.0)
+[✨ REPL: Simple ✨](https://svelte.dev/repl/c3bbe052fdfc4e87a46ccd9091ee002b)
+
+[💃 REPL: Show me everything 🕺](https://svelte.dev/repl/3df87e32340e4e9e85bf371becae2af0)
 
 ## Installation
 
@@ -37,13 +39,49 @@ Removed `isVirtualList` instead `npm i svelte-tiny-virtual-list -D` and
 <Select {VirtualList} />
 ```
 
+### CSS Camel to kebab:
+
 CSS classes and custom properties changed (ONLY depreciated in v5, no need to update to use v5) from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`
+
+### Redundant CSS custom properties:
+
+The following CSS custom properties were removed in v5.
+
+```css
+--clearSelectColor
+--clearSelectFocusColor
+--clearSelectHoverColor
+--groupTitleTextTransform
+--indicatorColor
+--indicatorFill
+--indicatorHeight
+--listLeft
+--listRight
+--multiClearBG
+--multiClearFill
+--multiClearHeight
+--multiClearHoverBG
+--multiClearHoverFill
+--multiClearPadding
+--multiClearRadius
+--multiClearTextAlign
+--multiClearTop
+--multiClearWidth
+--multiItemActiveBG
+--multiItemActiveColor
+--spinnerLeft
+--spinnerRight
+--virtualListHeight
+```
+
 
 ### Other CSS class name changes:
 `selectContainer` → `svelte-select`<br/>
 `listContainer` → `list`<br/>
 `indicator` → `chevron`<br/>
+`--clear-icon-colour` → `--clear-icon-color`<br/>
 `virtual-list` removed
+
 
 ### Prop changes:
 `containerClasses` → `class`<br/>

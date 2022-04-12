@@ -671,13 +671,8 @@
         /* deprecating camelCase custom props in favour of kebab-case for v5 */
         --borderFocusColor: --border-focus-color;
         --borderHoverColor: --border-hover-color;
-        --borderRadius: --border-radius;
-        --clearSelectBottom: --clear-select-bottom;
+        --borderRadius: --border-radius;        
         --clearSelectColor: --clear-select-color;
-        --clearSelectFocusColor: --clear-select-focus-color;
-        --clearSelectHoverColor: --clear-select-hover-color;
-        --clearSelectRight: --clear-select-right;
-        --clearSelectTop: --clear-select-top;
         --clearSelectWidth: --clear-select-width;
         --disabledBackground: --disabled-background;
         --disabledBorderColor: --disabled-border-color;
@@ -693,11 +688,7 @@
         --groupTitlePadding: --group-title-padding;
         --groupTitleTextTransform: --group-title-text-transform;
         --indicatorColor: --chevron-color;
-        --indicatorFill: --chevron-fill;
         --indicatorHeight: --chevron-height;
-        --indicatorRight: --chevron-right;
-        --indicatorStroke: --chevron-stroke;
-        --indicatorTop: --chevron-top;
         --indicatorWidth: --chevron-width;
         --inputColor: --input-color;
         --inputFontSize: --input-font-size;
@@ -720,24 +711,10 @@
         --listEmptyColor: --list-empty-color;
         --listEmptyPadding: --list-empty-padding;
         --listEmptyTextAlign: --list-empty-text-align;
-        --listLeft: --list-left;
         --listMaxHeight: --list-max-height;
         --listPosition: --list-position;
-        --listRight: --list-right;
         --listShadow: --list-shadow;
         --listZIndex: --list-z-index;
-        --multiClearBG: --multi-clear-bg;
-        --multiClearFill: --multi-clear-fill;
-        --multiClearHeight: --multi-clear-height;
-        --multiClearHoverBG: --multi-clear-hover-bg;
-        --multiClearHoverFill: --multi-clear-hover-fill;
-        --multiClearPadding: --multi-clear-padding;
-        --multiClearRadius: --multi-clear-radius;
-        --multiClearTextAlign: --multi-clear-text-align;
-        --multiClearTop: --multi-clear-top;
-        --multiClearWidth: --multi-clear-width;
-        --multiItemActiveBG: --multi-item-active-bg;
-        --multiItemActiveColor: --multi-item-active-color;
         --multiItemBG: --multi-item-bg;
         --multiItemBorderRadius: --multi-item-border-radius;
         --multiItemDisabledHoverBg: --multi-item-disabled-hover-bg;
@@ -754,10 +731,7 @@
         --selectedItemPadding: --selected-item-padding;
         --spinnerColor: --spinner-color;
         --spinnerHeight: --spinner-height;
-        --spinnerLeft: --spinner-left;
-        --spinnerRight: --spinner-right;
         --spinnerWidth: --spinner-width;
-        --virtualListHeight: --virtual-list-height;
     }
 
     .svelte-select {

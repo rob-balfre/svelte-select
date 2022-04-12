@@ -63,6 +63,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        --clear-icon-colour: var(--multi-item-clear-icon-color, #000);
+        --clear-icon-color: var(--multi-item-clear-icon-color, #000);
     }
 </style>
