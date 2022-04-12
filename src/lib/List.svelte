@@ -25,7 +25,7 @@
     export let activeItemIndex = 0;
     export let suggestionMode;
 
-    let isScrollingTimer = 0;
+    let isScrollingTimer = null;
     let isScrolling = false;
     let prev_items;
 
