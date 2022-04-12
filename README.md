@@ -111,6 +111,19 @@ CSS classes and custom properties changed (ONLY depreciated in v5, no need to up
 | Icon        | `component` | Icon component                                         |
 
 
+## Events
+
+| Event Name | Callback          | Description                                                                    |
+| ---------- | ----------------- | ------------------------------------------------------------------------------ |
+| select     | { detail }        | fires when value changes                                                       |
+| focus      | { detail }        | fires when select > input on:focus                                             |
+| blur       | { detail }        | fires when select > input on:blur                                              |
+| clear      | { detail }        | fires when clear all is invoked or item is removed (by user) from multi select |
+| loaded     | { options }       | fires when `loadOptions` resolves                                              |
+| itemCreated| { options }       | fires when `isCreatable` true and item is created                              |
+| error      | { type, details } | fires when error is caught                                                     |
+
+
 ### Items
 
 `items` can be simple arrays or collections.
@@ -297,7 +310,7 @@ export let ariaFocused = () => {
 }
 ```
 
-## Styling
+## CSS custom properties (variables)
 
 You can style a component by overriding [the available CSS custom properties](/docs/theming_variables.md).
 
@@ -321,20 +334,9 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 <Select {items} inputStyles="box-sizing: border-box;"></Select>
 ```
 
-### Replace styles (Tailwind, Bootstrap, Bulma etc)
-If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles/Select.svelte'`. Then somewhere in your code or build pipeline add your own. There is a tailwind stylesheet via `import 'svelte-select/tailwind.css'`. It uses `@extend` so PostCSS is required (experimental, feedback welcome). 
+### 🧪 Experimental: Replace styles (Tailwind, Bootstrap, Bulma etc)
+If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles/Select.svelte'`. Then somewhere in your code or build pipeline add your own. There is a tailwind stylesheet via `import 'svelte-select/tailwind.css'`. It uses `@extend` so PostCSS is required.
 
-## Events
-
-| Event Name | Callback          | Description                                                                    |
-| ---------- | ----------------- | ------------------------------------------------------------------------------ |
-| select     | { detail }        | fires when value changes                                                       |
-| focus      | { detail }        | fires when select > input on:focus                                             |
-| blur       | { detail }        | fires when select > input on:blur                                              |
-| clear      | { detail }        | fires when clear all is invoked or item is removed (by user) from multi select |
-| loaded     | { options }       | fires when `loadOptions` resolves                                              |
-| itemCreated| { options }       | fires when `isCreatable` true and item is created
-| error      | { type, details } | fires when error is caught                                                     |
 
 ## Development
 
