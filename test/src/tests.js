@@ -4086,3 +4086,34 @@ test('when component blurs fire on:blur event', async (t) => {
 
   select.$destroy();
 });
+
+
+test('when group header is not selectable then update hoverItemIndex to next/prev item', async (t) => { 
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithGroup,
+      isGroupHeaderSelectable: false,
+      groupBy,
+    }
+  });
+
+  function groupBy(item) {
+    return item.group;
+  }
+
+  const firstItem = document.querySelector('.list .list-item .item.hover');
+  t.ok(firstItem.innerHTML === 'Chocolate');
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  await wait(0);
+  const secondItem = document.querySelector('.list .list-item .item.hover');
+  t.ok(secondItem.innerHTML === 'Pizza');
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowUp'}));
+  await wait(0);
+  const thirdItem = document.querySelector('.list .list-item .item.hover');
+  t.ok(thirdItem.innerHTML === 'Ice Cream');
+  select.$destroy();
+});

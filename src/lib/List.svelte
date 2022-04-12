@@ -51,6 +51,8 @@
             },
             false
         );
+
+        if (hoverItemIndex === 0 && items[hoverItemIndex] && items[hoverItemIndex].isGroupHeader && !items[hoverItemIndex].isSelectable) hoverItemIndex = 1;
     });
 
     beforeUpdate(() => {
@@ -120,10 +122,13 @@
             case 'ArrowDown':
                 e.preventDefault();
                 items.length && updateHoverItem(1);
+                if (items[hoverItemIndex] && items[hoverItemIndex].isGroupHeader && !items[hoverItemIndex].isSelectable) hoverItemIndex += 1;
                 break;
             case 'ArrowUp':
                 e.preventDefault();
                 items.length && updateHoverItem(-1);
+                if (items[hoverItemIndex] && items[hoverItemIndex].isGroupHeader && !items[hoverItemIndex].isSelectable) hoverItemIndex > 0 ? hoverItemIndex -= 1 : hoverItemIndex = items.length - 1;
+                
                 break;
             case 'Enter':
                 e.preventDefault();
