@@ -268,7 +268,7 @@
                     isWaiting = res.isWaiting;
                     isFocused = res.isFocused;
                     listOpen = res.listOpen;
-                    filteredItems = res.filteredItems;
+                    filteredItems = groupBy ? filterGroupedItems(res.filteredItems) : res.filteredItems;
                 } else {
                     isWaiting = false;
                     isFocused = true;

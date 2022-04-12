@@ -4117,3 +4117,27 @@ test('when group header is not selectable then update hoverItemIndex to next/pre
   t.ok(thirdItem.innerHTML === 'Ice Cream');
   select.$destroy();
 });
+
+test('when loadOptions and groupBy then group headers should appear', async (t) => { 
+  const select = new Select({
+    target,
+    props: {
+      debounceWait: 1,
+      groupBy,
+      loadOptions: async function () {
+        return itemsWithGroup;
+      }
+    }
+  });
+
+  function groupBy(item) {
+    return item.group;
+  }
+
+  select.$set({filterText: 'potato'});
+  await wait(50);
+  const header = document.querySelector('.list .list-group-title');
+  t.ok(header.innerHTML === 'Sweet');
+
+  select.$destroy();
+});
