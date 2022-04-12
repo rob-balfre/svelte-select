@@ -84,6 +84,7 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--padding`
 - `--placeholder-color`
 - `--placeholder-opacity`
+- `--selected-item-color`
 - `--selected-item-padding`
 - `--spinner-color`
 - `--spinner-height`
