@@ -333,6 +333,7 @@ If you'd like to supply your own styles use: `import Select from 'svelte-select/
 | blur       | { detail }        | fires when select > input on:blur                                              |
 | clear      | { detail }        | fires when clear all is invoked or item is removed (by user) from multi select |
 | loaded     | { options }       | fires when `loadOptions` resolves                                              |
+| itemCreated| { options }       | fires when `isCreatable` true and item is created
 | error      | { type, details } | fires when error is caught                                                     |
 
 ## Development
