@@ -645,12 +645,12 @@
     </div>
 
     {#if !isMulti || (isMulti && !showMultiSelect)}
-        <input name={inputAttributes.name} type="hidden" value={value ? getSelectionLabel(value) : null} />
+        <input name={inputAttributes.name} type="hidden" value={value ? value[optionIdentifier] : null} />
     {/if}
 
     {#if isMulti && showMultiSelect}
         {#each value as item}
-            <input name={inputAttributes.name} type="hidden" value={item ? getSelectionLabel(item) : null} />
+            <input name={inputAttributes.name} type="hidden" value={item ? item[optionIdentifier] : null} />
         {/each}
     {/if}
 </div>

@@ -3709,7 +3709,7 @@ test('When no value then hidden field should also have no value', async (t) => {
   select.$destroy();
 });
 
-test('When value then hidden field should have value.label', async (t) => {
+test('When value then hidden field should have value', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -3720,7 +3720,7 @@ test('When value then hidden field should have value.label', async (t) => {
   });
 
   let hidden = document.querySelector('input[type="hidden"]').value;
-  t.equal(hidden, 'Cake');
+  t.equal(hidden, 'cake');
 
   select.$destroy();
 });
@@ -3753,8 +3753,8 @@ test('When isMulti and value then hidden fields should list value items', async 
   });
 
   let hidden = document.querySelectorAll('input[type="hidden"]');
-  t.equal(hidden[0].value, 'Cake');
-  t.equal(hidden[1].value, 'Pizza');
+  t.equal(hidden[0].value, 'cake');
+  t.equal(hidden[1].value, 'pizza');
 
   select.$destroy();
 });
