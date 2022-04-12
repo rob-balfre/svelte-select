@@ -15,7 +15,7 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--chevron-icon-width`
 - `--chevron-padding`
 - `--chevron-width`
-- `--clear-icon-colour`
+- `--clear-icon-color`
 - `--clear-icon-width`
 - `--clear-select-color`
 - `--clear-select-margin`
