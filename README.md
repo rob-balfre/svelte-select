@@ -1,3 +1,6 @@
+[✨✨✨ v5 NOW IN BETA ✨✨✨](https://github.com/rob-balfre/svelte-select/tree/feature/v5)
+
+
 # svelte-select
 
 A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
