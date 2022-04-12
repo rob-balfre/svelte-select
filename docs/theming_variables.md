@@ -1,6 +1,6 @@
 # Theming variables
 
-You can override the following variables to style a Select component.
+Override the following CSS custom properties (variables) to style svelte-select components.
 
 <!-- List start -->
 - `--background`

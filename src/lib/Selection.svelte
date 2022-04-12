@@ -12,5 +12,6 @@
         text-overflow: ellipsis;
         overflow-x: hidden;
         white-space: nowrap;
+        color: var(--selected-item-color, inherit);
     }
 </style>
