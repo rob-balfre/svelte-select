@@ -1,7 +1,8 @@
 # svelte-select changelog
 
-## 5.0.0-beta.0
+## 5.0.0
 
+* Other improvements (see docs)
 * select-container -> svelte-select
 * added justValue
 * Placeholder default change from 'Select...' to 'Please select'

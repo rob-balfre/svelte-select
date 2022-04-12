@@ -13,16 +13,14 @@
 </div>
 <div align="center">A select/autocomplete/typeahead Svelte component.</div>
 
-## Demos
+## Demo
 
-🌱 [Simple demo](https://svelte.dev/repl/a859c2ba7d1744af9c95037c48989193?version=3.12.1)
-
-🌻 [Advanced demo](https://svelte.dev/repl/3e032a58c3974d07b7818c0f817a06a3?version=3.20.1)
+[✨ REPL Demo ✨](https://svelte.dev/repl/c3bbe052fdfc4e87a46ccd9091ee002b?version=3.47.0)
 
 ## Installation
 
 ```bash
-npm install svelte-select
+npm install svelte-select@beta
 ```
 
 ## Migrating for v4 to v5
@@ -39,7 +37,7 @@ Removed `isVirtualList` instead `npm i svelte-tiny-virtual-list -D` and
 <Select VirtualList />
 ```
 
-CSS classes and custom properties changed (just depreciated in v5) from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`
+CSS classes and custom properties changed (ONLY depreciated in v5, no need to update to use v5) from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`
 
 ### Other CSS class name changes:
 `selectContainer` → `svelte-select`<br/>
