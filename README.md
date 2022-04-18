@@ -41,7 +41,7 @@ Removed `isVirtualList` instead `npm i svelte-tiny-virtual-list -D` and
 
 ### CSS Camel to kebab:
 
-CSS classes and custom properties changed (ONLY depreciated in v5, no need to update to use v5) from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`
+CSS classes and custom properties changed (only depreciated, no need to update if upgrading from v4) from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`
 
 ### Redundant CSS custom properties:
 
@@ -89,6 +89,10 @@ The following CSS custom properties were removed in v5.
 `indicatorSvg` → `ChevronIcon`<br/>
 `selectedValue` removed (was already deprecated in v4 in favour of `value`)<br/>
 `loadOptionsInterval` → `debounceWait`
+
+
+### Event change:
+The `select` event now only fires when the user selects an item. If you also want to track programmatic changes use the new `change` event.
 
 
 ## Props
@@ -153,7 +157,8 @@ The following CSS custom properties were removed in v5.
 
 | Event Name  | Callback          | Description                                                                    |
 | ----------- | ----------------- | ------------------------------------------------------------------------------ |
-| select      | { detail }        | fires when value changes                                                       |
+| select      | { detail }        | fires when item is selected                                                    |
+| change      | { detail }        | fires when value changes                                                       |
 | focus       | { detail }        | fires when select > input on:focus                                             |
 | blur        | { detail }        | fires when select > input on:blur                                              |
 | clear       | { detail }        | fires when clear all is invoked or item is removed (by user) from multi select |

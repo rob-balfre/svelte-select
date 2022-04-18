@@ -205,14 +205,14 @@
         if (isMulti) {
             if (JSON.stringify(value) !== JSON.stringify(prev_value)) {
                 if (checkValueForDuplicates()) {
-                    dispatch('select', value);
+                    dispatch('change', value);
                 }
             }
             return;
         }
 
         if (!prev_value || JSON.stringify(value[optionIdentifier]) !== JSON.stringify(prev_value[optionIdentifier])) {
-            dispatch('select', value);
+            dispatch('change', value);
         }
     }
 
@@ -244,7 +244,7 @@
     $: if (prev_isMulti && !isMulti) setupSingle();
     $: if (isMulti && value && value.length > 1) checkValueForDuplicates();
     $: if (value) dispatchSelectedItem();
-    $: if (!value && isMulti && prev_value) dispatch('select', value);
+    $: if (!value && isMulti && prev_value) dispatch('change', value);
     $: if (isFocused !== prev_isFocused) setupFocus();
     $: if (filterText !== prev_filterText) setupFilterText();
 
@@ -298,7 +298,8 @@
     $: ariaSelection = value ? handleAriaSelection(isMulti) : '';
     $: ariaContext = handleAriaContent({filteredItems, hoverItemIndex, isFocused, listOpen});
     $: updateValueDisplay(items);
-    $: if (value) justValue = value ? value[optionIdentifier] : value;
+    $: if (value && !isMulti) justValue = value ? value[optionIdentifier] : value;
+    $: if (value && isMulti) justValue = value.map(item => item[optionIdentifier]);
     $: if (isMulti && !Multi) console.warn('isMulti is true but Multi is not imported');
     $: listProps = {
         Item,
@@ -506,6 +507,7 @@
                 setTimeout(() => {
                     listOpen = false;
                     activeValue = undefined;
+                    dispatch('select', value);
                 });
             }
         }

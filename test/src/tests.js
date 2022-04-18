@@ -326,7 +326,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
   select.$destroy();
 });
 
-test('on enter active item fires a itemSelected event', async (t) => {
+test('on enter active item fires a select event', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -338,7 +338,7 @@ test('on enter active item fires a itemSelected event', async (t) => {
 
   let value = undefined;
 
-  select.$on('select', event => {
+  select.$on('change', event => {
     value = JSON.stringify(event.detail);
   });
 
@@ -350,7 +350,7 @@ test('on enter active item fires a itemSelected event', async (t) => {
   select.$destroy();
 });
 
-test('on tab active item fires a itemSelected event', async (t) => {
+test('on tab active item fires a select event', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -361,7 +361,7 @@ test('on tab active item fires a itemSelected event', async (t) => {
   });
 
   let value = undefined;
-  select.$on('select', event => {
+  select.$on('change', event => {
     value = JSON.stringify(event.detail);
   });
 
@@ -373,7 +373,7 @@ test('on tab active item fires a itemSelected event', async (t) => {
   select.$destroy();
 });
 
-test('on selected of current active item does not fire a itemSelected event', async (t) => {
+test('on selected of current active item does not fire a select event', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -386,7 +386,7 @@ test('on selected of current active item does not fire a itemSelected event', as
 
   let itemSelectedFired = false;
 
-  select.$on('select', () => {
+  select.$on('change', () => {
     itemSelectedFired = true;
   });
 
@@ -2035,7 +2035,7 @@ test('when value changes then select event should fire', async (t) => {
 
   let selectEvent = undefined;
 
-  select.$on('select', event => {
+  select.$on('change', event => {
     selectEvent = event;
   });
 
@@ -2127,7 +2127,7 @@ test('when item is selected or state changes then check value[optionIdentifier] 
 
   let item = undefined;
 
-  select.$on('select', () => {
+  select.$on('change', () => {
     item = true;
   });
 
@@ -2153,7 +2153,7 @@ test('when isMulti and item is selected or state changes then check value[option
 
   let item = undefined;
 
-  select.$on('select', () => {
+  select.$on('change', () => {
     item = true;
   });
 
@@ -2185,7 +2185,7 @@ test('when isFocused turns to false then check Select is no longer in focus', as
     }
   });
 
-  select.$on('select', () => {
+  select.$on('change', () => {
     setTimeout(() => {
       select.$set({
         isFocused: false,
@@ -3624,7 +3624,7 @@ test('When isMulti on:select events should fire on each item removal (including 
 
   let events = [];
 
-  select.$on('select', (e) => {
+  select.$on('change', (e) => {
     events.push('event fired');
   });
 
@@ -4139,5 +4139,51 @@ test('when loadOptions and groupBy then group headers should appear', async (t) 
   const header = document.querySelector('.list .list-group-title');
   t.ok(header.innerHTML === 'Sweet');
 
+  select.$destroy();
+});
+
+test('when user selects an item then select event fires', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items
+    }
+  });
+
+  let value = undefined;
+
+  select.$on('select', event => {
+    value = JSON.stringify(event.detail);
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+  t.equal(value, JSON.stringify({value: 'cake', label: 'Cake'}));
+
+  select.$destroy();
+});
+
+test('when item selected programmatically a select event should NOT fire', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items
+    }
+  });
+
+  let value = undefined;
+  select.$set({ value: {value: 'cake', label: 'Cake'}});
+
+  select.$on('select', event => {
+    value = event.detail;
+  });
+
+  await wait(0);
+  t.ok(value === undefined);
+  
   select.$destroy();
 });
