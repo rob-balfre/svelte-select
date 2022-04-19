@@ -298,9 +298,10 @@
     $: ariaSelection = value ? handleAriaSelection(isMulti) : '';
     $: ariaContext = handleAriaContent({filteredItems, hoverItemIndex, isFocused, listOpen});
     $: updateValueDisplay(items);
-    $: if (value && !isMulti) justValue = value ? value[optionIdentifier] : value;
-    $: if (value && isMulti) justValue = value.map(item => item[optionIdentifier]);
-    $: if (isMulti && !Multi) console.warn('isMulti is true but Multi is not imported');
+    $: if (isMulti) justValue = value ? value.map(item => item[optionIdentifier]) : null;
+    $: if (!isMulti) justValue = value ? value[optionIdentifier] : value;
+    $: if (!isMulti && prev_value && !value) dispatch('change', value);
+
     $: listProps = {
         Item,
         filterText,

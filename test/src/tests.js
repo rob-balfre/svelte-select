@@ -2119,7 +2119,6 @@ test('when item is selected or state changes then check value[optionIdentifier] 
   const select = new Select({
     target,
     props: {
-      
       items,
       value: {value: 'cake', label: 'Cake'}
     }
@@ -3610,7 +3609,6 @@ test('When groupBy, optionIdentifier, labelIdentifier and createGroupHeaderItem 
 });
 
 
-
 test('When isMulti on:select events should fire on each item removal (including the last item)', async (t) => {
   const select = new Select({
     target,
@@ -4184,6 +4182,24 @@ test('when item selected programmatically a select event should NOT fire', async
 
   await wait(0);
   t.ok(value === undefined);
+  
+  select.$destroy();
+});
+
+
+test('when value is cleared then justValue should be null', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items,
+      value: {value: 'cake', label: 'Cake'}
+    }
+  });
+  
+  select.handleClear();
+  await wait(0);
+  t.ok(!select.justValue);
   
   select.$destroy();
 });
