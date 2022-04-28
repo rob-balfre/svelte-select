@@ -7,6 +7,7 @@ export interface SelectProps {
   Item?: any;
   Selection?: any;
   MultiSelection?: any;
+  ClearIcon?: any;
   isMulti?: boolean;
   isDisabled?: boolean;
   isCreatable?: boolean;
