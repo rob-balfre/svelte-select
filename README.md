@@ -87,6 +87,7 @@ The following CSS custom properties were removed in v5.
 `containerClasses` → `class`<br/>
 `MultiSelection` → `Multi`<br/>
 `indicatorSvg` → `ChevronIcon`<br/>
+`showIndicator` → `showChevron`<br/>
 `selectedValue` removed (was already deprecated in v4 in favour of `value`)<br/>
 `loadOptionsInterval` → `debounceWait`
 
