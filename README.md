@@ -99,39 +99,39 @@ The `select` event now only fires when the user selects an item. If you also wan
 ## Props
 
 
-| Prop                    | Type       | Default         | Description                                        |
-| ----------------------- | ---------- | --------------- | -------------------------------------------------- |
-| items                   | `any[]`    | `[]`            | Array of items available to display / filter       |
-| value                   | `any`      | `null`          | Selected value(s)                                  |
-| justValue               | `any`      | `null`          | Selected value(s) excluding container object       |
-| optionIdentifier        | `string`   | `value`         | Override default identifier                        |
-| labelIdentifier         | `string`   | `label`         | Override default identifier                        |
-| id                      | `string`   | `null`          | Add an id to the filter input field                |
-| filterText              | `string`   | `''`            | Text to filter `items` by                          |
-| placeholder             | `string`   | `Please select` | Placeholder text                                   |
-| noOptionsMessage        | `string`   | `No options`    | Message displayed when no items                    |
-| hideEmptyState          | `boolean`  | `false`         | When no items hide list and `noOptionsMessage`     |
-| listOpen                | `boolean`  | `false`         | Open/close list                                    |
-| class                   | `string`   | `''`            | container classes                                  |
-| containerStyles         | `string`   | `''`            | Add inline styles to container                     |
-| isClearable             | `boolean`  | `true`          | Enable clearing of value(s)                        |
-| isCreatable             | `boolean`  | `false`         | Can create new item(s) to be added to `value`      |
-| isDisabled              | `boolean`  | `false`         | Disable select                                     |
-| isMulti                 | `boolean`  | `false`         | Enable multi-select                                |
-| isSearchable            | `boolean`  | `true`          | If `false` search/filtering is disabled            |
-| isGroupHeaderSelectable | `boolean`  | `false`         | Enable selectable group headers                    |
-| listPlacement           | `string`   | `auto`          | Display list `'auto'`, `'top'` or `'bottom'`       |
-| hasError                | `boolean`  | `false`         | Show error styles around select input              |
-| listAutoWidth           | `boolean`  | `true`          | If `false` will ignore width of select             |
-| showChevron             | `boolean`  | `false`         | Show chevron at all times                          |
-| inputAttributes         | `object`   | `{}`            | Pass in HTML attributes to Select's input          |
-| iconProps               | `object`   | `{}`            | Icon props                                         |
-| filteredItems           | `array`    | `[]`            | List of items after filtering (read only)          |
-| placeholderAlwaysShow   | `boolean`  | `false`         | When `isMulti` placeholder text will always show   |
-| isWaiting               | `boolean`  | `false`         | Show LoadingIcon. `loadOptions` will override this |
-| listOffset              | `number`   | `5`             | `px` space between select and list                 |
-| debounceWait            | `number`   | `300`           | `milliseconds` debounce wait                       |
-| suggestions             | `string[]` | `null`          | Show search suggestions before user input          |
+| Prop                    | Type       | Default         | Description                                                |
+| ----------------------- | ---------- | --------------- | ---------------------------------------------------------- |
+| items                   | `any[]`    | `[]`            | Array of items available to display / filter               |
+| value                   | `any`      | `null`          | Selected value(s)                                          |
+| justValue               | `any`      | `null`          | **READ-ONLY** Selected value(s) excluding container object |
+| optionIdentifier        | `string`   | `value`         | Override default identifier                                |
+| labelIdentifier         | `string`   | `label`         | Override default identifier                                |
+| id                      | `string`   | `null`          | Add an id to the filter input field                        |
+| filterText              | `string`   | `''`            | Text to filter `items` by                                  |
+| placeholder             | `string`   | `Please select` | Placeholder text                                           |
+| noOptionsMessage        | `string`   | `No options`    | Message displayed when no items                            |
+| hideEmptyState          | `boolean`  | `false`         | When no items hide list and `noOptionsMessage`             |
+| listOpen                | `boolean`  | `false`         | Open/close list                                            |
+| class                   | `string`   | `''`            | container classes                                          |
+| containerStyles         | `string`   | `''`            | Add inline styles to container                             |
+| isClearable             | `boolean`  | `true`          | Enable clearing of value(s)                                |
+| isCreatable             | `boolean`  | `false`         | Can create new item(s) to be added to `value`              |
+| isDisabled              | `boolean`  | `false`         | Disable select                                             |
+| isMulti                 | `boolean`  | `false`         | Enable multi-select                                        |
+| isSearchable            | `boolean`  | `true`          | If `false` search/filtering is disabled                    |
+| isGroupHeaderSelectable | `boolean`  | `false`         | Enable selectable group headers                            |
+| listPlacement           | `string`   | `auto`          | Display list `'auto'`, `'top'` or `'bottom'`               |
+| hasError                | `boolean`  | `false`         | Show error styles around select input                      |
+| listAutoWidth           | `boolean`  | `true`          | If `false` will ignore width of select                     |
+| showChevron             | `boolean`  | `false`         | Show chevron at all times                                  |
+| inputAttributes         | `object`   | `{}`            | Pass in HTML attributes to Select's input                  |
+| iconProps               | `object`   | `{}`            | Icon props                                                 |
+| filteredItems           | `array`    | `[]`            | List of items after filtering (read only)                  |
+| placeholderAlwaysShow   | `boolean`  | `false`         | When `isMulti` placeholder text will always show           |
+| isWaiting               | `boolean`  | `false`         | Show LoadingIcon. `loadOptions` will override this         |
+| listOffset              | `number`   | `5`             | `px` space between select and list                         |
+| debounceWait            | `number`   | `300`           | `milliseconds` debounce wait                               |
+| suggestions             | `string[]` | `null`          | Show search suggestions before user input                  |
 
 
 ### Replaceable components

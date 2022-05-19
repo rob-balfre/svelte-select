@@ -13,6 +13,8 @@
     import _filter from '$lib/filter';
     import _getItems from '$lib/getItems';
 
+    export let justValue = null; // read-only
+
     export let Item = _Item;
     export let List = _List;
     export let Selection = _Selection;
@@ -35,7 +37,6 @@
     export let isCreatable = false;
     export let isFocused = false;
     export let value = null;
-    export let justValue = null;
     export let filterText = '';
     export let placeholder = 'Please select';
     export let placeholderAlwaysShow = false;
@@ -86,7 +87,7 @@
     export let listOpen = false;
     
     let timeout;
-    export function debounce(fn, wait = 1) {
+    export let debounce = (fn, wait = 1) => {
         clearTimeout(timeout);
         timeout = setTimeout(fn, wait);
     }
