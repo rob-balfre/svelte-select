@@ -102,6 +102,8 @@
     export let listOffset = 5;
     export let suggestions = null;
 
+    export let keepListOpen = false;
+
     export { containerClasses as class };
 
     function addCreatableItem(_items, _filterText) {
@@ -396,6 +398,11 @@
             });
         }
 
+        if (keepListOpen) {
+            listOpen = true;
+            handleFocus();
+        }
+
         dispatch('clear', itemToRemove);
     }
 
@@ -473,7 +480,9 @@
 
     export function handleClear() {
         value = undefined;
-        listOpen = false;
+        if (!keepListOpen) {
+            listOpen = false;
+        }
         dispatch('clear', value);
         handleFocus();
     }
@@ -506,12 +515,28 @@
                 value = value;
 
                 setTimeout(() => {
-                    listOpen = false;
+                    if (!keepListOpen) {
+                        listOpen = false;
+                    } else {
+                        const selectableItems = getSelectableItems();
+                        if (selectableItems.length === 0) {
+                            listOpen = false;
+                        }
+                    }
                     activeValue = undefined;
                     dispatch('select', value);
                 });
             }
         }
+    }
+
+    /**
+     * returns all selectable Items
+     * @returns [{item0},..., {itemX}]
+     */
+    function getSelectableItems()
+    {
+        return filteredItems.filter((item) => typeof item.selectable === 'undefined' || item.selectable === true);
     }
 
     function itemCreated(event) {
@@ -525,7 +550,9 @@
 
         dispatch('itemCreated', detail);
         filterText = '';
-        listOpen = false;
+        if (!keepListOpen) {
+            listOpen = false;
+        }
         activeValue = undefined;
     }
 
