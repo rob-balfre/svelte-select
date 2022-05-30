@@ -103,9 +103,12 @@
     export let suggestions = null;
 
     /**
-     * minimum chars for auto-create on blur.
-     * if isCreatable is true and the amount of chars in the input is >= {minCharsAutoCreate},
-     * a new item will be created automatically
+     * if true and if isCreatable is true, a new item will be created automatically
+     * @type {boolean}
+     */
+    export let autoCreateOnBlur = false;
+    /**
+     * minimum amount of chars for auto-create on blur.
      * @type {number}
      */
     export let minCharsAutoCreate = 3;
@@ -467,7 +470,7 @@
         isFocused = false;
         activeValue = undefined;
 
-        if (isCreatable && e.target.value && e.target.value.length >= minCharsAutoCreate) {
+        if (isCreatable && autoCreateOnBlur && e.target.value && e.target.value.length >= minCharsAutoCreate) {
             itemCreated({detail: e.target.value});
         }
 
