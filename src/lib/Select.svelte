@@ -102,6 +102,14 @@
     export let listOffset = 5;
     export let suggestions = null;
 
+    /**
+     * minimum chars for auto-create on blur.
+     * if isCreatable is true and the amount of chars in the input is >= {minCharsAutoCreate},
+     * a new item will be created automatically
+     * @type {number}
+     */
+    export let minCharsAutoCreate = 3;
+
     export { containerClasses as class };
 
     function addCreatableItem(_items, _filterText) {
@@ -458,6 +466,10 @@
 
         isFocused = false;
         activeValue = undefined;
+
+        if (isCreatable && e.target.value && e.target.value.length >= minCharsAutoCreate) {
+            itemCreated({detail: e.target.value});
+        }
 
         if (list && !container.contains(e.relatedTarget) && !list.contains(e.relatedTarget)) {
             closeList();
