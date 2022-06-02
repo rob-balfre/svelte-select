@@ -106,7 +106,7 @@
      * for debug purpose only
      * @type {boolean}
      */
-    export let DebugkeepListOpen = false;
+    export let DebugKeepListOpen = false;
 
     export { containerClasses as class };
 
@@ -253,7 +253,7 @@
     $: if (!value && isMulti && prev_value) dispatch('change', value);
     $: if (isFocused !== prev_isFocused) setupFocus();
     $: if (filterText !== prev_filterText) setupFilterText();
-    $: if (DebugkeepListOpen === true && listOpen === false) listOpen = true;
+    $: if (DebugKeepListOpen === true && listOpen === false) listOpen = true;
 
     function setupFilterText() {
         if (filterText.length === 0) return;
