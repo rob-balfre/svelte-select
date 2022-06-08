@@ -594,7 +594,7 @@
     }
 
     function handleClickOutside(event) {
-        if (container && !container.contains(event.target) && !listApp?.$$?.ctx[0]?.contains(event.target)) {
+        if (container && !container.contains(event.target) && !listApp?.contains(event.target)) {
             handleBlur();
         }
     }
