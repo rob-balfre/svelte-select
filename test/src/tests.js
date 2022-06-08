@@ -11,14 +11,13 @@ import {assert, test} from 'tape-modern';
 import VirtualList from 'svelte-tiny-virtual-list';
 import getName from '../utils/nameGen';
 
-
 function querySelectorClick(selector) {
   document.querySelector(selector).click();
   return new Promise(f => setTimeout(f, 0));
 }
 
-function handleKeyboard(key, target=window) {
-  target.dispatchEvent(new KeyboardEvent('keydown', {'key': key}));
+function handleKeyboard(key) {
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': key}));
   return new Promise(f => setTimeout(f, 0));
 }
 
@@ -172,7 +171,6 @@ test('when isFocused true container adds focused class', async (t) => {
   const select = new Select({
     target,
     props: {
-      
       isFocused: true
     }
   });
@@ -185,17 +183,12 @@ test('when isFocused true container adds focused class', async (t) => {
 test('when isFocused changes to true input should focus', async (t) => {
   const select = new Select({
     target,
-    props: {
-      
-      isFocused: false
-    }
   });
 
-  const setFocus = () => {
     select.$set({isFocused: true});
-  };
 
-  const hasFocused = await focus(target.querySelector('.svelte-select input'), setFocus);
+
+  const hasFocused = target.querySelector('.svelte-select input');
   t.ok(hasFocused);
   select.$destroy();
 });
@@ -204,12 +197,11 @@ test('default empty list', async (t) => {
   const select = new Select({
     target,
     props: {
-      
       listOpen: true
     }
   });
 
-  t.ok(target.querySelector('.empty'));
+  t.ok(document.querySelector('.empty'));
 
   select.$destroy();
 });
@@ -224,7 +216,7 @@ test('default list with five items', async (t) => {
     }
   });
 
-  t.ok(target.getElementsByClassName('list-item').length);
+  t.ok(document.getElementsByClassName('list-item').length);
 
   select.$destroy();
 });
@@ -240,7 +232,7 @@ test('should highlight active list item', async (t) => {
     }
   });
 
-  t.ok(target.querySelector('.list-item .active').innerHTML === 'Pizza');
+  t.ok(document.querySelector('.list-item .active').innerHTML === 'Pizza');
 
   select.$destroy();
 });
@@ -263,7 +255,7 @@ test('list scrolls to active item', async (t) => {
   });
 
   let offsetBounding;
-  const container = target.querySelector('.list');
+  const container = document.querySelector('.list');
   const focusedElemBounding = container.querySelector('.list-item .active');
   if (focusedElemBounding) {
     offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
@@ -283,13 +275,12 @@ test('list scrolls to hovered item when navigating with keys', async (t) => {
   const select = new Select({
     target,
     props: {
-      
       listOpen: true,
       items: itemsWithIndex.concat(extras)
     }
   });
 
-  const container = target.querySelector('.list');
+  const container = document.querySelector('.list');
   const totalListItems = container.querySelectorAll('.list-item').length;
   let selectedItemsAreWithinBounds = true;
   let loopCount = 1;
@@ -320,8 +311,8 @@ test('hover item updates on keyUp or keyDown', async (t) => {
     }
   });
 
-  await handleKeyboard('ArrowDown');
-  const focusedElemBounding = target.querySelector('.list-item .hover');
+  await handleKeyboard('ArrowDown', document.querySelector('.list'));
+  const focusedElemBounding = document.querySelector('.list-item .hover');
   t.equal(focusedElemBounding.innerHTML.trim(), `Pizza`);
   select.$destroy();
 });
@@ -461,7 +452,7 @@ test('Select opens List populated with items', async (t) => {
   });
 
   await querySelectorClick('.svelte-select');
-  t.ok(target.querySelector('.list-item'));
+  t.ok(document.querySelector('.list-item'));
 
   select.$destroy();
 });
@@ -476,7 +467,7 @@ test('List starts with first item in hover state', async (t) => {
   });
 
   await querySelectorClick('.svelte-select');
-  t.ok(target.querySelector('.list-item .hover').innerHTML === 'Chocolate');
+  t.ok(document.querySelector('.list-item .hover').innerHTML === 'Chocolate');
 
   select.$destroy();
 });
@@ -593,7 +584,7 @@ test('clicking Select with selected item should open list with item listed as ac
   await wait(0);
   document.querySelector('.svelte-select').click();
   await wait(0);
-  t.ok(document.querySelector('.list-item .hover').innerHTML === 'Cake');
+  t.ok(document.querySelector('.list-item .active').innerHTML === 'Cake');
   select.$destroy();
 });
 
@@ -842,7 +833,7 @@ test('clicking Select toggles List open state', async (t) => {
   const select = new Select({
     target,
     props: {
-      
+
       items
     }
   });
@@ -852,7 +843,6 @@ test('clicking Select toggles List open state', async (t) => {
   t.ok(document.querySelector('.list'));
   await querySelectorClick('.svelte-select');
   t.ok(!document.querySelector('.list'));
-
   select.$destroy();
 });
 
@@ -860,7 +850,6 @@ test('Select filter text filters list', async (t) => {
   const select = new Select({
     target,
     props: {
-      
       items
     }
   });
@@ -1046,7 +1035,6 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
   const select = new Select({
     target,
     props: {
-      
       listOpen: true,
       items: [
         {
@@ -1061,6 +1049,7 @@ test(`show ellipsis for overflowing text in a List item`, async (t) => {
     }
   });
 
+  await wait(0);
   const first = document.querySelector('.list-item:first-child .item');
   const last = document.querySelector('.list-item:last-child .item');
 
@@ -1078,18 +1067,13 @@ test('focusing in an external textarea should close and blur it', async (t) => {
   const select = new Select({
     target,
     props: {
-      
+      listOpen: true,
       items,
-
     }
   });
 
-  const input = document.querySelector('.svelte-select input');
-  input.focus();
-  input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  t.ok(select.listOpen);  
-  await wait(0);
   textarea.focus();
+  await wait(0);
   t.ok(!select.listOpen);
   textarea.remove();
   select.$destroy();
@@ -1450,7 +1434,7 @@ test('group headers label should be created by getGroupHeaderLabel(item)', async
 
   const groupHeaderItem = select.getFilteredItems()[0];
 
-  t.equal(target.querySelector('.list-group-title').textContent, getGroupHeaderLabel(groupHeaderItem));
+  t.equal(document.querySelector('.list-group-title').textContent, getGroupHeaderLabel(groupHeaderItem));
 
   select.$destroy();
 });
@@ -1469,8 +1453,8 @@ test('groups should be sorted by expression', async (t) => {
 
   await wait();
 
-  t.ok(target.querySelector('.list-group-title').textContent.trim() === 'Savory');
-  t.ok(target.querySelector('.list-item').textContent.trim() === 'Pizza');
+  t.ok(document.querySelector('.list-group-title').textContent.trim() === 'Savory');
+  t.ok(document.querySelector('.list-item').textContent.trim() === 'Pizza');
 
   select.$destroy();
 });
@@ -1713,7 +1697,6 @@ test('when isMulti and value has items and list opens then first item in list sh
       Multi,
       isMulti: true,
       items,
-      isFocused: true
     }
   });
 
@@ -1857,15 +1840,13 @@ test('when getOptionLabel method and items is supplied then display result of ge
   const select = new Select({
     target,
     props: {
-      
       getOptionLabel: (option) => option.notLabel,
-      isFocused: true,
+      listOpen: true,
       items: [{notLabel: 'This is not a label', value: 'not important #1'}, {notLabel: 'This is not also not a label', value: 'not important #2'}],
     }
   });
 
-  await handleKeyboard('ArrowDown', select.input);
-  t.ok(document.querySelector('.item').innerHTML === 'This is not a label');
+  t.ok(document.querySelector('.item')?.innerHTML === 'This is not a label');
 
   select.$destroy();
 });
@@ -1874,14 +1855,12 @@ test('when getOptionLabel method and items is supplied then display result of ge
   const select = new Select({
     target,
     props: {
-      
       getOptionLabel: (option) => option.notLabel,
-      isFocused: true,
+      listOpen: true,
       items: [{notLabel: 'This is not a label', value: 'not important #1'}, {notLabel: 'This is not also not a label', value: 'not important #2'}],
     }
   });
 
-  await handleKeyboard('ArrowDown', select.input);
   t.ok(document.querySelector('.item').innerHTML === 'This is not a label');
 
   select.$destroy();
@@ -1894,14 +1873,13 @@ test('when a custom Item component is supplied then use to display each item', a
     props: {
       Item: CustomItem,
       getOptionLabel: (option) => option.name,
-      isFocused: true,
+      listOpen: true,
       items: [{
         image_url: 'https://images.punkapi.com/v2/keg.png',
         name: 'A Name', tagline: 'A tagline', abv: 'A abv'}],
     }
   });
 
-  await handleKeyboard('ArrowDown', select.input);
   t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
 
   select.$destroy();
@@ -1921,7 +1899,7 @@ test('when a custom Selection component is supplied then use to display selectio
     }
   });
 
-  await handleKeyboard('ArrowDown', select.input);
+  await handleKeyboard('ArrowDown');
   await handleKeyboard('Enter');
 
   t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
@@ -1946,7 +1924,7 @@ test('when loadOptions method is supplied, isMulti is true and filterText has le
   await wait(0);
   await handleSet(select, {filterText: 'Juniper'});
   await wait(600);
-  await handleKeyboard('ArrowDown', select.input);
+  await handleKeyboard('ArrowDown');
   await handleKeyboard('Enter');
   t.ok(document.querySelector('.multi-item_label').innerHTML === 'Juniper Wheat Beer');
   select.$destroy();
@@ -1978,30 +1956,9 @@ test('when getOptionLabel contains HTML then render the HTML', async (t) => {
     }
   });
 
-  await handleKeyboard('ArrowDown', select.input);
+  await handleKeyboard('ArrowDown');
   t.ok(document.querySelector('.item').innerHTML === '<p>Chocolate</p>');
 
-  select.$destroy();
-});
-
-test('when isMulti is true, value populated and arrowLeft is pressed then no items in list should be active', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      Multi,
-      isMulti: true,
-      items,
-      value: [
-        {value: 'pizza', label: 'Pizza'},
-        {value: 'chips', label: 'Chips'},
-      ],
-      isFocused: true
-    }
-  });
-
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
-  t.ok(!document.querySelector('.hover'));
   select.$destroy();
 });
 
@@ -2028,7 +1985,7 @@ test('when value changes then select event should fire', async (t) => {
   const select = new Select({
     target,
     props: {
-      
+      listOpen: true,
       items,
     }
   });
@@ -2039,8 +1996,7 @@ test('when value changes then select event should fire', async (t) => {
     selectEvent = event;
   });
 
-  await handleSet(select, {isFocused: true});
-  await handleKeyboard('ArrowDown', select.input);
+  await handleKeyboard('ArrowDown');
   await handleKeyboard('Enter');
 
   t.ok(selectEvent);
@@ -2103,12 +2059,11 @@ test('when items in list filter or update then first item in list should highlig
       isFocused: true
     }
   });
-
-  await handleKeyboard('ArrowDown', select.input);
-  await handleKeyboard('ArrowDown');
-  await handleKeyboard('ArrowDown');
   
-  t.ok(document.querySelector('.hover').innerHTML === 'Cake');
+  await handleKeyboard('ArrowDown');
+  await handleKeyboard('ArrowDown');
+  await handleKeyboard('ArrowDown');
+  t.ok(document.querySelector('.list .hover').innerHTML === 'Chips');
   await handleSet(select, {filterText: 'c'});
   t.ok(document.querySelector('.hover').innerHTML === 'Chocolate');
 
@@ -2560,7 +2515,6 @@ test('When creator selected, selected item is set to created item', async (t) =>
   const select = new Select({
     target,
     props: {
-      
       items,
       isCreatable: true,
       isFocused: true,
@@ -2682,7 +2636,6 @@ test('When isCreatable with non-default item structure, item creator displays ge
   const select = new Select({
     target,
     props: {
-      
       optionIdentifier: 'food',
       getOptionLabel: itemDisplay,
       getSelectionLabel: itemDisplay,
@@ -2782,6 +2735,7 @@ test('When isCreatable and isMulti and optionIdentifier is supplied multiple cre
 
 test('When isCreatable and item is created then createItem method should only run once', async (t) => {
   let createItemRun = 0;
+
   const createItem = (filterText) => {
     createItemRun += 1;
     return {
@@ -2793,7 +2747,6 @@ test('When isCreatable and item is created then createItem method should only ru
   const select = new Select({
     target,
     props: {
-      
       isCreatable: true,
       items,
       createItem
@@ -2804,7 +2757,6 @@ test('When isCreatable and item is created then createItem method should only ru
   select.$set({ filterText: 'foo' });
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-
   t.ok(createItemRun === 2);
 
   select.$destroy();
@@ -3279,14 +3231,15 @@ test('losing focus of Select should close list', async (t) => {
   const select = new Select({
     target,
     props: {
-      
       items,
+      isFocused: true
     }
   });
 
-  await querySelectorClick('.svelte-select');
+  
   t.ok(select.listOpen);
   document.querySelector('.svelte-select input').blur();
+  await wait();
   t.ok(!select.listOpen);
 
   select.$destroy();
@@ -3298,12 +3251,11 @@ test('clicking on an external textarea should close and blur it', async (t) => {
   const select = new Select({
     target,
     props: {
-      
+      listOpen: true,
       items,
     }
   });
 
-  await querySelectorClick('.svelte-select');
   t.ok(select.listOpen);
   document.querySelector('textarea').focus();
   t.ok(!select.listOpen);
@@ -3464,7 +3416,7 @@ test('When listOffset is set list position offset changes', async (t) => {
     },
   });
 
-  let elem = target.querySelector('.list');
+  let elem = document.querySelector('.list');
   t.ok(elem.style.top === '50px');
 
   select.$destroy();
@@ -3841,6 +3793,7 @@ test('When ariaListOpen, listOpen, then aria-context uses default updated', asyn
     },
   });
 
+  await wait(0);
   let aria = document.querySelector('#aria-context');
   t.equal(aria.innerHTML, 'label: Chocolate, count: 5');
     
@@ -3851,16 +3804,15 @@ test('When ariaFocused, focused value supplied, then aria-context uses default u
   const select = new Select({
     target,
     props: {
-      
       items: items,
       isFocused: true,
+      listOpen: false,
       ariaFocused: () => `nothing to see here.`
     },
   });
 
   let aria = document.querySelector('#aria-context');
   t.equal(aria.innerHTML, 'nothing to see here.');
-    
   select.$destroy();
 });
 

@@ -4,7 +4,7 @@ export default async function getItems({ dispatch, loadOptions, convertStringIte
         dispatch('error', { type: 'loadOptions', details: err });
     });
 
-    if (res && !res.cancelled) {
+    if (res && !res.cancelled) {        
         if (res) {
             if (res && res.length > 0 && typeof res[0] !== 'object') {
                 res = convertStringItemsToObjects(res);

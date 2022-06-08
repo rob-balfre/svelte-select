@@ -52,7 +52,13 @@
             false
         );
 
-        if (hoverItemIndex === 0 && items[hoverItemIndex] && items[hoverItemIndex].isGroupHeader && !items[hoverItemIndex].isSelectable) hoverItemIndex = 1;
+        if (
+            hoverItemIndex === 0 &&
+            items[hoverItemIndex] &&
+            items[hoverItemIndex].isGroupHeader &&
+            !items[hoverItemIndex].isSelectable
+        )
+            hoverItemIndex = 1;
     });
 
     beforeUpdate(() => {
@@ -76,7 +82,6 @@
 
     function handleClick(args) {
         const { item, i, event } = args;
-        // event.stopPropagation();
 
         if (value && !isMulti && value[optionIdentifier] === item[optionIdentifier]) return closeList();
 
@@ -89,8 +94,8 @@
         }
     }
 
-    function closeList(args) {
-        dispatch('closeList', args);
+    function closeList() {
+        dispatch('closeList');
     }
 
     async function updateHoverItem(increment) {
@@ -122,13 +127,15 @@
             case 'ArrowDown':
                 e.preventDefault();
                 items.length && updateHoverItem(1);
-                if (items[hoverItemIndex] && items[hoverItemIndex].isGroupHeader && !items[hoverItemIndex].isSelectable) hoverItemIndex += 1;
+                if (items[hoverItemIndex] && items[hoverItemIndex].isGroupHeader && !items[hoverItemIndex].isSelectable)
+                    hoverItemIndex += 1;
                 break;
             case 'ArrowUp':
                 e.preventDefault();
                 items.length && updateHoverItem(-1);
-                if (items[hoverItemIndex] && items[hoverItemIndex].isGroupHeader && !items[hoverItemIndex].isSelectable) hoverItemIndex > 0 ? hoverItemIndex -= 1 : hoverItemIndex = items.length - 1;
-                
+                if (items[hoverItemIndex] && items[hoverItemIndex].isGroupHeader && !items[hoverItemIndex].isSelectable)
+                    hoverItemIndex > 0 ? (hoverItemIndex -= 1) : (hoverItemIndex = items.length - 1);
+
                 break;
             case 'Enter':
                 e.preventDefault();
@@ -221,7 +228,12 @@
 
 <svelte:window on:keydown={handleKeyDown} on:scroll={computePlacement} on:resize={computePlacement} />
 
-<div class="list" class:suggestions={suggestionMode} bind:this={list} style={listStyle} on:mousedown|preventDefault>
+<div
+    class="list"
+    class:suggestions={suggestionMode}
+    bind:this={list}
+    style={listStyle}
+    on:mousedown|preventDefault>
     {#if items.length > 0}
         {#if VirtualList}
             <svelte:component
@@ -280,7 +292,6 @@
         <div class="empty">{noOptionsMessage}</div>
     {/if}
 </div>
-
 
 <style>
     .list {

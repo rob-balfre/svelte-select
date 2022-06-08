@@ -1,5 +1,5 @@
 <script>
-    import { beforeUpdate, createEventDispatcher, onMount } from 'svelte';
+    import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
     const dispatch = createEventDispatcher();
 
     import _Item from './Item.svelte';
@@ -9,9 +9,9 @@
     import _Multi from './Multi.svelte';
     import _ChevronIcon from './ChevronIcon.svelte';
     import _LoadingIcon from './LoadingIcon.svelte';
-    
+
     import _filter from '$lib/filter';
-    import _getItems from '$lib/getItems';
+    import _getItems from '$lib/get-items';
 
     export let justValue = null; // read-only
 
@@ -84,13 +84,13 @@
     export let isClearable = true;
     export let isWaiting = false;
     export let listPlacement = 'auto';
-    export let listOpen = false;
-    
+    export let listOpen = isFocused;
+
     let timeout;
     export let debounce = (fn, wait = 1) => {
         clearTimeout(timeout);
         timeout = setTimeout(fn, wait);
-    }
+    };
 
     export let debounceWait = 300;
     export let noOptionsMessage = 'No options';
@@ -120,7 +120,6 @@
     let prev_isFocused;
     let prev_isMulti;
     let hoverItemIndex;
-    let list;
 
     function setValue() {
         if (typeof value === 'string') {
@@ -217,14 +216,6 @@
         }
     }
 
-    function setupFocus() {
-        if (isFocused || listOpen) {
-            handleFocus();
-        } else {
-            if (input) input.blur();
-        }
-    }
-
     function setupMulti() {
         if (value) {
             if (Array.isArray(value)) {
@@ -246,8 +237,10 @@
     $: if (isMulti && value && value.length > 1) checkValueForDuplicates();
     $: if (value) dispatchSelectedItem();
     $: if (!value && isMulti && prev_value) dispatch('change', value);
-    $: if (isFocused !== prev_isFocused) setupFocus();
+    $: if (listOpen && input) handleFocus();
+    $: if (!isFocused && input) listOpen = false;
     $: if (filterText !== prev_filterText) setupFilterText();
+    $: if (!listOpen && listApp) destroyList();
 
     function setupFilterText() {
         if (filterText.length === 0) return;
@@ -297,9 +290,9 @@
     $: showMultiSelect = isMulti && value && value.length > 0;
     $: suggestionMode = suggestions && filterText.length === 0;
     $: ariaSelection = value ? handleAriaSelection(isMulti) : '';
-    $: ariaContext = handleAriaContent({filteredItems, hoverItemIndex, isFocused, listOpen});
+    $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, isFocused, listOpen });
     $: updateValueDisplay(items);
-    $: if (isMulti) justValue = value ? value.map(item => item[optionIdentifier]) : null;
+    $: if (isMulti) justValue = value ? value.map((item) => item[optionIdentifier]) : null;
     $: if (!isMulti) justValue = value ? value[optionIdentifier] : value;
     $: if (!isMulti && prev_value && !value) dispatch('change', value);
 
@@ -322,6 +315,7 @@
         listOffset,
         suggestionMode,
     };
+
     $: filteredItems = filter({
         loadOptions,
         filterText,
@@ -409,8 +403,11 @@
                 break;
             case 'ArrowDown':
                 e.preventDefault();
-                listOpen = true;
-                activeValue = undefined;
+                if (!listOpen) {
+                    listOpen = true;
+                    activeValue = undefined;
+                    e.stopPropagation();
+                }
                 break;
             case 'ArrowUp':
                 e.preventDefault();
@@ -451,25 +448,24 @@
         dispatch('focus', e);
 
         isFocused = true;
-        if (input) input.focus();
+        if (e) input.focus();
     }
 
     function handleBlur(e) {
         dispatch('blur', e);
-
+        listOpen = false;
         isFocused = false;
         activeValue = undefined;
-
-        if (list && !container.contains(e.relatedTarget) && !list.contains(e.relatedTarget)) {
-            closeList();
-        }
+        input.blur();
     }
 
     function handleClick() {
         if (isDisabled) return;
         isFocused = true;
         listOpen = !listOpen;
-        if (listOpen) handleFocus();
+        if (listOpen) {
+            handleFocus();
+        }
     }
 
     export function handleClear() {
@@ -481,6 +477,7 @@
 
     let mounted;
     onMount(() => {
+        if (listOpen) isFocused = true;
         if (isFocused && input) input.focus();
         mounted = true;
     });
@@ -559,10 +556,11 @@
         return ariaValues(selected);
     }
 
-    function handleAriaContent(args) {
-        if (!isFocused || !filteredItems || filteredItems.length === 0) return '';
+    function handleAriaContent() {
+        if (!filteredItems || filteredItems.length === 0) return '';
 
         let _item = filteredItems[hoverItemIndex];
+
         if (listOpen && _item) {
             let label = getSelectionLabel(_item);
             let count = filteredItems ? filteredItems.length : 0;
@@ -572,7 +570,42 @@
             return ariaFocused();
         }
     }
+
+    let listApp = null;
+    let showList = false;
+
+    $: {
+        if (mounted && listOpen) {
+            handleList();
+        } else {
+            destroyList();
+        }
+    }
+
+    function destroyList() {
+        showList = false;
+        clearTimeout(appendChild);
+    }
+
+    let appendChild;
+    async function handleList() {
+        showList = true;
+        appendChild = setTimeout(() => document.body.appendChild(listApp));
+    }
+
+    function handleClickOutside(event) {
+        if (container && !container.contains(event.target) && !listApp?.$$?.ctx[0]?.contains(event.target)) {
+            handleBlur();
+        }
+    }
+
+    onDestroy(() => {
+        listApp?.remove();
+        clearTimeout(appendChild);
+    });
 </script>
+
+<svelte:window on:click={handleClickOutside} />
 
 <div
     class="svelte-select {containerClasses}"
@@ -586,6 +619,18 @@
     style={containerStyles}
     on:click={handleClick}
     bind:this={container}>
+    {#if showList}
+        <div class="list-container" bind:this={listApp}>
+            <svelte:component
+                this={List}
+                bind:hoverItemIndex
+                {...listProps}
+                on:itemSelected={itemSelected}
+                on:itemCreated={itemCreated}
+                on:closeList={closeList} />
+        </div>
+    {/if}
+
     <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" class="a11y-text">
         {#if isFocused}
             <span id="aria-selection">{ariaSelection}</span>
@@ -659,23 +704,12 @@
     {/if}
 </div>
 
-{#if mounted && listOpen}
-    <svelte:component
-        this={List}
-        {...listProps}
-        bind:hoverItemIndex
-        bind:list
-        on:itemSelected={itemSelected}
-        on:itemCreated={itemCreated}
-        on:closeList={closeList} />
-{/if}
-
 <style>
     .svelte-select {
         /* deprecating camelCase custom props in favour of kebab-case for v5 */
         --borderFocusColor: --border-focus-color;
         --borderHoverColor: --border-hover-color;
-        --borderRadius: --border-radius;        
+        --borderRadius: --border-radius;
         --clearSelectColor: --clear-select-color;
         --clearSelectWidth: --clear-select-width;
         --disabledBackground: --disabled-background;
@@ -736,10 +770,9 @@
         --spinnerColor: --spinner-color;
         --spinnerHeight: --spinner-height;
         --spinnerWidth: --spinner-width;
-    }
 
-    .svelte-select {
         --internal-padding: 0 16px;
+
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--border-radius, 3px);
         box-sizing: border-box;
@@ -750,7 +783,12 @@
         padding: var(--padding, var(--internal-padding));
         background: var(--background, #fff);
         margin: var(--margin, 0);
-        width: var(--width, 100%);
+        width: var(--width, auto);
+        overflow: hidden;
+    }
+
+    .svelte-select .list-container {
+        display: none;
     }
 
     .svelte-select input {
@@ -894,5 +932,5 @@
 
     .multi input {
         flex: 1 1 40px;
-    }    
+    }
 </style>

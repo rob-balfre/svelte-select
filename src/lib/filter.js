@@ -11,7 +11,7 @@ export default function filter({
     convertStringItemsToObjects,
     filterGroupedItems,
     addCreatableItem,
-    getOptionLabel
+    getOptionLabel,
 }) {
     if (loadOptions && filterText.length > 0) return;
     if (!items) return [];
@@ -19,7 +19,6 @@ export default function filter({
     if (items && items.length > 0 && typeof items[0] !== 'object') {
         items = convertStringItemsToObjects(items);
     }
-
 
     let filterResults = items.filter((item) => {
         let matchesFilter = itemFilter(getOptionLabel(item, filterText), filterText, item);
