@@ -882,11 +882,7 @@
         color: var(--chevron-color, --icons-color);
         box-shadow: var(--chevron-box-shadow, -1px 0 0 0 #c5cacf);
         padding: var(--chevron-padding, 0 8px);
-        pointer-events: all;
-    }
-
-    .svelte-select.list-open .chevron {
-        pointer-events: none;
+        pointer-events: var(--chevron-pointer-events, none);
     }
 
     .svelte-select.multi.two-icons {
