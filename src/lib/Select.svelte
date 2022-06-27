@@ -620,7 +620,7 @@
     on:click={handleClick}
     bind:this={container}>
     {#if showList}
-        <div class="list-container" bind:this={listApp}>
+        <div class="svelte-select-list" bind:this={listApp}>
             <svelte:component
                 this={List}
                 bind:hoverItemIndex
@@ -786,11 +786,7 @@
         width: var(--width, auto);
         overflow: hidden;
     }
-
-    .svelte-select .list-container {
-        display: none;
-    }
-
+    
     .svelte-select input {
         cursor: default;
         border: none;
