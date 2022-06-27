@@ -14,7 +14,7 @@
 
     form {
         padding: 40px;
-        display: flex;
+        display: grid;
         width: 400px;
         background: #333;
     }

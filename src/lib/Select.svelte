@@ -117,7 +117,6 @@
     let activeValue;
     let prev_value;
     let prev_filterText;
-    let prev_isFocused;
     let prev_isMulti;
     let hoverItemIndex;
 
@@ -335,7 +334,6 @@
     beforeUpdate(async () => {
         prev_value = value;
         prev_filterText = filterText;
-        prev_isFocused = isFocused;
         prev_isMulti = isMulti;
     });
 
@@ -584,14 +582,13 @@
 
     function destroyList() {
         showList = false;
-        clearTimeout(appendChild);
     }
 
-    let appendChild;
     async function handleList() {
         showList = true;
-        appendChild = setTimeout(() => document.body.appendChild(listApp));
     }
+
+    $: if (listApp) document.body.appendChild(listApp);
 
     function handleClickOutside(event) {
         if (container && !container.contains(event.target) && !listApp?.contains(event.target)) {
@@ -601,7 +598,6 @@
 
     onDestroy(() => {
         listApp?.remove();
-        clearTimeout(appendChild);
     });
 </script>
 
@@ -621,13 +617,15 @@
     bind:this={container}>
     {#if showList}
         <div class="svelte-select-list" bind:this={listApp}>
-            <svelte:component
-                this={List}
-                bind:hoverItemIndex
-                {...listProps}
-                on:itemSelected={itemSelected}
-                on:itemCreated={itemCreated}
-                on:closeList={closeList} />
+            {#if listApp}
+                <svelte:component
+                    this={List}
+                    bind:hoverItemIndex
+                    {...listProps}
+                    on:itemSelected={itemSelected}
+                    on:itemCreated={itemCreated}
+                    on:closeList={closeList} />
+            {/if}
         </div>
     {/if}
 

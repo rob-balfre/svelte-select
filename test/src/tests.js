@@ -247,7 +247,6 @@ test('list scrolls to active item', async (t) => {
   const select = new Select({
     target,
     props: {
-      
       listOpen: true,
       items: itemsWithIndex.concat(extras),
       value: {value: 'sunday-roast', label: 'Sunday Roast'},
