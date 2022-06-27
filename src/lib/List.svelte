@@ -194,6 +194,7 @@
     }
 
     let listStyle;
+    let placementClass;
     function computePlacement() {
         if (!parent || !list) return;
 
@@ -210,13 +211,17 @@
 
         if (listPlacement === 'top') {
             styles = base + _top;
+            placementClass = 'top';
         } else if (listPlacement === 'bottom') {
             styles = base + _bottom;
+            placementClass = 'bottom';
         } else {
             styles = base + _bottom;
+            placementClass = 'bottom';
 
             if (bottom + listOffset + list.offsetHeight > window.innerHeight) {
                 styles = base + _top;
+                placementClass = 'top';
             }
         }
 
@@ -229,7 +234,7 @@
 <svelte:window on:keydown={handleKeyDown} on:scroll={computePlacement} on:resize={computePlacement} />
 
 <div
-    class="list"
+    class="list {placementClass}"
     class:suggestions={suggestionMode}
     bind:this={list}
     style={listStyle}

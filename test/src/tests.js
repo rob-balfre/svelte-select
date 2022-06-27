@@ -4155,3 +4155,22 @@ test('when value is cleared then justValue should be null', async (t) => {
   
   select.$destroy();
 });
+
+test('when list is open then a class of "above" or "below" should be present', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items,
+      listPlacement: 'top'
+    }
+  });
+  
+  const top = document.querySelector('.list.top');
+  t.ok(top);
+  select.listPlacement = 'bottom';
+  const bottom = document.querySelector('.list.bottom');
+  t.ok(bottom);
+  
+  select.$destroy();
+})
