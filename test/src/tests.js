@@ -4172,4 +4172,28 @@ test('when list is open then a class of "above" or "below" should be present', a
   t.ok(bottom);
   
   select.$destroy();
-})
+});
+
+test('when items are grouped and filter text results in no items then list renders correct message', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithGroup,
+      groupBy
+    }
+  });
+
+  function groupBy(item) {
+    return item.group;
+  }
+
+  let title = document.querySelector('.list-group-title').innerHTML;
+  t.ok(title === 'Sweet');
+  let item = document.querySelector('.list-item .item').innerHTML; 
+  t.ok(item === 'Chocolate');
+  select.filterText = 'foo';
+  let empty = document.querySelector('.list .empty');
+  t.ok(empty);
+  select.$destroy();
+});

@@ -194,7 +194,7 @@
         const sortedGroupedItems = [];
 
         groupFilter(groupValues).forEach((groupValue) => {
-            sortedGroupedItems.push(...groups[groupValue]);
+            if (groups[groupValue]) sortedGroupedItems.push(...groups[groupValue]);
         });
 
         return sortedGroupedItems;
