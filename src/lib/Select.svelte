@@ -1,5 +1,7 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
+    import { browser } from '$app/env';
+
     const dispatch = createEventDispatcher();
 
     import _Item from './Item.svelte';
@@ -12,6 +14,7 @@
 
     import _filter from '$lib/filter';
     import _getItems from '$lib/get-items';
+    import _computePlacement from '$lib/compute-placement';
 
     export let justValue = null; // read-only
 
@@ -20,6 +23,7 @@
     export let Selection = _Selection;
     export let filter = _filter;
     export let getItems = _getItems;
+    export let computePlacement = _computePlacement;
 
     export let Multi = _Multi;
     export let ChevronIcon = _ChevronIcon;
@@ -319,6 +323,7 @@
         listAutoWidth,
         listOffset,
         suggestionMode,
+        computePlacement
     };
 
     $: filteredItems = filter({
@@ -594,7 +599,8 @@
         showList = true;
     }
 
-    $: if (listApp) document.body.appendChild(listApp);
+    export let appendListTarget = browser && document && document.body;
+    $: if (listApp && appendListTarget) appendListTarget.appendChild(listApp);
 
     function handleClickOutside(event) {
         if (container && !container.contains(event.target) && !listApp?.contains(event.target)) {

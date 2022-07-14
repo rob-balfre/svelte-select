@@ -4198,7 +4198,7 @@ test('when items are grouped and filter text results in no items then list rende
   select.$destroy();
 });
 
-test('sanitiseLabel method filters label from items and selection', async (t) => {
+test('when < is supplied in filterText then sanitiseLabel method coverts to HTML entity', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -4215,4 +4215,21 @@ test('sanitiseLabel method filters label from items and selection', async (t) =>
   await wait(0);
   let selection = document.querySelector('.selected-item .selection').innerHTML;
   t.ok(selection === '&lt;test /&gt;');
+
+  select.$destroy();
+})
+
+test('when appendListTarget is supplied then list is appended to parent target', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      listOpen: true,
+      appendListTarget: document.querySelector('main')
+    }
+  });
+
+  t.ok(document.querySelector('main  .svelte-select-list'));
+
+  select.$destroy();
 })

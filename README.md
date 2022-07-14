@@ -64,6 +64,7 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 | listOffset              | `number`   | `5`             | `px` space between select and list                         |
 | debounceWait            | `number`   | `300`           | `milliseconds` debounce wait                               |
 | suggestions             | `string[]` | `null`          | Show search suggestions before user input                  |
+| appendListTarget        | `Element`  | `document.body` | Change where List gets appended                            |
 
 
 ### Replaceable components
@@ -182,6 +183,25 @@ To load items asynchronously then `loadOptions` is the simplest solution. Supply
 <Select loadOptions={examplePromise} />
 ```
 
+### Change where List gets appended
+
+By default List gets appended to the `document.body`. For most use-cases this is fine. If you want more control then supply a `appendListTarget` Element
+
+```svelte
+<script>
+  import Select from 'svelte-select';
+
+  let target = null;
+</script>
+
+<form bind:this={target}>
+  <Select appendListTarget={target} />
+  <!-- List will now get appended to the DOM inside this form Element> -->
+</form>
+```
+
+
+
 ### Exposed methods
 These internal functions are exposed to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
 
@@ -267,11 +287,14 @@ export function debounce(fn, wait = 1) {
 export const sanitiseLabel = (text) => text && `${text}`.replace(/\</gi, '&lt;');
 ```
 
-> Override core functionality at your own risk! See ([get-items.js](/src/lib/get-items.js)  and [filter.js](/src/lib/filter.js))
+> Override core functionality at your own risk! See ([get-items.js](/src/lib/get-items.js), [filter.js](/src/lib/filter.js), [compute-placement.js](/src/lib/compute-placement.js))
 ```js
-    // replaceable but not advised!
-    export let filter = _filter;  
-    export let getItems = _getItems;
+    // core replaceable methods...
+    <Select 
+      filter={...}
+      getItems={...}
+      computePlacement={...}
+    />
 ```
 
 ## A11y (Accessibility)

@@ -24,6 +24,7 @@
     export let hoverItemIndex = 0;
     export let activeItemIndex = 0;
     export let suggestionMode;
+    export let computePlacement;
 
     let isScrollingTimer = null;
     let isScrolling = false;
@@ -193,45 +194,17 @@
         return (item.isGroupHeader && item.isSelectable) || item.selectable || !item.hasOwnProperty('selectable');
     }
 
-    let listStyle;
-    let placementClass;
-    function computePlacement() {
-        if (!parent || !list) return;
-
-        const { top, bottom, left, height, width } = parent.getBoundingClientRect();
-
-        let styles;
-
-        const base = `position:fixed;left:${left}px;min-width:${width}px;width:${
-            listAutoWidth ? width + 'px' : 'auto'
-        };`;
-
-        const _top = `bottom:${window.innerHeight - bottom + height + listOffset}px;`;
-        const _bottom = `top:${top + height + listOffset}px;`;
-
-        if (listPlacement === 'top') {
-            styles = base + _top;
-            placementClass = 'top';
-        } else if (listPlacement === 'bottom') {
-            styles = base + _bottom;
-            placementClass = 'bottom';
-        } else {
-            styles = base + _bottom;
-            placementClass = 'bottom';
-
-            if (bottom + listOffset + list.offsetHeight > window.innerHeight) {
-                styles = base + _top;
-                placementClass = 'top';
-            }
-        }
-
-        listStyle = styles;
+    let computed;
+    function handleWindow() {
+        computed = computePlacement({parent, list, listPlacement, listOffset, listAutoWidth});
     }
 
-    $: if (parent && list) computePlacement();
+    $: if (parent && list) handleWindow();
+    $: placementClass = computed && computed.placementClass;
+    $: listStyle = computed && computed.listStyle;    
 </script>
 
-<svelte:window on:keydown={handleKeyDown} on:scroll={computePlacement} on:resize={computePlacement} />
+<svelte:window on:keydown={handleKeyDown} on:scroll={handleWindow} on:resize={handleWindow} />
 
 <div
     class="list {placementClass}"

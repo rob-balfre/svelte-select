@@ -19,6 +19,10 @@ export default [
                         find: /\$lib\/(.*)/,
                         replacement: path.join(__dirname, 'src/lib/$1'),
                     },
+                    {
+                        find: '$app/env',
+                        replacement: path.join(__dirname, 'test/src/env'),
+                    }
                 ],
             }),
             svelte({
