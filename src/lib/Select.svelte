@@ -1,6 +1,5 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
-    import { browser } from '$app/env';
 
     const dispatch = createEventDispatcher();
 
@@ -599,7 +598,8 @@
         showList = true;
     }
 
-    export let appendListTarget = browser && document && document.body;
+    export let appendListTarget = null;
+    $: if (listApp && !appendListTarget) appendListTarget = document.body;
     $: if (listApp && appendListTarget) appendListTarget.appendChild(listApp);
 
     function handleClickOutside(event) {
