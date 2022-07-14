@@ -10,12 +10,6 @@
             "options": {
                 "singleQuote": true
             }
-        },
-        {
-            "files": ["*.yml"],
-            "options": {
-                "tabWidth": 2
-            }
         }
     ],
     "svelteSortOrder": "scripts-markup-styles",

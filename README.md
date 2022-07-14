@@ -105,7 +105,7 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 
 `items` can be simple arrays or collections.
 
-```svelte
+```html
 <script>
   import Select from 'svelte-select';
 
@@ -125,7 +125,7 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 
 They can also be grouped and include non-selectable items.
 
-```svelte
+```html
 <script>
   import Select from 'svelte-select';
 
@@ -145,7 +145,7 @@ They can also be grouped and include non-selectable items.
 
 You can also use custom collections.
 
-```svelte
+```html
 <script>
   import Select from 'svelte-select';
 
@@ -165,7 +165,7 @@ You can also use custom collections.
 
 To load items asynchronously then `loadOptions` is the simplest solution. Supply a function that returns a `Promise` that resolves with a list of items. `loadOptions` has debounce baked in and fires each time `filterText` is updated.
 
-```svelte
+```html
 <script>
   import Select from 'svelte-select';
 
@@ -187,7 +187,7 @@ To load items asynchronously then `loadOptions` is the simplest solution. Supply
 
 By default List gets appended to the `document.body`. For most use-cases this is fine. If you want more control then supply a `appendListTarget` Element
 
-```svelte
+```html
 <script>
   import Select from 'svelte-select';
 
@@ -319,7 +319,7 @@ export let ariaFocused = () => {
 
 You can style a component by overriding [the available CSS custom properties](/docs/theming_variables.md).
 
-```svelte
+```html
 <script>
   import Select from 'svelte-select';
 </script>
@@ -329,7 +329,7 @@ You can style a component by overriding [the available CSS custom properties](/d
 
 You can also use the `inputStyles` prop to write in any override styles needed for the input.
 
-```svelte
+```html
 <script>
   import Select from 'svelte-select';
 

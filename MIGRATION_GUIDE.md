@@ -4,7 +4,7 @@ v5 is a major release that that includes some ⚠️ BREAKING CHANGES ⚠️
 
 Removed `isVirtualList` instead `npm i svelte-tiny-virtual-list -D` and
 
-```svelte
+```html
 <script>
   import VirtualList from 'svelte-tiny-virtual-list';
 </script>

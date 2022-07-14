@@ -66,7 +66,7 @@
     export let hasError = false;
     export let containerStyles = '';
     export let getSelectionLabel = (option) => {
-        if (option) return sanitiseLabel(option[labelIdentifier])
+        if (option) return sanitiseLabel(option[labelIdentifier]);
         else return null;
     };
 
@@ -322,7 +322,7 @@
         listAutoWidth,
         listOffset,
         suggestionMode,
-        computePlacement
+        computePlacement,
     };
 
     $: filteredItems = filter({
@@ -796,7 +796,7 @@
         width: var(--width, auto);
         overflow: hidden;
     }
-    
+
     .svelte-select input {
         cursor: default;
         border: none;
