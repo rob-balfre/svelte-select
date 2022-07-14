@@ -26,7 +26,7 @@ npm install svelte-select@beta
 ```
 
 ## Upgrading to v5
-See [migration guide](https://github.com/rob-balfre/svelte-select/blob/feature/v5/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
+See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 
 
 ## Props
@@ -263,10 +263,16 @@ export function debounce(fn, wait = 1) {
 }
 ```
 
-| debounce    | `function`  | Debounce function                                   |
-| filter      | `function`  | Filter options function                             |
-| loadOptions | `function`  | Return a `Promise` that resolves with items         |
-| getItems    | `function`  | Take full control of async and loadOptions defaults |
+```js
+export const sanitiseLabel = (text) => text && `${text}`.replace(/\</gi, '&lt;');
+```
+
+> Override core functionality at your own risk! See ([get-items.js](/src/lib/get-items.js)  and [filter.js](/src/lib/filter.js))
+```js
+    // replaceable but not advised!
+    export let filter = _filter;  
+    export let getItems = _getItems;
+```
 
 ## A11y (Accessibility)
 

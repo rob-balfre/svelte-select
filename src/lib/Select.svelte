@@ -45,19 +45,25 @@
     export let groupBy = undefined;
     export let groupFilter = (groups) => groups;
     export let isGroupHeaderSelectable = false;
+    export const sanitiseLabel = (text) => text && `${text}`.replace(/\</gi, '&lt;');
     export let getGroupHeaderLabel = (option) => {
-        return option[labelIdentifier] || option.id;
+        return sanitiseLabel(option[labelIdentifier]) || option.id;
     };
     export let labelIdentifier = 'label';
     export let getOptionLabel = (option, filterText) => {
-        return option.isCreator ? `Create \"${filterText}\"` : option[labelIdentifier];
+        if (option.isCreator) {
+            filterText = sanitiseLabel(filterText);
+            return `Create \"${filterText}\"`;
+        } else {
+            return sanitiseLabel(option[labelIdentifier]);
+        }
     };
     export let optionIdentifier = 'value';
     export let loadOptions = undefined;
     export let hasError = false;
     export let containerStyles = '';
     export let getSelectionLabel = (option) => {
-        if (option) return option[labelIdentifier];
+        if (option) return sanitiseLabel(option[labelIdentifier])
         else return null;
     };
 

@@ -4197,3 +4197,22 @@ test('when items are grouped and filter text results in no items then list rende
   t.ok(empty);
   select.$destroy();
 });
+
+test('sanitiseLabel method filters label from items and selection', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: [],
+      filterText: '<test />',
+      isCreatable: true,
+    }
+  });
+
+  let item = document.querySelector('.list-item .item.hover');
+  t.ok(item.innerHTML === 'Create "&lt;test /&gt;"');
+  item.click();
+  await wait(0);
+  let selection = document.querySelector('.selected-item .selection').innerHTML;
+  t.ok(selection === '&lt;test /&gt;');
+})
