@@ -49,17 +49,17 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 | isClearable             | `boolean`  | `true`          | Enable clearing of value(s)                                |
 | isCreatable             | `boolean`  | `false`         | Can create new item(s) to be added to `value`              |
 | isDisabled              | `boolean`  | `false`         | Disable select                                             |
-| isMulti                 | `boolean`  | `false`         | Enable multi-select                                        |
+| multiple                | `boolean`  | `false`         | Enable multi-select                                        |
 | isSearchable            | `boolean`  | `true`          | If `false` search/filtering is disabled                    |
 | isGroupHeaderSelectable | `boolean`  | `false`         | Enable selectable group headers                            |
+| isFocused               | `boolean`  | `false`         | Controls input focus                                       |
 | listPlacement           | `string`   | `auto`          | Display list `'auto'`, `'top'` or `'bottom'`               |
 | hasError                | `boolean`  | `false`         | Show error styles around select input                      |
 | listAutoWidth           | `boolean`  | `true`          | If `false` will ignore width of select                     |
 | showChevron             | `boolean`  | `false`         | Show chevron at all times                                  |
 | inputAttributes         | `object`   | `{}`            | Pass in HTML attributes to Select's input                  |
 | iconProps               | `object`   | `{}`            | Icon props                                                 |
-| filteredItems           | `array`    | `[]`            | List of items after filtering (read only)                  |
-| placeholderAlwaysShow   | `boolean`  | `false`         | When `isMulti` placeholder text will always show           |
+| placeholderAlwaysShow   | `boolean`  | `false`         | When `multiple` placeholder text will always show          |
 | isWaiting               | `boolean`  | `false`         | Show LoadingIcon. `loadOptions` will override this         |
 | listOffset              | `number`   | `5`             | `px` space between select and list                         |
 | debounceWait            | `number`   | `300`           | `milliseconds` debounce wait                               |
@@ -67,12 +67,23 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 | appendListTarget        | `Element`  | `document.body` | Change where List gets appended                            |
 
 
+## Named slots
+
+### Selection 
+
+```html
+<Select>
+  <div slot="selection" let:selection>
+    ✨ {selection} ✨
+  </div>
+</Select>
+```
+
 ### Replaceable components
 
 | Import      | Type        | Description           |
 | ----------- | ----------- | --------------------- |
 | Item        | `component` | Item component        |
-| Selection   | `component` | Selection component   |
 | Multi       | `component` | Multi select support  |
 | ChevronIcon | `component` | Chevron Icon          |
 | ClearIcon   | `component` | Clear Icon            |
@@ -365,7 +376,7 @@ test.only('when getSelectionLabel contains HTML then render the HTML', async (t)
     }
   });
 
-  t.ok(document.querySelector('.selection').innerHTML === '<p>Chocolate</p>');
+  t.ok(document.querySelector('.selected-item').innerHTML === '<p>Chocolate</p>');
 
   //select.$destroy();
 });

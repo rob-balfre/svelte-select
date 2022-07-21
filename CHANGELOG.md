@@ -2,6 +2,9 @@
 
 ## 5.0.0
 
+* Added named slot `selection`
+* Removed Selection component
+* isMulti -> multiple
 * Other improvements (see docs)
 * select-container -> svelte-select
 * added justValue
@@ -63,7 +66,7 @@
 
 ## 4.2.5
 
-* isMulti on:select fix (#276)
+* multiple on:select fix (#276)
 
 ## 4.2.4
 
@@ -113,7 +116,7 @@
 
 ## 3.15.0
 
-* Added new prop multiFullItemClearable for easier clearable items when isMulti is true - thanks to @stephenlrandall
+* Added new prop multiFullItemClearable for easier clearable items when multiple is true - thanks to @stephenlrandall
 
 ## 3.14.3
 
@@ -330,7 +333,7 @@
 
 ## 1.5.5
 
-*  isMulti on:select bug fix
+*  multiple on:select bug fix
 
 ## 1.5.4
 

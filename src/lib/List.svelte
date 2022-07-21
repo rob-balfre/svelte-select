@@ -11,7 +11,7 @@
     export let noOptionsMessage;
     export let hideEmptyState;
     export let value;
-    export let isMulti;
+    export let multiple;
     export let getGroupHeaderLabel;
     export let items;
     export let itemHeight;
@@ -31,7 +31,7 @@
     let prev_items;
 
     onMount(() => {
-        if (items.length > 0 && !isMulti && value) {
+        if (items.length > 0 && !multiple && value) {
             const _hoverItemIndex = items.findIndex((item) => item[optionIdentifier] === value[optionIdentifier]);
 
             if (_hoverItemIndex) {
@@ -84,7 +84,7 @@
     function handleClick(args) {
         const { item, i, event } = args;
 
-        if (value && !isMulti && value[optionIdentifier] === item[optionIdentifier]) return closeList();
+        if (value && !multiple && value[optionIdentifier] === item[optionIdentifier]) return closeList();
 
         if (item.isCreator) {
             dispatch('itemCreated', filterText);
@@ -142,7 +142,7 @@
                 e.preventDefault();
                 if (items.length === 0) break;
                 const hoverItem = items[hoverItemIndex];
-                if (value && !isMulti && value[optionIdentifier] === hoverItem[optionIdentifier]) {
+                if (value && !multiple && value[optionIdentifier] === hoverItem[optionIdentifier]) {
                     closeList();
                     break;
                 }

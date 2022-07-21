@@ -10,6 +10,7 @@ import ParentContainer from './Select/ParentContainer.svelte'
 import {assert, test} from 'tape-modern';
 import VirtualList from 'svelte-tiny-virtual-list';
 import getName from '../utils/nameGen';
+import SelectionSlotTest from './SelectionSlotTest.svelte';
 
 function querySelectorClick(selector) {
   document.querySelector(selector).click();
@@ -390,12 +391,11 @@ test('selected item\'s default view', async (t) => {
   const select = new Select({
     target,
     props: {
-      
       value: {value: 'chips', label: 'Chips'},
     }
   });
 
-  t.ok(target.querySelector('.selected-item .selection').innerHTML === 'Chips');
+  t.ok(target.querySelector('.selected-item').innerHTML === 'Chips');
   select.$destroy();
 });
 
@@ -405,7 +405,7 @@ test('select view updates with value updates', async (t) => {
   });
 
   await handleSet(select, {value: {value: 'chips', label: 'Chips'}});
-  t.ok(target.querySelector('.selected-item .selection').innerHTML === 'Chips');
+  t.ok(target.querySelector('.selected-item').innerHTML === 'Chips');
 
   select.$destroy();
 });
@@ -421,7 +421,7 @@ test('clear wipes value and updates view', async (t) => {
 
   await wait(0);
   await handleSet(select, {value: undefined});
-  t.ok(!target.querySelector('.selected-item .selection'));
+  t.ok(!target.querySelector('.selected-item'));
 
   select.$destroy();
 });
@@ -484,7 +484,7 @@ test('select item from list', async (t) => {
   await handleKeyboard('ArrowDown');
   await handleKeyboard('ArrowDown');
   await handleKeyboard('Enter');
-  t.ok(document.querySelector('.selection').innerHTML === 'Cake');
+  t.ok(document.querySelector('.selected-item').innerHTML === 'Cake');
 
   select.$destroy();
 });
@@ -1009,18 +1009,18 @@ test(`two way binding between Select and it's parent component`, async (t) => {
     }
   });
 
-  t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
+  t.equal(document.querySelector('.selected-item').innerHTML, document.querySelector('.result').innerHTML);
 
   parent.$set({
     value: {value: 'ice-cream', label: 'Ice Cream'},
   });
 
-  t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
+  t.equal(document.querySelector('.selected-item').innerHTML, document.querySelector('.result').innerHTML);
   document.querySelector('.svelte-select').click();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-  t.equal(document.querySelector('.selection').innerHTML, document.querySelector('.result').innerHTML);
+  t.equal(document.querySelector('.selected-item').innerHTML, document.querySelector('.result').innerHTML);
 
   parent.$destroy();
 });
@@ -1458,12 +1458,12 @@ test('groups should be sorted by expression', async (t) => {
   select.$destroy();
 });
 
-test('when isMulti is true show each item in value', async (t) => {
+test('when multiple is true show each item in value', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [
         {value: 'pizza', label: 'Pizza'},
@@ -1479,12 +1479,12 @@ test('when isMulti is true show each item in value', async (t) => {
   select.$destroy();
 });
 
-test('when isMulti is true and value is undefined show placeholder text', async (t) => {
+test('when multiple is true and value is undefined show placeholder text', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: undefined
     }
@@ -1495,12 +1495,12 @@ test('when isMulti is true and value is undefined show placeholder text', async 
   select.$destroy();
 });
 
-test('when isMulti is true clicking item in List will populate value', async (t) => {
+test('when multiple is true clicking item in List will populate value', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: undefined
     }
@@ -1514,12 +1514,12 @@ test('when isMulti is true clicking item in List will populate value', async (t)
   select.$destroy();
 });
 
-test('when isMulti is true items in value will not appear in List', async (t) => {
+test('when multiple is true items in value will not appear in List', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}]
     }
@@ -1537,13 +1537,13 @@ test('when isMulti is true items in value will not appear in List', async (t) =>
   select.$destroy();
 });
 
-test('when isMulti is true both value and filterText filters List', async (t) => {
+test('when multiple is true both value and filterText filters List', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
       listOpen: true,
-      isMulti: true,
+      multiple: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}]
     }
@@ -1558,12 +1558,12 @@ test('when isMulti is true both value and filterText filters List', async (t) =>
   select.$destroy();
 });
 
-test('when isMulti is true clicking X on a selected item will remove it from value', async (t) => {
+test('when multiple is true clicking X on a selected item will remove it from value', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]
     }
@@ -1575,12 +1575,12 @@ test('when isMulti is true clicking X on a selected item will remove it from val
   select.$destroy();
 });
 
-test('when isMulti is true and all selected items have been removed then placeholder should show and clear all should hide', async (t) => {
+test('when multiple is true and all selected items have been removed then placeholder should show and clear all should hide', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}]
     }
@@ -1591,12 +1591,12 @@ test('when isMulti is true and all selected items have been removed then placeho
   select.$destroy();
 });
 
-test('when isMulti is true and items are selected then clear all should wipe all selected items', async (t) => {
+test('when multiple is true and items are selected then clear all should wipe all selected items', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]
     }
@@ -1608,12 +1608,12 @@ test('when isMulti is true and items are selected then clear all should wipe all
   select.$destroy();
 });
 
-test('when isMulti and groupBy is active then items should be selectable', async (t) => {
+test('when multiple and groupBy is active then items should be selectable', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items: itemsWithGroup,
       groupBy: (item) => item.group
     }
@@ -1627,12 +1627,12 @@ test('when isMulti and groupBy is active then items should be selectable', async
   select.$destroy();
 });
 
-test('when isMulti and selected items reach edge of container then Select height should increase and selected items should wrap to new line', async (t) => {
+test('when multiple and selected items reach edge of container then Select height should increase and selected items should wrap to new line', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items
     }
   });
@@ -1644,12 +1644,12 @@ test('when isMulti and selected items reach edge of container then Select height
   select.$destroy();
 });
 
-test('when isMulti and value is populated then navigating with LeftArrow updates activeValue', async (t) => {
+test('when multiple and value is populated then navigating with LeftArrow updates activeValue', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}, {value: 'chips', label: 'Chips'},],
       isFocused: true
@@ -1667,12 +1667,12 @@ test('when isMulti and value is populated then navigating with LeftArrow updates
   select.$destroy();
 });
 
-test('when isMulti and value is populated then navigating with ArrowRight updates activeValue', async (t) => {
+test('when multiple and value is populated then navigating with ArrowRight updates activeValue', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}, {value: 'chips', label: 'Chips'},],
       isFocused: true
@@ -1689,12 +1689,12 @@ test('when isMulti and value is populated then navigating with ArrowRight update
   select.$destroy();
 });
 
-test('when isMulti and value has items and list opens then first item in list should be active', async (t) => {
+test('when multiple and value has items and list opens then first item in list should be active', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
     }
   });
@@ -1709,12 +1709,12 @@ test('when isMulti and value has items and list opens then first item in list sh
   select.$destroy();
 });
 
-test('when isMulti, isDisabled, and value has items then items should be locked', async (t) => {
+test('when multiple, isDisabled, and value has items then items should be locked', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       isDisabled: true,
       value: [{value: 'chocolate', label: 'Chocolate'}],
@@ -1726,12 +1726,12 @@ test('when isMulti, isDisabled, and value has items then items should be locked'
   select.$destroy();
 });
 
-test('when isMulti is true show each item in value if simple arrays are used', async (t) => {
+test('when multiple is true show each item in value if simple arrays are used', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items: ['pizza', 'chips', 'chocolate'],
       value: ['pizza', 'chocolate']
     }
@@ -1757,7 +1757,7 @@ test('when labelIdentifier is set you can pass a string and see the right label'
     }
   });
 
-  t.ok(document.querySelector('.selection').innerHTML === 'ONE');
+  t.ok(document.querySelector('.selected-item').innerHTML === 'ONE');
 
   select.$destroy();
 });
@@ -1788,7 +1788,6 @@ test('when loadOptions method is supplied and filterText has length then items s
     target,
     props: {
       Item: CustomItem, 
-      Selection: CustomItem,
       getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
@@ -1830,7 +1829,7 @@ test('when getSelectionLabel method is supplied and value are no items then disp
   });
 
 
-  t.ok(document.querySelector('.selection').innerHTML === 'This is not a label');
+  t.ok(document.querySelector('.selected-item').innerHTML === 'This is not a label');
 
   select.$destroy();
 });
@@ -1884,29 +1883,7 @@ test('when a custom Item component is supplied then use to display each item', a
   select.$destroy();
 });
 
-test('when a custom Selection component is supplied then use to display selection', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      Item: CustomItem,
-      Selection: CustomItem,
-      getOptionLabel: (option) => option.name,
-      isFocused: true,
-      items: [{
-        image_url: 'https://images.punkapi.com/v2/keg.png',
-        name: 'A Name', tagline: 'A tagline', abv: 'A abv'}],
-    }
-  });
-
-  await handleKeyboard('ArrowDown');
-  await handleKeyboard('Enter');
-
-  t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
-
-  select.$destroy();
-});
-
-test('when loadOptions method is supplied, isMulti is true and filterText has length then items should populate via promise resolve', async (t) => {
+test('when loadOptions method is supplied, multiple is true and filterText has length then items should populate via promise resolve', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1916,7 +1893,7 @@ test('when loadOptions method is supplied, isMulti is true and filterText has le
       getSelectionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
-      isMulti: true
+      multiple: true
     }
   });
 
@@ -1929,17 +1906,12 @@ test('when loadOptions method is supplied, isMulti is true and filterText has le
   select.$destroy();
 });
 
-test('when getSelectionLabel contains HTML then render the HTML', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      
-      value: items[0],
-      getSelectionLabel: (option) => `<p>${option.label}</p>`,
-    }
+test('when selection slot render slot content', async (t) => {
+  const select = new SelectionSlotTest({
+    target
   });
 
-  t.ok(document.querySelector('.selection').innerHTML === '<p>Chocolate</p>');
+  t.ok(document.querySelector('.selected-item').innerHTML === 'Slot: one');
 
   select.$destroy();
 });
@@ -2031,7 +2003,7 @@ test('when multi item is cleared the clear event is fired with removed item', as
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [itemToRemove]
     }
@@ -2090,12 +2062,12 @@ test('when item is selected or state changes then check value[optionIdentifier] 
   select.$destroy();
 });
 
-test('when isMulti and item is selected or state changes then check value[optionIdentifier] has changed before firing "select" event', async (t) => {
+test('when multiple and item is selected or state changes then check value[optionIdentifier] has changed before firing "select" event', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [
         {value: 'pizza', label: 'Pizza'},
@@ -2218,7 +2190,7 @@ test('when items are just strings then value should render', async (t) => {
     }
   });
 
-  t.ok(document.querySelector('.selection').innerHTML === 'one');
+  t.ok(document.querySelector('.selected-item').innerHTML === 'one');
   select.$destroy();
 });
 
@@ -2247,12 +2219,12 @@ test('when VirtualList then render list', async (t) => {
   select.$destroy();
 });
 
-test('when isMulti and value has items then check each item is unique', async (t) => {
+test('when multiple and value has items then check each item is unique', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [
         {value: 'pizza', label: 'Pizza'},
@@ -2267,12 +2239,12 @@ test('when isMulti and value has items then check each item is unique', async (t
   select.$destroy();
 });
 
-test('when isMulti and textFilter has length then enter should select item', async (t) => {
+test('when multiple and textFilter has length then enter should select item', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       isFocused: true,
       filterText: 'p',
@@ -2287,12 +2259,12 @@ test('when isMulti and textFilter has length then enter should select item', asy
   select.$destroy();
 });
 
-test('when isMulti and textFilter has length and no items in list then enter should do nothing', async (t) => {
+test('when multiple and textFilter has length and no items in list then enter should do nothing', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       isFocused: true,
       filterText: 'zc',
@@ -2306,12 +2278,12 @@ test('when isMulti and textFilter has length and no items in list then enter sho
   select.$destroy();
 });
 
-test('When isMulti and no selected item then delete should do nothing', async (t) => {
+test('When multiple and no selected item then delete should do nothing', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       isFocused: true,
       listOpen: true
@@ -2342,7 +2314,7 @@ test('When list is open, filterText applied and Enter/Tab key pressed should sel
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   t.equal(select.value.value, 'A5');
   await wait(0);
-  t.ok(target.querySelector('.selected-item .selection').innerHTML === 'A5');
+  t.ok(target.querySelector('.selected-item').innerHTML === 'A5');
 
   select.$destroy();
 });
@@ -2379,17 +2351,17 @@ test('when items and value supplied as just strings then value should render cor
     }
   });
 
-  t.equal(document.querySelector('.selected-item .selection').innerHTML, 'Pizza');
+  t.equal(document.querySelector('.selected-item').innerHTML, 'Pizza');
 
   select.$destroy();
 });
 
-test('when isMulti with items and value supplied as just strings then value should render correctly', async (t) => {
+test('when multiple with items and value supplied as just strings then value should render correctly', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items: ['Pizza', 'Chocolate', 'Crisps'],
       value: ['Pizza']
     }
@@ -2400,7 +2372,7 @@ test('when isMulti with items and value supplied as just strings then value shou
   select.$destroy();
 });
 
-test('when isMulti, groupBy and value are supplied then list should be filtered', async (t) => {
+test('when multiple, groupBy and value are supplied then list should be filtered', async (t) => {
   let _items = [
     { id: 1, name: "Foo", group: "first" },
     { id: 2, name: "Bar", group: "second" },
@@ -2413,7 +2385,7 @@ test('when isMulti, groupBy and value are supplied then list should be filtered'
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items: _items,
       groupBy: (item) => item.group,
       optionIdentifier: 'id',
@@ -2544,7 +2516,7 @@ test('When creator is selected, created item it added to multi selection', async
       isCreatable: true,
       isFocused: true,
       listOpen: true,
-      isMulti: true
+      multiple: true
     }
   });
 
@@ -2572,7 +2544,7 @@ test('When creator is selected multiple times, items are all added to multi sele
       isCreatable: true,
       isFocused: true,
       listOpen: true,
-      isMulti: true
+      multiple: true
     }
   });
 
@@ -2592,7 +2564,7 @@ test('When creator is selected multiple times, items are all added to multi sele
   select.$destroy();
 });
 
-test('When isMulti and an items remove icon is clicked then item should be removed from value', async (t) => {
+test('When multiple and an items remove icon is clicked then item should be removed from value', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -2603,7 +2575,7 @@ test('When isMulti and an items remove icon is clicked then item should be remov
         {value: 'pizza', label: 'Pizza'},
         {value: 'cake', label: 'Cake'},
       ],
-      isMulti: true
+      multiple: true
     }
   });
 
@@ -2658,7 +2630,7 @@ test('When isCreatable with non-default item structure, item creator displays ge
   select.$destroy();
 });
 
-test('When isCreatable and isMulti and optionIdentifier is supplied creator displays getCreatorLabel label', async (t) => {
+test('When isCreatable and multiple and optionIdentifier is supplied creator displays getCreatorLabel label', async (t) => {
   const filterText = 'abc';
   const _items = [
     {foo: 'chocolate', label: 'Chocolate'},
@@ -2670,7 +2642,7 @@ test('When isCreatable and isMulti and optionIdentifier is supplied creator disp
     props: {
       Multi,
       optionIdentifier: 'foo',
-      isMulti: true,
+      multiple: true,
       items: _items,
       isCreatable: true
     }
@@ -2685,7 +2657,7 @@ test('When isCreatable and isMulti and optionIdentifier is supplied creator disp
   select.$destroy();
 });
 
-test('When isCreatable and isMulti and optionIdentifier is supplied multiple creatable items can be added', async (t) => {
+test('When isCreatable and multiple and optionIdentifier is supplied multiple creatable items can be added', async (t) => {
   const filterText = 'foo';
   const filterText2 = 'bar';
 
@@ -2707,7 +2679,7 @@ test('When isCreatable and isMulti and optionIdentifier is supplied multiple cre
     props: {
       Multi,
       optionIdentifier,
-      isMulti: true,
+      multiple: true,
       items: _items,
       isCreatable: true,
       getOptionLabel,
@@ -2927,8 +2899,6 @@ test('When noOptionsMessage is changed after List component has been created the
       getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
-      Item: CustomItem,
-      Selection: CustomItem,
       noOptionsMessage: 'FIRST'
     },
   });
@@ -3036,7 +3006,7 @@ test('When items change then value should also update', async (t) => {
   await wait(0);
 
   t.ok(select.value.label === 'Loaded Fries');
-  t.ok(target.querySelector('.selected-item .selection').innerHTML === 'Loaded Fries');
+  t.ok(target.querySelector('.selected-item').innerHTML === 'Loaded Fries');
 
   select.$destroy();
 
@@ -3046,7 +3016,7 @@ test('When items change then value should also update', async (t) => {
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [{value: 'chips', label: 'Chips'}, {value: 'pizza', label: 'Pizza'}],
     },
@@ -3093,17 +3063,17 @@ test('When items change then value should also update but only if found in items
   await wait(0);
 
   t.ok(select.value.label === 'Chips');
-  t.ok(target.querySelector('.selected-item .selection').innerHTML === 'Chips');
+  t.ok(target.querySelector('.selected-item').innerHTML === 'Chips');
 
   select.$destroy();
 });
 
-test('When isMulti and multiFullItemClearable then clicking anywhere on the item will remove item', async (t) => {
+test('When multiple and multiFullItemClearable then clicking anywhere on the item will remove item', async (t) => {
   const multiSelect = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       multiFullItemClearable: true,
       value: [{value: 'chips', label: 'Chips'}, {value: 'pizza', label: 'Pizza'}],
@@ -3118,12 +3088,12 @@ test('When isMulti and multiFullItemClearable then clicking anywhere on the item
   multiSelect.$destroy();
 });
 
-test('When isMulti and filterText then items should filter out already selected items', async (t) => {
+test('When multiple and filterText then items should filter out already selected items', async (t) => {
   const multiSelect = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items,
       value: [{value: 'chips', label: 'Chips'}, {value: 'pizza', label: 'Pizza'}],
     },
@@ -3173,7 +3143,7 @@ test('when isCreatable and item created then event "itemCreated" should dispatch
       isCreatable: true,
       isFocused: true,
       listOpen: true,
-      isMulti: true
+      multiple: true
     }
   });
   
@@ -3263,7 +3233,7 @@ test('clicking on an external textarea should close and blur it', async (t) => {
   select.$destroy();
 });
 
-test('when switching between isMulti true/false ensure Select continues working', async (t) => {
+test('when switching between multiple true/false ensure Select continues working', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -3274,13 +3244,13 @@ test('when switching between isMulti true/false ensure Select continues working'
     }
   });
 
-  select.isMulti = true;
+  select.multiple = true;
   select.loadOptions = itemsPromise;
 
   t.ok(JSON.stringify(select.value) === JSON.stringify([{value: 'chips', label: 'Chips'}]));
   t.ok(Array.isArray(select.value));
   
-  select.isMulti = false;
+  select.multiple = false;
   select.loadOptions = null;
   select.items = [...items];
 
@@ -3325,7 +3295,7 @@ test('when esc key pressed should close list', async (t) => {
 });
 
 
-test('when isMulti and placeholderAlwaysShow then always show placeholder text', async (t) => {
+test('when multiple and placeholderAlwaysShow then always show placeholder text', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -3333,7 +3303,7 @@ test('when isMulti and placeholderAlwaysShow then always show placeholder text',
       items,
       value: [{value: 'chocolate', label: 'Chocolate'},
       {value: 'pizza', label: 'Pizza'},],
-      isMulti: true,
+      multiple: true,
       placeholderAlwaysShow: true,
       placeholder: 'foo bar'
     }
@@ -3375,7 +3345,7 @@ test('when loadOptions and value then items should show on promise resolve',asyn
   select.$destroy();
 });
 
-test('when loadOptions, isMulti and value then filterText should remain on promise resolve',async (t) => {
+test('when loadOptions, multiple and value then filterText should remain on promise resolve',async (t) => {
   const loadOptionsFn = async () => {
     return Promise.resolve([
       {value: 'chocolate', label: 'Chocolate'},
@@ -3388,7 +3358,7 @@ test('when loadOptions, isMulti and value then filterText should remain on promi
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       value: {
         value: 'chocolate', label: 'Chocolate'
       },
@@ -3560,13 +3530,13 @@ test('When groupBy, optionIdentifier, labelIdentifier and createGroupHeaderItem 
 });
 
 
-test('When isMulti on:select events should fire on each item removal (including the last item)', async (t) => {
+test('When multiple on:select events should fire on each item removal (including the last item)', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
       items,
-      isMulti: true,
+      multiple: true,
       value: ['Cake', 'Chips']
     },
   });
@@ -3674,12 +3644,12 @@ test('When value then hidden field should have value', async (t) => {
   select.$destroy();
 });
 
-test('When isMulti and no value then hidden field should no value', async (t) => {
+test('When multiple and no value then hidden field should no value', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items: items,
     },
   });
@@ -3690,12 +3660,12 @@ test('When isMulti and no value then hidden field should no value', async (t) =>
   select.$destroy();
 });
 
-test('When isMulti and value then hidden fields should list value items', async (t) => {
+test('When multiple and value then hidden fields should list value items', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items: items,
       value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},]
     },
@@ -3744,12 +3714,12 @@ test('When listOpen and value then aria-selection describes value', async (t) =>
   select.$destroy();
 });
 
-test('When listOpen, value and isMulti then aria-selection describes value', async (t) => {
+test('When listOpen, value and multiple then aria-selection describes value', async (t) => {
   const select = new Select({
     target,
     props: {
       Multi,
-      isMulti: true,
+      multiple: true,
       items: items,
       value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},],
       isFocused: true
@@ -4213,8 +4183,8 @@ test('when < is supplied in filterText then sanitiseLabel method coverts to HTML
   t.ok(item.innerHTML === 'Create "&lt;test /&gt;"');
   item.click();
   await wait(0);
-  let selection = document.querySelector('.selected-item .selection').innerHTML;
-  t.ok(selection === '&lt;test /&gt;');
+  let selection = document.querySelector('.selected-item').innerHTML;
+  t.ok(selection === '&amp;lt;test /&gt;');
 
   select.$destroy();
 })

@@ -5,7 +5,6 @@
 
     import _Item from './Item.svelte';
     import _List from './List.svelte';
-    import _Selection from './Selection.svelte';
     import _ClearIcon from './ClearIcon.svelte';
     import _Multi from './Multi.svelte';
     import _ChevronIcon from './ChevronIcon.svelte';
@@ -19,7 +18,6 @@
 
     export let Item = _Item;
     export let List = _List;
-    export let Selection = _Selection;
     export let filter = _filter;
     export let getItems = _getItems;
     export let computePlacement = _computePlacement;
@@ -34,7 +32,7 @@
     export let id = null;
     export let container = undefined;
     export let input = undefined;
-    export let isMulti = false;
+    export let multiple = false;
     export let multiFullItemClearable = false;
     export let isDisabled = false;
     export let isCreatable = false;
@@ -126,7 +124,7 @@
     let activeValue;
     let prev_value;
     let prev_filterText;
-    let prev_isMulti;
+    let prev_multiple;
     let hoverItemIndex;
 
     function setValue() {
@@ -136,7 +134,7 @@
                 [optionIdentifier]: value,
                 label: value,
             };
-        } else if (isMulti && Array.isArray(value) && value.length > 0) {
+        } else if (multiple && Array.isArray(value) && value.length > 0) {
             value = value.map((item) => (typeof item === 'string' ? { value: item, label: item } : item));
         }
     }
@@ -210,7 +208,7 @@
     }
 
     function dispatchSelectedItem() {
-        if (isMulti) {
+        if (multiple) {
             if (JSON.stringify(value) !== JSON.stringify(prev_value)) {
                 if (checkValueForDuplicates()) {
                     dispatch('change', value);
@@ -240,11 +238,11 @@
 
     $: if ((items, value)) setValue();
     $: if (inputAttributes || !isSearchable) assignInputAttributes();
-    $: if (isMulti) setupMulti();
-    $: if (prev_isMulti && !isMulti) setupSingle();
-    $: if (isMulti && value && value.length > 1) checkValueForDuplicates();
+    $: if (multiple) setupMulti();
+    $: if (prev_multiple && !multiple) setupSingle();
+    $: if (multiple && value && value.length > 1) checkValueForDuplicates();
     $: if (value) dispatchSelectedItem();
-    $: if (!value && isMulti && prev_value) dispatch('change', value);
+    $: if (!value && multiple && prev_value) dispatch('change', value);
     $: if (listOpen && input) handleFocus();
     $: if (!isFocused && input) listOpen = false;
     $: if (filterText !== prev_filterText) setupFilterText();
@@ -284,25 +282,25 @@
         } else {
             listOpen = true;
 
-            if (isMulti) {
+            if (multiple) {
                 activeValue = undefined;
             }
         }
     }
 
-    $: hasValue = isMulti ? value && value.length > 1 : value;
+    $: hasValue = multiple ? value && value.length > 1 : value;
     $: _showChevron = showChevron && ChevronIcon;
     $: showSelectedItem = hasValue && filterText.length === 0;
     $: showClear = showSelectedItem && isClearable && !isDisabled && !isWaiting;
-    $: placeholderText = placeholderAlwaysShow && isMulti ? placeholder : value ? '' : placeholder;
-    $: showMultiSelect = isMulti && value && value.length > 0;
+    $: placeholderText = placeholderAlwaysShow && multiple ? placeholder : value ? '' : placeholder;
+    $: showMultiSelect = multiple && value && value.length > 0;
     $: suggestionMode = suggestions && filterText.length === 0;
-    $: ariaSelection = value ? handleAriaSelection(isMulti) : '';
+    $: ariaSelection = value ? handleAriaSelection(multiple) : '';
     $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, isFocused, listOpen });
     $: updateValueDisplay(items);
-    $: if (isMulti) justValue = value ? value.map((item) => item[optionIdentifier]) : null;
-    $: if (!isMulti) justValue = value ? value[optionIdentifier] : value;
-    $: if (!isMulti && prev_value && !value) dispatch('change', value);
+    $: if (multiple) justValue = value ? value.map((item) => item[optionIdentifier]) : null;
+    $: if (!multiple) justValue = value ? value[optionIdentifier] : value;
+    $: if (!multiple && prev_value && !value) dispatch('change', value);
 
     $: listProps = {
         Item,
@@ -312,7 +310,7 @@
         hideEmptyState,
         VirtualList,
         value,
-        isMulti,
+        multiple,
         getGroupHeaderLabel,
         items: filteredItems,
         itemHeight,
@@ -329,7 +327,7 @@
         loadOptions,
         filterText,
         items: suggestionMode ? suggestions : items,
-        isMulti,
+        multiple,
         value,
         optionIdentifier,
         groupBy,
@@ -344,7 +342,7 @@
     beforeUpdate(async () => {
         prev_value = value;
         prev_filterText = filterText;
-        prev_isMulti = isMulti;
+        prev_multiple = multiple;
     });
 
     function checkValueForDuplicates() {
@@ -376,7 +374,7 @@
         if (!items || items.length === 0 || items.some((item) => typeof item !== 'object')) return;
         if (
             !value ||
-            (isMulti ? value.some((selection) => !selection || !selection[optionIdentifier]) : !value[optionIdentifier])
+            (multiple ? value.some((selection) => !selection || !selection[optionIdentifier]) : !value[optionIdentifier])
         )
             return;
 
@@ -426,15 +424,15 @@
                 if (!listOpen) isFocused = false;
                 break;
             case 'Backspace':
-                if (!isMulti || filterText.length > 0) return;
-                if (isMulti && value && value.length > 0) {
+                if (!multiple || filterText.length > 0) return;
+                if (multiple && value && value.length > 0) {
                     handleMultiItemClear(activeValue !== undefined ? activeValue : value.length - 1);
                     if (activeValue === 0 || activeValue === undefined) break;
                     activeValue = value.length > activeValue ? activeValue - 1 : undefined;
                 }
                 break;
             case 'ArrowLeft':
-                if (!isMulti || filterText.length > 0) return;
+                if (!multiple || filterText.length > 0) return;
                 if (activeValue === undefined) {
                     activeValue = value.length - 1;
                 } else if (value.length > activeValue && activeValue !== 0) {
@@ -442,7 +440,7 @@
                 }
                 break;
             case 'ArrowRight':
-                if (!isMulti || filterText.length > 0 || activeValue === undefined) return;
+                if (!multiple || filterText.length > 0 || activeValue === undefined) return;
                 if (activeValue === value.length - 1) {
                     activeValue = undefined;
                 } else if (activeValue < value.length - 1) {
@@ -503,7 +501,7 @@
             const item = Object.assign({}, detail);
 
             if (!item.isGroupHeader || item.isSelectable) {
-                if (isMulti) {
+                if (multiple) {
                     value = value ? value.concat([item]) : [item];
                 } else {
                     value = item;
@@ -522,7 +520,7 @@
 
     function itemCreated(event) {
         const { detail } = event;
-        if (isMulti) {
+        if (multiple) {
             value = value || [];
             value = [...value, createItem(detail)];
         } else {
@@ -552,10 +550,10 @@
         return `Select is focused, type to refine list, press down to open the menu.`;
     };
 
-    function handleAriaSelection(_isMulti) {
+    function handleAriaSelection(_multiple) {
         let selected = undefined;
 
-        if (_isMulti && value.length > 0) {
+        if (_multiple && value.length > 0) {
             selected = value.map((v) => getSelectionLabel(v)).join(', ');
         } else {
             selected = getSelectionLabel(value);
@@ -618,7 +616,7 @@
 <div
     class="svelte-select {containerClasses}"
     class:error={hasError}
-    class:multi={isMulti}
+    class:multi={multiple}
     class:disabled={isDisabled}
     class:focused={isFocused}
     class:list-open={listOpen}
@@ -679,9 +677,11 @@
         style={inputStyles}
         disabled={isDisabled} />
 
-    {#if !isMulti && showSelectedItem}
+    {#if !multiple && showSelectedItem}
         <div class="selected-item">
-            <svelte:component this={Selection} item={value} {getSelectionLabel} />
+            <slot name="selection" selection={getSelectionLabel(value)}>
+                { getSelectionLabel(value) }
+            </slot>
         </div>
     {/if}
 
@@ -703,11 +703,11 @@
         {/if}
     </div>
 
-    {#if !isMulti || (isMulti && !showMultiSelect)}
+    {#if !multiple || (multiple && !showMultiSelect)}
         <input name={inputAttributes.name} type="hidden" value={value ? value[optionIdentifier] : null} />
     {/if}
 
-    {#if isMulti && showMultiSelect}
+    {#if multiple && showMultiSelect}
         {#each value as item}
             <input name={inputAttributes.name} type="hidden" value={item ? item[optionIdentifier] : null} />
         {/each}
@@ -847,6 +847,9 @@
         height: var(--height, 42px);
         overflow-x: hidden;
         padding: var(--selected-item-padding, 0 20px 0 0);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--selected-item-color, inherit);
     }
 
     .svelte-select .selected-item:focus {

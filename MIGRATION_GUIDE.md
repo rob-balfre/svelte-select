@@ -2,6 +2,16 @@
 
 v5 is a major release that that includes some ⚠️ BREAKING CHANGES ⚠️ 
 
+Removed `Selection` component, use named slot instead.
+
+```html
+<Select bind:items bind:value>
+  <div slot="selection" let:selection>
+    <i>{selection}</i>
+  </div>
+</Select>
+```
+
 Removed `isVirtualList` instead `npm i svelte-tiny-virtual-list -D` and
 
 ```html
@@ -63,6 +73,7 @@ The following CSS custom properties were removed in v5.
 `showIndicator` → `showChevron`<br/>
 `selectedValue` removed (was already deprecated in v4 in favour of `value`)<br/>
 `loadOptionsInterval` → `debounceWait`
+`isMulti` → `multiple`
 
 
 ### Event change:

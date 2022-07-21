@@ -2,7 +2,7 @@ export default function filter({
     loadOptions,
     filterText,
     items,
-    isMulti,
+    multiple,
     value,
     optionIdentifier,
     groupBy,
@@ -23,7 +23,7 @@ export default function filter({
     let filterResults = items.filter((item) => {
         let matchesFilter = itemFilter(getOptionLabel(item, filterText), filterText, item);
 
-        if (matchesFilter && isMulti && value && Array.isArray(value)) {
+        if (matchesFilter && multiple && value && Array.isArray(value)) {
             matchesFilter = !value.some((x) => {
                 return x[optionIdentifier] === item[optionIdentifier];
             });
