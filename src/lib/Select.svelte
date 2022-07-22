@@ -6,7 +6,6 @@
     import _Item from './Item.svelte';
     import _List from './List.svelte';
     import _ClearIcon from './ClearIcon.svelte';
-    import _Multi from './Multi.svelte';
     import _ChevronIcon from './ChevronIcon.svelte';
     import _LoadingIcon from './LoadingIcon.svelte';
 
@@ -22,7 +21,6 @@
     export let getItems = _getItems;
     export let computePlacement = _computePlacement;
 
-    export let Multi = _Multi;
     export let ChevronIcon = _ChevronIcon;
     export let ClearIcon = _ClearIcon;
     export let LoadingIcon = _LoadingIcon;
@@ -288,9 +286,9 @@
         }
     }
 
-    $: hasValue = multiple ? value && value.length > 1 : value;
+    $: hasValue = multiple ? value && value.length > 0 : value;
     $: _showChevron = showChevron && ChevronIcon;
-    $: showSelectedItem = hasValue && filterText.length === 0;
+    $: showSelectedItem = hasValue && (filterText.length === 0 || multiple);
     $: showClear = showSelectedItem && isClearable && !isDisabled && !isWaiting;
     $: placeholderText = placeholderAlwaysShow && multiple ? placeholder : value ? '' : placeholder;
     $: showMultiSelect = multiple && value && value.length > 0;
@@ -374,7 +372,9 @@
         if (!items || items.length === 0 || items.some((item) => typeof item !== 'object')) return;
         if (
             !value ||
-            (multiple ? value.some((selection) => !selection || !selection[optionIdentifier]) : !value[optionIdentifier])
+            (multiple
+                ? value.some((selection) => !selection || !selection[optionIdentifier])
+                : !value[optionIdentifier])
         )
             return;
 
@@ -385,9 +385,8 @@
         }
     }
 
-    function handleMultiItemClear(event) {
-        const { detail } = event;
-        const itemToRemove = value[detail ? detail.i : value.length - 1];
+    function handleMultiItemClear(i) {
+        const itemToRemove = value[i];
 
         if (value.length === 1) {
             value = undefined;
@@ -652,17 +651,30 @@
         <svelte:component this={Icon} {...iconProps} />
     {/if}
 
-    {#if showMultiSelect}
-        <svelte:component
-            this={Multi}
-            {value}
-            {getSelectionLabel}
-            {activeValue}
-            {isDisabled}
-            {ClearIcon}
-            {multiFullItemClearable}
-            on:multiItemClear={handleMultiItemClear}
-            on:focus={handleFocus} />
+    {#if showSelectedItem}
+        {#if multiple}
+            {#each value as item, i}
+                <div
+                    class="multi-item {activeValue === i ? 'active' : ''} {isDisabled ? 'disabled' : ''}"
+                    on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}>
+                    <slot name="selection" selection={getSelectionLabel(item)}>
+                        {getSelectionLabel(item)}
+                    </slot>
+
+                    {#if !isDisabled && !multiFullItemClearable && ClearIcon}
+                        <div class="multi-item_clear" on:click={() => handleMultiItemClear(i)}>
+                            <svelte:component this={ClearIcon} />
+                        </div>
+                    {/if}
+                </div>
+            {/each}
+        {:else}
+            <div class="selected-item">
+                <slot name="selection" selection={getSelectionLabel(value)}>
+                    {getSelectionLabel(value)}
+                </slot>
+            </div>
+        {/if}
     {/if}
 
     <input
@@ -677,13 +689,7 @@
         style={inputStyles}
         disabled={isDisabled} />
 
-    {#if !multiple && showSelectedItem}
-        <div class="selected-item">
-            <slot name="selection" selection={getSelectionLabel(value)}>
-                { getSelectionLabel(value) }
-            </slot>
-        </div>
-    {/if}
+    
 
     <div class="icons">
         {#if showClear}
@@ -907,9 +913,9 @@
         padding: var(--multi-select-padding, 0 35px 0 16px);
         min-height: 38px;
         flex-wrap: wrap;
-        align-items: stretch;
         display: flex;
         height: auto;
+        align-items: center;
     }
 
     .svelte-select.multi input {
@@ -937,5 +943,35 @@
 
     .multi input {
         flex: 1 1 40px;
+    }
+
+    .multi-item {
+        background: var(--multi-item-bg, #ebedef);
+        margin: var(--multi-item-margin, 4px 5px 0 0);
+        border: var(--multi-item-border, 1px solid #ddd);
+        border-radius: var(--multi-item-border-radius, 4px);
+        height: var(--multi-item-height, 32px);
+        line-height: var(--multi-item-height, 32px);
+        display: flex;
+        cursor: default;
+        padding: var(--multi-item-padding, 0 6px 0 6px);
+        max-width: var(--multi-max-width, calc(100% - 8px));
+        box-sizing: border-box;
+        margin: var(--multi-label-margin, 0 5px 0 0);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .multi-item.disabled:hover {
+        background: var(--multi-item-disabled-hover-bg, #ebedef);
+        color: var(--multi-item-disabled-hover-color, #c1c6cc);
+    }
+
+    .multi-item_clear {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        --clear-icon-color: var(--multi-item-clear-icon-color, #000);
     }
 </style>

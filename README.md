@@ -84,7 +84,6 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 | Import      | Type        | Description           |
 | ----------- | ----------- | --------------------- |
 | Item        | `component` | Item component        |
-| Multi       | `component` | Multi select support  |
 | ChevronIcon | `component` | Chevron Icon          |
 | ClearIcon   | `component` | Clear Icon            |
 | LoadingIcon | `component` | Spinning Loading Icon |

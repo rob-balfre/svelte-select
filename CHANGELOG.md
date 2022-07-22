@@ -2,6 +2,7 @@
 
 ## 5.0.0
 
+* Removed Multi component
 * Added named slot `selection`
 * Removed Selection component
 * isMulti -> multiple
