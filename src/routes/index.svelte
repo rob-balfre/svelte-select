@@ -1,16 +1,24 @@
 <script>
     import Select from '$lib/Select.svelte';
-    let items = ['one', 'two'];
-    let value = 'one';
+    let items = ['one', 'two', 'three'];
+    let value; //= ['one', 'two'];
     let target = null;
 </script>
 
 <div class="container">
     <form>
-        <Select bind:items bind:value>
-            <div class="fancy-selection" slot="selection" let:selection>
+        <Select bind:items bind:value showChevron>
+            <!-- <div class="fancy-selection" slot="selection" let:selection>
                 <i>{selection}</i>
             </div>
+
+            <div class="chevron" slot="chevron" let:listOpen>
+                {#if listOpen}
+                ⬆️
+                {:else}
+                ⬇️
+                {/if}
+            </div> -->
         </Select>
     </form>
 </div>

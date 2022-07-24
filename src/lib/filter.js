@@ -6,7 +6,7 @@ export default function filter({
     value,
     optionIdentifier,
     groupBy,
-    isCreatable,
+    creatable,
     itemFilter,
     convertStringItemsToObjects,
     filterGroupedItems,
@@ -36,7 +36,7 @@ export default function filter({
         filterResults = filterGroupedItems(filterResults);
     }
 
-    if (isCreatable) {
+    if (creatable) {
         filterResults = addCreatableItem(filterResults, filterText);
     }
 

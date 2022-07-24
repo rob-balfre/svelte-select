@@ -5,13 +5,14 @@
 
     import _Item from './Item.svelte';
     import _List from './List.svelte';
-    import _ClearIcon from './ClearIcon.svelte';
-    import _ChevronIcon from './ChevronIcon.svelte';
-    import _LoadingIcon from './LoadingIcon.svelte';
 
     import _filter from '$lib/filter';
     import _getItems from '$lib/get-items';
     import _computePlacement from '$lib/compute-placement';
+
+    import ChevronIcon from './ChevronIcon.svelte';
+    import ClearIcon from './ClearIcon.svelte';
+    import LoadingIcon from './LoadingIcon.svelte';
 
     export let justValue = null; // read-only
 
@@ -21,20 +22,16 @@
     export let getItems = _getItems;
     export let computePlacement = _computePlacement;
 
-    export let ChevronIcon = _ChevronIcon;
-    export let ClearIcon = _ClearIcon;
-    export let LoadingIcon = _LoadingIcon;
     export let VirtualList = null;
-    export let Icon = undefined;
 
     export let id = null;
     export let container = undefined;
     export let input = undefined;
     export let multiple = false;
     export let multiFullItemClearable = false;
-    export let isDisabled = false;
-    export let isCreatable = false;
-    export let isFocused = false;
+    export let disabled = false;
+    export let creatable = false;
+    export let focused = false;
     export let value = null;
     export let filterText = '';
     export let placeholder = 'Please select';
@@ -43,7 +40,7 @@
     export let itemFilter = (label, filterText) => `${label}`.toLowerCase().includes(filterText.toLowerCase());
     export let groupBy = undefined;
     export let groupFilter = (groups) => groups;
-    export let isGroupHeaderSelectable = false;
+    export let groupHeaderSelectable = false;
     export const sanitiseLabel = (text) => text && `${text}`.replace(/\</gi, '&lt;');
     export let getGroupHeaderLabel = (option) => {
         return sanitiseLabel(option[labelIdentifier]) || option.id;
@@ -84,12 +81,12 @@
         return filteredItems;
     };
 
-    export let isSearchable = true;
+    export let searchable = true;
     export let inputStyles = '';
-    export let isClearable = true;
-    export let isWaiting = false;
+    export let clearable = true;
+    export let loading = false;
     export let listPlacement = 'auto';
-    export let listOpen = isFocused;
+    export let listOpen = focused;
 
     let timeout;
     export let debounce = (fn, wait = 1) => {
@@ -103,7 +100,6 @@
     export let inputAttributes = {};
     export let listAutoWidth = true;
     export let itemHeight = 42;
-    export let iconProps = {};
     export let showChevron = false;
     export let listOffset = 5;
     export let suggestions = null;
@@ -156,7 +152,7 @@
             _inputAttributes['id'] = id;
         }
 
-        if (!isSearchable) {
+        if (!searchable) {
             _inputAttributes['readonly'] = true;
         }
     }
@@ -187,7 +183,7 @@
                         Object.assign(createGroupHeaderItem(groupValue, item), {
                             id: groupValue,
                             isGroupHeader: true,
-                            isSelectable: isGroupHeaderSelectable,
+                            isSelectable: groupHeaderSelectable,
                         })
                     );
                 }
@@ -235,26 +231,26 @@
     }
 
     $: if ((items, value)) setValue();
-    $: if (inputAttributes || !isSearchable) assignInputAttributes();
+    $: if (inputAttributes || !searchable) assignInputAttributes();
     $: if (multiple) setupMulti();
     $: if (prev_multiple && !multiple) setupSingle();
     $: if (multiple && value && value.length > 1) checkValueForDuplicates();
     $: if (value) dispatchSelectedItem();
     $: if (!value && multiple && prev_value) dispatch('change', value);
     $: if (listOpen && input) handleFocus();
-    $: if (!isFocused && input) listOpen = false;
+    $: if (!focused && input) listOpen = false;
     $: if (filterText !== prev_filterText) setupFilterText();
     $: if (!listOpen && listApp) destroyList();
 
     function setupFilterText() {
         if (filterText.length === 0) return;
 
-        isFocused = true;
+        focused = true;
         listOpen = true;
 
         if (loadOptions) {
             debounce(async function () {
-                isWaiting = true;
+                loading = true;
                 let res = await getItems({
                     dispatch,
                     loadOptions,
@@ -263,17 +259,17 @@
                 });
 
                 if (res) {
-                    isWaiting = res.isWaiting;
-                    isFocused = res.isFocused;
+                    loading = res.loading;
+                    focused = res.focused;
                     listOpen = res.listOpen;
                     filteredItems = groupBy ? filterGroupedItems(res.filteredItems) : res.filteredItems;
                 } else {
-                    isWaiting = false;
-                    isFocused = true;
+                    loading = false;
+                    focused = true;
                     listOpen = true;
                 }
 
-                if (isCreatable) {
+                if (creatable) {
                     filteredItems = addCreatableItem(filteredItems, filterText);
                 }
             }, debounceWait);
@@ -287,14 +283,13 @@
     }
 
     $: hasValue = multiple ? value && value.length > 0 : value;
-    $: _showChevron = showChevron && ChevronIcon;
     $: showSelectedItem = hasValue && (filterText.length === 0 || multiple);
-    $: showClear = showSelectedItem && isClearable && !isDisabled && !isWaiting;
+    $: showClear = showSelectedItem && clearable && !disabled && !loading;
     $: placeholderText = placeholderAlwaysShow && multiple ? placeholder : value ? '' : placeholder;
     $: showMultiSelect = multiple && value && value.length > 0;
     $: suggestionMode = suggestions && filterText.length === 0;
     $: ariaSelection = value ? handleAriaSelection(multiple) : '';
-    $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, isFocused, listOpen });
+    $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, focused, listOpen });
     $: updateValueDisplay(items);
     $: if (multiple) justValue = value ? value.map((item) => item[optionIdentifier]) : null;
     $: if (!multiple) justValue = value ? value[optionIdentifier] : value;
@@ -329,7 +324,7 @@
         value,
         optionIdentifier,
         groupBy,
-        isCreatable,
+        creatable,
         itemFilter,
         convertStringItemsToObjects,
         filterGroupedItems,
@@ -400,7 +395,7 @@
     }
 
     function handleKeyDown(e) {
-        if (!isFocused) return;
+        if (!focused) return;
 
         switch (e.key) {
             case 'Enter':
@@ -420,7 +415,7 @@
                 activeValue = undefined;
                 break;
             case 'Tab':
-                if (!listOpen) isFocused = false;
+                if (!listOpen) focused = false;
                 break;
             case 'Backspace':
                 if (!multiple || filterText.length > 0) return;
@@ -452,21 +447,21 @@
     function handleFocus(e) {
         dispatch('focus', e);
 
-        isFocused = true;
+        focused = true;
         if (e) input.focus();
     }
 
     function handleBlur(e) {
         dispatch('blur', e);
         listOpen = false;
-        isFocused = false;
+        focused = false;
         activeValue = undefined;
         input.blur();
     }
 
     function handleClick() {
-        if (isDisabled) return;
-        isFocused = true;
+        if (disabled) return;
+        focused = true;
         listOpen = !listOpen;
         if (listOpen) {
             handleFocus();
@@ -482,8 +477,8 @@
 
     let mounted;
     onMount(() => {
-        if (listOpen) isFocused = true;
-        if (isFocused && input) input.focus();
+        if (listOpen) focused = true;
+        if (focused && input) input.focus();
         mounted = true;
     });
 
@@ -616,11 +611,10 @@
     class="svelte-select {containerClasses}"
     class:error={hasError}
     class:multi={multiple}
-    class:disabled={isDisabled}
-    class:focused={isFocused}
+    class:disabled={disabled}
+    class:focused={focused}
     class:list-open={listOpen}
-    class:two-icons={_showChevron && showClear}
-    class:show-chevron={_showChevron}
+    class:show-chevron={showChevron}
     style={containerStyles}
     on:click={handleClick}
     bind:this={container}>
@@ -639,7 +633,7 @@
     {/if}
 
     <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" class="a11y-text">
-        {#if isFocused}
+        {#if focused}
             <span id="aria-selection">{ariaSelection}</span>
             <span id="aria-context">
                 {ariaContext}
@@ -647,21 +641,19 @@
         {/if}
     </span>
 
-    {#if Icon}
-        <svelte:component this={Icon} {...iconProps} />
-    {/if}
+    <slot name="prepend" />
 
     {#if showSelectedItem}
         {#if multiple}
             {#each value as item, i}
                 <div
-                    class="multi-item {activeValue === i ? 'active' : ''} {isDisabled ? 'disabled' : ''}"
+                    class="multi-item {activeValue === i ? 'active' : ''} {disabled ? 'disabled' : ''}"
                     on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}>
                     <slot name="selection" selection={getSelectionLabel(item)}>
                         {getSelectionLabel(item)}
                     </slot>
 
-                    {#if !isDisabled && !multiFullItemClearable && ClearIcon}
+                    {#if !disabled && !multiFullItemClearable && ClearIcon}
                         <div class="multi-item_clear" on:click={() => handleMultiItemClear(i)}>
                             <svelte:component this={ClearIcon} />
                         </div>
@@ -681,33 +673,37 @@
         on:keydown={handleKeyDown}
         on:blur={handleBlur}
         on:focus={handleFocus}
-        readOnly={!isSearchable}
+        readOnly={!searchable}
         {..._inputAttributes}
         bind:this={input}
         bind:value={filterText}
         placeholder={placeholderText}
         style={inputStyles}
-        disabled={isDisabled} />
+        disabled={disabled} />
 
-    
+    {#if loading}
+        <div class="icon loading" aria-hidden="true">
+            <slot name="loading-icon">
+                <LoadingIcon />
+            </slot>
+        </div>
+    {/if}
 
-    <div class="icons">
-        {#if showClear}
-            <div class="clear-select" on:click|preventDefault={handleClear} aria-hidden="true">
-                <svelte:component this={ClearIcon} />
-            </div>
-        {/if}
+    {#if showClear}
+        <div class="icon clear-select" on:click|preventDefault={handleClear} aria-hidden="true">
+            <slot name="clear-icon">
+                <ClearIcon />
+            </slot>
+        </div>
+    {/if}
 
-        {#if _showChevron}
-            <div class="chevron" aria-hidden="true">
-                <svelte:component this={ChevronIcon} />
-            </div>
-        {/if}
-
-        {#if isWaiting}
-            <svelte:component this={LoadingIcon} />
-        {/if}
-    </div>
+    {#if showChevron}
+        <div class="icon chevron" aria-hidden="true">
+            <slot name="chevron" {listOpen}>
+                <ChevronIcon />
+            </slot>
+        </div>
+    {/if}
 
     {#if !multiple || (multiple && !showMultiSelect)}
         <input name={inputAttributes.name} type="hidden" value={value ? value[optionIdentifier] : null} />
@@ -787,11 +783,11 @@
         --spinnerHeight: --spinner-height;
         --spinnerWidth: --spinner-width;
 
-        --internal-padding: 0 16px;
+        --internal-padding: 0 0 0 16px;
 
-        border: var(--border, 1px solid #d8dbdf);
-        border-radius: var(--border-radius, 3px);
         box-sizing: border-box;
+        border: var(--border, 1px solid #d8dbdf);
+        border-radius: var(--border-radius, 6px);
         height: var(--height, 42px);
         position: relative;
         display: flex;
@@ -803,52 +799,57 @@
         overflow: hidden;
     }
 
-    .svelte-select input {
+    .svelte-select > * {
+        box-sizing: border-box;
+        transition: all 0.2s;
+    }
+
+    .svelte-select:hover,
+    .svelte-select:hover .chevron {
+        border-color: var(--border-hover-color, #b2b8bf);
+    }
+
+    input {
         cursor: default;
         border: none;
         color: var(--input-color, #3f4f5f);
         height: var(--height, 42px);
         line-height: var(--height, 42px);
-        padding: var(--input-padding, var(--padding, var(--internal-padding)));
-        width: 100%;
+        padding: var(--input-padding, 0);
+        flex-grow: 1;
         background: transparent;
         font-size: var(--input-font-size, 14px);
         letter-spacing: var(--input-letter-spacing, inherit);
-        position: absolute;
-        left: var(--input-left, 0);
         margin: var(--input-margin, 0);
-        box-sizing: border-box;
     }
 
-    .svelte-select input::placeholder {
+    input::placeholder {
         color: var(--placeholder-color, #78848f);
         opacity: var(--placeholder-opacity, 1);
     }
 
-    .svelte-select input:focus {
+    input:focus {
         outline: none;
     }
 
-    .svelte-select:hover {
-        border-color: var(--border-hover-color, #b2b8bf);
-    }
-
-    .svelte-select.focused {
+    .svelte-select.focused,
+    .svelte-select.focused .chevron {
         border-color: var(--border-focus-color, #006fe8);
     }
 
-    .svelte-select.disabled {
+    .disabled {
         background: var(--disabled-background, #ebedef);
         border-color: var(--disabled-border-color, #ebedef);
         color: var(--disabled-color, #c1c6cc);
     }
 
-    .svelte-select.disabled input::placeholder {
+    .disabled input::placeholder {
         color: var(--disabled-placeholder-color, #c1c6cc);
         opacity: var(--disabled-placeholder-opacity, 1);
     }
 
-    .svelte-select .selected-item {
+    .selected-item {
+        position: absolute;
         line-height: var(--height, 42px);
         height: var(--height, 42px);
         overflow-x: hidden;
@@ -858,58 +859,36 @@
         color: var(--selected-item-color, inherit);
     }
 
-    .svelte-select .selected-item:focus {
+    .selected-item:focus {
         outline: none;
     }
 
-    .svelte-select .icons {
-        pointer-events: none;
-        position: absolute;
+
+    .icon {
         display: flex;
         align-items: center;
-        justify-items: center;
-        right: var(--icons-right, 0);
-        top: var(--icons-top, 11px);
-        bottom: var(--icons-bottom, 11px);
-        color: var(--icons-color, #c5cacf);
-        padding: var(--icon-padding, 0);
+        justify-content: center;
     }
 
-    .svelte-select.focused .icons,
-    .svelte-select .clear-select:hover,
-    .svelte-select .chevron:hover {
-        color: var(--icons-color-focused, #2c3e50);
-    }
-
-    .svelte-select .clear-select {
-        display: flex;
-        align-items: center;
-        min-width: var(--clear-select-width, 20px);
+    .loading,
+    .clear-select {
+        width: var(--clear-select-width, 40px);
+        height: var(--clear-select-height, 40px);
         color: var(--clear-select-color, --icons-color);
-        margin: var(--clear-select-margin, 0 8px 0 0);
+        margin: var(--clear-select-margin, 0);
         pointer-events: all;
     }
 
-    .svelte-select .chevron {
-        display: flex;
-        min-width: var(--chevron-width, 20px);
-        height: var(--chevron-height, 20px);
-        color: var(--chevron-color, --icons-color);
-        box-shadow: var(--chevron-box-shadow, -1px 0 0 0 #c5cacf);
-        padding: var(--chevron-padding, 0 8px);
+    .chevron {
+        width: var(--chevron-width, 40px);
+        height: var(--chevron-height, 40px);
+        background: var(--chevron-background, transparent);
         pointer-events: var(--chevron-pointer-events, none);
+        color: var(--chevron-color, --icons-color);
+        border-left: 1px solid #d8dbdf;
     }
 
-    .svelte-select.multi.two-icons {
-        padding-right: 60px;
-    }
-
-    .svelte-select.show-chevron,
-    .svelte-select.show-chevron input {
-        padding-right: 40px;
-    }
-
-    .svelte-select.multi {
+    .multi {
         padding: var(--multi-select-padding, 0 35px 0 16px);
         min-height: 38px;
         flex-wrap: wrap;
@@ -918,13 +897,13 @@
         align-items: center;
     }
 
-    .svelte-select.multi input {
+    .multi input {
         padding: var(--multi-select-input-padding, 0);
         position: relative;
         margin: var(--multi-select-input-margin, 0);
     }
 
-    .svelte-select.error {
+    .error {
         border: var(--error-border, 1px solid #ff2d55);
         background: var(--error-background, #fff);
     }
@@ -956,7 +935,6 @@
         cursor: default;
         padding: var(--multi-item-padding, 0 6px 0 6px);
         max-width: var(--multi-max-width, calc(100% - 8px));
-        box-sizing: border-box;
         margin: var(--multi-label-margin, 0 5px 0 0);
         overflow: hidden;
         text-overflow: ellipsis;

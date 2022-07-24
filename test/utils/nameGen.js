@@ -2169,7 +2169,6 @@ var adjectives = [
     'vulgar',
     'wacky',
     'waggish',
-    'waiting',
     'wakeful',
     'wan',
     'wandering',

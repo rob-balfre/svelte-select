@@ -2,7 +2,6 @@ import normalizeHtml from '../utils/normalizeHtml';
 import CustomItem from './CustomItem.svelte';
 import Select from '../../src/lib/Select.svelte';
 import ChevronIcon from '../../src/lib/ChevronIcon.svelte';
-import TestIcon from './TestIcon.svelte';
 import TestClearIcon from './TestClearIcon.svelte';
 import SelectDefault from './Select/Select--default.svelte'
 import ParentContainer from './Select/ParentContainer.svelte'
@@ -11,6 +10,9 @@ import VirtualList from 'svelte-tiny-virtual-list';
 import getName from '../utils/nameGen';
 import SelectionSlotTest from './SelectionSlotTest.svelte';
 import SelectionSlotMultipleTest from './SelectionSlotMultipleTest.svelte';
+import ChevronSlotTest from './ChevronSlotTest.svelte';
+import PrependSlotTest from './PrependSlotTest.svelte';
+import ClearIconSlotTest from './ClearIconSlotTest.svelte';
 
 function querySelectorClick(selector) {
   document.querySelector(selector).click();
@@ -168,11 +170,11 @@ test('with no data creates default elements', async (t) => {
   select.$destroy();
 });
 
-test('when isFocused true container adds focused class', async (t) => {
+test('when focused true container adds focused class', async (t) => {
   const select = new Select({
     target,
     props: {
-      isFocused: true
+      focused: true
     }
   });
 
@@ -181,12 +183,12 @@ test('when isFocused true container adds focused class', async (t) => {
   select.$destroy();
 });
 
-test('when isFocused changes to true input should focus', async (t) => {
+test('when focused changes to true input should focus', async (t) => {
   const select = new Select({
     target,
   });
 
-    select.$set({isFocused: true});
+    select.$set({focused: true});
 
 
   const hasFocused = target.querySelector('.svelte-select input');
@@ -526,7 +528,7 @@ test('blur should close list and remove focus from select', async (t) => {
     }
   });
 
-  select.$set({isFocused: true});
+  select.$set({focused: true});
   div.click();
   div.remove();
   t.ok(!document.querySelector('.list'));
@@ -581,7 +583,7 @@ test('focus on Select input updates focus state', async (t) => {
   
   document.querySelector('.svelte-select input').focus();
 
-  t.ok(select.isFocused);
+  t.ok(select.focused);
   select.$destroy();
 });
 
@@ -596,7 +598,7 @@ test('key up and down when Select focused opens list', async (t) => {
   const input = document.querySelector('.svelte-select input');
   input.focus();
   await wait(0);
-  t.ok(select.isFocused);
+  t.ok(select.focused);
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
   t.ok(document.querySelector('.list'));
@@ -609,7 +611,7 @@ test('List should keep width of parent Select', async (t) => {
     target,
     props: {
       items,
-      isFocused: true
+      focused: true
     }
   });
 
@@ -757,7 +759,7 @@ test('typing while Select is focused populates Select filter text', async (t) =>
     }
   });
 
-  select.$set({isFocused: true});
+  select.$set({focused: true});
   document.querySelector('.svelte-select input').blur();
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 't'}));
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'e'}));
@@ -852,7 +854,7 @@ test('Typing in the Select filter opens List', async (t) => {
     target,
     props: {
       items,
-      isFocused: true
+      focused: true
     }
   });
 
@@ -866,7 +868,7 @@ test('While filtering, the first item in List should receive hover class', async
     target,
     props: {
       items,
-      isFocused: true
+      focused: true
     }
   });
 
@@ -895,7 +897,7 @@ test('Select can be disabled', async (t) => {
     target,
     props: {
       items,
-      isDisabled: true,
+      disabled: true,
     }
   });
 
@@ -909,7 +911,7 @@ test('Select List closes when you click enter', async (t) => {
     target,
     props: {
       items,
-      isFocused: true
+      focused: true
     }
   });
 
@@ -926,7 +928,7 @@ test('tabbing should move between tabIndexes and others Selects', async (t) => {
     target,
     props: {
       items,
-      isFocused: false
+      focused: false
     }
   });
 
@@ -934,7 +936,7 @@ test('tabbing should move between tabIndexes and others Selects', async (t) => {
     target: extraTarget,
     props: {
       items,
-      isFocused: false
+      focused: false
     }
   });
 
@@ -950,7 +952,7 @@ test(`shouldn't be able to clear a disabled Select`, async (t) => {
     target,
     props: {
       items,
-      isDisabled: true,
+      disabled: true,
       value: {name: 'Item #4'}
     }
   });
@@ -1044,7 +1046,7 @@ test('clicking between Selects should close and blur other Select', async (t) =>
     target,
     props: {
       items,
-      isFocused: false
+      focused: false
     }
   });
 
@@ -1052,21 +1054,21 @@ test('clicking between Selects should close and blur other Select', async (t) =>
     target: extraTarget,
     props: {
       items,
-      isFocused: false
+      focused: false
     }
   });
 
   await querySelectorClick('.svelte-select');
   t.ok(select.listOpen);
-  t.ok(select.isFocused);
-  t.ok(!other.isFocused);
-  t.ok(!other.isFocused);
+  t.ok(select.focused);
+  t.ok(!other.focused);
+  t.ok(!other.focused);
 
   await querySelectorClick('#extra .svelte-select');
   t.ok(!select.listOpen);
-  t.ok(!select.isFocused);
+  t.ok(!select.focused);
   t.ok(other.listOpen);
-  t.ok(other.isFocused);
+  t.ok(other.focused);
 
   select.$destroy();
   other.$destroy();
@@ -1127,7 +1129,7 @@ test('should not be able to clear when clearing is disabled', async (t) => {
     target,
     props: {
       items,
-      isClearable: false
+      clearable: false
     }
   });
 
@@ -1145,7 +1147,7 @@ test('should not be able to search when searching is disabled', async (t) => {
     target,
     props: {
       items,
-      isSearchable: false
+      searchable: false
     }
   });
 
@@ -1175,7 +1177,7 @@ test('placeholder should be prop value', async (t) => {
   select.$destroy();
 });
 
-test('should display loading icon when waiting is enabled', async (t) => {
+test('should display loading icon when loading is enabled', async (t) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
 
@@ -1183,7 +1185,7 @@ test('should display loading icon when waiting is enabled', async (t) => {
     target,
     props: {
       items,
-      isWaiting: true
+      loading: true
     }
   });
 
@@ -1316,13 +1318,13 @@ test('when groupBy, no active item and keydown enter is fired then list should c
   select.$destroy();
 });
 
-test('when isGroupHeaderSelectable clicking group header should select createGroupHeaderItem(groupValue,item)', async (t) => {
+test('when groupHeaderSelectable clicking group header should select createGroupHeaderItem(groupValue,item)', async (t) => {
   const select = new Select({
     target,
     props: {
       listOpen: true,
       items: itemsWithGroup,
-      isGroupHeaderSelectable: true,
+      groupHeaderSelectable: true,
       groupBy,
       createGroupHeaderItem
     }
@@ -1584,7 +1586,7 @@ test('when multiple and value is populated then navigating with LeftArrow update
       multiple: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}, {value: 'chips', label: 'Chips'},],
-      isFocused: true
+      focused: true
     }
   });
 
@@ -1606,7 +1608,7 @@ test('when multiple and value is populated then navigating with ArrowRight updat
       multiple: true,
       items,
       value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}, {value: 'chips', label: 'Chips'},],
-      isFocused: true
+      focused: true
     }
   });
 
@@ -1639,13 +1641,13 @@ test('when multiple and value has items and list opens then first item in list s
   select.$destroy();
 });
 
-test('when multiple, isDisabled, and value has items then items should be locked', async (t) => {
+test('when multiple, disabled, and value has items then items should be locked', async (t) => {
   const select = new Select({
     target,
     props: {
       multiple: true,
       items,
-      isDisabled: true,
+      disabled: true,
       value: [{value: 'chocolate', label: 'Chocolate'}],
     }
   });
@@ -1859,7 +1861,7 @@ test('when getOptionLabel contains HTML then render the HTML', async (t) => {
     props: {
       items,
       getOptionLabel: (option) => `<p>${option.label}</p>`,
-      isFocused: true
+      focused: true
     }
   });
 
@@ -1959,7 +1961,7 @@ test('when items in list filter or update then first item in list should highlig
     target,
     props: {
       items,
-      isFocused: true
+      focused: true
     }
   });
   
@@ -2022,11 +2024,11 @@ test('when multiple and item is selected or state changes then check value[optio
   select.$destroy();
 });
 
-test('when isFocused turns to false then check Select is no longer in focus', async (t) => {
+test('when focused turns to false then check Select is no longer in focus', async (t) => {
   const select = new Select({
     target,
     props: {
-      isFocused: true,
+      focused: true,
       items,
     }
   });
@@ -2034,7 +2036,7 @@ test('when isFocused turns to false then check Select is no longer in focus', as
   const selectSecond = new Select({
     target: extraTarget,
     props: {
-      isFocused: false,
+      focused: false,
       items,
     }
   });
@@ -2042,12 +2044,12 @@ test('when isFocused turns to false then check Select is no longer in focus', as
   select.$on('change', () => {
     setTimeout(() => {
       select.$set({
-        isFocused: false,
+        focused: false,
       })
     }, 0)
 
     selectSecond.$set({
-      isFocused: true
+      focused: true
     })
   });
 
@@ -2056,8 +2058,8 @@ test('when isFocused turns to false then check Select is no longer in focus', as
 
   await wait(0);
 
-  t.ok(selectSecond.isFocused);
-  t.ok(!select.isFocused);
+  t.ok(selectSecond.focused);
+  t.ok(!select.focused);
 
   selectSecond.$destroy();
   select.$destroy();
@@ -2074,7 +2076,7 @@ test('when items and loadOptions method are both supplied then fallback to items
       loadOptions: getPosts,
       optionIdentifier: 'id',
       items: _items,
-      isFocused: true,
+      focused: true,
       listOpen: true
     }
   });
@@ -2170,7 +2172,7 @@ test('when multiple and textFilter has length then enter should select item', as
     props: {
       multiple: true,
       items,
-      isFocused: true,
+      focused: true,
       filterText: 'p',
       listOpen: true
     }
@@ -2189,7 +2191,7 @@ test('when multiple and textFilter has length and no items in list then enter sh
     props: {
       multiple: true,
       items,
-      isFocused: true,
+      focused: true,
       filterText: 'zc',
       listOpen: true
     }
@@ -2207,7 +2209,7 @@ test('When multiple and no selected item then delete should do nothing', async (
     props: {
       multiple: true,
       items,
-      isFocused: true,
+      focused: true,
       listOpen: true
     }
   });
@@ -2224,7 +2226,7 @@ test('When list is open, filterText applied and Enter/Tab key pressed should sel
     target,
     props: {
       listOpen: true,
-      isFocused: true,
+      focused: true,
       filterText: 'A5',
       items: ['A5', 'test string', 'something else']
     }
@@ -2318,14 +2320,14 @@ test('when multiple, groupBy and value are supplied then list should be filtered
   select.$destroy();
 });
 
-test('When isCreatable disabled, creator is not displayed', async (t) => {
+test('When creatable disabled, creator is not displayed', async (t) => {
   const filterText = 'abc';
 
   const select = new Select({
     target,
     props: {
       items,
-      isFocused: true,
+      focused: true,
       listOpen: true
     }
   });
@@ -2339,7 +2341,7 @@ test('When isCreatable disabled, creator is not displayed', async (t) => {
   select.$destroy();
 });
 
-test('When isCreatable enabled, creator displays getOptionLabel for isCreator', async (t) => {
+test('When creatable enabled, creator displays getOptionLabel for isCreator', async (t) => {
   const filterText = 'abc_XXXX';
 
   function getOptionLabel(item, filterText) {
@@ -2352,8 +2354,8 @@ test('When isCreatable enabled, creator displays getOptionLabel for isCreator', 
     target,
     props: {
       items,
-      isCreatable: true,
-      isFocused: true,
+      creatable: true,
+      focused: true,
       listOpen: true,
       getOptionLabel
     }
@@ -2368,7 +2370,7 @@ test('When isCreatable enabled, creator displays getOptionLabel for isCreator', 
   select.$destroy();
 });
 
-test('When isCreatable enabled, creator is not displayed when duplicate item value in item list', async (t) => {
+test('When creatable enabled, creator is not displayed when duplicate item value in item list', async (t) => {
   const dupeValueForCheck = 'xxxxxx';
   const item = {
     value: dupeValueForCheck,
@@ -2379,7 +2381,7 @@ test('When isCreatable enabled, creator is not displayed when duplicate item val
     target,
     props: {
       items: [item],
-      isCreatable: true,
+      creatable: true,
       listOpen: true
     }
   });
@@ -2401,8 +2403,8 @@ test('When creator selected, selected item is set to created item', async (t) =>
     target,
     props: {
       items,
-      isCreatable: true,
-      isFocused: true,
+      creatable: true,
+      focused: true,
       listOpen: true
     }
   });
@@ -2426,8 +2428,8 @@ test('When creator is selected, created item it added to multi selection', async
     target,
     props: {
       items,
-      isCreatable: true,
-      isFocused: true,
+      creatable: true,
+      focused: true,
       listOpen: true,
       multiple: true
     }
@@ -2453,8 +2455,8 @@ test('When creator is selected multiple times, items are all added to multi sele
     target,
     props: {
       items,
-      isCreatable: true,
-      isFocused: true,
+      creatable: true,
+      focused: true,
       listOpen: true,
       multiple: true
     }
@@ -2481,7 +2483,7 @@ test('When multiple and an items remove icon is clicked then item should be remo
     target,
     props: {
       items,
-      isCreatable: true,
+      creatable: true,
       value: [
         {value: 'pizza', label: 'Pizza'},
         {value: 'cake', label: 'Cake'},
@@ -2498,7 +2500,7 @@ test('When multiple and an items remove icon is clicked then item should be remo
   select.$destroy();
 });
 
-test('When isCreatable with non-default item structure, item creator displays getCreatorLabel label for isCreator', async (t) => {
+test('When creatable with non-default item structure, item creator displays getCreatorLabel label for isCreator', async (t) => {
   const _items = [
     {country: 'Italy', food: 'Pizza'},
     {country: 'Australia', food: 'Meat Pie'},
@@ -2522,7 +2524,7 @@ test('When isCreatable with non-default item structure, item creator displays ge
       getOptionLabel: itemDisplay,
       getSelectionLabel: itemDisplay,
       items: _items,
-      isCreatable: true,
+      creatable: true,
       createItem(filterText) {
         return {
           food: filterText,
@@ -2541,7 +2543,7 @@ test('When isCreatable with non-default item structure, item creator displays ge
   select.$destroy();
 });
 
-test('When isCreatable and multiple and optionIdentifier is supplied creator displays getCreatorLabel label', async (t) => {
+test('When creatable and multiple and optionIdentifier is supplied creator displays getCreatorLabel label', async (t) => {
   const filterText = 'abc';
   const _items = [
     {foo: 'chocolate', label: 'Chocolate'},
@@ -2554,7 +2556,7 @@ test('When isCreatable and multiple and optionIdentifier is supplied creator dis
       optionIdentifier: 'foo',
       multiple: true,
       items: _items,
-      isCreatable: true
+      creatable: true
     }
   });
 
@@ -2567,7 +2569,7 @@ test('When isCreatable and multiple and optionIdentifier is supplied creator dis
   select.$destroy();
 });
 
-test('When isCreatable and multiple and optionIdentifier is supplied multiple creatable items can be added', async (t) => {
+test('When creatable and multiple and optionIdentifier is supplied multiple creatable items can be added', async (t) => {
   const filterText = 'foo';
   const filterText2 = 'bar';
 
@@ -2590,7 +2592,7 @@ test('When isCreatable and multiple and optionIdentifier is supplied multiple cr
       optionIdentifier,
       multiple: true,
       items: _items,
-      isCreatable: true,
+      creatable: true,
       getOptionLabel,
       getSelectionLabel,
       createItem,
@@ -2613,7 +2615,7 @@ test('When isCreatable and multiple and optionIdentifier is supplied multiple cr
   select.$destroy();
 });
 
-test('When isCreatable and item is created then createItem method should only run once', async (t) => {
+test('When creatable and item is created then createItem method should only run once', async (t) => {
   let createItemRun = 0;
 
   const createItem = (filterText) => {
@@ -2627,7 +2629,7 @@ test('When isCreatable and item is created then createItem method should only ru
   const select = new Select({
     target,
     props: {
-      isCreatable: true,
+      creatable: true,
       items,
       createItem
     }
@@ -2694,16 +2696,12 @@ test('When item is already active and is selected from list then close list', as
 });
 
 
-test('When Icon prop is supplied then render on Select', async (t) => {
-  const select = new Select({
+test('When prepend named slot is supplied then render content', async (t) => {
+  const select = new PrependSlotTest({
     target,
-    props: {
-      items,
-      Icon: TestIcon
-    }
   });
 
-  t.ok(document.querySelectorAll('#testIcon')[0]);
+  t.ok(document.querySelector('.before').innerHTML === 'Before it all');
 
   select.$destroy();
 });
@@ -2738,7 +2736,7 @@ test('When showChevron prop is true and no value show chevron on Select', async 
   select.$destroy();
 });
 
-test('When showChevron and isClearable is true always show chevron on Select', async (t) => {
+test('When showChevron and clearable is true always show chevron on Select', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -2746,7 +2744,7 @@ test('When showChevron and isClearable is true always show chevron on Select', a
       items,
       value: {value: 'chocolate', label: 'Chocolate'},
       showChevron: true,
-      isClearable: false
+      clearable: false
     }
   });
 
@@ -3016,7 +3014,7 @@ test('when loadOptions and items is supplied then list should close on blur', as
     }
   });
 
-  select.$set({isFocused: true});
+  select.$set({focused: true});
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
   select.$set(({ filterText: 's'}))
@@ -3027,13 +3025,13 @@ test('when loadOptions and items is supplied then list should close on blur', as
   select.$destroy();
 });
 
-test('when isCreatable and item created then event "itemCreated" should dispatch', async (t) => {
+test('when creatable and item created then event "itemCreated" should dispatch', async (t) => {
   const select = new Select({
     target,
     props: {
       items,
-      isCreatable: true,
-      isFocused: true,
+      creatable: true,
+      focused: true,
       listOpen: true,
       multiple: true
     }
@@ -3073,16 +3071,11 @@ test('when loadOptions response returns cancelled true then dont end loading sta
 });
 
 test('when ClearIcon replace clear icon', async (t) => {
-  const select = new Select({
+  const select = new ClearIconSlotTest({
     target,
-    props: {
-      ClearIcon: TestClearIcon,
-      items,
-      value: {value: 'chips', label: 'Chips'}
-    }
   });
   
-  t.ok(target.querySelector('.testClearIcon'));
+  t.ok(target.querySelector('.clear-select div').innerHTML === 'x');
 
   select.$destroy();
 });
@@ -3092,7 +3085,7 @@ test('losing focus of Select should close list', async (t) => {
     target,
     props: {
       items,
-      isFocused: true
+      focused: true
     }
   });
 
@@ -3149,12 +3142,12 @@ test('when switching between multiple true/false ensure Select continues working
   select.$destroy();
 });
 
-test('when isSearchable is false then input should be readonly', async (t) => {
+test('when searchable is false then input should be readonly', async (t) => {
   const select = new Select({
     target,
     props: {
       items,
-      isSearchable: false
+      searchable: false
     }
   });
 
@@ -3433,12 +3426,12 @@ test('When multiple on:select events should fire on each item removal (including
 });
 
 
-test('When loadOptions and isCreatable then create new item is active when promise resolves with no items', async (t) => {
+test('When loadOptions and creatable then create new item is active when promise resolves with no items', async (t) => {
   const select = new Select({
     target,
     props: {
       loadOptions: itemsPromiseEmpty,
-      isCreatable: true,
+      creatable: true,
     },
   });
 
@@ -3450,12 +3443,12 @@ test('When loadOptions and isCreatable then create new item is active when promi
   select.$destroy();
 });
 
-test('When loadOptions and isCreatable then create new item show at bottom of results when promise resolves', async (t) => {
+test('When loadOptions and creatable then create new item show at bottom of results when promise resolves', async (t) => {
   const select = new Select({
     target,
     props: {
       loadOptions: itemsPromise,
-      isCreatable: true,
+      creatable: true,
     },
   });
 
@@ -3570,7 +3563,7 @@ test('When listOpen and value then aria-selection describes value', async (t) =>
     props: {
       items: items,
       value: {value: 'cake', label: 'Cake'},
-      isFocused: true
+      focused: true
     },
   });
 
@@ -3587,7 +3580,7 @@ test('When listOpen, value and multiple then aria-selection describes value', as
       multiple: true,
       items: items,
       value: [{value: 'cake', label: 'Cake'},  {value: 'pizza', label: 'Pizza'},],
-      isFocused: true
+      focused: true
     },
   });
 
@@ -3604,7 +3597,7 @@ test('When ariaValues and value supplied, then aria-selection uses default updat
     props: {
       items: items,
       value: {value: 'pizza', label: 'Pizza'},
-      isFocused: true,
+      focused: true,
       ariaValues: (val) => `Yummy ${val} in my tummy!`
     },
   });
@@ -3637,7 +3630,7 @@ test('When ariaFocused, focused value supplied, then aria-context uses default u
     target,
     props: {
       items: items,
-      isFocused: true,
+      focused: true,
       listOpen: false,
       ariaFocused: () => `nothing to see here.`
     },
@@ -3844,7 +3837,7 @@ test('when component blurs fire on:blur event', async (t) => {
     target,
     props: {
       items,
-      isFocused: true
+      focused: true
     }
   });
 
@@ -3868,7 +3861,7 @@ test('when group header is not selectable then update hoverItemIndex to next/pre
     props: {
       listOpen: true,
       items: itemsWithGroup,
-      isGroupHeaderSelectable: false,
+      groupHeaderSelectable: false,
       groupBy,
     }
   });
@@ -4030,7 +4023,7 @@ test('when < is supplied in filterText then sanitiseLabel method coverts to HTML
       listOpen: true,
       items: [],
       filterText: '<test />',
-      isCreatable: true,
+      creatable: true,
     }
   });
 
@@ -4055,6 +4048,17 @@ test('when appendListTarget is supplied then list is appended to parent target',
   });
 
   t.ok(document.querySelector('main  .svelte-select-list'));
+
+  select.$destroy();
+});
+
+
+test('when named slot chevron show content', async (t) => {
+  const select = new ChevronSlotTest({
+    target,
+  });
+
+  t.ok(document.querySelector('.chevron div').innerHTML === '⬆️');
 
   select.$destroy();
 });

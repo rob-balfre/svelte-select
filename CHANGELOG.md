@@ -2,6 +2,19 @@
 
 ## 5.0.0
 
+* isGroupHeaderSelectable -> groupHeaderSelectable
+* isSearchable -> searchable
+* isFocused -> focused
+* isCreatable -> creatable
+* isClearable -> clearable
+* isWaiting -> loading
+* Added named slot `prepend`
+* Added named slot `chevron-icon`
+* Added named slot `clear-icon`
+* Added named slot `loading-icon`
+* Removed iconProps
+* Removed ClearIcon component
+* Removed ChevronIcon component
 * Removed Multi component
 * Added named slot `selection`
 * Removed Selection component

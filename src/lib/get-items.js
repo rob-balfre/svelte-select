@@ -17,8 +17,8 @@ export default async function getItems({ dispatch, loadOptions, convertStringIte
 
         return {
             filteredItems: res,
-            isWaiting: false,
-            isFocused: true,
+            loading: false,
+            focused: true,
             listOpen: true,
         };
     }

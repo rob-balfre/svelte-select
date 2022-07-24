@@ -28,6 +28,8 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
+        box-sizing: border-box;
+        transition: all .2s;
     }
 
     .item.group-item {

@@ -12,14 +12,12 @@
 
 <style>
     .loading {
-        padding: 0 5px;
-        width: var(--spinner-width, 35px);
+        width: var(--spinner-width, 20px);
         height: var(--spinner-height, 20px);
-        color: var(--spinner-color, #51ce6c);
+        color: var(--spinner-color, --icons-color);
         animation: rotate 0.75s linear infinite;
         transform-origin: center center;
-        margin: auto;
-        -webkit-transform: none;
+        transform: none;
     }
 
     .circle_path {

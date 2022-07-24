@@ -2,13 +2,16 @@
 
 v5 is a major release that that includes some ⚠️ BREAKING CHANGES ⚠️ 
 
-Removed `Selection` component, use named slot instead.
+
+Removed `Selection`, `ChevronIcon`, `ClearIcon`, `LoadingIcon`, `Icon` components, use named slots instead.
 
 ```html
 <Select bind:items bind:value>
-  <div slot="selection" let:selection>
-    <i>{selection}</i>
-  </div>
+  <div slot="prepend" />
+  <div slot="selection" let:selection />
+  <div slot="clear-icon" />  
+  <div slot="loading-icon" />  
+  <div slot="chevron-icon" />  
 </Select>
 ```
 
@@ -74,6 +77,12 @@ The following CSS custom properties were removed in v5.
 `selectedValue` removed (was already deprecated in v4 in favour of `value`)<br/>
 `loadOptionsInterval` → `debounceWait`
 `isMulti` → `multiple`
+`isWaiting` → `loading`
+`isClearable` → `clearable`
+`isCreatable` → `creatable`
+`isFocused` → `focused`
+`isGroupHeaderSelectable` → `groupHeaderSelectable`
+`isDisabled` → `disabled`
 
 
 ### Event change:

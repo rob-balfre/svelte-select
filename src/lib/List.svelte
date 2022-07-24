@@ -284,6 +284,11 @@
         box-sizing: border-box;
     }
 
+    .list > * {
+        box-sizing: border-box;
+        transition: all .2s;
+    }
+
     .list .list-group-title {
         color: var(--group-title-color, #8f8f8f);
         cursor: default;
