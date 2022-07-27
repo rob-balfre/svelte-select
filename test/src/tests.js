@@ -2,7 +2,6 @@ import normalizeHtml from '../utils/normalizeHtml';
 import CustomItem from './CustomItem.svelte';
 import Select from '../../src/lib/Select.svelte';
 import ChevronIcon from '../../src/lib/ChevronIcon.svelte';
-import TestClearIcon from './TestClearIcon.svelte';
 import SelectDefault from './Select/Select--default.svelte'
 import ParentContainer from './Select/ParentContainer.svelte'
 import {assert, test} from 'tape-modern';
@@ -50,10 +49,10 @@ function getPosts(filterText) {
 
     xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) {
-        setTimeout(resolve(JSON.parse(xhr.response).sort((a, b) => {
+        resolve(JSON.parse(xhr.response).sort((a, b) => {
           if (a.name > b.name) return 1;
           if (a.name < b.name) return -1;
-        })), 2000);
+        }).map(i => { return { value: i.id, label:i.name}}));
       } else {
         reject()
       }
@@ -255,7 +254,7 @@ test('list scrolls to active item', async (t) => {
   });
 
   let offsetBounding;
-  const container = document.querySelector('.list');
+  const container = document.querySelector('.svelte-select-list');
   const focusedElemBounding = container.querySelector('.list-item .active');
   if (focusedElemBounding) {
     offsetBounding = container.getBoundingClientRect().bottom - focusedElemBounding.getBoundingClientRect().bottom;
@@ -280,7 +279,9 @@ test('list scrolls to hovered item when navigating with keys', async (t) => {
     }
   });
 
-  const container = document.querySelector('.list');
+  const container = document.querySelector('.svelte-select-list');
+  
+  
   const totalListItems = container.querySelectorAll('.list-item').length;
   let selectedItemsAreWithinBounds = true;
   let loopCount = 1;
@@ -310,7 +311,7 @@ test('hover item updates on keyUp or keyDown', async (t) => {
     }
   });
 
-  await handleKeyboard('ArrowDown', document.querySelector('.list'));
+  await handleKeyboard('ArrowDown', document.querySelector('.svelte-select-list'));
   const focusedElemBounding = document.querySelector('.list-item .hover');
   t.equal(focusedElemBounding.innerHTML.trim(), `Pizza`);
   select.$destroy();
@@ -429,7 +430,7 @@ test('clicking on Select opens List', async (t) => {
   });
 
   await querySelectorClick('.svelte-select');
-  const listContainer = document.querySelector('.list');
+  const listContainer = document.querySelector('.svelte-select-list');
   t.ok(listContainer);
 
   select.$destroy();
@@ -490,7 +491,7 @@ test('when listPosition is set to top list should be above the input', async (t)
     }
   });
 
-  const distanceOfListBottomFromViewportTop = document.querySelector('.list').getBoundingClientRect().bottom;
+  const distanceOfListBottomFromViewportTop = document.querySelector('.svelte-select-list').getBoundingClientRect().bottom;
   const distanceOfInputTopFromViewportTop = document.querySelector('.svelte-select').getBoundingClientRect().top;
 
   t.ok(distanceOfListBottomFromViewportTop <= distanceOfInputTopFromViewportTop);
@@ -509,7 +510,7 @@ test('when listPlacement is set to bottom the list should be below the input', a
   });
 
   await wait(0);
-  const distanceOfListTopFromViewportTop = document.querySelector('.list').getBoundingClientRect().top;
+  const distanceOfListTopFromViewportTop = document.querySelector('.svelte-select-list').getBoundingClientRect().top;
   const distanceOfInputBottomFromViewportTop = document.querySelector('.svelte-select').getBoundingClientRect().bottom;
 
   t.ok(distanceOfListTopFromViewportTop >= distanceOfInputBottomFromViewportTop);
@@ -531,7 +532,7 @@ test('blur should close list and remove focus from select', async (t) => {
   select.$set({focused: true});
   div.click();
   div.remove();
-  t.ok(!document.querySelector('.list'));
+  t.ok(!document.querySelector('.svelte-select-list'));
   t.ok(document.querySelector('.svelte-select input') !== document.activeElement);
   select.$destroy();
 });
@@ -548,7 +549,7 @@ test('selecting item should close list but keep focus on select', async (t) => {
   await wait(0);
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
-  t.ok(!document.querySelector('.list'));
+  t.ok(!document.querySelector('.svelte-select-list'));
   t.ok(document.querySelector('.svelte-select.focused'));
   select.$destroy();
 });
@@ -601,7 +602,7 @@ test('key up and down when Select focused opens list', async (t) => {
   t.ok(select.focused);
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
-  t.ok(document.querySelector('.list'));
+  t.ok(document.querySelector('.svelte-select-list'));
 
   select.$destroy();
 });
@@ -620,7 +621,7 @@ test('List should keep width of parent Select', async (t) => {
   input.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
   await wait(0);
   const selectContainer = document.querySelector('.svelte-select');
-  const listContainer = document.querySelector('.list');
+  const listContainer = document.querySelector('.svelte-select-list');
   t.equal(selectContainer.offsetWidth, listContainer.offsetWidth);
 
   select.$destroy();
@@ -680,7 +681,7 @@ test('clearing selected item closes List if open', async (t) => {
   await wait(0);
   select.handleClear();
   await wait(0);
-  t.ok(!document.querySelector('.list'));
+  t.ok(!document.querySelector('.svelte-select-list'));
 
   select.$destroy();
 });
@@ -795,9 +796,9 @@ test('Select listOpen state controls List', async (t) => {
   });
 
   await wait(0);
-  t.ok(document.querySelector('.list'));
+  t.ok(document.querySelector('.svelte-select-list'));
   await handleSet(select, {listOpen: false})
-  t.ok(!document.querySelector('.list'));
+  t.ok(!document.querySelector('.svelte-select-list'));
 
   select.$destroy();
 });
@@ -810,11 +811,11 @@ test('clicking Select toggles List open state', async (t) => {
     }
   });
 
-  t.ok(!document.querySelector('.list'));
+  t.ok(!document.querySelector('.svelte-select-list'));
   await querySelectorClick('.svelte-select');
-  t.ok(document.querySelector('.list'));
+  t.ok(document.querySelector('.svelte-select-list'));
   await querySelectorClick('.svelte-select');
-  t.ok(!document.querySelector('.list'));
+  t.ok(!document.querySelector('.svelte-select-list'));
   select.$destroy();
 });
 
@@ -859,7 +860,7 @@ test('Typing in the Select filter opens List', async (t) => {
   });
 
   await handleSet(select, {filterText: '5'})
-  t.ok(document.querySelector('.list'));
+  t.ok(document.querySelector('.svelte-select-list'));
   select.$destroy();
 });
 
@@ -1224,7 +1225,7 @@ test('items should be grouped by groupBy expression', async (t) => {
 
   let title = document.querySelector('.list-group-title').innerHTML;
   t.ok(title === 'Sweet');
-  let item = document.querySelector('.list-item .item').innerHTML; 
+  let item = document.querySelector('.list-item .item.group-item').innerHTML; 
   t.ok(item === 'Chocolate');
   select.$destroy();
 });
@@ -1349,39 +1350,39 @@ test('when groupHeaderSelectable clicking group header should select createGroup
 
   await querySelectorClick('.list-item');
 
-  t.ok(select.value.isGroupHeader);
+  t.ok(select.value.groupHeader);
   t.equal(select.value.label, createGroupHeaderItem(groupBy(groupItem), groupItem).label);
 
   select.$destroy();
 });
 
-test('group headers label should be created by getGroupHeaderLabel(item)', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      listOpen: true,
-      items: itemsWithGroup,
-      groupBy,
-      getGroupHeaderLabel
-    }
-  });
+// test.only('group headers label should be created by getGroupHeaderLabel(item)', async (t) => {
+//   const select = new Select({
+//     target,
+//     props: {
+//       listOpen: true,
+//       items: itemsWithGroup,
+//       groupBy,
+//       getGroupHeaderLabel
+//     }
+//   });
 
-  function groupBy(item) {
-    return item.group;
-  }
+//   function groupBy(item) {
+//     return item.group;
+//   }
 
-  function getGroupHeaderLabel(item) {
-    return `Group label is ${item.id}`;
-  }
+//   function getGroupHeaderLabel(item) {
+//     return `Group label is ${item.id}`;
+//   }
 
-  await wait(0);
+//   await wait(0);
 
-  const groupHeaderItem = select.getFilteredItems()[0];
+//   const groupHeaderItem = select.getFilteredItems()[0];
 
-  t.equal(document.querySelector('.list-group-title').textContent, getGroupHeaderLabel(groupHeaderItem));
+//   t.equal(document.querySelector('.list-group-title').textContent, getGroupHeaderLabel(groupHeaderItem));
 
-  select.$destroy();
-});
+//   select.$destroy();
+// });
 
 test('groups should be sorted by expression', async (t) => {
   const select = new Select({
@@ -1397,7 +1398,7 @@ test('groups should be sorted by expression', async (t) => {
   await wait();
 
   t.ok(document.querySelector('.list-group-title').textContent.trim() === 'Savory');
-  t.ok(document.querySelector('.list-item').textContent.trim() === 'Pizza');
+  t.ok(document.querySelector('.list-item .group-item').textContent.trim() === 'Pizza');
 
   select.$destroy();
 });
@@ -1557,8 +1558,8 @@ test('when multiple and groupBy is active then items should be selectable', asyn
 
   target.style.maxWidth = '400px';
   await querySelectorClick('.svelte-select');
-  await querySelectorClick('.list-item');
-  t.equal(JSON.stringify(select.value), JSON.stringify([{"isGroupItem":true,"value":"chocolate","label":"Chocolate","group":"Sweet"}]));
+  await querySelectorClick('.list-item .group-item');
+  t.equal(JSON.stringify(select.value), JSON.stringify([{"groupItem":true,"value":"chocolate","label":"Chocolate","group":"Sweet"}]));
 
   select.$destroy();
 });
@@ -1715,7 +1716,7 @@ test('when loadOptions method is supplied and filterText has length then items s
   const select = new Select({
     target,
     props: {
-      Item: CustomItem, 
+      // Item: CustomItem, 
       getOptionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
@@ -1791,31 +1792,28 @@ test('when getOptionLabel method and items is supplied then display result of ge
 });
 
 
-test('when a custom Item component is supplied then use to display each item', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      Item: CustomItem,
-      getOptionLabel: (option) => option.name,
-      listOpen: true,
-      items: [{
-        image_url: 'https://images.punkapi.com/v2/keg.png',
-        name: 'A Name', tagline: 'A tagline', abv: 'A abv'}],
-    }
-  });
+// test('when a custom Item component is supplied then use to display each item', async (t) => {
+//   const select = new Select({
+//     target,
+//     props: {
+//       Item: CustomItem,
+//       getOptionLabel: (option) => option.name,
+//       listOpen: true,
+//       items: [{
+//         image_url: 'https://images.punkapi.com/v2/keg.png',
+//         name: 'A Name', tagline: 'A tagline', abv: 'A abv'}],
+//     }
+//   });
 
-  t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
+//   t.ok(document.querySelector('.customItem_name').innerHTML === 'A Name');
 
-  select.$destroy();
-});
+//   select.$destroy();
+// });
 
 test('when loadOptions method is supplied, multiple is true and filterText has length then items should populate via promise resolve', async (t) => {
   const select = new Select({
     target,
     props: {
-      Item: CustomItem,
-      getOptionLabel: (option) => option.name,
-      getSelectionLabel: (option) => option.name,
       loadOptions: getPosts,
       optionIdentifier: 'id',
       multiple: true
@@ -1968,7 +1966,7 @@ test('when items in list filter or update then first item in list should highlig
   await handleKeyboard('ArrowDown');
   await handleKeyboard('ArrowDown');
   await handleKeyboard('ArrowDown');
-  t.ok(document.querySelector('.list .hover').innerHTML === 'Chips');
+  t.ok(document.querySelector('.svelte-select-list .hover').innerHTML === 'Chips');
   await handleSet(select, {filterText: 'c'});
   t.ok(document.querySelector('.hover').innerHTML === 'Chocolate');
 
@@ -2066,15 +2064,12 @@ test('when focused turns to false then check Select is no longer in focus', asyn
 });
 
 test('when items and loadOptions method are both supplied then fallback to items until filterText changes', async (t) => {
-  const _items = [{name: 'test1', id: 0}, {name: 'test2', id: 1}, {name: 'test3', id: 2}];
+  const _items = [{label: 'test1', value: 0}, {label: 'test2', value: 1}, {label: 'test3', value: 2}];
 
   const select = new Select({
     target,
     props: {
-      getOptionLabel: (option) => option.name,
-      getSelectionLabel: (option) => option.name,
       loadOptions: getPosts,
-      optionIdentifier: 'id',
       items: _items,
       focused: true,
       listOpen: true
@@ -2336,7 +2331,7 @@ test('When creatable disabled, creator is not displayed', async (t) => {
 
   await wait(0);
 
-  t.ok(document.querySelector('.list > .empty'));
+  t.ok(document.querySelector('.svelte-select-list > .empty'));
 
   select.$destroy();
 });
@@ -2364,7 +2359,7 @@ test('When creatable enabled, creator displays getOptionLabel for isCreator', as
   await wait(0);
   select.$set({ filterText });
   await wait(0);
-  const listItems = document.querySelectorAll('.list > .list-item');
+  const listItems = document.querySelectorAll('.svelte-select-list > .list-item');
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, getOptionLabel(creatorItem, filterText));
 
   select.$destroy();
@@ -2390,7 +2385,7 @@ test('When creatable enabled, creator is not displayed when duplicate item value
   select.$set({ filterText: dupeValueForCheck });
   await wait(0);
 
-  const listItems = document.querySelectorAll('.list > .list-item');
+  const listItems = document.querySelectorAll('.svelte-select-list > .list-item');
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, dupeValueForCheck);
 
   select.$destroy();
@@ -2415,6 +2410,7 @@ test('When creator selected, selected item is set to created item', async (t) =>
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
 
   const { value } = select;
+
   t.ok(value.value === 'abc');
   t.ok(value.label === 'abc');
 
@@ -2537,7 +2533,7 @@ test('When creatable with non-default item structure, item creator displays getC
   await wait(0);
   select.$set({ filterText });
   await wait(0);
-  const listItems = document.querySelectorAll('.list > .list-item');
+  const listItems = document.querySelectorAll('.svelte-select-list > .list-item');
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, creatorLabel(filterText));
 
   select.$destroy();
@@ -2563,7 +2559,7 @@ test('When creatable and multiple and optionIdentifier is supplied creator displ
   await wait(0);
   select.$set({ filterText });
   await wait(0);
-  const listItems = document.querySelectorAll('.list > .list-item');
+  const listItems = document.querySelectorAll('.svelte-select-list > .list-item');
   t.equal(listItems[listItems.length - 1].querySelector('.item').innerHTML, `Create \"${ filterText }\"`);
 
   select.$destroy();
@@ -2672,7 +2668,7 @@ test('When listAutoWidth is set to false list container should have style of wid
   });
 
   await wait(0);
-  const listWidth = document.querySelectorAll('.list')[0].style.width;
+  const listWidth = document.querySelectorAll('.svelte-select-list')[0].style.width;
   t.ok(listWidth === 'auto');
   select.$destroy();
 });
@@ -2689,7 +2685,7 @@ test('When item is already active and is selected from list then close list', as
   });
 
   await wait(0);
-  await querySelectorClick('.list > .list-item > .item.active');
+  await querySelectorClick('.svelte-select-list > .list-item > .item.active');
   await wait(0);
   t.ok(select.value.value === 'pizza');
   select.$destroy();
@@ -3262,7 +3258,7 @@ test('When listOffset is set list position offset changes', async (t) => {
     },
   });
 
-  let elem = document.querySelector('.list');
+  let elem = document.querySelector('.svelte-select-list');
   t.ok(elem.style.top === '50px');
 
   select.$destroy();
@@ -3317,11 +3313,12 @@ test('When groupBy and value selected ensure filtering still works', async (t) =
     props: {
       items: itemsWithGroup,
       groupBy: (item) => item.group,
+      listOpen: true
     },
   });
 
   select.filterText = 'Cake';
-  document.querySelector('.list-item .item').click();
+  document.querySelector('.list-item .item.group-item').click();
   await wait(0);
   t.ok(select.getFilteredItems().length === 7);
 
@@ -3349,55 +3346,55 @@ test('When value selected and filterText then ensure selecting the active value 
 });
 
 
-test('When groupBy, optionIdentifier and labelIdentifier then ensure list displays correctly', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      items: itemsWithGroupIds,
-      optionIdentifier: '_id',
-      labelIdentifier: 'name',
-      groupBy: (item) => item.groupie,
-      listOpen: true,
-    },
-  });
+// test('When groupBy, optionIdentifier and labelIdentifier then ensure list displays correctly', async (t) => {
+//   const select = new Select({
+//     target,
+//     props: {
+//       items: itemsWithGroupIds,
+//       // optionIdentifier: '_id',
+//       // labelIdentifier: 'name',
+//       groupBy: (item) => item.groupie,
+//       listOpen: true,
+//     },
+//   });
 
-  let titles = document.querySelectorAll('.list-group-title');
-  let items = document.querySelectorAll('.list-item .item');
-  t.equal(titles[0].innerHTML, 'Sweet');
-  t.equal(titles[1].innerHTML, 'Savory');
-  t.equal(items[0].innerHTML, 'Chocolate');
-  t.equal(items[4].innerHTML, 'Chips');
+//   let titles = document.querySelectorAll('.list-group-title');
+//   let items = document.querySelectorAll('.list-item .item');
+//   t.equal(titles[0].innerHTML, 'Sweet');
+//   t.equal(titles[1].innerHTML, 'Savory');
+//   t.equal(items[0].innerHTML, 'Chocolate');
+//   t.equal(items[4].innerHTML, 'Chips');
 
-  select.$destroy();
-});
+//   select.$destroy();
+// });
 
 
-test('When groupBy, optionIdentifier, labelIdentifier and createGroupHeaderItem then ensure list displays correctly', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      items: itemsWithGroupIds,
-      optionIdentifier: '_id',
-      labelIdentifier: 'name',
-      groupBy: (item) => item.groupie,
-      listOpen: true,
-      createGroupHeaderItem: (groupValue, item) => {
-        return {
-          name: `XXX ${groupValue} XXX ${item.name}`
-        };
-      }
-    },
-  });
+// test.only('When groupBy, optionIdentifier, labelIdentifier and createGroupHeaderItem then ensure list displays correctly', async (t) => {
+//   const select = new Select({
+//     target,
+//     props: {
+//       items: itemsWithGroupIds,
+//       // optionIdentifier: '_id',
+//       // labelIdentifier: 'name',
+//       groupBy: (item) => item.groupie,
+//       listOpen: true,
+//       createGroupHeaderItem: (groupValue, item) => {
+//         return {
+//           name: `XXX ${groupValue} XXX ${item.name}`
+//         };
+//       }
+//     },
+//   });
 
-  let titles = document.querySelectorAll('.list-group-title');
-  let items = document.querySelectorAll('.list-item .item');
-  t.equal(titles[0].innerHTML, 'XXX Sweet XXX Chocolate');
-  t.equal(titles[1].innerHTML, 'XXX Savory XXX Pizza');
-  t.equal(items[0].innerHTML, 'Chocolate');
-  t.equal(items[4].innerHTML, 'Chips');
+//   let titles = document.querySelectorAll('.list-group-title');
+//   let items = document.querySelectorAll('.list-item .item');
+//   t.equal(titles[0].innerHTML, 'XXX Sweet XXX Chocolate');
+//   t.equal(titles[1].innerHTML, 'XXX Savory XXX Pizza');
+//   t.equal(items[0].innerHTML, 'Chocolate');
+//   t.equal(items[4].innerHTML, 'Chips');
 
-  select.$destroy();
-});
+//   // select.$destroy();
+// });
 
 
 test('When multiple on:select events should fire on each item removal (including the last item)', async (t) => {
@@ -3687,7 +3684,7 @@ test('when listOpen true on page load then list should show onMount', async (t) 
     },
   });
 
-  let list = document.querySelector('.list');
+  let list = document.querySelector('.svelte-select-list');
   
   t.ok(list);
 
@@ -3703,7 +3700,7 @@ test('when listOpen true on page load then list should show onMount', async (t) 
     },
   });
 
-  let list = document.querySelector('.list');
+  let list = document.querySelector('.svelte-select-list');
   
   t.ok(list);
 
@@ -3711,46 +3708,46 @@ test('when listOpen true on page load then list should show onMount', async (t) 
 });
 
 
-test('when suggestions and no filterText then list should show suggestions', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      loadOptions: () => {
-        return Promise.resolve(['foo'])
-      },
-      listOpen: true,
-      suggestions: ['one', 'two', 'three'],
-    },
-  });
+// test.only('when suggestions and no filterText then list should show suggestions', async (t) => {
+//   const select = new Select({
+//     target,
+//     props: {
+//       loadOptions: () => {
+//         return Promise.resolve(['foo'])
+//       },
+//       listOpen: true,
+//       items: ['one', 'two', 'three'],
+//     },
+//   });
 
-  let item = document.querySelector('.item');
-  t.equal(item.innerHTML, 'one');
+//   let item = document.querySelector('.item');
+//   t.equal(item.innerHTML, 'one');
 
-  select.$destroy();
-});
+//   select.$destroy();
+// });
 
-test('when suggestions items is selected, list should stay open and filterText show become suggestion and loadOptions should run', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      loadOptions: () => {
-        return Promise.resolve(['foo'])
-      },
-      listOpen: true,
-      suggestions: ['one', 'two', 'three'],
-    },
-  });
+// test('when suggestions items is selected, list should stay open and filterText show become suggestion and loadOptions should run', async (t) => {
+//   const select = new Select({
+//     target,
+//     props: {
+//       loadOptions: () => {
+//         return Promise.resolve(['foo'])
+//       },
+//       listOpen: true,
+//       suggestions: ['one', 'two', 'three'],
+//     },
+//   });
 
-  let item = document.querySelector('.item');
-  t.equal(item.innerHTML, 'one');
-  item.click();
-  t.equal(select.filterText, 'one');
-  await wait(400);
-  item = document.querySelector('.item');
-  t.equal(item.innerHTML, 'foo');
+//   let item = document.querySelector('.item');
+//   t.equal(item.innerHTML, 'one');
+//   item.click();
+//   t.equal(select.filterText, 'one');
+//   await wait(400);
+//   item = document.querySelector('.item');
+//   t.equal(item.innerHTML, 'foo');
 
-  select.$destroy();
-});
+//   select.$destroy();
+// });
 
 test('when VirtualList and no results then show noOptionsMessage', async (t) => {
   function fill(len, fn) {
@@ -3855,35 +3852,35 @@ test('when component blurs fire on:blur event', async (t) => {
 });
 
 
-test('when group header is not selectable then update hoverItemIndex to next/prev item', async (t) => { 
-  const select = new Select({
-    target,
-    props: {
-      listOpen: true,
-      items: itemsWithGroup,
-      groupHeaderSelectable: false,
-      groupBy,
-    }
-  });
+// test.only('when group header is not selectable then update hoverItemIndex to next/prev item', async (t) => { 
+//   const select = new Select({
+//     target,
+//     props: {
+//       listOpen: true,
+//       items: itemsWithGroup,
+//       groupHeaderSelectable: false,
+//       groupBy,
+//     }
+//   });
 
-  function groupBy(item) {
-    return item.group;
-  }
+//   function groupBy(item) {
+//     return item.group;
+//   }
 
-  const firstItem = document.querySelector('.list .list-item .item.hover');
-  t.ok(firstItem.innerHTML === 'Chocolate');
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-  await wait(0);
-  const secondItem = document.querySelector('.list .list-item .item.hover');
-  t.ok(secondItem.innerHTML === 'Pizza');
-  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowUp'}));
-  await wait(0);
-  const thirdItem = document.querySelector('.list .list-item .item.hover');
-  t.ok(thirdItem.innerHTML === 'Ice Cream');
-  select.$destroy();
-});
+//   const firstItem = document.querySelector('.svelte-select-list .list-item .item.hover');
+//   t.ok(firstItem.innerHTML === 'Chocolate');
+//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+//   await wait(0);
+//   const secondItem = document.querySelector('.svelte-select-list .list-item .item.hover');
+//   t.ok(secondItem.innerHTML === 'Pizza');
+//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowUp'}));
+//   await wait(0);
+//   const thirdItem = document.querySelector('.svelte-select-list .list-item .item.hover');
+//   t.ok(thirdItem.innerHTML === 'Ice Cream');
+//   select.$destroy();
+// });
 
 test('when loadOptions and groupBy then group headers should appear', async (t) => { 
   const select = new Select({
@@ -3903,7 +3900,7 @@ test('when loadOptions and groupBy then group headers should appear', async (t) 
 
   select.$set({filterText: 'potato'});
   await wait(50);
-  const header = document.querySelector('.list .list-group-title');
+  const header = document.querySelector('.svelte-select-list .list-group-title');
   t.ok(header.innerHTML === 'Sweet');
 
   select.$destroy();
@@ -3983,10 +3980,10 @@ test('when list is open then a class of "above" or "below" should be present', a
     }
   });
   
-  const top = document.querySelector('.list.top');
+  const top = document.querySelector('.svelte-select-list.top');
   t.ok(top);
   select.listPlacement = 'bottom';
-  const bottom = document.querySelector('.list.bottom');
+  const bottom = document.querySelector('.svelte-select-list.bottom');
   t.ok(bottom);
   
   select.$destroy();
@@ -4008,34 +4005,34 @@ test('when items are grouped and filter text results in no items then list rende
 
   let title = document.querySelector('.list-group-title').innerHTML;
   t.ok(title === 'Sweet');
-  let item = document.querySelector('.list-item .item').innerHTML; 
+  let item = document.querySelector('.list-item .item.group-item').innerHTML; 
   t.ok(item === 'Chocolate');
   select.filterText = 'foo';
-  let empty = document.querySelector('.list .empty');
+  let empty = document.querySelector('.svelte-select-list .empty');
   t.ok(empty);
   select.$destroy();
 });
 
-test('when < is supplied in filterText then sanitiseLabel method coverts to HTML entity', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      listOpen: true,
-      items: [],
-      filterText: '<test />',
-      creatable: true,
-    }
-  });
+// test('when < is supplied in filterText then sanitiseLabel method coverts to HTML entity', async (t) => {
+//   const select = new Select({
+//     target,
+//     props: {
+//       listOpen: true,
+//       items: [],
+//       filterText: '<test />',
+//       creatable: true,
+//     }
+//   });
 
-  let item = document.querySelector('.list-item .item.hover');
-  t.ok(item.innerHTML === 'Create "&lt;test /&gt;"');
-  item.click();
-  await wait(0);
-  let selection = document.querySelector('.selected-item').innerHTML;
-  t.ok(selection === '&amp;lt;test /&gt;');
+//   let item = document.querySelector('.list-item .item.hover');
+//   t.ok(item.innerHTML === 'Create "&lt;test /&gt;"');
+//   item.click();
+//   await wait(0);
+//   let selection = document.querySelector('.selected-item').innerHTML;
+//   t.ok(selection === '&amp;lt;test /&gt;');
 
-  select.$destroy();
-})
+//   select.$destroy();
+// })
 
 test('when appendListTarget is supplied then list is appended to parent target', async (t) => {
   const select = new Select({

@@ -1,10 +1,7 @@
 <script>
-    import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
+    import { beforeUpdate, createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 
     const dispatch = createEventDispatcher();
-
-    import _Item from './Item.svelte';
-    import _List from './List.svelte';
 
     import _filter from '$lib/filter';
     import _getItems from '$lib/get-items';
@@ -16,13 +13,9 @@
 
     export let justValue = null; // read-only
 
-    export let Item = _Item;
-    export let List = _List;
     export let filter = _filter;
     export let getItems = _getItems;
     export let computePlacement = _computePlacement;
-
-    export let VirtualList = null;
 
     export let id = null;
     export let container = undefined;
@@ -41,17 +34,15 @@
     export let groupBy = undefined;
     export let groupFilter = (groups) => groups;
     export let groupHeaderSelectable = false;
-    export const sanitiseLabel = (text) => text && `${text}`.replace(/\</gi, '&lt;');
     export let getGroupHeaderLabel = (option) => {
-        return sanitiseLabel(option[labelIdentifier]) || option.id;
+        return option[labelIdentifier] || option.id;
     };
     export let labelIdentifier = 'label';
     export let getOptionLabel = (option, filterText) => {
         if (option.isCreator) {
-            filterText = sanitiseLabel(filterText);
             return `Create \"${filterText}\"`;
         } else {
-            return sanitiseLabel(option[labelIdentifier]);
+            return option[labelIdentifier];
         }
     };
     export let optionIdentifier = 'value';
@@ -59,7 +50,7 @@
     export let hasError = false;
     export let containerStyles = '';
     export let getSelectionLabel = (option) => {
-        if (option) return sanitiseLabel(option[labelIdentifier]);
+        if (option) return option[labelIdentifier];
         else return null;
     };
 
@@ -99,10 +90,8 @@
     export let hideEmptyState = false;
     export let inputAttributes = {};
     export let listAutoWidth = true;
-    export let itemHeight = 42;
     export let showChevron = false;
     export let listOffset = 5;
-    export let suggestions = null;
 
     export { containerClasses as class };
 
@@ -119,7 +108,7 @@
     let prev_value;
     let prev_filterText;
     let prev_multiple;
-    let hoverItemIndex;
+    let hoverItemIndex = 0;
 
     function setValue() {
         if (typeof value === 'string') {
@@ -182,14 +171,14 @@
                     groups[groupValue].push(
                         Object.assign(createGroupHeaderItem(groupValue, item), {
                             id: groupValue,
-                            isGroupHeader: true,
-                            isSelectable: groupHeaderSelectable,
+                            groupHeader: true,
+                            selectable: groupHeaderSelectable,
                         })
                     );
                 }
             }
 
-            groups[groupValue].push(Object.assign({ isGroupItem: !!groupValue }, item));
+            groups[groupValue].push(Object.assign({ groupItem: !!groupValue }, item));
         });
 
         const sortedGroupedItems = [];
@@ -239,8 +228,8 @@
     $: if (!value && multiple && prev_value) dispatch('change', value);
     $: if (listOpen && input) handleFocus();
     $: if (!focused && input) listOpen = false;
+    $: if (!listOpen) filterText = '';
     $: if (filterText !== prev_filterText) setupFilterText();
-    $: if (!listOpen && listApp) destroyList();
 
     function setupFilterText() {
         if (filterText.length === 0) return;
@@ -262,7 +251,7 @@
                     loading = res.loading;
                     focused = res.focused;
                     listOpen = res.listOpen;
-                    filteredItems = groupBy ? filterGroupedItems(res.filteredItems) : res.filteredItems;
+                    items = groupBy ? filterGroupedItems(res.filteredItems) : res.filteredItems;
                 } else {
                     loading = false;
                     focused = true;
@@ -270,7 +259,7 @@
                 }
 
                 if (creatable) {
-                    filteredItems = addCreatableItem(filteredItems, filterText);
+                    items = addCreatableItem(filteredItems, filterText);
                 }
             }, debounceWait);
         } else {
@@ -287,7 +276,6 @@
     $: showClear = showSelectedItem && clearable && !disabled && !loading;
     $: placeholderText = placeholderAlwaysShow && multiple ? placeholder : value ? '' : placeholder;
     $: showMultiSelect = multiple && value && value.length > 0;
-    $: suggestionMode = suggestions && filterText.length === 0;
     $: ariaSelection = value ? handleAriaSelection(multiple) : '';
     $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, focused, listOpen });
     $: updateValueDisplay(items);
@@ -295,31 +283,10 @@
     $: if (!multiple) justValue = value ? value[optionIdentifier] : value;
     $: if (!multiple && prev_value && !value) dispatch('change', value);
 
-    $: listProps = {
-        Item,
-        filterText,
-        optionIdentifier,
-        noOptionsMessage,
-        hideEmptyState,
-        VirtualList,
-        value,
-        multiple,
-        getGroupHeaderLabel,
-        items: filteredItems,
-        itemHeight,
-        getOptionLabel,
-        listPlacement,
-        parent: container,
-        listAutoWidth,
-        listOffset,
-        suggestionMode,
-        computePlacement,
-    };
-
     $: filteredItems = filter({
         loadOptions,
         filterText,
-        items: suggestionMode ? suggestions : items,
+        items,
         multiple,
         value,
         optionIdentifier,
@@ -331,6 +298,8 @@
         addCreatableItem,
         getOptionLabel,
     });
+
+    $: if (filteredItems) hoverItemIndex = 0;
 
     beforeUpdate(async () => {
         prev_value = value;
@@ -398,24 +367,72 @@
         if (!focused) return;
 
         switch (e.key) {
+            case 'Escape':
+                e.preventDefault();
+                e.stopPropagation();
+                closeList();
+                break;
             case 'Enter':
                 e.preventDefault();
+                e.stopPropagation();
+
+                if (listOpen) {
+                    if (filteredItems.length === 0) break;
+                    const hoverItem = filteredItems[hoverItemIndex];
+                    
+                    if (hoverItem?.selectable === false) break;
+
+                    if (value && !multiple && value[optionIdentifier] === hoverItem[optionIdentifier]) {
+                        closeList();
+                        break;
+                    }
+                    if (hoverItem.isCreator) {
+                        itemCreated(filterText);
+                    } else {
+                        activeItemIndex = hoverItemIndex;
+                        handleSelect(filteredItems[hoverItemIndex]);
+                    }
+                }
+
                 break;
             case 'ArrowDown':
                 e.preventDefault();
-                if (!listOpen) {
+                e.stopPropagation();
+
+                if (listOpen) {
+                    setHoverIndex(1);
+                } else {
                     listOpen = true;
                     activeValue = undefined;
-                    e.stopPropagation();
                 }
+
                 break;
             case 'ArrowUp':
                 e.preventDefault();
-                listOpen = true;
-                activeValue = undefined;
+                e.stopPropagation();
+
+                if (listOpen) {
+                    setHoverIndex(-1);
+                } else {
+                    listOpen = true;
+                    activeValue = undefined;
+                }
+
                 break;
             case 'Tab':
-                if (!listOpen) focused = false;
+                e.preventDefault();
+
+                if (listOpen) {
+                    if (filteredItems.length === 0) {
+                        return closeList();
+                    }
+                    if (value && value[optionIdentifier] === filteredItems[hoverItemIndex][optionIdentifier])
+                        return closeList();
+                    activeItemIndex = hoverItemIndex;
+                    handleSelect(filteredItems[hoverItemIndex]);
+                    focused = false;
+                }
+
                 break;
             case 'Backspace':
                 if (!multiple || filterText.length > 0) return;
@@ -424,6 +441,7 @@
                     if (activeValue === 0 || activeValue === undefined) break;
                     activeValue = value.length > activeValue ? activeValue - 1 : undefined;
                 }
+
                 break;
             case 'ArrowLeft':
                 if (!multiple || filterText.length > 0) return;
@@ -482,19 +500,12 @@
         mounted = true;
     });
 
-    function itemSelected(event) {
-        if (suggestionMode) {
-            filterText = event.detail.value;
-            return;
-        }
-
-        const { detail } = event;
-
-        if (detail) {
+    function itemSelected(selection) {
+        if (selection) {
             filterText = '';
-            const item = Object.assign({}, detail);
+            const item = Object.assign({}, selection);
 
-            if (!item.isGroupHeader || item.isSelectable) {
+            if (!item.groupHeader || item.selectable) {
                 if (multiple) {
                     value = value ? value.concat([item]) : [item];
                 } else {
@@ -512,16 +523,15 @@
         }
     }
 
-    function itemCreated(event) {
-        const { detail } = event;
+    function itemCreated(creation) {
         if (multiple) {
             value = value || [];
-            value = [...value, createItem(detail)];
+            value = [...value, createItem(creation)];
         } else {
-            value = createItem(detail);
+            value = createItem(creation);
         }
 
-        dispatch('itemCreated', detail);
+        dispatch('itemCreated', creation);
         filterText = '';
         listOpen = false;
         activeValue = undefined;
@@ -571,63 +581,165 @@
         }
     }
 
-    let listApp = null;
-    let showList = false;
+    let list = null;
 
-    $: {
-        if (mounted && listOpen) {
-            handleList();
-        } else {
-            destroyList();
-        }
-    }
-
-    function destroyList() {
-        showList = false;
-    }
-
-    async function handleList() {
-        showList = true;
+    let isScrollingTimer;
+    function handleListScroll() {
+        clearTimeout(isScrollingTimer);
+        isScrollingTimer = setTimeout(() => {
+            isScrolling = false;
+        }, 100);
     }
 
     export let appendListTarget = null;
-    $: if (listApp && !appendListTarget) appendListTarget = document.body;
-    $: if (listApp && appendListTarget) appendListTarget.appendChild(listApp);
 
     function handleClickOutside(event) {
-        if (container && !container.contains(event.target) && !listApp?.contains(event.target)) {
+        if (container && !container.contains(event.target) && !list?.contains(event.target)) {
             handleBlur();
         }
     }
 
     onDestroy(() => {
-        listApp?.remove();
+        list?.remove();
     });
+
+    export let activeItemIndex = 0;
+
+    let isScrolling = false;
+
+    function handleSelect(item) {
+        if (item.isCreator) return;
+        itemSelected(item);
+    }
+
+    function handleHover(i) {
+        if (isScrolling) return;
+        hoverItemIndex = i;
+    }
+
+    function handleItemClick(args) {
+        const { item, i } = args;
+
+        if (item?.selectable === false) return;
+        if (value && !multiple && value[optionIdentifier] === item[optionIdentifier]) return closeList();
+
+        if (item.isCreator) {
+            itemCreated(filterText);
+        } else if (isItemSelectable(item)) {
+            activeItemIndex = i;
+            hoverItemIndex = i;
+            handleSelect(item);
+        }
+    }
+
+    let scrollToHoverItem = 0;
+    function setHoverIndex(increment) {
+        if (increment > 0 && hoverItemIndex === filteredItems.length - 1) {
+            hoverItemIndex = 0;
+        } else if (increment < 0 && hoverItemIndex === 0) {
+            hoverItemIndex = filteredItems.length - 1;
+        } else {
+            hoverItemIndex = hoverItemIndex + increment;
+        }
+
+        scrollToHoverItem = hoverItemIndex;
+    }
+
+    function isItemActive(item, value, optionIdentifier) {
+        return value && value[optionIdentifier] === item[optionIdentifier];
+    }
+
+    function isItemFirst(itemIndex) {
+        return itemIndex === 0;
+    }
+
+    function isItemHover(hoverItemIndex, item, itemIndex) {
+        return isItemSelectable(item) && (hoverItemIndex === itemIndex || filteredItems.length === 1);
+    }
+
+    function isItemSelectable(item) {
+        return (item.groupHeader && item.selectable) || item.selectable || !item.hasOwnProperty('selectable');
+    }
+
+    let computed;
+    function handleWindow() {
+        computed = computePlacement({ parent: container, list, listPlacement, listOffset, listAutoWidth });
+    }
+
+    $: if (container && listPlacement) handleWindow();
+    $: placementClass = computed && computed.placementClass;
+    $: listStyle = computed && computed.listStyle;
+
+    function listAction(node, appendListTarget) {
+        if (appendListTarget) appendListTarget.appendChild(node);
+
+        return {
+            update(appendListTarget) {
+                appendListTarget.appendChild(node);
+            },
+        };
+    }
+
+    const activeScroll = scrollAction;
+    const hoverScroll = scrollAction;
+
+    function scrollAction(node, args) {
+        return {
+            update(args) {
+                if (args.scroll) node.scrollIntoView(false);
+            },
+        };
+    }
+
+    $: listMounted = !!list;
 </script>
 
-<svelte:window on:click={handleClickOutside} />
+<svelte:window on:click={handleClickOutside} on:keydown={handleKeyDown} />
 
 <div
     class="svelte-select {containerClasses}"
     class:error={hasError}
     class:multi={multiple}
-    class:disabled={disabled}
-    class:focused={focused}
+    class:disabled
+    class:focused
     class:list-open={listOpen}
     class:show-chevron={showChevron}
     style={containerStyles}
     on:click={handleClick}
     bind:this={container}>
-    {#if showList}
-        <div class="svelte-select-list" bind:this={listApp}>
-            {#if listApp}
-                <svelte:component
-                    this={List}
-                    bind:hoverItemIndex
-                    {...listProps}
-                    on:itemSelected={itemSelected}
-                    on:itemCreated={itemCreated}
-                    on:closeList={closeList} />
+
+    {#if listStyle && listOpen}
+        <div
+            use:listAction={appendListTarget}
+            bind:this={list}
+            class="svelte-select-list {placementClass}"
+            style={listStyle}
+            on:scroll={handleListScroll}
+            on:mousedown|preventDefault>
+            {#if filteredItems.length > 0}
+                {#each filteredItems as item, i}
+                    <div
+                        on:mouseover={() => handleHover(i)}
+                        on:focus={() => handleHover(i)}
+                        on:click|stopPropagation={() => handleItemClick({ item, i })}
+                        class="list-item"
+                        tabindex="-1">
+                        <div
+                            use:activeScroll={{ scroll: isItemActive(item, value, optionIdentifier), listMounted }}
+                            use:hoverScroll={{ scroll: scrollToHoverItem === i, listMounted }}
+                            class="item"
+                            class:list-group-title={item.groupHeader}
+                            class:active={isItemActive(item, value, optionIdentifier)}
+                            class:first={isItemFirst(i)}
+                            class:hover={hoverItemIndex === i}
+                            class:group-item={item.groupItem}
+                            class:not-selectable={item?.selectable === false}>
+                            {@html getOptionLabel(item, filterText)}
+                        </div>
+                    </div>
+                {/each}
+            {:else if !hideEmptyState}
+                <div class="empty">{noOptionsMessage}</div>
             {/if}
         </div>
     {/if}
@@ -679,7 +791,7 @@
         bind:value={filterText}
         placeholder={placeholderText}
         style={inputStyles}
-        disabled={disabled} />
+        {disabled} />
 
     {#if loading}
         <div class="icon loading" aria-hidden="true">
@@ -863,7 +975,6 @@
         outline: none;
     }
 
-
     .icon {
         display: flex;
         align-items: center;
@@ -951,5 +1062,81 @@
         align-items: center;
         justify-content: center;
         --clear-icon-color: var(--multi-item-clear-icon-color, #000);
+    }
+
+    .svelte-select-list {
+        box-shadow: var(--list-shadow, 0 2px 3px 0 rgba(44, 62, 80, 0.24));
+        border-radius: var(--list-border-radius, 4px);
+        max-height: var(--list-max-height, 252px);
+        overflow-y: auto;
+        background: var(--list-background, #fff);
+        position: var(--list-position, absolute);
+        z-index: var(--list-z-index, 2);
+        border: var(--list-border);
+        box-sizing: border-box;
+    }
+
+    .svelte-select-list > * {
+        box-sizing: border-box;
+        transition: all 0.2s;
+    }
+
+    .list-group-title {
+        color: var(--group-title-color, #8f8f8f);
+        cursor: default;
+        font-size: var(--group-title-font-size, 12px);
+        font-weight: var(--group-title-font-weight, 600);
+        height: var(--height, 42px);
+        line-height: var(--height, 42px);
+        padding: var(--group-title-padding, 0 20px);
+        text-overflow: ellipsis;
+        overflow-x: hidden;
+        white-space: nowrap;
+        text-transform: var(--group-title-text-transform, uppercase);
+    }
+
+    .empty {
+        text-align: var(--list-empty-text-align, center);
+        padding: var(--list-empty-padding, 20px 0);
+        color: var(--list-empty-color, #78848f);
+    }
+
+    .item {
+        cursor: default;
+        height: var(--height, 42px);
+        line-height: var(--height, 42px);
+        padding: var(--item-padding, 0 20px);
+        color: var(--item-color, inherit);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        box-sizing: border-box;
+        transition: all 0.2s;
+    }
+
+    .item.group-item {
+        padding-left: var(--group-item-padding-left, 40px);
+    }
+
+    .item:active {
+        background: var(--item-active-background, #b9daff);
+    }
+
+    .item.active {
+        background: var(--item-is-active-bg, #007aff);
+        color: var(--item-is-active-color, #fff);
+    }
+
+    .item.not-selectable {
+        color: var(--item-is-not-selectable-color, #999);
+    }
+
+    .item.first {
+        border-radius: var(--item-first-border-radius, 4px 4px 0 0);
+    }
+
+    .item.hover:not(.active) {
+        background: var(--item-hover-bg, #e7f2ff);
+        color: var(--item-hover-color, inherit);
     }
 </style>

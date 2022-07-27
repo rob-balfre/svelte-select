@@ -13,7 +13,7 @@ export default function filter({
     addCreatableItem,
     getOptionLabel,
 }) {
-    if (loadOptions && filterText.length > 0) return;
+    if (items && loadOptions && filterText.length > 0) return items;
     if (!items) return [];
 
     if (items && items.length > 0 && typeof items[0] !== 'object') {

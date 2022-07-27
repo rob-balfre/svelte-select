@@ -1,20 +1,20 @@
 <script>
-    export let isActive = false;
-    export let isFirst = false;
-    export let isHover = false;
+    export let active = false;
+    export let first = false;
+    export let hover = false;
     export let item = undefined;
 
     let itemClasses = '';
 
     $: {
         const classes = [];
-        if (isActive) {
+        if (active) {
             classes.push('active');
         }
-        if (isFirst) {
+        if (first) {
             classes.push('first');
         }
-        if (isHover) {
+        if (hover) {
             classes.push('hover');
         }
         itemClasses = classes.join(' ');

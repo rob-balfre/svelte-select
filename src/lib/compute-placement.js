@@ -17,7 +17,7 @@ export default function computePlacement({ parent, list, listPlacement, listOffs
     } else {
         listStyle = base + _bottom;
         placementClass = 'bottom';
-        if (bottom + listOffset + list.offsetHeight > window.innerHeight) {
+        if (list && (bottom + listOffset + list.offsetHeight > window.innerHeight)) {
             listStyle = base + _top;
             placementClass = 'top';
         }
