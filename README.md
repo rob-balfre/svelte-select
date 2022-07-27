@@ -13,6 +13,8 @@
 </div>
 <div align="center">A select/autocomplete/typeahead Svelte component.</div>
 
+## 🚨 Converting internal components into named slots - WIP so docs are in flux, sorry!
+
 ## Demo
 
 [✨ REPL: Simple ✨](https://svelte.dev/repl/c3bbe052fdfc4e87a46ccd9091ee002b)
