@@ -39,18 +39,16 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 | items                 | `any[]`    | `[]`            | Array of items available to display / filter               |
 | value                 | `any`      | `null`          | Selected value(s)                                          |
 | justValue             | `any`      | `null`          | **READ-ONLY** Selected value(s) excluding container object |
-| optionIdentifier      | `string`   | `value`         | Override default identifier                                |
-| labelIdentifier       | `string`   | `label`         | Override default identifier                                |
+| itemId                | `string`   | `value`         | Override default identifier                                |
+| label                 | `string`   | `label`         | Override default label                                     |
 | id                    | `string`   | `null`          | Add an id to the filter input field                        |
 | filterText            | `string`   | `''`            | Text to filter `items` by                                  |
 | placeholder           | `string`   | `Please select` | Placeholder text                                           |
-| noOptionsMessage      | `string`   | `No options`    | Message displayed when no items                            |
-| hideEmptyState        | `boolean`  | `false`         | When no items hide list and `noOptionsMessage`             |
+| hideEmptyState        | `boolean`  | `false`         | When no items hide list                                    |
 | listOpen              | `boolean`  | `false`         | Open/close list                                            |
 | class                 | `string`   | `''`            | container classes                                          |
 | containerStyles       | `string`   | `''`            | Add inline styles to container                             |
 | clearable             | `boolean`  | `true`          | Enable clearing of value(s)                                |
-| creatable             | `boolean`  | `false`         | Can create new item(s) to be added to `value`              |
 | disabled              | `boolean`  | `false`         | Disable select                                             |
 | multiple              | `boolean`  | `false`         | Enable multi-select                                        |
 | searchable            | `boolean`  | `true`          | If `false` search/filtering is disabled                    |
@@ -66,7 +64,7 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 | listOffset            | `number`   | `5`             | `px` space between select and list                         |
 | debounceWait          | `number`   | `300`           | `milliseconds` debounce wait                               |
 | suggestions           | `string[]` | `null`          | Show search suggestions before user input                  |
-| appendListTarget      | `Element`  | `document.body` | Change where List gets appended                            |
+| appendListTarget      | `Element`  | `document.body` | Change where list gets appended                            |
 
 
 ## Named slots
@@ -78,22 +76,12 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
   <div slot="clear-icon" />  
   <div slot="loading-icon" />  
   <div slot="chevron-icon" /> 
+  <div slot="list" let:filteredItems />  
+  <div slot="list-item" let:item let:index />  
+  <!-- Remember you can also use `svelte:fragment` to avoid a container DOM element. -->
+  <svelte:fragment slot="empty" />  
 </Select>
 ```
-
-
-### Replaceable components
-
-| Import | Type        | Description    |
-| ------ | ----------- | -------------- |
-| Item   | `component` | Item component |
-
-
-### Optional component imports
-
-| Import      | Type        | Description                                            |
-| ----------- | ----------- | ------------------------------------------------------ |
-| VirtualList | `component` | Virtual list support (uses `svelte-tiny-virtual-list`) |
 
 
 ## Events
@@ -158,8 +146,8 @@ You can also use custom collections.
 <script>
   import Select from 'svelte-select';
 
-  const optionIdentifier = 'id';
-  const labelIdentifier = 'title';
+  const itemId = 'id';
+  const label = 'title';
 
   const items = [
     {id: 0, title: 'Foo'},
@@ -167,7 +155,7 @@ You can also use custom collections.
   ];
 </script>
 
-<Select {optionIdentifier} {labelIdentifier} {items} />
+<Select {itemId} {label} {items} />
 ```
 
 ### Async Items
@@ -192,9 +180,9 @@ To load items asynchronously then `loadOptions` is the simplest solution. Supply
 <Select loadOptions={examplePromise} />
 ```
 
-### Change where List gets appended
+### Change where list gets appended
 
-By default List gets appended to the `document.body`. For most use-cases this is fine. If you want more control then supply a `appendListTarget` Element
+By default list gets appended to the `document.body`. For most use-cases this is fine. If you want more control then supply a `appendListTarget` Element
 
 ```html
 <script>
@@ -205,7 +193,7 @@ By default List gets appended to the `document.body`. For most use-cases this is
 
 <form bind:this={target}>
   <Select appendListTarget={target} />
-  <!-- List will now get appended to the DOM inside this form Element> -->
+  <!-- list will now get appended to the DOM inside this form Element> -->
 </form>
 ```
 
@@ -241,24 +229,6 @@ export let createItem = filterText => {
     value: filterText,
     label: filterText
   };
-};
-```
-
-```js
-export let getOptionLabel = (option, filterText) => {
-  return option.isCreator ? `Create \"${filterText}\"` : option.label;
-};
-```
-
-```js
-export let getSelectionLabel = option => {
-  if (option) return option.label;
-};
-```
-
-```js
-export let getGroupHeaderLabel = option => {
-  return option.label;
 };
 ```
 
@@ -365,16 +335,15 @@ Open http://localhost:3000 and see devtools console output. When developing it's
 For example:
 
 ```js
-test.only('when getSelectionLabel contains HTML then render the HTML', async (t) => {
+test.only('...', async (t) => {
   const select = new Select({
     target,
     props: {
-      value: items[0],
-      getSelectionLabel: (option) => `<p>${option.label}</p>`,
+      ...
     }
   });
 
-  t.ok(document.querySelector('.selected-item').innerHTML === '<p>Chocolate</p>');
+  t.ok(...);
 
   //select.$destroy();
 });

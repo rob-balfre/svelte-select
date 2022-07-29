@@ -2,6 +2,16 @@
 
 ## 5.0.0
 
+* Added named slot `list`
+* Added named slot `item`
+* Removed Virtual list
+* noOptionsMessage removed
+* optionIdentifier -> itemId
+* getOptionLabel removed
+* getGroupHeaderLabel removed
+* itemCreated event removed
+* labelIdentifier -> label
+* creatable removed, use named slots and bake in your create own logic
 * isGroupHeaderSelectable -> groupHeaderSelectable
 * isSearchable -> searchable
 * isFocused -> focused
@@ -38,7 +48,6 @@
 * tailwind css option
 * breaking: containerClasses -> class
 * listGroupTitle -> list-group-title
-* virtualList -> virtual-list
 * listContainer -> list 
 * selectContainer and other CSS class names updated, selectContainer -> svelte-select for example
 * LoadingIcon prop added
@@ -49,7 +58,6 @@
 * indicatorSvg removed, use ChevronIcon going forward
 * removed playwright and puppeteer, tests now just run in the browser with sirv
 * debounce method is now exported as a prop
-* Removed isVirtualList, will use VirtualList going forward
 * Convert repo to use SvelteKit
 * Change licence from LIL to ISC
 

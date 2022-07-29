@@ -7,6 +7,6 @@
 
 <Select bind:items bind:value multiple>
     <svelte:fragment slot="selection" let:selection>
-        Slot: {selection}
+        Slot: {selection.label}
     </svelte:fragment>
 </Select>

@@ -2,11 +2,11 @@
     import Select from '../../src/lib/Select.svelte';
 
     let items = ['one', 'two'];
-    let value = 'one';
+    
 </script>
 
-<Select bind:items bind:value>
-    <svelte:fragment slot="selection" let:selection>
-        Slot: {selection.label}
+<Select bind:items listOpen>
+    <svelte:fragment slot="item" let:item>
+        * {item.label} *
     </svelte:fragment>
 </Select>

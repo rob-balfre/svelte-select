@@ -2,8 +2,11 @@
 
 v5 is a major release that that includes some ⚠️ BREAKING CHANGES ⚠️ 
 
+Removed `getOptionLabel`. Not needed.<br/>
+Removed `getGroupHeaderLabel`. Not needed.<br/>
+Removed `noOptionsMessage`. Not needed.
 
-Removed `Selection`, `ChevronIcon`, `ClearIcon`, `LoadingIcon`, `Icon` components, use named slots instead.
+Removed `Selection`, `ChevronIcon`, `ClearIcon`, `LoadingIcon`, `Icon`, `List` and `Item` components, use named slots instead:
 
 ```html
 <Select bind:items bind:value>
@@ -12,17 +15,35 @@ Removed `Selection`, `ChevronIcon`, `ClearIcon`, `LoadingIcon`, `Icon` component
   <div slot="clear-icon" />  
   <div slot="loading-icon" />  
   <div slot="chevron-icon" />  
+  <div slot="list" let:filteredItems />  
+  <div slot="list-item" let:item let:index />  
+  <div slot="empty" />  
 </Select>
 ```
 
-Removed `isVirtualList` instead `npm i svelte-tiny-virtual-list -D` and
+Removed `isVirtualList`. Use named slots.
 
-```html
+```svelte
 <script>
   import VirtualList from 'svelte-tiny-virtual-list';
+  ...
 </script>
 
-<Select {VirtualList} />
+<Select>
+  <div slot="list" let:filteredItems>  
+    <VirtualList {...} />
+  </div>
+</Select>
+```
+
+Removed `isCreatable` prop and `itemCreated` event, named slots can be used to bake in your own create method
+
+```html
+<Select>
+  <div slot="empty" on:click={..your-create-method-here...}>
+    CREATE: {filterText}
+  </div>
+</Select>
 ```
 
 ### CSS Camel to kebab:
@@ -74,16 +95,16 @@ The following CSS custom properties were removed in v5.
 `MultiSelection` → `Multi`<br/>
 `indicatorSvg` → `ChevronIcon`<br/>
 `showIndicator` → `showChevron`<br/>
+`loadOptionsInterval` → `debounceWait`<br/>
+`isMulti` → `multiple`<br/>
+`isWaiting` → `loading`<br/>
+`isClearable` → `clearable`<br/>
+`isFocused` → `focused`<br/>
+`isGroupHeaderSelectable` → `groupHeaderSelectable`<br/>
+`isDisabled` → `disabled`<br/>
+`labelIdentifier` -> `label`<br/>
+`optionIdentifier` -> `itemId`<br/>
 `selectedValue` removed (was already deprecated in v4 in favour of `value`)<br/>
-`loadOptionsInterval` → `debounceWait`
-`isMulti` → `multiple`
-`isWaiting` → `loading`
-`isClearable` → `clearable`
-`isCreatable` → `creatable`
-`isFocused` → `focused`
-`isGroupHeaderSelectable` → `groupHeaderSelectable`
-`isDisabled` → `disabled`
-
 
 ### Event change:
 The `select` event now only fires when the user selects an item. If you also want to track programmatic changes use the new `change` event.

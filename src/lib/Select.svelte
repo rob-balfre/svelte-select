@@ -23,48 +23,26 @@
     export let multiple = false;
     export let multiFullItemClearable = false;
     export let disabled = false;
-    export let creatable = false;
     export let focused = false;
     export let value = null;
     export let filterText = '';
     export let placeholder = 'Please select';
     export let placeholderAlwaysShow = false;
     export let items = null;
+    export let label = 'label';
     export let itemFilter = (label, filterText) => `${label}`.toLowerCase().includes(filterText.toLowerCase());
     export let groupBy = undefined;
     export let groupFilter = (groups) => groups;
     export let groupHeaderSelectable = false;
-    export let getGroupHeaderLabel = (option) => {
-        return option[labelIdentifier] || option.id;
-    };
-    export let labelIdentifier = 'label';
-    export let getOptionLabel = (option, filterText) => {
-        if (option.isCreator) {
-            return `Create \"${filterText}\"`;
-        } else {
-            return option[labelIdentifier];
-        }
-    };
-    export let optionIdentifier = 'value';
+    export let itemId = 'value';
     export let loadOptions = undefined;
     export let hasError = false;
     export let containerStyles = '';
-    export let getSelectionLabel = (option) => {
-        if (option) return option[labelIdentifier];
-        else return null;
-    };
 
     export let createGroupHeaderItem = (groupValue, item) => {
         return {
             value: groupValue,
             label: groupValue,
-        };
-    };
-
-    export let createItem = (filterText) => {
-        return {
-            value: filterText,
-            label: filterText,
         };
     };
 
@@ -86,7 +64,6 @@
     };
 
     export let debounceWait = 300;
-    export let noOptionsMessage = 'No options';
     export let hideEmptyState = false;
     export let inputAttributes = {};
     export let listAutoWidth = true;
@@ -94,14 +71,6 @@
     export let listOffset = 5;
 
     export { containerClasses as class };
-
-    function addCreatableItem(_items, _filterText) {
-        if (_filterText.length === 0) return _items;
-        const itemToCreate = createItem(_filterText);
-        if (_items[0] && _filterText === _items[0][labelIdentifier]) return _items;
-        itemToCreate.isCreator = true;
-        return [..._items, itemToCreate];
-    }
 
     let containerClasses = '';
     let activeValue;
@@ -112,9 +81,9 @@
 
     function setValue() {
         if (typeof value === 'string') {
-            let item = items.find((item) => item[optionIdentifier] === value);
+            let item = items.find((item) => item[itemId] === value);
             value = item || {
-                [optionIdentifier]: value,
+                [itemId]: value,
                 label: value,
             };
         } else if (multiple && Array.isArray(value) && value.length > 0) {
@@ -200,7 +169,7 @@
             return;
         }
 
-        if (!prev_value || JSON.stringify(value[optionIdentifier]) !== JSON.stringify(prev_value[optionIdentifier])) {
+        if (!prev_value || JSON.stringify(value[itemId]) !== JSON.stringify(prev_value[itemId])) {
             dispatch('change', value);
         }
     }
@@ -226,7 +195,6 @@
     $: if (multiple && value && value.length > 1) checkValueForDuplicates();
     $: if (value) dispatchSelectedItem();
     $: if (!value && multiple && prev_value) dispatch('change', value);
-    $: if (listOpen && input) handleFocus();
     $: if (!focused && input) listOpen = false;
     $: if (!listOpen) filterText = '';
     $: if (filterText !== prev_filterText) setupFilterText();
@@ -257,10 +225,6 @@
                     focused = true;
                     listOpen = true;
                 }
-
-                if (creatable) {
-                    items = addCreatableItem(filteredItems, filterText);
-                }
             }, debounceWait);
         } else {
             listOpen = true;
@@ -279,8 +243,8 @@
     $: ariaSelection = value ? handleAriaSelection(multiple) : '';
     $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, focused, listOpen });
     $: updateValueDisplay(items);
-    $: if (multiple) justValue = value ? value.map((item) => item[optionIdentifier]) : null;
-    $: if (!multiple) justValue = value ? value[optionIdentifier] : value;
+    $: if (multiple) justValue = value ? value.map((item) => item[itemId]) : null;
+    $: if (!multiple) justValue = value ? value[itemId] : value;
     $: if (!multiple && prev_value && !value) dispatch('change', value);
 
     $: filteredItems = filter({
@@ -289,14 +253,12 @@
         items,
         multiple,
         value,
-        optionIdentifier,
+        itemId,
         groupBy,
-        creatable,
+        label,
         itemFilter,
         convertStringItemsToObjects,
         filterGroupedItems,
-        addCreatableItem,
-        getOptionLabel,
     });
 
     $: if (filteredItems) hoverItemIndex = 0;
@@ -314,8 +276,8 @@
             const uniqueValues = [];
 
             value.forEach((val) => {
-                if (!ids.includes(val[optionIdentifier])) {
-                    ids.push(val[optionIdentifier]);
+                if (!ids.includes(val[itemId])) {
+                    ids.push(val[itemId]);
                     uniqueValues.push(val);
                 } else {
                     noDuplicates = false;
@@ -328,19 +290,13 @@
     }
 
     function findItem(selection) {
-        let matchTo = selection ? selection[optionIdentifier] : value[optionIdentifier];
-        return items.find((item) => item[optionIdentifier] === matchTo);
+        let matchTo = selection ? selection[itemId] : value[itemId];
+        return items.find((item) => item[itemId] === matchTo);
     }
 
     function updateValueDisplay(items) {
         if (!items || items.length === 0 || items.some((item) => typeof item !== 'object')) return;
-        if (
-            !value ||
-            (multiple
-                ? value.some((selection) => !selection || !selection[optionIdentifier])
-                : !value[optionIdentifier])
-        )
-            return;
+        if (!value || (multiple ? value.some((selection) => !selection || !selection[itemId]) : !value[itemId])) return;
 
         if (Array.isArray(value)) {
             value = value.map((selection) => findItem(selection) || selection);
@@ -365,24 +321,23 @@
 
     function handleKeyDown(e) {
         if (!focused) return;
+        e.stopPropagation();
 
         switch (e.key) {
             case 'Escape':
                 e.preventDefault();
-                e.stopPropagation();
                 closeList();
                 break;
             case 'Enter':
                 e.preventDefault();
-                e.stopPropagation();
 
                 if (listOpen) {
                     if (filteredItems.length === 0) break;
                     const hoverItem = filteredItems[hoverItemIndex];
-                    
+
                     if (hoverItem?.selectable === false) break;
 
-                    if (value && !multiple && value[optionIdentifier] === hoverItem[optionIdentifier]) {
+                    if (value && !multiple && value[itemId] === hoverItem[itemId]) {
                         closeList();
                         break;
                     }
@@ -397,11 +352,11 @@
                 break;
             case 'ArrowDown':
                 e.preventDefault();
-                e.stopPropagation();
 
                 if (listOpen) {
                     setHoverIndex(1);
                 } else {
+                    hoverItemIndex = 0;
                     listOpen = true;
                     activeValue = undefined;
                 }
@@ -409,7 +364,6 @@
                 break;
             case 'ArrowUp':
                 e.preventDefault();
-                e.stopPropagation();
 
                 if (listOpen) {
                     setHoverIndex(-1);
@@ -420,22 +374,28 @@
 
                 break;
             case 'Tab':
-                e.preventDefault();
+                if (listOpen && focused) {
+                    if (
+                        filteredItems.length === 0 ||
+                        (value && value[itemId] === filteredItems[hoverItemIndex][itemId])
+                    )
+                        return closeList();
 
-                if (listOpen) {
-                    if (filteredItems.length === 0) {
-                        return closeList();
-                    }
-                    if (value && value[optionIdentifier] === filteredItems[hoverItemIndex][optionIdentifier])
-                        return closeList();
+                    e.preventDefault();
                     activeItemIndex = hoverItemIndex;
                     handleSelect(filteredItems[hoverItemIndex]);
+
+                    listOpen = false;
+                } else if (!listOpen && focused) {
                     focused = false;
+                } else {
+                    handleBlur();
                 }
 
                 break;
             case 'Backspace':
                 if (!multiple || filterText.length > 0) return;
+
                 if (multiple && value && value.length > 0) {
                     handleMultiItemClear(activeValue !== undefined ? activeValue : value.length - 1);
                     if (activeValue === 0 || activeValue === undefined) break;
@@ -444,7 +404,7 @@
 
                 break;
             case 'ArrowLeft':
-                if (!multiple || filterText.length > 0) return;
+                if (!value || !multiple || filterText.length > 0) return;
                 if (activeValue === undefined) {
                     activeValue = value.length - 1;
                 } else if (value.length > activeValue && activeValue !== 0) {
@@ -452,7 +412,7 @@
                 }
                 break;
             case 'ArrowRight':
-                if (!multiple || filterText.length > 0 || activeValue === undefined) return;
+                if (!value || !multiple || filterText.length > 0 || activeValue === undefined) return;
                 if (activeValue === value.length - 1) {
                     activeValue = undefined;
                 } else if (activeValue < value.length - 1) {
@@ -464,26 +424,25 @@
 
     function handleFocus(e) {
         dispatch('focus', e);
-
+        input.focus();
         focused = true;
-        if (e) input.focus();
     }
 
     function handleBlur(e) {
-        dispatch('blur', e);
-        listOpen = false;
-        focused = false;
-        activeValue = undefined;
-        input.blur();
+        if (listOpen || focused) {
+            dispatch('blur', e);
+            listOpen = false;
+            focused = false;
+            activeValue = undefined;
+            input.blur();
+        }
     }
 
     function handleClick() {
         if (disabled) return;
-        focused = true;
+        hoverItemIndex = 0;
         listOpen = !listOpen;
-        if (listOpen) {
-            handleFocus();
-        }
+        if (listOpen && !focused) handleFocus();
     }
 
     export function handleClear() {
@@ -493,11 +452,9 @@
         handleFocus();
     }
 
-    let mounted;
     onMount(() => {
         if (listOpen) focused = true;
         if (focused && input) input.focus();
-        mounted = true;
     });
 
     function itemSelected(selection) {
@@ -523,20 +480,6 @@
         }
     }
 
-    function itemCreated(creation) {
-        if (multiple) {
-            value = value || [];
-            value = [...value, createItem(creation)];
-        } else {
-            value = createItem(creation);
-        }
-
-        dispatch('itemCreated', creation);
-        filterText = '';
-        listOpen = false;
-        activeValue = undefined;
-    }
-
     function closeList() {
         filterText = '';
         listOpen = false;
@@ -558,9 +501,9 @@
         let selected = undefined;
 
         if (_multiple && value.length > 0) {
-            selected = value.map((v) => getSelectionLabel(v)).join(', ');
+            selected = value.map((v) => v[label]).join(', ');
         } else {
-            selected = getSelectionLabel(value);
+            selected = value[label];
         }
 
         return ariaValues(selected);
@@ -568,14 +511,10 @@
 
     function handleAriaContent() {
         if (!filteredItems || filteredItems.length === 0) return '';
-
         let _item = filteredItems[hoverItemIndex];
-
         if (listOpen && _item) {
-            let label = getSelectionLabel(_item);
             let count = filteredItems ? filteredItems.length : 0;
-
-            return ariaListOpen(label, count);
+            return ariaListOpen(_item[label], count);
         } else {
             return ariaFocused();
         }
@@ -621,7 +560,7 @@
         const { item, i } = args;
 
         if (item?.selectable === false) return;
-        if (value && !multiple && value[optionIdentifier] === item[optionIdentifier]) return closeList();
+        if (value && !multiple && value[itemId] === item[itemId]) return closeList();
 
         if (item.isCreator) {
             itemCreated(filterText);
@@ -645,16 +584,13 @@
         scrollToHoverItem = hoverItemIndex;
     }
 
-    function isItemActive(item, value, optionIdentifier) {
-        return value && value[optionIdentifier] === item[optionIdentifier];
+    function isItemActive(item, value, itemId) {
+        if (multiple) return;
+        return value && value[itemId] === item[itemId];
     }
 
     function isItemFirst(itemIndex) {
         return itemIndex === 0;
-    }
-
-    function isItemHover(hoverItemIndex, item, itemIndex) {
-        return isItemSelectable(item) && (hoverItemIndex === itemIndex || filteredItems.length === 1);
     }
 
     function isItemSelectable(item) {
@@ -666,7 +602,7 @@
         computed = computePlacement({ parent: container, list, listPlacement, listOffset, listAutoWidth });
     }
 
-    $: if (container && listPlacement) handleWindow();
+    $: if (container && listPlacement && listOpen) handleWindow();
     $: placementClass = computed && computed.placementClass;
     $: listStyle = computed && computed.listStyle;
 
@@ -705,9 +641,9 @@
     class:list-open={listOpen}
     class:show-chevron={showChevron}
     style={containerStyles}
-    on:click={handleClick}
+    on:pointerdown|preventDefault={handleClick}
+    on:click|preventDefault|stopPropagation
     bind:this={container}>
-
     {#if listStyle && listOpen}
         <div
             use:listAction={appendListTarget}
@@ -715,8 +651,9 @@
             class="svelte-select-list {placementClass}"
             style={listStyle}
             on:scroll={handleListScroll}
-            on:mousedown|preventDefault>
-            {#if filteredItems.length > 0}
+            on:pointerdown|preventDefault|stopPropagation>
+            {#if $$slots.list}<slot name="list" {filteredItems} />
+            {:else if filteredItems.length > 0}
                 {#each filteredItems as item, i}
                     <div
                         on:mouseover={() => handleHover(i)}
@@ -725,21 +662,25 @@
                         class="list-item"
                         tabindex="-1">
                         <div
-                            use:activeScroll={{ scroll: isItemActive(item, value, optionIdentifier), listMounted }}
+                            use:activeScroll={{ scroll: isItemActive(item, value, itemId), listMounted }}
                             use:hoverScroll={{ scroll: scrollToHoverItem === i, listMounted }}
                             class="item"
                             class:list-group-title={item.groupHeader}
-                            class:active={isItemActive(item, value, optionIdentifier)}
+                            class:active={isItemActive(item, value, itemId)}
                             class:first={isItemFirst(i)}
                             class:hover={hoverItemIndex === i}
                             class:group-item={item.groupItem}
                             class:not-selectable={item?.selectable === false}>
-                            {@html getOptionLabel(item, filterText)}
+                            <slot name="item" {item} index={i}>
+                                {item[label]}
+                            </slot>
                         </div>
                     </div>
                 {/each}
             {:else if !hideEmptyState}
-                <div class="empty">{noOptionsMessage}</div>
+                <slot name="empty">
+                    <div class="empty">No options</div>
+                </slot>
             {/if}
         </div>
     {/if}
@@ -755,75 +696,81 @@
 
     <slot name="prepend" />
 
-    {#if showSelectedItem}
-        {#if multiple}
-            {#each value as item, i}
-                <div
-                    class="multi-item {activeValue === i ? 'active' : ''} {disabled ? 'disabled' : ''}"
-                    on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}>
-                    <slot name="selection" selection={getSelectionLabel(item)}>
-                        {getSelectionLabel(item)}
-                    </slot>
+    <div class="value-container">
+        {#if showSelectedItem}
+            {#if multiple}
+                {#each value as item, i}
+                    <div
+                        class="multi-item"
+                        class:active={activeValue === i}
+                        class:disabled
+                        on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}>
+                        <slot name="selection" selection={item}>
+                            {item[label]}
+                        </slot>
 
-                    {#if !disabled && !multiFullItemClearable && ClearIcon}
-                        <div class="multi-item_clear" on:click={() => handleMultiItemClear(i)}>
-                            <svelte:component this={ClearIcon} />
-                        </div>
-                    {/if}
+                        {#if !disabled && !multiFullItemClearable && ClearIcon}
+                            <div class="multi-item_clear" on:click={() => handleMultiItemClear(i)}>
+                                <svelte:component this={ClearIcon} />
+                            </div>
+                        {/if}
+                    </div>
+                {/each}
+            {:else}
+                <div class="selected-item">
+                    <slot name="selection" selection={value}>
+                        {value[label]}
+                    </slot>
                 </div>
-            {/each}
-        {:else}
-            <div class="selected-item">
-                <slot name="selection" selection={getSelectionLabel(value)}>
-                    {getSelectionLabel(value)}
+            {/if}
+        {/if}
+
+        <input
+            on:keydown={handleKeyDown}
+            on:blur={handleBlur}
+            on:focus={handleFocus}
+            readOnly={!searchable}
+            {..._inputAttributes}
+            bind:this={input}
+            bind:value={filterText}
+            placeholder={placeholderText}
+            style={inputStyles}
+            {disabled} />
+    </div>
+
+    <div class="indicators">
+        {#if loading}
+            <div class="icon loading" aria-hidden="true">
+                <slot name="loading-icon">
+                    <LoadingIcon />
                 </slot>
             </div>
         {/if}
-    {/if}
 
-    <input
-        on:keydown={handleKeyDown}
-        on:blur={handleBlur}
-        on:focus={handleFocus}
-        readOnly={!searchable}
-        {..._inputAttributes}
-        bind:this={input}
-        bind:value={filterText}
-        placeholder={placeholderText}
-        style={inputStyles}
-        {disabled} />
+        {#if showClear}
+            <div class="icon clear-select" on:click|preventDefault={handleClear} aria-hidden="true">
+                <slot name="clear-icon">
+                    <ClearIcon />
+                </slot>
+            </div>
+        {/if}
 
-    {#if loading}
-        <div class="icon loading" aria-hidden="true">
-            <slot name="loading-icon">
-                <LoadingIcon />
-            </slot>
-        </div>
-    {/if}
-
-    {#if showClear}
-        <div class="icon clear-select" on:click|preventDefault={handleClear} aria-hidden="true">
-            <slot name="clear-icon">
-                <ClearIcon />
-            </slot>
-        </div>
-    {/if}
-
-    {#if showChevron}
-        <div class="icon chevron" aria-hidden="true">
-            <slot name="chevron" {listOpen}>
-                <ChevronIcon />
-            </slot>
-        </div>
-    {/if}
+        {#if showChevron}
+            <div class="icon chevron" aria-hidden="true">
+                <slot name="chevron" {listOpen}>
+                    <ChevronIcon />
+                </slot>
+            </div>
+        {/if}
+    </div>
 
     {#if !multiple || (multiple && !showMultiSelect)}
-        <input name={inputAttributes.name} type="hidden" value={value ? value[optionIdentifier] : null} />
+        <input name={inputAttributes.name} type="hidden" value={value ? value[itemId] : null} />
     {/if}
 
     {#if multiple && showMultiSelect}
         {#each value as item}
-            <input name={inputAttributes.name} type="hidden" value={item ? item[optionIdentifier] : null} />
+            <input name={inputAttributes.name} type="hidden" value={item ? item[itemId] : null} />
         {/each}
     {/if}
 </div>
@@ -900,7 +847,7 @@
         box-sizing: border-box;
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--border-radius, 6px);
-        height: var(--height, 42px);
+        min-height: var(--height, 42px);
         position: relative;
         display: flex;
         align-items: center;
@@ -921,18 +868,31 @@
         border-color: var(--border-hover-color, #b2b8bf);
     }
 
+    .value-container {
+        display: flex;
+        flex: 1 1 0%;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 5px 10px;
+        padding: 5px 0;
+    }
+
+    .indicators {
+        display: flex;
+        flex-shrink: 0;
+    }
+
     input {
         cursor: default;
         border: none;
         color: var(--input-color, #3f4f5f);
-        height: var(--height, 42px);
-        line-height: var(--height, 42px);
+        height: var(--height, 20px);
+        line-height: var(--height, 20px);
         padding: var(--input-padding, 0);
-        flex-grow: 1;
-        background: transparent;
         font-size: var(--input-font-size, 14px);
         letter-spacing: var(--input-letter-spacing, inherit);
         margin: var(--input-margin, 0);
+        min-width: 10px;
     }
 
     input::placeholder {
@@ -988,6 +948,7 @@
         color: var(--clear-select-color, --icons-color);
         margin: var(--clear-select-margin, 0);
         pointer-events: all;
+        flex-shrink: 0;
     }
 
     .chevron {
@@ -997,21 +958,18 @@
         pointer-events: var(--chevron-pointer-events, none);
         color: var(--chevron-color, --icons-color);
         border-left: 1px solid #d8dbdf;
+        flex-shrink: 0;
     }
 
     .multi {
-        padding: var(--multi-select-padding, 0 35px 0 16px);
-        min-height: 38px;
-        flex-wrap: wrap;
-        display: flex;
+        padding: var(--multi-select-padding, var(--internal-padding));
         height: auto;
-        align-items: center;
     }
 
     .multi input {
         padding: var(--multi-select-input-padding, 0);
         position: relative;
-        margin: var(--multi-select-input-margin, 0);
+        margin: var(--multi-select-input-margin, 5px 0);
     }
 
     .error {
@@ -1037,19 +995,19 @@
 
     .multi-item {
         background: var(--multi-item-bg, #ebedef);
-        margin: var(--multi-item-margin, 4px 5px 0 0);
-        border: var(--multi-item-border, 1px solid #ddd);
+        margin: var(--multi-item-margin, 0);
+        outline: var(--multi-item-outline, 1px solid #ddd);
         border-radius: var(--multi-item-border-radius, 4px);
-        height: var(--multi-item-height, 32px);
-        line-height: var(--multi-item-height, 32px);
+        height: var(--multi-item-height, 25px);
+        line-height: var(--multi-item-height, 25px);
         display: flex;
         cursor: default;
         padding: var(--multi-item-padding, 0 6px 0 6px);
         max-width: var(--multi-max-width, calc(100% - 8px));
-        margin: var(--multi-label-margin, 0 5px 0 0);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .multi-item.disabled:hover {
@@ -1062,6 +1020,10 @@
         align-items: center;
         justify-content: center;
         --clear-icon-color: var(--multi-item-clear-icon-color, #000);
+    }
+
+    .multi-item.active {
+        outline: var(--multi-item-active-outline, 1px solid #006fe8);
     }
 
     .svelte-select-list {

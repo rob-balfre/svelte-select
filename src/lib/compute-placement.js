@@ -1,4 +1,4 @@
-export default function computePlacement({ parent, list, listPlacement, listOffset, listAutoWidth }) {
+export default function computePlacement({ parent, list, listPlacement, listOffset, listAutoWidth }) {    
     const { top, bottom, left, height, width } = parent.getBoundingClientRect();
 
     let listStyle;

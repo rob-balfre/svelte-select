@@ -4,28 +4,27 @@ export default function filter({
     items,
     multiple,
     value,
-    optionIdentifier,
+    itemId,
     groupBy,
-    creatable,
     itemFilter,
     convertStringItemsToObjects,
     filterGroupedItems,
-    addCreatableItem,
-    getOptionLabel,
+    label,
 }) {
     if (items && loadOptions && filterText.length > 0) return items;
     if (!items) return [];
+
+    
 
     if (items && items.length > 0 && typeof items[0] !== 'object') {
         items = convertStringItemsToObjects(items);
     }
 
     let filterResults = items.filter((item) => {
-        let matchesFilter = itemFilter(getOptionLabel(item, filterText), filterText, item);
-
-        if (matchesFilter && multiple && value && Array.isArray(value)) {
+        let matchesFilter = itemFilter(item[label], filterText, item);
+        if (matchesFilter && multiple && value?.length) {
             matchesFilter = !value.some((x) => {
-                return x[optionIdentifier] === item[optionIdentifier];
+                return x[itemId] === item[itemId];
             });
         }
 
@@ -34,10 +33,6 @@ export default function filter({
 
     if (groupBy) {
         filterResults = filterGroupedItems(filterResults);
-    }
-
-    if (creatable) {
-        filterResults = addCreatableItem(filterResults, filterText);
     }
 
     return filterResults;
