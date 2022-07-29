@@ -748,7 +748,11 @@
         {/if}
 
         {#if showClear}
-            <div class="icon clear-select" on:click|preventDefault={handleClear} aria-hidden="true">
+            <div
+                class="icon clear-select"
+                on:click|preventDefault|stopPropagation={handleClear}
+                on:pointerdown|preventDefault|stopPropagation
+                aria-hidden="true">
                 <slot name="clear-icon">
                     <ClearIcon />
                 </slot>
