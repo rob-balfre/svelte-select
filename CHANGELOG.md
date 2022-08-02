@@ -2,6 +2,14 @@
 
 ## 5.0.0
 
+* Removed CSS prop `--input-font-size`
+* Removed CSS prop `--multi-item-border`
+* Removed CSS prop `--multi-label-margin`
+* Added CSS props `--loading--margin , --loading-color, --loading-height, --loading-width`
+* Added CSS prop `--chevron-border`
+* Added CSS prop `--font-size`
+* Added CSS prop `--multi-item-gap`
+* Added named slot `multi-clear-icon`
 * Added named slot `list`
 * Added named slot `item`
 * Removed Virtual list
@@ -19,7 +27,7 @@
 * isClearable -> clearable
 * isWaiting -> loading
 * Added named slot `prepend`
-* Added named slot `chevron-icon`
+* Added named slot `chevron`
 * Added named slot `clear-icon`
 * Added named slot `loading-icon`
 * Removed iconProps

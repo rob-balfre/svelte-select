@@ -1,9 +1,6 @@
-import normalizeHtml from '../utils/normalizeHtml';
 import Select from '../../src/lib/Select.svelte';
-import ChevronIcon from '../../src/lib/ChevronIcon.svelte';
 import ParentContainer from './Select/ParentContainer.svelte'
 import {assert, test} from 'tape-modern';
-import getName from '../utils/nameGen';
 import SelectionSlotTest from './SelectionSlotTest.svelte';
 import SelectionSlotMultipleTest from './SelectionSlotMultipleTest.svelte';
 import ChevronSlotTest from './ChevronSlotTest.svelte';
@@ -19,7 +16,6 @@ function querySelectorClick(selector) {
   } else {
     document.querySelector(selector).click();
   }
-  // return new Promise(f => setTimeout(f, 0));
 }
 
 function handleKeyboard(key) {
@@ -147,10 +143,6 @@ function wait(ms) {
   return new Promise(f => setTimeout(f, ms));
 }
 
-assert.htmlEqual = (a, b) => {
-  assert.equal(normalizeHtml(a), normalizeHtml(b));
-};
-
 assert.arrayEqual = (a, b) => {
   assert.ok(Array.isArray(a));
   assert.ok(Array.isArray(b));
@@ -228,7 +220,7 @@ test('should highlight active list item', async (t) => {
 
 test('list scrolls to active item', async (t) => {
   const extras = [
-    {value: 'chicken-schnitzel', label: 'Chicken Schnitzel', index: 5},
+    {value: 'chicken', label: 'Chicken', index: 5},
     {value: 'fried-chicken', label: 'Fried Chicken', index: 6},
     {value: 'sunday-roast', label: 'Sunday Roast', index: 7},
   ];
@@ -255,7 +247,7 @@ test('list scrolls to active item', async (t) => {
 
 test('list scrolls to hovered item when navigating with keys', async (t) => {
   const extras = [
-    {value: 'chicken-schnitzel', label: 'Chicken Schnitzel', index: 5},
+    {value: 'chicken', label: 'Chicken', index: 5},
     {value: 'fried-chicken', label: 'Fried Chicken', index: 6},
     {value: 'sunday-roast', label: 'Sunday Roast', index: 7},
   ];
@@ -1341,7 +1333,7 @@ test('when multiple is true show each item in value', async (t) => {
     }
   });
 
-  const all = target.querySelectorAll('.multi-item');
+  const all = target.querySelectorAll('.multi-item span');
 
   t.ok(all[0].innerHTML.startsWith('Pizza'));
   t.ok(all[1].innerHTML.startsWith('Chips'));
@@ -1359,7 +1351,7 @@ test('when multiple is true and value is undefined show placeholder text', async
     }
   });
 
-  t.ok(!target.querySelector('.multi-item'));
+  t.ok(!target.querySelector('.multi-item span'));
 
   select.$destroy();
 });
@@ -1434,7 +1426,7 @@ test('when multiple is true clicking X on a selected item will remove it from va
     }
   });
 
-  document.querySelector('.multi-item_clear').click();
+  document.querySelector('.multi-item-clear').click();
   t.equal(JSON.stringify(select.value), JSON.stringify([{value: 'pizza', label: 'Pizza'}]));
 
   select.$destroy();
@@ -1450,7 +1442,7 @@ test('when multiple is true and all selected items have been removed then placeh
     }
   });
 
-  document.querySelector('.multi-item_clear').click();
+  document.querySelector('.multi-item-clear').click();
 
   select.$destroy();
 });
@@ -1499,7 +1491,7 @@ test('when multiple and selected items reach edge of container then Select heigh
   });
 
   target.style.maxWidth = '200px';
-  t.ok(document.querySelector('.svelte-select').scrollHeight === 40);
+  t.ok(document.querySelector('.svelte-select').scrollHeight === 42);
   await handleSet(select, {value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]});
   t.ok(document.querySelector('.svelte-select').scrollHeight > 44);
   select.$destroy();
@@ -1591,7 +1583,7 @@ test('when multiple is true show each item in value if simple arrays are used', 
     }
   });
 
-  const all = target.querySelectorAll('.multi-item');
+  const all = target.querySelectorAll('.multi-item span');
   t.ok(all[0].innerHTML.startsWith('pizza'));
   t.ok(all[1].innerHTML.startsWith('chocolate'));
 
@@ -1714,7 +1706,7 @@ test('when loadOptions method is supplied, multiple is true and filterText has l
   await wait(600);
   await handleKeyboard('ArrowDown');
   await handleKeyboard('Enter');
-  t.ok(document.querySelector('.multi-item').innerHTML.startsWith('Juniper Wheat Beer'));
+  t.ok(document.querySelector('.multi-item span').innerHTML.startsWith('Juniper Wheat Beer'));
   select.$destroy();
 });
 
@@ -1733,7 +1725,7 @@ test('when multiple and selection slot render slot content', async (t) => {
     target
   });
 
-  const items = document.querySelectorAll('.multi-item');
+  const items = document.querySelectorAll('.multi-item span');
   
   t.ok(items[0].innerHTML.startsWith('Slot: one'));
   t.ok(items[1].innerHTML.startsWith('Slot: two'));
@@ -1820,7 +1812,7 @@ test('when multi item is cleared the clear event is fired with removed item', as
     removedItem = event.detail;
   });
 
-  document.querySelector('.multi-item_clear').click();
+  document.querySelector('.multi-item-clear').click();
   t.equal(JSON.stringify(removedItem), JSON.stringify(itemToRemove));
 
   select.$destroy();
@@ -2129,7 +2121,7 @@ test('when multiple with items and value supplied as just strings then value sho
     }
   });
 
-  t.ok(document.querySelector('.multi-item').innerHTML.startsWith('Pizza'));
+  t.ok(document.querySelector('.multi-item span').innerHTML.startsWith('Pizza'));
 
   select.$destroy();
 });
@@ -2242,7 +2234,6 @@ test('When showChevron prop is true and no value show chevron on Select', async 
   const select = new Select({
     target,
     props: {
-      ChevronIcon,
       items,
       showChevron: true
     }
@@ -2257,7 +2248,6 @@ test('When showChevron and clearable is true always show chevron on Select', asy
   const select = new Select({
     target,
     props: {
-      ChevronIcon,
       items,
       value: {value: 'chocolate', label: 'Chocolate'},
       showChevron: true,
@@ -2462,7 +2452,7 @@ test('When multiple and multiFullItemClearable then clicking anywhere on the ite
   });
 
   await wait(0);
-  await querySelectorClick('.multi-item');
+  await querySelectorClick('.multi-item span');
   await wait(0);
   t.ok(multiSelect.value[0].label === 'Pizza');
   
@@ -2725,7 +2715,7 @@ test('When listOffset is set list position offset changes', async (t) => {
   });
 
   let elem = document.querySelector('.svelte-select-list');
-  t.ok(elem.style.top === '50px');
+  t.ok(elem.style.top === '52px');
 
   select.$destroy();
 });
@@ -2827,9 +2817,9 @@ test('When multiple on:select events should fire on each item removal (including
     events.push('event fired');
   });
 
-  document.querySelector('.multi-item_clear').click();
+  document.querySelector('.multi-item-clear').click();
   await wait(0);
-  document.querySelector('.multi-item_clear').click();
+  document.querySelector('.multi-item-clear').click();
   await wait(0);
   t.ok(events.length === 2);
   

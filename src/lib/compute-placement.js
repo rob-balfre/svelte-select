@@ -1,4 +1,4 @@
-export default function computePlacement({ parent, list, listPlacement, listOffset, listAutoWidth }) {    
+export default function computePlacement({ parent, list, listPlacement, listOffset, listAutoWidth }) {
     const { top, bottom, left, height, width } = parent.getBoundingClientRect();
 
     let listStyle;
@@ -17,7 +17,7 @@ export default function computePlacement({ parent, list, listPlacement, listOffs
     } else {
         listStyle = base + _bottom;
         placementClass = 'bottom';
-        if (list && (bottom + listOffset + list.offsetHeight > window.innerHeight)) {
+        if (list && bottom + listOffset + list.offsetHeight > window.innerHeight) {
             listStyle = base + _top;
             placementClass = 'top';
         }

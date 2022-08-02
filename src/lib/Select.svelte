@@ -236,8 +236,8 @@
     }
 
     $: hasValue = multiple ? value && value.length > 0 : value;
-    $: showSelectedItem = hasValue && (filterText.length === 0 || multiple);
-    $: showClear = showSelectedItem && clearable && !disabled && !loading;
+    $: hideSelectedItem = hasValue && filterText.length > 0;
+    $: showClear = hasValue && clearable && !disabled && !loading;
     $: placeholderText = placeholderAlwaysShow && multiple ? placeholder : value ? '' : placeholder;
     $: showMultiSelect = multiple && value && value.length > 0;
     $: ariaSelection = value ? handleAriaSelection(multiple) : '';
@@ -305,7 +305,7 @@
         }
     }
 
-    function handleMultiItemClear(i) {
+    async function handleMultiItemClear(i) {
         const itemToRemove = value[i];
 
         if (value.length === 1) {
@@ -317,6 +317,9 @@
         }
 
         dispatch('clear', itemToRemove);
+
+        await tick();
+        handleWindow();
     }
 
     function handleKeyDown(e) {
@@ -598,7 +601,9 @@
     }
 
     let computed;
-    function handleWindow() {
+    async function handleWindow() {
+        if (!list) await tick();
+        if (!listOpen || !container) return;
         computed = computePlacement({ parent: container, list, listPlacement, listOffset, listAutoWidth });
     }
 
@@ -622,7 +627,7 @@
     function scrollAction(node, args) {
         return {
             update(args) {
-                if (args.scroll) node.scrollIntoView(false);
+                if (args.scroll) node.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'start' });
             },
         };
     }
@@ -630,7 +635,7 @@
     $: listMounted = !!list;
 </script>
 
-<svelte:window on:click={handleClickOutside} on:keydown={handleKeyDown} />
+<svelte:window on:click={handleClickOutside} on:keydown={handleKeyDown} on:scroll={handleWindow} />
 
 <div
     class="svelte-select {containerClasses}"
@@ -644,7 +649,7 @@
     on:pointerdown|preventDefault={handleClick}
     on:click|preventDefault|stopPropagation
     bind:this={container}>
-    {#if listStyle && listOpen}
+    {#if listOpen}
         <div
             use:listAction={appendListTarget}
             bind:this={list}
@@ -672,7 +677,7 @@
                             class:group-item={item.groupItem}
                             class:not-selectable={item?.selectable === false}>
                             <slot name="item" {item} index={i}>
-                                {item[label]}
+                                {item?.[label]}
                             </slot>
                         </div>
                     </div>
@@ -697,7 +702,7 @@
     <slot name="prepend" />
 
     <div class="value-container">
-        {#if showSelectedItem}
+        {#if hasValue}
             {#if multiple}
                 {#each value as item, i}
                     <div
@@ -705,19 +710,26 @@
                         class:active={activeValue === i}
                         class:disabled
                         on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}>
-                        <slot name="selection" selection={item}>
-                            {item[label]}
-                        </slot>
+                        <span class="multi-item-text">
+                            <slot name="selection" selection={item}>
+                                {item[label]}
+                            </slot>
+                        </span>
 
                         {#if !disabled && !multiFullItemClearable && ClearIcon}
-                            <div class="multi-item_clear" on:click={() => handleMultiItemClear(i)}>
-                                <svelte:component this={ClearIcon} />
+                            <div
+                                class="multi-item-clear"
+                                on:pointerdown|preventDefault|stopPropagation
+                                on:click={() => handleMultiItemClear(i)}>
+                                <slot name="multi-clear-icon">
+                                    <ClearIcon />
+                                </slot>
                             </div>
                         {/if}
                     </div>
                 {/each}
             {:else}
-                <div class="selected-item">
+                <div class="selected-item" class:hide-selected-item={hideSelectedItem}>
                     <slot name="selection" selection={value}>
                         {value[label]}
                     </slot>
@@ -835,7 +847,6 @@
         --multiItemHeight: --multi-item-height;
         --multiItemMargin: --multi-item-margin;
         --multiItemPadding: --multi-item-padding;
-        --multiLabelMargin: --multi-label-margin;
         --multiSelectInputMargin: --multi-select-input-margin;
         --multiSelectInputPadding: --multi-select-input-padding;
         --multiSelectPadding: --multi-select-padding;
@@ -848,7 +859,6 @@
 
         --internal-padding: 0 0 0 16px;
 
-        box-sizing: border-box;
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--border-radius, 6px);
         min-height: var(--height, 42px);
@@ -858,13 +868,9 @@
         padding: var(--padding, var(--internal-padding));
         background: var(--background, #fff);
         margin: var(--margin, 0);
-        width: var(--width, auto);
+        width: var(--width, 100%);
         overflow: hidden;
-    }
-
-    .svelte-select > * {
-        box-sizing: border-box;
-        transition: all 0.2s;
+        font-size: var(--font-size, 14px);
     }
 
     .svelte-select:hover,
@@ -879,6 +885,9 @@
         align-items: center;
         gap: 5px 10px;
         padding: 5px 0;
+        position: relative;
+        overflow: hidden;
+        align-self: stretch;
     }
 
     .indicators {
@@ -887,16 +896,18 @@
     }
 
     input {
+        position: absolute;
         cursor: default;
         border: none;
-        color: var(--input-color, #3f4f5f);
-        height: var(--height, 20px);
-        line-height: var(--height, 20px);
+        color: var(--input-color, --item-color);
         padding: var(--input-padding, 0);
-        font-size: var(--input-font-size, 14px);
         letter-spacing: var(--input-letter-spacing, inherit);
         margin: var(--input-margin, 0);
         min-width: 10px;
+        left: 0;
+        right: 0;
+        background: transparent;
+        font-size: var(--font-size);
     }
 
     input::placeholder {
@@ -925,18 +936,27 @@
     }
 
     .selected-item {
-        position: absolute;
-        line-height: var(--height, 42px);
-        height: var(--height, 42px);
+        position: relative;
         overflow-x: hidden;
         padding: var(--selected-item-padding, 0 20px 0 0);
         text-overflow: ellipsis;
         white-space: nowrap;
         color: var(--selected-item-color, inherit);
+        font-size: var(--font-size);
+    }
+
+    .multi .selected-item {
+        position: absolute;
+        line-height: var(--height, 42px);
+        height: var(--height, 42px);
     }
 
     .selected-item:focus {
         outline: none;
+    }
+
+    .hide-selected-item {
+        opacity: 0;
     }
 
     .icon {
@@ -945,7 +965,6 @@
         justify-content: center;
     }
 
-    .loading,
     .clear-select {
         width: var(--clear-select-width, 40px);
         height: var(--clear-select-height, 40px);
@@ -955,25 +974,33 @@
         flex-shrink: 0;
     }
 
+    .loading {
+        width: var(--loading-width, 40px);
+        height: var(--loading-height, 40px);
+        color: var(--loading-color, --icons-color);
+        margin: var(--loading--margin, 0);
+        flex-shrink: 0;
+    }
+
     .chevron {
         width: var(--chevron-width, 40px);
         height: var(--chevron-height, 40px);
         background: var(--chevron-background, transparent);
         pointer-events: var(--chevron-pointer-events, none);
         color: var(--chevron-color, --icons-color);
-        border-left: 1px solid #d8dbdf;
+        border: var(--chevron-border, 0 0 0 1px solid #d8dbdf);
         flex-shrink: 0;
     }
 
     .multi {
         padding: var(--multi-select-padding, var(--internal-padding));
-        height: auto;
     }
 
     .multi input {
         padding: var(--multi-select-input-padding, 0);
         position: relative;
         margin: var(--multi-select-input-margin, 5px 0);
+        flex: 1 1 40px;
     }
 
     .error {
@@ -993,10 +1020,6 @@
         white-space: nowrap;
     }
 
-    .multi input {
-        flex: 1 1 40px;
-    }
-
     .multi-item {
         background: var(--multi-item-bg, #ebedef);
         margin: var(--multi-item-margin, 0);
@@ -1006,12 +1029,11 @@
         line-height: var(--multi-item-height, 25px);
         display: flex;
         cursor: default;
-        padding: var(--multi-item-padding, 0 6px 0 6px);
-        max-width: var(--multi-max-width, calc(100% - 8px));
+        padding: var(--multi-item-padding, 0 5px);
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex-shrink: 0;
+        gap: var(--multi-item-gap, 4px);
+        outline-offset: -1px;
+        max-width: var(--multi-max-width, none);
     }
 
     .multi-item.disabled:hover {
@@ -1019,7 +1041,13 @@
         color: var(--multi-item-disabled-hover-color, #c1c6cc);
     }
 
-    .multi-item_clear {
+    .multi-item-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .multi-item-clear {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1039,12 +1067,6 @@
         position: var(--list-position, absolute);
         z-index: var(--list-z-index, 2);
         border: var(--list-border);
-        box-sizing: border-box;
-    }
-
-    .svelte-select-list > * {
-        box-sizing: border-box;
-        transition: all 0.2s;
     }
 
     .list-group-title {
@@ -1076,8 +1098,9 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
-        box-sizing: border-box;
         transition: all 0.2s;
+        display: flex;
+        align-items: center;
     }
 
     .item.group-item {

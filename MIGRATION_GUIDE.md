@@ -13,10 +13,11 @@ Removed `Selection`, `ChevronIcon`, `ClearIcon`, `LoadingIcon`, `Icon`, `List` a
   <div slot="prepend" />
   <div slot="selection" let:selection />
   <div slot="clear-icon" />  
+  <div slot="multi-clear-icon" />
   <div slot="loading-icon" />  
-  <div slot="chevron-icon" />  
+  <div slot="chevron" />  
   <div slot="list" let:filteredItems />  
-  <div slot="list-item" let:item let:index />  
+  <div slot="item" let:item let:index />  
   <div slot="empty" />  
 </Select>
 ```

@@ -121,6 +121,6 @@
     @apply hover:bg-gray-300 hover:text-gray-500;
 }
 
-.multi-item_clear {
+.multi-item-clear {
     @apply flex items-center justify-center w-5;
 }
