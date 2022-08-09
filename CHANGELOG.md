@@ -2,6 +2,7 @@
 
 ## 5.0.0
 
+* Removed `hasError` prop use `class` instead
 * Removed CSS prop `--input-font-size`
 * Removed CSS prop `--multi-item-border`
 * Removed CSS prop `--multi-label-margin`
@@ -42,7 +43,6 @@
 * added justValue
 * Placeholder default change from 'Select...' to 'Please select'
 * added blur and focus events
-* Added suggestions feature
 * computePlacement now computes to fixed list
 * removed isOutOfViewport and clickOutside
 * new debounce method

@@ -2,6 +2,7 @@
 
 v5 is a major release that that includes some ⚠️ BREAKING CHANGES ⚠️ 
 
+Removed `hasError`. Not needed.<br/>
 Removed `getOptionLabel`. Not needed.<br/>
 Removed `getGroupHeaderLabel`. Not needed.<br/>
 Removed `noOptionsMessage`. Not needed.
@@ -15,7 +16,7 @@ Removed `Selection`, `ChevronIcon`, `ClearIcon`, `LoadingIcon`, `Icon`, `List` a
   <div slot="clear-icon" />  
   <div slot="multi-clear-icon" />
   <div slot="loading-icon" />  
-  <div slot="chevron" />  
+  <div slot="chevron-icon" />  
   <div slot="list" let:filteredItems />  
   <div slot="item" let:item let:index />  
   <div slot="empty" />  

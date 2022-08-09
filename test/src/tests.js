@@ -108,12 +108,12 @@ const itemsWithIndex = [
   {value: 'ice-cream', label: 'Ice Cream', index: 4},
 ];
 
-const itemsWithGroupIds = [
-  {_id: 'chocolate', name: 'Chocolate', groupie: 'Sweet'},
-  {_id: 'pizza', name: 'Pizza', groupie: 'Savory'},
-  {_id: 'cake', name: 'Cake', groupie: 'Sweet'},
-  {_id: 'chips', name: 'Chips', groupie: 'Savory'},
-  {_id: 'ice-cream', name: 'Ice Cream', groupie: 'Sweet'}
+const collection = [
+  {_id: 0, label: 'Chocolate'},
+  {_id: 1, label: 'Pizza'},
+  {_id: 2, label: 'Cake'},
+  {_id: 3, label: 'Chips'},
+  {_id: 4, label: 'Ice Cream'}
 ];
 
 const itemsWithSelectable = [
@@ -228,12 +228,13 @@ test('list scrolls to active item', async (t) => {
   const select = new Select({
     target,
     props: {
-      listOpen: true,
+      
       items: itemsWithIndex.concat(extras),
       value: {value: 'sunday-roast', label: 'Sunday Roast'},
     }
   });
 
+  select.listOpen = true;
   let offsetBounding;
   const container = document.querySelector('.svelte-select-list');
   const focusedElemBounding = container.querySelector('.list-item .active');
@@ -3330,7 +3331,6 @@ test('when named slot list show content', async (t) => {
   select.$destroy();
 });
 
-
 test('when named slot item show content', async (t) => {
   const select = new ItemSlotTest({
     target,
@@ -3340,3 +3340,17 @@ test('when named slot item show content', async (t) => {
 
   select.$destroy();
 });
+
+test('when itemId and justValue then return correct value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items: collection,
+      value: {_id: 2, label: 'Cake'},
+      itemId: '_id'
+    }
+  });
+
+  t.ok(select.justValue === 2);
+  select.$destroy();
+})

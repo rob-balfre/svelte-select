@@ -4,7 +4,7 @@ export default function computePlacement({ parent, list, listPlacement, listOffs
     let listStyle;
     let placementClass;
 
-    const base = `position:fixed;left:${left}px;min-width:${width}px;width:${listAutoWidth ? width + 'px' : 'auto'};`;
+    const base = `position:fixed;left:${left}px;width:${listAutoWidth ? width + 'px' : 'auto'};`;
     const _top = `bottom:${window.innerHeight - bottom + height + listOffset}px;`;
     const _bottom = `top:${top + height + listOffset}px;`;
 

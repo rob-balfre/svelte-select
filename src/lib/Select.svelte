@@ -36,7 +36,6 @@
     export let groupHeaderSelectable = false;
     export let itemId = 'value';
     export let loadOptions = undefined;
-    export let hasError = false;
     export let containerStyles = '';
 
     export let createGroupHeaderItem = (groupValue, item) => {
@@ -243,8 +242,7 @@
     $: ariaSelection = value ? handleAriaSelection(multiple) : '';
     $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, focused, listOpen });
     $: updateValueDisplay(items);
-    $: if (multiple) justValue = value ? value.map((item) => item[itemId]) : null;
-    $: if (!multiple) justValue = value ? value[itemId] : value;
+    $: justValue = computeJustValue(multiple, value, itemId);
     $: if (!multiple && prev_value && !value) dispatch('change', value);
 
     $: filteredItems = filter({
@@ -268,6 +266,11 @@
         prev_filterText = filterText;
         prev_multiple = multiple;
     });
+
+    function computeJustValue() {
+        if (multiple) return value ? value.map((item) => item[itemId]) : null;
+        return value ? value[itemId] : value;
+    }
 
     function checkValueForDuplicates() {
         let noDuplicates = true;
@@ -426,7 +429,7 @@
     }
 
     function handleFocus(e) {
-        dispatch('focus', e);
+        if (e) dispatch('focus', e);
         input.focus();
         focused = true;
     }
@@ -609,7 +612,7 @@
 
     $: if (container && listPlacement && listOpen) handleWindow();
     $: placementClass = computed && computed.placementClass;
-    $: listStyle = computed && computed.listStyle;
+    $: listStyle = (computed && computed.listStyle) || 'display:none;';
 
     function listAction(node, appendListTarget) {
         if (appendListTarget) appendListTarget.appendChild(node);
@@ -632,14 +635,40 @@
         };
     }
 
+    function observe(node) {
+        const observerOptions = {
+            childList: false,
+            attributes: true,
+            subtree: true,
+        };
+
+        const observer = new MutationObserver(callback);
+        observer.observe(node, observerOptions);
+
+        function callback(e) {
+            if (e.length > 1) {
+                handleWindow();
+            }
+        }
+
+        return {
+            destroy() {
+                observer.disconnect();
+            },
+        };
+    }
+
     $: listMounted = !!list;
 </script>
 
-<svelte:window on:click={handleClickOutside} on:keydown={handleKeyDown} on:scroll={handleWindow} />
+<svelte:window
+    on:click={handleClickOutside}
+    on:keydown={handleKeyDown}
+    on:scroll={handleWindow}
+    on:resize={handleWindow} />
 
 <div
     class="svelte-select {containerClasses}"
-    class:error={hasError}
     class:multi={multiple}
     class:disabled
     class:focused
@@ -651,6 +680,7 @@
     bind:this={container}>
     {#if listOpen}
         <div
+            use:observe
             use:listAction={appendListTarget}
             bind:this={list}
             class="svelte-select-list {placementClass}"
@@ -773,7 +803,7 @@
 
         {#if showChevron}
             <div class="icon chevron" aria-hidden="true">
-                <slot name="chevron" {listOpen}>
+                <slot name="chevron-icon" {listOpen}>
                     <ChevronIcon />
                 </slot>
             </div>
@@ -904,8 +934,10 @@
         letter-spacing: var(--input-letter-spacing, inherit);
         margin: var(--input-margin, 0);
         min-width: 10px;
-        left: 0;
+        top: 0;
         right: 0;
+        bottom: 0;
+        left: 0;
         background: transparent;
         font-size: var(--font-size);
     }

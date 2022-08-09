@@ -7,7 +7,7 @@
 </script>
 
 <Select bind:items bind:value bind:listOpen showChevron>
-    <div slot="chevron">
+    <div slot="chevron-icon">
         {#if listOpen}
             ⬆️
         {:else}

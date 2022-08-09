@@ -34,37 +34,35 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 
 ## Props
 
-| Prop                  | Type       | Default         | Description                                                |
-| --------------------- | ---------- | --------------- | ---------------------------------------------------------- |
-| items                 | `any[]`    | `[]`            | Array of items available to display / filter               |
-| value                 | `any`      | `null`          | Selected value(s)                                          |
-| justValue             | `any`      | `null`          | **READ-ONLY** Selected value(s) excluding container object |
-| itemId                | `string`   | `value`         | Override default identifier                                |
-| label                 | `string`   | `label`         | Override default label                                     |
-| id                    | `string`   | `null`          | Add an id to the filter input field                        |
-| filterText            | `string`   | `''`            | Text to filter `items` by                                  |
-| placeholder           | `string`   | `Please select` | Placeholder text                                           |
-| hideEmptyState        | `boolean`  | `false`         | When no items hide list                                    |
-| listOpen              | `boolean`  | `false`         | Open/close list                                            |
-| class                 | `string`   | `''`            | container classes                                          |
-| containerStyles       | `string`   | `''`            | Add inline styles to container                             |
-| clearable             | `boolean`  | `true`          | Enable clearing of value(s)                                |
-| disabled              | `boolean`  | `false`         | Disable select                                             |
-| multiple              | `boolean`  | `false`         | Enable multi-select                                        |
-| searchable            | `boolean`  | `true`          | If `false` search/filtering is disabled                    |
-| groupHeaderSelectable | `boolean`  | `false`         | Enable selectable group headers                            |
-| focused               | `boolean`  | `false`         | Controls input focus                                       |
-| listPlacement         | `string`   | `auto`          | Display list `'auto'`, `'top'` or `'bottom'`               |
-| hasError              | `boolean`  | `false`         | Show error styles around select input                      |
-| listAutoWidth         | `boolean`  | `true`          | If `false` will ignore width of select                     |
-| showChevron           | `boolean`  | `false`         | Show chevron at all times                                  |
-| inputAttributes       | `object`   | `{}`            | Pass in HTML attributes to Select's input                  |
-| placeholderAlwaysShow | `boolean`  | `false`         | When `multiple` placeholder text will always show          |
-| loading               | `boolean`  | `false`         | Shows `loading-icon`. `loadOptions` will override this     |
-| listOffset            | `number`   | `5`             | `px` space between select and list                         |
-| debounceWait          | `number`   | `300`           | `milliseconds` debounce wait                               |
-| suggestions           | `string[]` | `null`          | Show search suggestions before user input                  |
-| appendListTarget      | `Element`  | `document.body` | Change where list gets appended                            |
+| Prop                  | Type      | Default         | Description                                                |
+| --------------------- | --------- | --------------- | ---------------------------------------------------------- |
+| items                 | `any[]`   | `[]`            | Array of items available to display / filter               |
+| value                 | `any`     | `null`          | Selected value(s)                                          |
+| justValue             | `any`     | `null`          | **READ-ONLY** Selected value(s) excluding container object |
+| itemId                | `string`  | `value`         | Override default identifier                                |
+| label                 | `string`  | `label`         | Override default label                                     |
+| id                    | `string`  | `null`          | id attr for input field                                    |
+| filterText            | `string`  | `''`            | Text to filter `items` by                                  |
+| placeholder           | `string`  | `Please select` | Placeholder text                                           |
+| hideEmptyState        | `boolean` | `false`         | When no items hide list                                    |
+| listOpen              | `boolean` | `false`         | Open/close list                                            |
+| class                 | `string`  | `''`            | container classes                                          |
+| containerStyles       | `string`  | `''`            | Add inline styles to container                             |
+| clearable             | `boolean` | `true`          | Enable clearing of value(s)                                |
+| disabled              | `boolean` | `false`         | Disable select                                             |
+| multiple              | `boolean` | `false`         | Enable multi-select                                        |
+| searchable            | `boolean` | `true`          | If `false` search/filtering is disabled                    |
+| groupHeaderSelectable | `boolean` | `false`         | Enable selectable group headers                            |
+| focused               | `boolean` | `false`         | Controls input focus                                       |
+| listPlacement         | `string`  | `auto`          | Display list `'auto'`, `'top'` or `'bottom'`               |
+| listAutoWidth         | `boolean` | `true`          | If `false` will ignore width of select                     |
+| showChevron           | `boolean` | `false`         | Show chevron                                               |
+| inputAttributes       | `object`  | `{}`            | Pass in HTML attributes to Select's input                  |
+| placeholderAlwaysShow | `boolean` | `false`         | When `multiple` placeholder text will always show          |
+| loading               | `boolean` | `false`         | Shows `loading-icon`. `loadOptions` will override this     |
+| listOffset            | `number`  | `5`             | `px` space between select and list                         |
+| debounceWait          | `number`  | `300`           | `milliseconds` debounce wait                               |
+| appendListTarget      | `Element` | `null`          | Change where list gets appended                            |
 
 
 ## Named slots
@@ -76,7 +74,7 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
   <div slot="clear-icon" />  
   <div slot="multi-clear-icon" />  
   <div slot="loading-icon" />  
-  <div slot="chevron" /> 
+  <div slot="chevron-icon" /> 
   <div slot="list" let:filteredItems />  
   <div slot="item" let:item let:index />  
   <!-- Remember you can also use `svelte:fragment` to avoid a container DOM element. -->
