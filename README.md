@@ -13,13 +13,9 @@
 </div>
 <div align="center">A select/autocomplete/typeahead Svelte component.</div>
 
-## 🚨 Converting internal components into named slots - WIP so docs are in flux, sorry!
-### Use these docs for now... [v5.0.0-beta.16](https://www.npmjs.com/package/svelte-select/v/5.0.0-beta.16)
-
-
 ## Examples
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/rob-balfre/svelte-select/tree/feature/v5?file=src/routes/examples/props/value)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/rob-balfre/svelte-select/tree/feature/v5?file=EXAMPLES.md)
 
 
 ## Installation
