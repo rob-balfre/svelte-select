@@ -22,7 +22,7 @@
 
 <style>
     .container {
-        transform: translate(120px, 50%);
+        transform: translate(0, 120px);
         overflow: hidden;
         width: 300px;
         background: grey;
