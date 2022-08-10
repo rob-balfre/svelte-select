@@ -186,7 +186,6 @@ By default list gets prepended to `div.svelte-select`. For most use-cases this i
 </script>
 
 <Select appendListTarget={target} />
-<!-- list will now get appended to the DOM inside this form Element> -->
 ```
 
 
