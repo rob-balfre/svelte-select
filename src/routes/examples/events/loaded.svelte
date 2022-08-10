@@ -7,15 +7,17 @@
         { value: 'three', label: 'Three' },
     ];
 
+    function loadOptions() {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(JSON.parse(JSON.stringify(items)));
+            });
+        });
+    }
+
     function handle(e) {
         console.log(e.detail);
     }
 </script>
 
-<Select {items} on:blur={handle} searchable={false} />
-
-<br />
-
-<Select {items} on:blur={handle} multiple />
-
-<button>Test</button>
+<Select on:loaded={handle} {loadOptions} />

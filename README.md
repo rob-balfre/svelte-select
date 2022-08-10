@@ -16,11 +16,11 @@
 ## 🚨 Converting internal components into named slots - WIP so docs are in flux, sorry!
 ### Use these docs for now... [v5.0.0-beta.16](https://www.npmjs.com/package/svelte-select/v/5.0.0-beta.16)
 
-## Demo
 
-[✨ REPL: Simple ✨](https://svelte.dev/repl/c3bbe052fdfc4e87a46ccd9091ee002b)
+## Examples
 
-[💃 REPL: Show me everything 🕺](https://svelte.dev/repl/3df87e32340e4e9e85bf371becae2af0)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/rob-balfre/svelte-select/tree/feature/v5?file=src/routes/examples/props/value)
+
 
 ## Installation
 
@@ -93,7 +93,6 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 | blur        | { detail }        | fires when select > input on:blur                                              |
 | clear       | { detail }        | fires when clear all is invoked or item is removed (by user) from multi select |
 | loaded      | { options }       | fires when `loadOptions` resolves                                              |
-| itemCreated | { options }       | fires when `creatable` true and item is created                                |
 | error       | { type, details } | fires when error is caught                                                     |
 
 
@@ -181,19 +180,17 @@ To load items asynchronously then `loadOptions` is the simplest solution. Supply
 
 ### Change where list gets appended
 
-By default list gets appended to the `document.body`. For most use-cases this is fine. If you want more control then supply a `appendListTarget` Element
+By default list gets prepended to `div.svelte-select`. For most use-cases this is fine. If you want more control then supply a `appendListTarget` Element
 
 ```html
 <script>
   import Select from 'svelte-select';
 
-  let target = null;
+  let target = document.body;
 </script>
 
-<form bind:this={target}>
-  <Select appendListTarget={target} />
-  <!-- list will now get appended to the DOM inside this form Element> -->
-</form>
+<Select appendListTarget={target} />
+<!-- list will now get appended to the DOM inside this form Element> -->
 ```
 
 

@@ -12,10 +12,7 @@
     }
 </script>
 
-<Select {items} on:blur={handle} searchable={false} />
-
+<Select {items} on:clear={handle} />
 <br />
+<Select {items} on:clear={handle} multiple />
 
-<Select {items} on:blur={handle} multiple />
-
-<button>Test</button>

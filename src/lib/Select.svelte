@@ -54,7 +54,7 @@
     export let clearable = true;
     export let loading = false;
     export let listPlacement = 'auto';
-    export let listOpen = focused;
+    export let listOpen = false;
 
     let timeout;
     export let debounce = (fn, wait = 1) => {
@@ -346,9 +346,6 @@
                     if (value && !multiple && value[itemId] === hoverItem[itemId]) {
                         closeList();
                         break;
-                    }
-                    if (hoverItem.isCreator) {
-                        itemCreated(filterText);
                     } else {
                         activeItemIndex = hoverItemIndex;
                         handleSelect(filteredItems[hoverItemIndex]);
@@ -390,12 +387,7 @@
                     e.preventDefault();
                     activeItemIndex = hoverItemIndex;
                     handleSelect(filteredItems[hoverItemIndex]);
-
                     listOpen = false;
-                } else if (!listOpen && focused) {
-                    focused = false;
-                } else {
-                    handleBlur();
                 }
 
                 break;
@@ -564,13 +556,9 @@
 
     function handleItemClick(args) {
         const { item, i } = args;
-
         if (item?.selectable === false) return;
         if (value && !multiple && value[itemId] === item[itemId]) return closeList();
-
-        if (item.isCreator) {
-            itemCreated(filterText);
-        } else if (isItemSelectable(item)) {
+        if (isItemSelectable(item)) {
             activeItemIndex = i;
             hoverItemIndex = i;
             handleSelect(item);
