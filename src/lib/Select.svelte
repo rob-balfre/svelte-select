@@ -259,7 +259,7 @@
         filterGroupedItems,
     });
 
-    $: if (filteredItems) hoverItemIndex = 0;
+    $: if (filteredItems) setHoverIndex(0);
 
     beforeUpdate(async () => {
         prev_value = value;
@@ -357,9 +357,9 @@
                 e.preventDefault();
 
                 if (listOpen) {
-                    setHoverIndex(1);
+                    changeHoverIndex(1);
                 } else {
-                    hoverItemIndex = 0;
+                    setHoverIndex(0);
                     listOpen = true;
                     activeValue = undefined;
                 }
@@ -369,7 +369,7 @@
                 e.preventDefault();
 
                 if (listOpen) {
-                    setHoverIndex(-1);
+                    changeHoverIndex(-1);
                 } else {
                     listOpen = true;
                     activeValue = undefined;
@@ -438,7 +438,7 @@
 
     function handleClick() {
         if (disabled) return;
-        hoverItemIndex = 0;
+        setHoverIndex(0);
         listOpen = !listOpen;
         if (listOpen && !focused) handleFocus();
     }
@@ -551,7 +551,7 @@
 
     function handleHover(i) {
         if (isScrolling) return;
-        hoverItemIndex = i;
+        setHoverIndex(i);
     }
 
     function handleItemClick(args) {
