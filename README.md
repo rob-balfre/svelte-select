@@ -30,7 +30,7 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 
 ## Rollup and low/no-build setups
 
-List position and floating is powered by `floating-ui` see [package-entry-points](`https://github.com/floating-ui/floating-ui#package-entry-points`) docs if you encounter build errors.
+List position and floating is powered by `floating-ui`, see their [package-entry-points](https://github.com/floating-ui/floating-ui#package-entry-points) docs if you encounter build errors.
 
 
 
