@@ -1,11 +1,12 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+    import { offset, flip, shift } from '@floating-ui/dom';
+    import { createFloatingActions } from 'svelte-floating-ui';
 
     const dispatch = createEventDispatcher();
 
-    import _filter from '$lib/filter';
-    import _getItems from '$lib/get-items';
-    import _computePlacement from '$lib/compute-placement';
+    import _filter from './filter';
+    import _getItems from './get-items';
 
     import ChevronIcon from './ChevronIcon.svelte';
     import ClearIcon from './ClearIcon.svelte';
@@ -15,7 +16,6 @@
 
     export let filter = _filter;
     export let getItems = _getItems;
-    export let computePlacement = _computePlacement;
 
     export let id = null;
     export let container = undefined;
@@ -53,7 +53,6 @@
     export let inputStyles = '';
     export let clearable = true;
     export let loading = false;
-    export let listPlacement = 'auto';
     export let listOpen = false;
 
     let timeout;
@@ -320,9 +319,6 @@
         }
 
         dispatch('clear', itemToRemove);
-
-        await tick();
-        handleWindow();
     }
 
     function handleKeyDown(e) {
@@ -528,8 +524,6 @@
         }, 100);
     }
 
-    export let appendListTarget = null;
-
     function handleClickOutside(event) {
         if (container && !container.contains(event.target) && !list?.contains(event.target)) {
             handleBlur();
@@ -591,31 +585,10 @@
         return (item.groupHeader && item.selectable) || item.selectable || !item.hasOwnProperty('selectable');
     }
 
-    let computed;
-    async function handleWindow() {
-        if (!list) await tick();
-        if (!listOpen || !container) return;
-        computed = computePlacement({ parent: container, list, listPlacement, listOffset, listAutoWidth });
-    }
-
-    $: if (container && listPlacement && listOpen) handleWindow();
-    $: placementClass = computed && computed.placementClass;
-    $: listStyle = (computed && computed.listStyle) || 'display:none;';
-
-    function listAction(node, appendListTarget) {
-        if (appendListTarget) appendListTarget.appendChild(node);
-
-        return {
-            update(appendListTarget) {
-                appendListTarget.appendChild(node);
-            },
-        };
-    }
-
     const activeScroll = scrollAction;
     const hoverScroll = scrollAction;
 
-    function scrollAction(node, args) {
+    function scrollAction(node) {
         return {
             update(args) {
                 if (args.scroll) node.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'start' });
@@ -623,37 +596,32 @@
         };
     }
 
-    function observe(node) {
-        const observerOptions = {
-            childList: false,
-            attributes: true,
-            subtree: true,
-        };
+    $: if (listOpen && container && list) setListWidth();
 
-        const observer = new MutationObserver(callback);
-        observer.observe(node, observerOptions);
-
-        function callback(e) {
-            if (e.length > 1) {
-                handleWindow();
-            }
-        }
-
-        return {
-            destroy() {
-                observer.disconnect();
-            },
-        };
+    function setListWidth() {
+        const { width } = container.getBoundingClientRect();
+        list.style.width = listAutoWidth ? width + 'px' : 'auto';
     }
 
+
+    export let floatingConfig = {};
+    $: setupFloat(floatingConfig);
+
+    let _floatingConfig = {
+        strategy: 'absolute',
+        placement: 'bottom-start',
+        middleware: [offset(listOffset), flip(), shift()],
+    };
+
+    const [floatingRef, floatingContent] = createFloatingActions(_floatingConfig);
+
     $: listMounted = !!list;
+    function setupFloat() {
+        _floatingConfig = Object.assign(_floatingConfig, floatingConfig)
+    }
 </script>
 
-<svelte:window
-    on:click={handleClickOutside}
-    on:keydown={handleKeyDown}
-    on:scroll={handleWindow}
-    on:resize={handleWindow} />
+<svelte:window on:click={handleClickOutside} on:keydown={handleKeyDown} />
 
 <div
     class="svelte-select {containerClasses}"
@@ -665,14 +633,13 @@
     style={containerStyles}
     on:pointerdown|preventDefault={handleClick}
     on:click|preventDefault|stopPropagation
-    bind:this={container}>
+    bind:this={container}
+    use:floatingRef>
     {#if listOpen}
         <div
-            use:observe
-            use:listAction={appendListTarget}
+            use:floatingContent
             bind:this={list}
-            class="svelte-select-list {placementClass}"
-            style={listStyle}
+            class="svelte-select-list"
             on:scroll={handleListScroll}
             on:pointerdown|preventDefault|stopPropagation>
             {#if $$slots.list}<slot name="list" {filteredItems} />
@@ -874,7 +841,6 @@
         --spinnerColor: --spinner-color;
         --spinnerHeight: --spinner-height;
         --spinnerWidth: --spinner-width;
-
         --internal-padding: 0 0 0 16px;
 
         border: var(--border, 1px solid #d8dbdf);
@@ -887,8 +853,11 @@
         background: var(--background, #fff);
         margin: var(--margin, 0);
         width: var(--width, 100%);
-        overflow: hidden;
         font-size: var(--font-size, 14px);
+    }
+
+    * {
+        box-sizing: var(--box-sizing, border-box);
     }
 
     .svelte-select:hover,
@@ -1121,6 +1090,7 @@
         transition: all 0.2s;
         display: flex;
         align-items: center;
+        width: 100%;
     }
 
     .item.group-item {

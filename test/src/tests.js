@@ -28,17 +28,6 @@ function handleSet(component, data) {
   return new Promise(f => setTimeout(f, 0));
 }
 
-function focus(element, setFocus) {
-  return new Promise(resolve => {
-    element.addEventListener('focus', function handler() {
-      element.removeEventListener('focus', handler);
-      resolve(true);
-    });
-
-    if (setFocus) setFocus();
-  });
-}
-
 function getPosts(filterText) {
   filterText = filterText ? filterText.replace(' ','_') : '';
 
@@ -127,14 +116,6 @@ function itemsPromise() {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve(JSON.parse(JSON.stringify(items)));
-    })
-  })
-}
-
-function itemsPromiseEmpty() {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve([]);
     })
   })
 }
@@ -463,31 +444,32 @@ test('select item from list', async (t) => {
   select.$destroy();
 });
 
-test('when listPosition is set to top list should be above the input', async (t) => {
+test('when placement is set to top list should be above the input', async (t) => {
   const select = new Select({
     target,
     props: {
       items,
       listOpen: true,
-      listPlacement: 'top'
+      floatingConfig: { placement: 'top-start' }
     }
   });
 
+  target.style.margin = '300px 0 0 0';
+  await wait(0);
   const distanceOfListBottomFromViewportTop = document.querySelector('.svelte-select-list').getBoundingClientRect().bottom;
   const distanceOfInputTopFromViewportTop = document.querySelector('.svelte-select').getBoundingClientRect().top;
-
   t.ok(distanceOfListBottomFromViewportTop <= distanceOfInputTopFromViewportTop);
-
+  target.style.margin = '0';
   select.$destroy();
 });
 
-test('when listPlacement is set to bottom the list should be below the input', async (t) => {
+test('when placement is set to bottom the list should be below the input', async (t) => {
   const select = new Select({
     target,
     props: {
       items,
       listOpen: true,
-      listPlacement: 'bottom'
+      floatingConfig: { placement: 'bottom-start' }
     }
   });
 
@@ -1492,9 +1474,9 @@ test('when multiple and selected items reach edge of container then Select heigh
   });
 
   target.style.maxWidth = '200px';
-  t.ok(document.querySelector('.svelte-select').scrollHeight === 42);
+  t.ok(document.querySelector('.svelte-select').scrollHeight === 40);
   await handleSet(select, {value: [{value: 'chocolate', label: 'Chocolate'}, {value: 'pizza', label: 'Pizza'}]});
-  t.ok(document.querySelector('.svelte-select').scrollHeight > 44);
+  t.ok(document.querySelector('.svelte-select').scrollHeight > 42);
   select.$destroy();
 });
 
@@ -1828,12 +1810,11 @@ test('when items in list filter or update then first item in list should highlig
     }
   });
   
+
   await handleKeyboard('ArrowDown');
-  await handleKeyboard('ArrowDown');
-  await handleKeyboard('ArrowDown');
-  t.ok(document.querySelector('.svelte-select-list .hover').innerHTML === 'Chips');
-  await handleSet(select, {filterText: 'c'});
-  t.ok(document.querySelector('.hover').innerHTML === 'Chocolate');
+  t.ok(document.querySelector('.svelte-select-list .hover').innerHTML === 'Chocolate');
+  await handleSet(select, {filterText: 'chi'});
+  t.ok(document.querySelector('.hover').innerHTML === 'Chips');
 
   select.$destroy();
 });
@@ -2538,16 +2519,14 @@ test('losing focus of Select should close list', async (t) => {
     target,
     props: {
       items,
-      focused: true
+      listOpen: true
     }
   });
-
   
   t.ok(select.listOpen);
   document.querySelector('.svelte-select input').blur();
   await wait();
   t.ok(!select.listOpen);
-
   select.$destroy();
 });
 
@@ -2715,8 +2694,9 @@ test('When listOffset is set list position offset changes', async (t) => {
     },
   });
 
+  await wait(0);
   let elem = document.querySelector('.svelte-select-list');
-  t.ok(elem.style.top === '52px');
+  t.ok(elem.style.top === '41px');
 
   select.$destroy();
 });
@@ -3253,25 +3233,6 @@ test('when value is cleared then justValue should be null', async (t) => {
   select.$destroy();
 });
 
-test('when list is open then a class of "above" or "below" should be present', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      listOpen: true,
-      items,
-      listPlacement: 'top'
-    }
-  });
-  
-  const top = document.querySelector('.svelte-select-list.top');
-  t.ok(top);
-  select.listPlacement = 'bottom';
-  const bottom = document.querySelector('.svelte-select-list.bottom');
-  t.ok(bottom);
-  
-  select.$destroy();
-});
-
 test('when items are grouped and filter text results in no items then list renders correct message', async (t) => {
   const select = new Select({
     target,
@@ -3293,21 +3254,6 @@ test('when items are grouped and filter text results in no items then list rende
   select.filterText = 'foo';
   let empty = document.querySelector('.svelte-select-list .empty');
   t.ok(empty);
-  select.$destroy();
-});
-
-test('when appendListTarget is supplied then list is appended to parent target', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      items,
-      listOpen: true,
-      appendListTarget: document.querySelector('main')
-    }
-  });
-
-  t.ok(document.querySelector('main  .svelte-select-list'));
-
   select.$destroy();
 });
 

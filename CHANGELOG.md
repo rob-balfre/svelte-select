@@ -2,6 +2,9 @@
 
 ## 5.0.0
 
+* Added `floatingConfig` 
+* Removed `listPlacement`
+* Removed `computePlacement` 
 * Removed `hasError` prop use `class` instead
 * Removed CSS prop `--input-font-size`
 * Removed CSS prop `--multi-item-border`
@@ -43,7 +46,6 @@
 * added justValue
 * Placeholder default change from 'Select...' to 'Please select'
 * added blur and focus events
-* computePlacement now computes to fixed list
 * removed isOutOfViewport and clickOutside
 * new debounce method
 * filterMethod changed to filter

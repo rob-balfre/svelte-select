@@ -28,6 +28,12 @@ npm install svelte-select@beta
 See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 
 
+## Rollup and low/no-build setups
+
+List position and floating is powered by `floating-ui` see [package-entry-points](`https://github.com/floating-ui/floating-ui#package-entry-points`) docs if you encounter build errors.
+
+
+
 ## Props
 
 | Prop                  | Type      | Default         | Description                                                |
@@ -50,7 +56,6 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 | searchable            | `boolean` | `true`          | If `false` search/filtering is disabled                    |
 | groupHeaderSelectable | `boolean` | `false`         | Enable selectable group headers                            |
 | focused               | `boolean` | `false`         | Controls input focus                                       |
-| listPlacement         | `string`  | `auto`          | Display list `'auto'`, `'top'` or `'bottom'`               |
 | listAutoWidth         | `boolean` | `true`          | If `false` will ignore width of select                     |
 | showChevron           | `boolean` | `false`         | Show chevron                                               |
 | inputAttributes       | `object`  | `{}`            | Pass in HTML attributes to Select's input                  |
@@ -58,7 +63,7 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 | loading               | `boolean` | `false`         | Shows `loading-icon`. `loadOptions` will override this     |
 | listOffset            | `number`  | `5`             | `px` space between select and list                         |
 | debounceWait          | `number`  | `300`           | `milliseconds` debounce wait                               |
-| appendListTarget      | `Element` | `null`          | Change where list gets appended                            |
+| floatingConfig        | `object`  | `{}`            | Config for to handle advanced list floating                |
 
 
 ## Named slots
@@ -81,15 +86,15 @@ See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 
 ## Events
 
-| Event Name  | Callback          | Description                                                                    |
-| ----------- | ----------------- | ------------------------------------------------------------------------------ |
-| select      | { detail }        | fires when item is selected                                                    |
-| change      | { detail }        | fires when value changes                                                       |
-| focus       | { detail }        | fires when select > input on:focus                                             |
-| blur        | { detail }        | fires when select > input on:blur                                              |
-| clear       | { detail }        | fires when clear all is invoked or item is removed (by user) from multi select |
-| loaded      | { options }       | fires when `loadOptions` resolves                                              |
-| error       | { type, details } | fires when error is caught                                                     |
+| Event Name | Callback          | Description                                                                    |
+| ---------- | ----------------- | ------------------------------------------------------------------------------ |
+| select     | { detail }        | fires when item is selected                                                    |
+| change     | { detail }        | fires when value changes                                                       |
+| focus      | { detail }        | fires when select > input on:focus                                             |
+| blur       | { detail }        | fires when select > input on:blur                                              |
+| clear      | { detail }        | fires when clear all is invoked or item is removed (by user) from multi select |
+| loaded     | { options }       | fires when `loadOptions` resolves                                              |
+| error      | { type, details } | fires when error is caught                                                     |
 
 
 ### Items
@@ -174,21 +179,22 @@ To load items asynchronously then `loadOptions` is the simplest solution. Supply
 <Select loadOptions={examplePromise} />
 ```
 
-### Change where list gets appended
 
-By default list gets prepended to `div.svelte-select`. For most use-cases this is fine. If you want more control then supply a `appendListTarget` Element
+### Advanced List Positioning / Floating 
+
+`svelte-select` uses [floating-ui](https://floating-ui.com/) to control the list floating. See their docs and pass in your config via the `floatingConfig` prop.
 
 ```html
 <script>
   import Select from 'svelte-select';
 
-  let target = document.body;
+  let floatingConfig = {
+    strategy: 'fixed'
+  }
 </script>
 
-<Select appendListTarget={target} />
+<Select {floatingConfig} />
 ```
-
-
 
 ### Exposed methods
 These internal functions are exposed to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
@@ -257,13 +263,12 @@ export function debounce(fn, wait = 1) {
 export const sanitiseLabel = (text) => text && `${text}`.replace(/\</gi, '&lt;');
 ```
 
-> Override core functionality at your own risk! See ([get-items.js](/src/lib/get-items.js), [filter.js](/src/lib/filter.js), [compute-placement.js](/src/lib/compute-placement.js))
+> Override core functionality at your own risk! See ([get-items.js](/src/lib/get-items.js) & [filter.js](/src/lib/filter.js))
 ```js
     // core replaceable methods...
     <Select 
       filter={...}
       getItems={...}
-      computePlacement={...}
     />
 ```
 
