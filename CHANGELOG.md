@@ -2,6 +2,7 @@
 
 ## 5.0.0
 
+* Remove `getSelectionLabel` use slots instead
 * Added `floatingConfig` 
 * Removed `listPlacement`
 * Removed `computePlacement` 

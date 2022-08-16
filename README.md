@@ -13,10 +13,13 @@
 </div>
 <div align="center">A select/autocomplete/typeahead Svelte component.</div>
 
-## Examples
+## Demos
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/rob-balfre/svelte-select/tree/feature/v5?file=EXAMPLES.md)
 
+[✨ REPL: Simple ✨](https://svelte.dev/repl/c3bbe052fdfc4e87a46ccd9091ee002b)
+
+[💃 REPL: Show me everything 🕺](https://svelte.dev/repl/3df87e32340e4e9e85bf371becae2af0)
 
 ## Installation
 
