@@ -197,7 +197,7 @@ To load items asynchronously then `loadOptions` is the simplest solution. Supply
 ```
 
 ### Exposed methods
-These internal functions are exposed to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
+These internal functions are exposed to override if needed. Look through the test file (test/src/index.js) for examples.
 
 ```js
 export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
@@ -216,15 +216,6 @@ export let createGroupHeaderItem = groupValue => {
   return {
     value: groupValue,
     label: groupValue
-  };
-};
-```
-
-```js
-export let createItem = filterText => {
-  return {
-    value: filterText,
-    label: filterText
   };
 };
 ```
@@ -250,20 +241,14 @@ export const getFilteredItems = () => {
 ```
 
 ```js
-export function debounce(fn, wait = 1) {
-    let timeout;
-    return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => fn.apply(this, ...args), wait);
-    };
-}
+export let debounce = (fn, wait = 1) => {
+  clearTimeout(timeout);
+  timeout = setTimeout(fn, wait);
+};
 ```
 
-```js
-export const sanitiseLabel = (text) => text && `${text}`.replace(/\</gi, '&lt;');
-```
+Override core functionality at your own risk! See ([get-items.js](/src/lib/get-items.js) & [filter.js](/src/lib/filter.js))
 
-> Override core functionality at your own risk! See ([get-items.js](/src/lib/get-items.js) & [filter.js](/src/lib/filter.js))
 ```js
     // core replaceable methods...
     <Select 
