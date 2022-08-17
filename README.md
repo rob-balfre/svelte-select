@@ -66,7 +66,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | loading               | `boolean` | `false`         | Shows `loading-icon`. `loadOptions` will override this     |
 | listOffset            | `number`  | `5`             | `px` space between select and list                         |
 | debounceWait          | `number`  | `300`           | `milliseconds` debounce wait                               |
-| floatingConfig        | `object`  | `{}`            | Config for to handle advanced list floating                |
+| floatingConfig        | `object`  | `{}`            | [Floating UI Config](https://floating-ui.com/)             |
 
 
 ## Named slots
