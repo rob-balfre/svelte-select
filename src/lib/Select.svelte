@@ -258,7 +258,7 @@
         filterGroupedItems,
     });
 
-    $: if (filteredItems) hoverItemIndex = 0;
+    $: if (filteredItems) setHoverIndex(0);
 
     beforeUpdate(async () => {
         prev_value = value;
@@ -353,9 +353,9 @@
                 e.preventDefault();
 
                 if (listOpen) {
-                    setHoverIndex(1);
+                    changeHoverIndex(1);
                 } else {
-                    hoverItemIndex = 0;
+                    setHoverIndex(0);
                     listOpen = true;
                     activeValue = undefined;
                 }
@@ -365,7 +365,7 @@
                 e.preventDefault();
 
                 if (listOpen) {
-                    setHoverIndex(-1);
+                    changeHoverIndex(-1);
                 } else {
                     listOpen = true;
                     activeValue = undefined;
@@ -434,7 +434,7 @@
 
     function handleClick() {
         if (disabled) return;
-        hoverItemIndex = 0;
+        setHoverIndex(0);
         listOpen = !listOpen;
         if (listOpen && !focused) handleFocus();
     }
@@ -545,7 +545,7 @@
 
     function handleHover(i) {
         if (isScrolling) return;
-        hoverItemIndex = i;
+        setHoverIndex(i);
     }
 
     function handleItemClick(args) {
@@ -559,17 +559,65 @@
         }
     }
 
+    /**
+     * Converts a desired index in a index that is in bound with `filteredItems`.
+     *
+     * desiredIndex > bigger than array size -> 0
+     *
+     * desiredIndex < 0 -> last array index
+     * @param {number} desiredIndex
+     * @returns {number} A version of the desired index that is in bound
+     */
+    function getInBoundIndex(desiredIndex) {
+        if (desiredIndex > filteredItems.length) return 0;
+        if (desiredIndex < 0) return filteredItems.length - 1;
+        return desiredIndex;
+    }
+
     let scrollToHoverItem = 0;
-    function setHoverIndex(increment) {
-        if (increment > 0 && hoverItemIndex === filteredItems.length - 1) {
-            hoverItemIndex = 0;
-        } else if (increment < 0 && hoverItemIndex === 0) {
-            hoverItemIndex = filteredItems.length - 1;
-        } else {
-            hoverItemIndex = hoverItemIndex + increment;
+
+    /**
+     * Increments or decrements the `hoverItemIndex` while keeping the index in bound
+     * and skipping indexes with non selectable items.
+     * @param {number} increment Positive or negative integer for amount and direction in which the index should change
+     * @returns {number} The first index that fulfilled the requirements and was subsequently set
+     */
+    function changeHoverIndex(increment) {
+        // Get a in bound index with the applied change
+        let newIndex = getInBoundIndex(hoverItemIndex + increment);
+
+        // Go further in the wished direction until there is a selectable item
+        while (!isItemSelectable(filteredItems[newIndex])) {
+            if (increment < 0) newIndex--;
+            if (increment > 0) newIndex++;
+            newIndex = getInBoundIndex(newIndex);
         }
 
-        scrollToHoverItem = hoverItemIndex;
+        // Set the new index
+        hoverItemIndex = newIndex;
+        scrollToHoverItem = newIndex;
+
+        return newIndex;
+    }
+
+    /**
+     * Set the `hoverItemIndex` while keeping the index in bound and skipping
+     * indexes with non selectable items.
+     * @param {number} newIndex The new desired index
+     * @returns {number} The first index that fulfilled the requirements and was subsequently set
+     */
+    function setHoverIndex(newIndex) {
+        newIndex = getInBoundIndex(newIndex);
+
+        // Increment the index until the item is selectable
+        while (!isItemSelectable(filteredItems[newIndex])) {
+            newIndex++;
+            newIndex = getInBoundIndex(newIndex);
+        }
+
+        hoverItemIndex = newIndex;
+
+        return newIndex;
     }
 
     function isItemActive(item, value, itemId) {
