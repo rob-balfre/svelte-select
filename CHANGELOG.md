@@ -2,6 +2,8 @@
 
 ## 5.0.0
 
+* Added `--border-hover`, `--border-focused`, `--item-height`, `--item-line-height` and `--multi-item-color`
+* Removed `--borderFocusColor` and `--borderHoverColor`
 * Remove `getSelectionLabel` use slots instead
 * Added `floatingConfig` 
 * Removed `listPlacement`

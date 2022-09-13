@@ -8,6 +8,8 @@ import PrependSlotTest from './PrependSlotTest.svelte';
 import ClearIconSlotTest from './ClearIconSlotTest.svelte';
 import ListSlotTest from './ListSlotTest.svelte';
 import ItemSlotTest from './ItemSlotTest.svelte';
+import ItemHeightTest from './ItemHeightTest.svelte';
+import MultiItemColor from './MultiItemColor.svelte';
 
 function querySelectorClick(selector) {
   if (selector === '.svelte-select') {
@@ -3299,4 +3301,24 @@ test('when itemId and justValue then return correct value', async (t) => {
 
   t.ok(select.justValue === 2);
   select.$destroy();
-})
+});
+
+test('when --item-height css variable supplied then item height should match new height', async (t) => {
+  const select = new ItemHeightTest({
+    target
+  });
+
+  t.ok(document.querySelector('.item').offsetHeight === 50);
+
+  select.$destroy();
+});
+
+test('when --multi-item-color css variable supplied then CSS should apply', async (t) => {
+  const select = new MultiItemColor({
+    target
+  });
+
+  t.ok(getComputedStyle(document.querySelector('.multi-item')).getPropertyValue('color') === 'rgb(255, 0, 0)');
+
+  select.$destroy();
+});

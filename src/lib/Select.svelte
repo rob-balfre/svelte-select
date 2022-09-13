@@ -603,7 +603,6 @@
         list.style.width = listAutoWidth ? width + 'px' : 'auto';
     }
 
-
     export let floatingConfig = {};
     $: setupFloat(floatingConfig);
 
@@ -617,7 +616,7 @@
 
     $: listMounted = !!list;
     function setupFloat() {
-        _floatingConfig = Object.assign(_floatingConfig, floatingConfig)
+        _floatingConfig = Object.assign(_floatingConfig, floatingConfig);
     }
 </script>
 
@@ -779,70 +778,69 @@
 <style>
     .svelte-select {
         /* deprecating camelCase custom props in favour of kebab-case for v5 */
-        --borderFocusColor: --border-focus-color;
-        --borderHoverColor: --border-hover-color;
-        --borderRadius: --border-radius;
-        --clearSelectColor: --clear-select-color;
-        --clearSelectWidth: --clear-select-width;
-        --disabledBackground: --disabled-background;
-        --disabledBorderColor: --disabled-border-color;
-        --disabledColor: --disabled-color;
-        --disabledPlaceholderColor: --disabled-placeholder-color;
-        --disabledPlaceholderOpacity: --disabled-placeholder-opacity;
-        --errorBackground: --error-background;
-        --errorBorder: --error-border;
-        --groupItemPaddingLeft: --group-item-padding-left;
-        --groupTitleColor: --group-title-color;
-        --groupTitleFontSize: --group-title-font-size;
-        --groupTitleFontWeight: --group-title-font-weight;
-        --groupTitlePadding: --group-title-padding;
-        --groupTitleTextTransform: --group-title-text-transform;
-        --indicatorColor: --chevron-color;
-        --indicatorHeight: --chevron-height;
-        --indicatorWidth: --chevron-width;
-        --inputColor: --input-color;
-        --inputFontSize: --input-font-size;
-        --inputLeft: --input-left;
-        --inputLetterSpacing: --input-letter-spacing;
-        --inputMargin: --input-margin;
-        --inputPadding: --input-padding;
-        --itemActiveBackground: --item-active-background;
-        --itemColor: --item-color;
-        --itemFirstBorderRadius: --item-first-border-radius;
-        --itemHoverBG: --item-hover-bg;
-        --itemHoverColor: --item-hover-color;
-        --itemIsActiveBG: --item-is-active-bg;
-        --itemIsActiveColor: --item-is-active-color;
-        --itemIsNotSelectableColor: --item-is-not-selectable-color;
-        --itemPadding: --item-padding;
-        --listBackground: --list-background;
-        --listBorder: --list-border;
-        --listBorderRadius: --list-border-radius;
-        --listEmptyColor: --list-empty-color;
-        --listEmptyPadding: --list-empty-padding;
-        --listEmptyTextAlign: --list-empty-text-align;
-        --listMaxHeight: --list-max-height;
-        --listPosition: --list-position;
-        --listShadow: --list-shadow;
-        --listZIndex: --list-z-index;
-        --multiItemBG: --multi-item-bg;
-        --multiItemBorderRadius: --multi-item-border-radius;
-        --multiItemDisabledHoverBg: --multi-item-disabled-hover-bg;
-        --multiItemDisabledHoverColor: --multi-item-disabled-hover-color;
-        --multiItemHeight: --multi-item-height;
-        --multiItemMargin: --multi-item-margin;
-        --multiItemPadding: --multi-item-padding;
-        --multiSelectInputMargin: --multi-select-input-margin;
-        --multiSelectInputPadding: --multi-select-input-padding;
-        --multiSelectPadding: --multi-select-padding;
-        --placeholderColor: --placeholder-color;
-        --placeholderOpacity: --placeholder-opacity;
-        --selectedItemPadding: --selected-item-padding;
-        --spinnerColor: --spinner-color;
-        --spinnerHeight: --spinner-height;
-        --spinnerWidth: --spinner-width;
-        --internal-padding: 0 0 0 16px;
+        --borderRadius: var(--border-radius);
+        --clearSelectColor: var(--clear-select-color);
+        --clearSelectWidth: var(--clear-select-width);
+        --disabledBackground: var(--disabled-background);
+        --disabledBorderColor: var(--disabled-border-color);
+        --disabledColor: var(--disabled-color);
+        --disabledPlaceholderColor: var(--disabled-placeholder-color);
+        --disabledPlaceholderOpacity: var(--disabled-placeholder-opacity);
+        --errorBackground: var(--error-background);
+        --errorBorder: var(--error-border);
+        --groupItemPaddingLeft: var(--group-item-padding-left);
+        --groupTitleColor: var(--group-title-color);
+        --groupTitleFontSize: var(--group-title-font-size);
+        --groupTitleFontWeight: var(--group-title-font-weight);
+        --groupTitlePadding: var(--group-title-padding);
+        --groupTitleTextTransform: var(--group-title-text-transform);
+        --indicatorColor: var(--chevron-color);
+        --indicatorHeight: var(--chevron-height);
+        --indicatorWidth: var(--chevron-width);
+        --inputColor: var(--input-color);
+        --inputFontSize: var(--input-font-size);
+        --inputLeft: var(--input-left);
+        --inputLetterSpacing: var(--input-letter-spacing);
+        --inputMargin: var(--input-margin);
+        --inputPadding: var(--input-padding);
+        --itemActiveBackground: var(--item-active-background);
+        --itemColor: var(--item-color);
+        --itemFirstBorderRadius: var(--item-first-border-radius);
+        --itemHoverBG: var(--item-hover-bg);
+        --itemHoverColor: var(--item-hover-color);
+        --itemIsActiveBG: var(--item-is-active-bg);
+        --itemIsActiveColor: var(--item-is-active-color);
+        --itemIsNotSelectableColor: var(--item-is-not-selectable-color);
+        --itemPadding: var(--item-padding);
+        --listBackground: var(--list-background);
+        --listBorder: var(--list-border);
+        --listBorderRadius: var(--list-border-radius);
+        --listEmptyColor: var(--list-empty-color);
+        --listEmptyPadding: var(--list-empty-padding);
+        --listEmptyTextAlign: var(--list-empty-text-align);
+        --listMaxHeight: var(--list-max-height);
+        --listPosition: var(--list-position);
+        --listShadow: var(--list-shadow);
+        --listZIndex: var(--list-z-index);
+        --multiItemBG: var(--multi-item-bg);
+        --multiItemBorderRadius: var(--multi-item-border-radius);
+        --multiItemDisabledHoverBg: var(--multi-item-disabled-hover-bg);
+        --multiItemDisabledHoverColor: var(--multi-item-disabled-hover-color);
+        --multiItemHeight: var(--multi-item-height);
+        --multiItemMargin: var(--multi-item-margin);
+        --multiItemPadding: var(--multi-item-padding);
+        --multiSelectInputMargin: var(--multi-select-input-margin);
+        --multiSelectInputPadding: var(--multi-select-input-padding);
+        --multiSelectPadding: var(--multi-select-padding);
+        --placeholderColor: var(--placeholder-color);
+        --placeholderOpacity: var(--placeholder-opacity);
+        --selectedItemPadding: var(--selected-item-padding);
+        --spinnerColor: var(--spinner-color);
+        --spinnerHeight: var(--spinner-height);
+        --spinnerWidth: var(--spinner-width);
 
+        --internal-padding: 0 0 0 16px;
+        --height: 42px;
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--border-radius, 6px);
         min-height: var(--height, 42px);
@@ -862,7 +860,7 @@
 
     .svelte-select:hover,
     .svelte-select:hover .chevron {
-        border-color: var(--border-hover-color, #b2b8bf);
+        border: var(--border-hover, 1px solid #b2b8bf);
     }
 
     .value-container {
@@ -886,7 +884,7 @@
         position: absolute;
         cursor: default;
         border: none;
-        color: var(--input-color, --item-color);
+        color: var(--input-color, var(--item-color));
         padding: var(--input-padding, 0);
         letter-spacing: var(--input-letter-spacing, inherit);
         margin: var(--input-margin, 0);
@@ -910,7 +908,7 @@
 
     .svelte-select.focused,
     .svelte-select.focused .chevron {
-        border-color: var(--border-focus-color, #006fe8);
+        border: var(--border-focused, 1px solid #006fe8);
     }
 
     .disabled {
@@ -936,8 +934,8 @@
 
     .multi .selected-item {
         position: absolute;
-        line-height: var(--height, 42px);
-        height: var(--height, 42px);
+        line-height: var(--height);
+        height: var(--height);
     }
 
     .selected-item:focus {
@@ -957,7 +955,7 @@
     .clear-select {
         width: var(--clear-select-width, 40px);
         height: var(--clear-select-height, 40px);
-        color: var(--clear-select-color, --icons-color);
+        color: var(--clear-select-color, var(--icons-color));
         margin: var(--clear-select-margin, 0);
         pointer-events: all;
         flex-shrink: 0;
@@ -966,7 +964,7 @@
     .loading {
         width: var(--loading-width, 40px);
         height: var(--loading-height, 40px);
-        color: var(--loading-color, --icons-color);
+        color: var(--loading-color, var(--icons-color));
         margin: var(--loading--margin, 0);
         flex-shrink: 0;
     }
@@ -976,7 +974,7 @@
         height: var(--chevron-height, 40px);
         background: var(--chevron-background, transparent);
         pointer-events: var(--chevron-pointer-events, none);
-        color: var(--chevron-color, --icons-color);
+        color: var(--chevron-color, var(--icons-color));
         border: var(--chevron-border, 0 0 0 1px solid #d8dbdf);
         flex-shrink: 0;
     }
@@ -1023,6 +1021,7 @@
         gap: var(--multi-item-gap, 4px);
         outline-offset: -1px;
         max-width: var(--multi-max-width, none);
+        color: var(--multi-item-color, var(--item-color));
     }
 
     .multi-item.disabled:hover {
@@ -1063,8 +1062,8 @@
         cursor: default;
         font-size: var(--group-title-font-size, 12px);
         font-weight: var(--group-title-font-weight, 600);
-        height: var(--height, 42px);
-        line-height: var(--height, 42px);
+        height: var(--height);
+        line-height: var(--height);
         padding: var(--group-title-padding, 0 20px);
         text-overflow: ellipsis;
         overflow-x: hidden;
@@ -1080,8 +1079,8 @@
 
     .item {
         cursor: default;
-        height: var(--height, 42px);
-        line-height: var(--height, 42px);
+        height: var(--item-height, var(--height));
+        line-height: var(--item-line-height, var(--height));
         padding: var(--item-padding, 0 20px);
         color: var(--item-color, inherit);
         text-overflow: ellipsis;

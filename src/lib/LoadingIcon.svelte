@@ -14,7 +14,7 @@
     .loading {
         width: var(--spinner-width, 20px);
         height: var(--spinner-height, 20px);
-        color: var(--spinner-color, --icons-color);
+        color: var(--spinner-color, var(--icons-color));
         animation: rotate 0.75s linear infinite;
         transform-origin: center center;
         transform: none;
