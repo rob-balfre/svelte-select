@@ -5,8 +5,8 @@ Override the following CSS custom properties (variables) to style svelte-select 
 <!-- List start -->
 - `--background`
 - `--border`
-- `--border-focus-color`
-- `--border-hover-color`
+- `--border-focused`
+- `--border-hover`
 - `--border-radius`
 - `--box-sizing`
 - `--chevron-background`
@@ -38,7 +38,10 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--group-title-padding`
 - `--group-title-text-transform`
 - `--height`
+- `--icons-color`
 - `--input-color`
+- `--input-font-size`
+- `--input-left`
 - `--input-letter-spacing`
 - `--input-margin`
 - `--input-padding`
@@ -46,11 +49,13 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--item-active-background`
 - `--item-color`
 - `--item-first-border-radius`
+- `--item-height`
 - `--item-hover-bg`
 - `--item-hover-color`
 - `--item-is-active-bg`
 - `--item-is-active-color`
 - `--item-is-not-selectable-color`
+- `--item-line-height`
 - `--item-padding`
 - `--list-background`
 - `--list-border`
@@ -71,6 +76,7 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--multi-item-bg`
 - `--multi-item-border-radius`
 - `--multi-item-clear-icon-color`
+- `--multi-item-color`
 - `--multi-item-disabled-hover-bg`
 - `--multi-item-disabled-hover-color`
 - `--multi-item-gap`
