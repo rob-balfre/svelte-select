@@ -3342,20 +3342,19 @@ test('when groupHeaderSelectable false and groupBy true then group headers shoul
 
   await wait(0);
   item = document.querySelector('.item.hover.group-item');
-  t.ok(item.innerHTML === 'Pizza');
+  t.ok(item.innerHTML === 'Chips');
 
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowUp'}));
 
   await wait(0);
   item = document.querySelector('.item.hover.group-item');
-  t.ok(item.innerHTML === 'Ice Cream');
+  t.ok(item.innerHTML === 'Pizza');
 
-
-  select.$set({filterText: 'pizza'});
+  select.$set({filterText: 'Ice'});
 
   await wait(0);
   item = document.querySelector('.item.hover.group-item');
-  t.ok(item.innerHTML === 'Pizza');
+  t.ok(item.innerHTML === 'Ice Cream');
 
   select.$set({filterText: ''});
 

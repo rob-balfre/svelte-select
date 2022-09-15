@@ -200,7 +200,7 @@
     function checkHoverSelectable() {
         hoverItemIndex = 0;
 
-        if (groupBy && !groupHeaderSelectable && filteredItems[hoverItemIndex] && !filteredItems[hoverItemIndex].selectable) {
+        if (groupBy && filteredItems[hoverItemIndex] && !filteredItems[hoverItemIndex].selectable) {
             setHoverIndex(1);
         }
     }
@@ -579,7 +579,7 @@
 
         const hover = filteredItems[hoverItemIndex];
 
-        if (hover && hover.groupHeader && !hover.selectable) {
+        if (hover && hover.selectable === false) {
             if (increment === 1 || increment === -1) setHoverIndex(increment);
             return;
         }
