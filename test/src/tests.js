@@ -10,6 +10,7 @@ import ListSlotTest from './ListSlotTest.svelte';
 import ItemSlotTest from './ItemSlotTest.svelte';
 import ItemHeightTest from './ItemHeightTest.svelte';
 import MultiItemColor from './MultiItemColor.svelte';
+import GroupHeaderNotSelectable from './GroupHeaderNotSelectable.svelte';
 
 function querySelectorClick(selector) {
   if (selector === '.svelte-select') {
@@ -3319,6 +3320,60 @@ test('when --multi-item-color css variable supplied then CSS should apply', asyn
   });
 
   t.ok(getComputedStyle(document.querySelector('.multi-item')).getPropertyValue('color') === 'rgb(255, 0, 0)');
+
+  select.$destroy();
+});
+
+
+test('when groupHeaderSelectable false and groupBy true then group headers should never have active/hover states', async (t) => {
+  const select = new GroupHeaderNotSelectable({
+    target
+  });
+
+  await querySelectorClick('.svelte-select');
+
+  let item = document.querySelector('.item.hover.group-item');
+  
+  t.ok(item.innerHTML === 'Chocolate');
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+
+  await wait(0);
+  item = document.querySelector('.item.hover.group-item');
+  t.ok(item.innerHTML === 'Pizza');
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowUp'}));
+
+  await wait(0);
+  item = document.querySelector('.item.hover.group-item');
+  t.ok(item.innerHTML === 'Ice Cream');
+
+
+  select.$set({filterText: 'pizza'});
+
+  await wait(0);
+  item = document.querySelector('.item.hover.group-item');
+  t.ok(item.innerHTML === 'Pizza');
+
+  select.$set({filterText: ''});
+
+  await wait(0);
+  item = document.querySelector('.item.hover.group-item');
+  t.ok(item.innerHTML === 'Chocolate');
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowUp'}));
+
+  await wait(0);
+  item = document.querySelector('.item.hover.group-item');
+  t.ok(item.innerHTML === 'Chips');
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+
+  await wait(0);
+  item = document.querySelector('.item.hover.group-item');
+  t.ok(item.innerHTML === 'Chocolate');
 
   select.$destroy();
 });

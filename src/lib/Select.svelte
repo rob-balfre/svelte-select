@@ -1,5 +1,5 @@
 <script>
-    import { beforeUpdate, createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+    import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
     import { offset, flip, shift } from '@floating-ui/dom';
     import { createFloatingActions } from 'svelte-floating-ui';
 
@@ -197,6 +197,14 @@
     $: if (!listOpen) filterText = '';
     $: if (filterText !== prev_filterText) setupFilterText();
 
+    function checkHoverSelectable() {
+        hoverItemIndex = 0;
+
+        if (groupBy && !groupHeaderSelectable && filteredItems[hoverItemIndex] && !filteredItems[hoverItemIndex].selectable) {
+            setHoverIndex(1);
+        }
+    }
+
     function setupFilterText() {
         if (filterText.length === 0) return;
 
@@ -258,7 +266,7 @@
         filterGroupedItems,
     });
 
-    $: if (filteredItems) hoverItemIndex = 0;
+    $: if (listOpen) checkHoverSelectable(filteredItems);
 
     beforeUpdate(async () => {
         prev_value = value;
@@ -567,6 +575,13 @@
             hoverItemIndex = filteredItems.length - 1;
         } else {
             hoverItemIndex = hoverItemIndex + increment;
+        }
+
+        const hover = filteredItems[hoverItemIndex];
+
+        if (hover && hover.groupHeader && !hover.selectable) {
+            if (increment === 1 || increment === -1) setHoverIndex(increment);
+            return;
         }
 
         scrollToHoverItem = hoverItemIndex;
@@ -1104,10 +1119,6 @@
         color: var(--item-is-active-color, #fff);
     }
 
-    .item.not-selectable {
-        color: var(--item-is-not-selectable-color, #999);
-    }
-
     .item.first {
         border-radius: var(--item-first-border-radius, 4px 4px 0 0);
     }
@@ -1115,5 +1126,13 @@
     .item.hover:not(.active) {
         background: var(--item-hover-bg, #e7f2ff);
         color: var(--item-hover-color, inherit);
+    }
+
+    .item.not-selectable,
+    .item.hover.item.not-selectable,
+    .item.active.item.not-selectable,
+    .item.not-selectable:active {
+        color: var(--item-is-not-selectable-color, #999);
+        background: transparent;
     }
 </style>
