@@ -858,8 +858,7 @@
         box-sizing: var(--box-sizing, border-box);
     }
 
-    .svelte-select:hover,
-    .svelte-select:hover .chevron {
+    .svelte-select:hover {
         border: var(--border-hover, 1px solid #b2b8bf);
     }
 
