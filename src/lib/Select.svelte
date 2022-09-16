@@ -1101,7 +1101,6 @@
         overflow: hidden;
         white-space: nowrap;
         transition: all 0.2s;
-        display: flex;
         align-items: center;
         width: 100%;
     }
