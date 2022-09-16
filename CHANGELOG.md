@@ -2,6 +2,7 @@
 
 ## 5.0.0
 
+* Default font-size set to `16px`, iOS will zoom the UI if set smaller (thanks to @rchrdnsh)
 * Added `--border-hover`, `--border-focused`, `--item-height`, `--item-line-height` and `--multi-item-color`
 * Removed `--borderFocusColor` and `--borderHoverColor`
 * Remove `getSelectionLabel` use slots instead

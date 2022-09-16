@@ -65,7 +65,7 @@
     }
 
     nav {
-        width: 200px;
+        width: 250px;
         border-right: 1px solid #f3f1fd;
         overflow-y: scroll;
         position: fixed;
@@ -76,7 +76,7 @@
 
     .content {
         position: fixed;
-        left: 200px;
+        left: 250px;
         right: 0;
         top: 0;
         bottom: 0;
@@ -101,7 +101,7 @@
         color: #696d75;
         padding: 10px;
         text-decoration: none;
-        font-size: 14px;
+        font-size: 16px;
     }
 
     a.active {

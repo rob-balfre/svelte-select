@@ -859,6 +859,8 @@
 
         --internal-padding: 0 0 0 16px;
         --height: 42px;
+        --font-size: 16px;
+
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--border-radius, 6px);
         min-height: var(--height, 42px);
@@ -869,7 +871,7 @@
         background: var(--background, #fff);
         margin: var(--margin, 0);
         width: var(--width, 100%);
-        font-size: var(--font-size, 14px);
+        font-size: var(--font-size);
     }
 
     * {
@@ -1077,7 +1079,7 @@
     .list-group-title {
         color: var(--group-title-color, #8f8f8f);
         cursor: default;
-        font-size: var(--group-title-font-size, 12px);
+        font-size: var(--group-title-font-size, 16px);
         font-weight: var(--group-title-font-weight, 600);
         height: var(--height);
         line-height: var(--height);
