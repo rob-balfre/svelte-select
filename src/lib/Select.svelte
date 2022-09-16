@@ -252,7 +252,6 @@
     $: updateValueDisplay(items);
     $: justValue = computeJustValue(multiple, value, itemId);
     $: if (!multiple && prev_value && !value) dispatch('change', value);
-
     $: filteredItems = filter({
         loadOptions,
         filterText,
@@ -266,8 +265,12 @@
         convertStringItemsToObjects,
         filterGroupedItems,
     });
-
     $: if (listOpen) checkHoverSelectable(filteredItems);
+    $: handleFilterEvent(filteredItems);
+
+    function handleFilterEvent(items) {
+        if (listOpen) dispatch('filter', items);
+    }
 
     beforeUpdate(async () => {
         prev_value = value;

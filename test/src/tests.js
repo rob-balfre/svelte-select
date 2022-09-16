@@ -3393,3 +3393,26 @@ test('when hasError then show error styles', async (t) => {
 
   select.$destroy();
 });
+
+
+test('when items filter then event on:filter fires', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      listOpen: true
+    }
+  });
+
+  let event = undefined;
+
+  select.$on('filter', (e) => {
+    event = e.detail
+  });
+
+  select.$set({filterText: 'ch'});
+  await wait(0);
+  t.ok(event && event.length === 2);
+
+  select.$destroy();
+});
