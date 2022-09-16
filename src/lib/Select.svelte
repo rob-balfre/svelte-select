@@ -910,6 +910,11 @@
         background: transparent;
         font-size: var(--font-size);
     }
+    
+    :not(.multi) > .value-container > input {
+        width: 100%;
+        height: 100%;
+    }
 
     input::placeholder {
         color: var(--placeholder-color, #78848f);
