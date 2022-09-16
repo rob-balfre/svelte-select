@@ -346,8 +346,6 @@
                     if (filteredItems.length === 0) break;
                     const hoverItem = filteredItems[hoverItemIndex];
 
-                    if (hoverItem?.selectable === false) break;
-
                     if (value && !multiple && value[itemId] === hoverItem[itemId]) {
                         closeList();
                         break;
