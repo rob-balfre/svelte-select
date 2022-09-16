@@ -67,6 +67,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | listOffset            | `number`  | `5`             | `px` space between select and list                         |
 | debounceWait          | `number`  | `300`           | `milliseconds` debounce wait                               |
 | floatingConfig        | `object`  | `{}`            | [Floating UI Config](https://floating-ui.com/)             |
+| hasError              | `boolean` | `false`         | If `true` sets error class and styles                      |
 
 
 ## Named slots
