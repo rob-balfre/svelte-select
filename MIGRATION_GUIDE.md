@@ -2,7 +2,6 @@
 
 v5 is a major release that that includes some ⚠️ BREAKING CHANGES ⚠️ 
 
-Removed `hasError`. Not needed.<br/>
 Removed `getOptionLabel`. Not needed.<br/>
 Removed `getGroupHeaderLabel`. Not needed.<br/>
 Removed `noOptionsMessage`. Not needed.

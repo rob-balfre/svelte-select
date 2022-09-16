@@ -8,7 +8,6 @@
 * Added `floatingConfig` 
 * Removed `listPlacement`
 * Removed `computePlacement` 
-* Removed `hasError` prop use `class` instead
 * Removed CSS prop `--input-font-size`
 * Removed CSS prop `--multi-item-border`
 * Removed CSS prop `--multi-label-margin`

@@ -37,6 +37,7 @@
     export let itemId = 'value';
     export let loadOptions = undefined;
     export let containerStyles = '';
+    export let hasError = false;
 
     export let createGroupHeaderItem = (groupValue, item) => {
         return {
@@ -644,6 +645,7 @@
     class:focused
     class:list-open={listOpen}
     class:show-chevron={showChevron}
+    class:error={hasError}
     style={containerStyles}
     on:pointerdown|preventDefault={handleClick}
     on:click|preventDefault|stopPropagation
@@ -1004,7 +1006,7 @@
         flex: 1 1 40px;
     }
 
-    .error {
+    .svelte-select.error {
         border: var(--error-border, 1px solid #ff2d55);
         background: var(--error-background, #fff);
     }

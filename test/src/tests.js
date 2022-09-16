@@ -3376,3 +3376,20 @@ test('when groupHeaderSelectable false and groupBy true then group headers shoul
 
   select.$destroy();
 });
+
+
+test('when hasError then show error styles', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      hasError: true
+    }
+  });
+
+  t.ok(document.querySelector('.svelte-select.error'));
+  select.$set({hasError: false});
+  await wait(0);
+  t.ok(!document.querySelector('.svelte-select.error'));
+
+  select.$destroy();
+});
