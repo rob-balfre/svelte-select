@@ -768,15 +768,15 @@
         {/if}
 
         {#if showClear}
-            <div
+            <button
                 class="icon clear-select"
                 on:click|preventDefault|stopPropagation={handleClear}
                 on:pointerdown|preventDefault|stopPropagation
-                aria-hidden="true">
+                tabindex="0">
                 <slot name="clear-icon">
                     <ClearIcon />
                 </slot>
-            </div>
+            </button>
         {/if}
 
         {#if showChevron}
@@ -866,6 +866,7 @@
         --internal-padding: 0 0 0 16px;
         --height: 42px;
         --font-size: 16px;
+        --border-focused: 1px solid #006fe8;
 
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--border-radius, 6px);
@@ -933,7 +934,7 @@
 
     .svelte-select.focused,
     .svelte-select.focused .chevron {
-        border: var(--border-focused, 1px solid #006fe8);
+        border: var(--border-focused);
     }
 
     .disabled {
@@ -978,12 +979,20 @@
     }
 
     .clear-select {
+        all: unset;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: var(--clear-select-width, 40px);
         height: var(--clear-select-height, 40px);
         color: var(--clear-select-color, var(--icons-color));
         margin: var(--clear-select-margin, 0);
         pointer-events: all;
         flex-shrink: 0;
+    }
+
+    .clear-select:focus {
+        outline: var(--border-focused);
     }
 
     .loading {
