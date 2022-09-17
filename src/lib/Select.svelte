@@ -18,6 +18,7 @@
     export let getItems = _getItems;
 
     export let id = null;
+    export let name = null;
     export let container = undefined;
     export let input = undefined;
     export let multiple = false;
@@ -789,12 +790,12 @@
     </div>
 
     {#if !multiple || (multiple && !showMultiSelect)}
-        <input name={inputAttributes.name} type="hidden" value={value ? value[itemId] : null} />
+        <input {name} type="hidden" value={value ? value[itemId] : null} />
     {/if}
 
     {#if multiple && showMultiSelect}
         {#each value as item}
-            <input name={inputAttributes.name} type="hidden" value={item ? item[itemId] : null} />
+            <input {name} type="hidden" value={item ? item[itemId] : null} />
         {/each}
     {/if}
 </div>

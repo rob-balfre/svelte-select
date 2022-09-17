@@ -68,6 +68,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | debounceWait          | `number`  | `300`           | `milliseconds` debounce wait                               |
 | floatingConfig        | `object`  | `{}`            | [Floating UI Config](https://floating-ui.com/)             |
 | hasError              | `boolean` | `false`         | If `true` sets error class and styles                      |
+| name                  | `string`  | `null`          | Name attribute of hidden input, helpful for form actions   |
 
 
 ## Named slots

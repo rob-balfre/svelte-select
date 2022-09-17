@@ -2814,7 +2814,7 @@ test('When inputAttributes.name supplied, add to hidden input', async (t) => {
   const select = new Select({
     target,
     props: {
-      inputAttributes: { name: 'Foods' },
+      name: 'Foods',
       items: items,
       showChevron: true,
     },
