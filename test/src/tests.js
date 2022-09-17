@@ -14,7 +14,7 @@ import GroupHeaderNotSelectable from './GroupHeaderNotSelectable.svelte';
 
 function querySelectorClick(selector) {
   if (selector === '.svelte-select') {
-    const event = new PointerEvent('pointerdown')
+    const event = new PointerEvent('pointerup')
     document.querySelector(selector).dispatchEvent(event);
   } else {
     document.querySelector(selector).click();

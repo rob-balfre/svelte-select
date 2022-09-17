@@ -432,7 +432,8 @@
         focused = true;
     }
 
-    function handleBlur(e) {
+    async function handleBlur(e) {
+        if (isScrolling) return;
         if (listOpen || focused) {
             dispatch('blur', e);
             listOpen = false;
@@ -608,7 +609,10 @@
     function scrollAction(node) {
         return {
             update(args) {
-                if (args.scroll) node.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'start' });
+                if (args.scroll) {
+                    handleListScroll();
+                    node.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'start' });
+                }
             },
         };
     }
@@ -648,7 +652,8 @@
     class:show-chevron={showChevron}
     class:error={hasError}
     style={containerStyles}
-    on:pointerdown|preventDefault={handleClick}
+    on:pointerup|preventDefault={handleClick}
+    on:pointerdown|preventDefault|stopPropagation
     on:click|preventDefault|stopPropagation
     bind:this={container}
     use:floatingRef>
@@ -658,7 +663,8 @@
             bind:this={list}
             class="svelte-select-list"
             on:scroll={handleListScroll}
-            on:pointerdown|preventDefault|stopPropagation>
+            on:pointerdown|preventDefault|stopPropagation
+            on:pointerup|preventDefault|stopPropagation>
             {#if $$slots.list}<slot name="list" {filteredItems} />
             {:else if filteredItems.length > 0}
                 {#each filteredItems as item, i}
