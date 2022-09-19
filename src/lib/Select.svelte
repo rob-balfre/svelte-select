@@ -69,7 +69,8 @@
     export let listAutoWidth = true;
     export let showChevron = false;
     export let listOffset = 5;
-
+    export let hoverItemIndex = 0;
+    
     export { containerClasses as class };
 
     let containerClasses = '';
@@ -77,7 +78,6 @@
     let prev_value;
     let prev_filterText;
     let prev_multiple;
-    let hoverItemIndex = 0;
 
     function setValue() {
         if (typeof value === 'string') {
@@ -198,6 +198,11 @@
     $: if (!focused && input) listOpen = false;
     $: if (!listOpen) filterText = '';
     $: if (filterText !== prev_filterText) setupFilterText();
+    $: dispatchHover(hoverItemIndex);
+
+    function dispatchHover(i) {
+        dispatch('hoverItem', i)
+    }
 
     function checkHoverSelectable() {
         hoverItemIndex = 0;
@@ -354,7 +359,6 @@
                         closeList();
                         break;
                     } else {
-                        activeItemIndex = hoverItemIndex;
                         handleSelect(filteredItems[hoverItemIndex]);
                     }
                 }
@@ -392,7 +396,6 @@
                         return closeList();
 
                     e.preventDefault();
-                    activeItemIndex = hoverItemIndex;
                     handleSelect(filteredItems[hoverItemIndex]);
                     listOpen = false;
                 }
@@ -546,8 +549,6 @@
         list?.remove();
     });
 
-    export let activeItemIndex = 0;
-
     let isScrolling = false;
 
     function handleSelect(item) {
@@ -565,7 +566,6 @@
         if (item?.selectable === false) return;
         if (value && !multiple && value[itemId] === item[itemId]) return closeList();
         if (isItemSelectable(item)) {
-            activeItemIndex = i;
             hoverItemIndex = i;
             handleSelect(item);
         }
