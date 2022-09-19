@@ -4,10 +4,12 @@
     const _props = import.meta.glob('./examples/props/*.svelte');
     const _slots = import.meta.glob('./examples/slots/*.svelte');
     const _events = import.meta.glob('./examples/events/*.svelte');
+    const _advanced = import.meta.glob('./examples/advanced/*.svelte');
 
     $: props = buildLinks(_props);
     $: slots = buildLinks(_slots);
     $: events = buildLinks(_events);
+    $: advanced = buildLinks(_advanced);
 
     function buildLinks(obj) {
         return Object.keys(obj).map((key) => {
@@ -40,6 +42,13 @@
         <h2>Events</h2>
         <ul>
             {#each events as { href, name }}
+                <li><a class:active={$page.routeId === href} href={`/${href}`}>{name}</a></li>
+            {/each}
+        </ul>
+
+        <h2>Advanced</h2>
+        <ul>
+            {#each advanced as { href, name }}
                 <li><a class:active={$page.routeId === href} href={`/${href}`}>{name}</a></li>
             {/each}
         </ul>
