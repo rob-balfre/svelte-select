@@ -20,6 +20,7 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--clear-icon-color`
 - `--clear-icon-width`
 - `--clear-select-color`
+- `--clear-select-focus-outline`
 - `--clear-select-height`
 - `--clear-select-margin`
 - `--clear-select-width`

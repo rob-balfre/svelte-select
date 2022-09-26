@@ -43,26 +43,28 @@
     bind:hoverItemIndex
     on:hoverItem={(e) => handleHover(e.detail)}>
     <svelte:fragment slot="list" let:filteredItems>
-        <VirtualList
-            width="100%"
-            height={300}
-            itemCount={filteredItems.length}
-            itemSize={50}
-            scrollToIndex={hoverItemIndex}>
-            <div
-                class="item"
-                class:active={activeIndex === index}
-                class:hover={hoverItemIndex === index}
-                slot="item"
-                let:index
-                let:style
-                {style}
-                on:click={() => handleClick(index)}
-                on:focus={() => handleHover(index)}
-                on:mouseover={() => handleHover(index)}>
-                Item: {filteredItems[index].label}, Index: #{index}
-            </div>
-        </VirtualList>
+        {#if filteredItems.length > 0}
+            <VirtualList
+                width="100%"
+                height={300}
+                itemCount={filteredItems?.length}
+                itemSize={50}
+                scrollToIndex={hoverItemIndex}>
+                <div
+                    class="item"
+                    class:active={activeIndex === index}
+                    class:hover={hoverItemIndex === index}
+                    slot="item"
+                    let:index
+                    let:style
+                    {style}
+                    on:click={() => handleClick(index)}
+                    on:focus={() => handleHover(index)}
+                    on:mouseover={() => handleHover(index)}>
+                    Item: {filteredItems[index].label}, Index: #{index}
+                </div>
+            </VirtualList>
+        {/if}
     </svelte:fragment>
 </Select>
 

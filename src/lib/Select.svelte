@@ -39,6 +39,7 @@
     export let loadOptions = undefined;
     export let containerStyles = '';
     export let hasError = false;
+    export let filterSelectedItems = true;
 
     export let createGroupHeaderItem = (groupValue, item) => {
         return {
@@ -195,7 +196,7 @@
     $: if (multiple && value && value.length > 1) checkValueForDuplicates();
     $: if (value) dispatchSelectedItem();
     $: if (!value && multiple && prev_value) dispatch('change', value);
-    $: if (!focused && input) listOpen = false;
+    $: if (!focused && input) closeList();
     $: if (!listOpen) filterText = '';
     $: if (filterText !== prev_filterText) setupFilterText();
     $: dispatchHover(hoverItemIndex);
@@ -267,6 +268,7 @@
         itemId,
         groupBy,
         label,
+        filterSelectedItems,
         itemFilter,
         convertStringItemsToObjects,
         filterGroupedItems,
@@ -397,7 +399,7 @@
 
                     e.preventDefault();
                     handleSelect(filteredItems[hoverItemIndex]);
-                    listOpen = false;
+                    closeList();
                 }
 
                 break;
@@ -440,7 +442,7 @@
         if (isScrolling) return;
         if (listOpen || focused) {
             dispatch('blur', e);
-            listOpen = false;
+            closeList();
             focused = false;
             activeValue = undefined;
             input.blur();
@@ -456,7 +458,7 @@
 
     export function handleClear() {
         value = undefined;
-        listOpen = false;
+        closeList();
         dispatch('clear', value);
         handleFocus();
     }
@@ -481,7 +483,7 @@
                 value = value;
 
                 setTimeout(() => {
-                    listOpen = false;
+                    closeList();
                     activeValue = undefined;
                     dispatch('select', value);
                 });
@@ -866,8 +868,6 @@
 
         --internal-padding: 0 0 0 16px;
         --height: 42px;
-        --font-size: 16px;
-        --border-focused: 1px solid #006fe8;
 
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--border-radius, 6px);
@@ -879,7 +879,7 @@
         background: var(--background, #fff);
         margin: var(--margin, 0);
         width: var(--width, 100%);
-        font-size: var(--font-size);
+        font-size: var(--font-size, 16px);
     }
 
     * {
@@ -921,7 +921,7 @@
         bottom: 0;
         left: 0;
         background: transparent;
-        font-size: var(--font-size);
+        font-size: var(--font-size, 16px);
     }
     
     :not(.multi) > .value-container > input {
@@ -938,9 +938,8 @@
         outline: none;
     }
 
-    .svelte-select.focused,
-    .svelte-select.focused .chevron {
-        border: var(--border-focused);
+    .svelte-select.focused {
+        border: var(--border-focused,  1px solid #006fe8);
     }
 
     .disabled {
@@ -961,7 +960,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         color: var(--selected-item-color, inherit);
-        font-size: var(--font-size);
+        font-size: var(--font-size, 16px);
     }
 
     .multi .selected-item {
@@ -998,7 +997,7 @@
     }
 
     .clear-select:focus {
-        outline: var(--border-focused);
+        outline: var(--clear-select-focus-outline, --border-focused);
     }
 
     .loading {
