@@ -867,7 +867,6 @@
         --spinnerWidth: var(--spinner-width);
 
         --internal-padding: 0 0 0 16px;
-        --height: 42px;
 
         border: var(--border, 1px solid #d8dbdf);
         border-radius: var(--border-radius, 6px);
@@ -965,8 +964,8 @@
 
     .multi .selected-item {
         position: absolute;
-        line-height: var(--height);
-        height: var(--height);
+        line-height: var(--height, 42px);
+        height: var(--height, 42px);
     }
 
     .selected-item:focus {
@@ -1101,8 +1100,8 @@
         cursor: default;
         font-size: var(--group-title-font-size, 16px);
         font-weight: var(--group-title-font-weight, 600);
-        height: var(--height);
-        line-height: var(--height);
+        height: var(--height, 42px);
+        line-height: var(--height, 42px);
         padding: var(--group-title-padding, 0 20px);
         text-overflow: ellipsis;
         overflow-x: hidden;
@@ -1118,8 +1117,8 @@
 
     .item {
         cursor: default;
-        height: var(--item-height, var(--height));
-        line-height: var(--item-line-height, var(--height));
+        height: var(--item-height, var(--height, 42px));
+        line-height: var(--item-line-height, var(--height, 42px));
         padding: var(--item-padding, 0 20px);
         color: var(--item-color, inherit);
         text-overflow: ellipsis;
