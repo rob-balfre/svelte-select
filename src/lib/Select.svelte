@@ -722,7 +722,7 @@
                         class:disabled
                         on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}>
                         <span class="multi-item-text">
-                            <slot name="selection" selection={item}>
+                            <slot name="selection" selection={item} index={i}>
                                 {item[label]}
                             </slot>
                         </span>

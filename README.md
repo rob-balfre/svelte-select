@@ -76,7 +76,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 ```svelte
 <Select>
   <div slot="prepend" />
-  <div slot="selection" let:selection />
+  <div slot="selection" let:selection let:index /> <!-- index only available when multiple -->
   <div slot="clear-icon" />  
   <div slot="multi-clear-icon" />  
   <div slot="loading-icon" />  

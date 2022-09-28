@@ -6,7 +6,7 @@
 </script>
 
 <Select bind:items bind:value multiple>
-    <svelte:fragment slot="selection" let:selection>
-        Slot: {selection.label}
+    <svelte:fragment slot="selection" let:selection let:index>
+        Index: {index} Slot: {selection.label}
     </svelte:fragment>
 </Select>

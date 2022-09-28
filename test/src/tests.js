@@ -1713,8 +1713,8 @@ test('when multiple and selection slot render slot content', async (t) => {
 
   const items = document.querySelectorAll('.multi-item span');
   
-  t.ok(items[0].innerHTML.startsWith('Slot: one'));
-  t.ok(items[1].innerHTML.startsWith('Slot: two'));
+  t.ok(items[0].innerHTML.startsWith('Index: 0 Slot: one'));
+  t.ok(items[1].innerHTML.startsWith('Index: 1 Slot: two'));
 
   select.$destroy();
 });

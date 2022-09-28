@@ -14,3 +14,12 @@
         🎉 {selection.label} 🎉 
     </div>
 </Select>
+
+<br />
+<br />
+
+<Select {items} multiple>
+    <div slot="selection" let:selection let:index>
+        🎉 {index} : {selection.label} 🎉 
+    </div>
+</Select>
