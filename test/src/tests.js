@@ -3416,3 +3416,87 @@ test('when items filter then event on:filter fires', async (t) => {
 
   select.$destroy();
 });
+
+
+test('clicking tab on item with selectable false should not select item', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable,
+      filterText: '2'
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Tab'}));
+  await wait(0);
+  t.ok(!select.value)
+  select.$destroy();
+});
+
+
+test('when multiple and clicking enter an item with selectable false should not be selected', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable,
+      filterText: '2',
+      multiple: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+  t.ok(!select.value)
+  select.$destroy();
+});
+
+test('when list has one item that is not selectable then clicking up/down keys should reset hover index', async (t) => {
+    const select = new Select({
+      target,
+      props: {
+        listOpen: true,
+        items: [
+          { value: 'chocolate', label: 'Chocolate', group: 'Sweet' },
+          { value: 'pizza', label: 'Pizza', group: 'Savory' },
+          { value: 'cake', label: 'Cake', group: 'Sweet', selectable: false },
+          { value: 'chips', label: 'Chips', group: 'Savory' },
+          { value: 'ice-cream', label: 'Ice Cream', group: 'Sweet' },
+        ],
+        filterText: 'Ca',
+      },
+    });
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+    t.ok(!select.value);
+    select.$set({filterText: 'pi'});
+    await wait(0);
+    window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+    t.ok(select.value.label === 'Pizza');
+
+    select.$destroy();
+});
+
+test('when list has no items that are selectable then clicking up/down keys should reset hover index', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithSelectable,
+      filterText: 'not'
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(!select.value);
+  select.$set({filterText: 'se'});
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+  t.ok(select.value.label === 'SelectableDefault')
+  select.$destroy();
+});

@@ -554,7 +554,7 @@
     let isScrolling = false;
 
     function handleSelect(item) {
-        if (item.isCreator) return;
+        if (item.isCreator || item.selectable === false) return;
         itemSelected(item);
     }
 
@@ -575,6 +575,12 @@
 
     let scrollToHoverItem = 0;
     function setHoverIndex(increment) {
+        let selectableFilteredItems = filteredItems.filter(item => !Object.hasOwn(item, 'selectable') || item.selectable === true);
+
+        if (selectableFilteredItems.length === 0) {
+            return hoverItemIndex = 0;
+        }
+        
         if (increment > 0 && hoverItemIndex === filteredItems.length - 1) {
             hoverItemIndex = 0;
         } else if (increment < 0 && hoverItemIndex === 0) {
