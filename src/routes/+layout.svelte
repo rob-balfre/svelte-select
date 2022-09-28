@@ -1,15 +1,21 @@
 <script>
     import { page } from '$app/stores';
 
-    const _props = import.meta.glob('./examples/props/*.svelte');
-    const _slots = import.meta.glob('./examples/slots/*.svelte');
-    const _events = import.meta.glob('./examples/events/*.svelte');
-    const _advanced = import.meta.glob('./examples/advanced/*.svelte');
+    import { Highlight } from 'svelte-highlight';
+    import typescript from 'svelte-highlight/languages/typescript';
+    import highlightStyles from 'svelte-highlight/styles/atom-one-dark';
 
-    $: props = buildLinks(_props);
-    $: slots = buildLinks(_slots);
-    $: events = buildLinks(_events);
-    $: advanced = buildLinks(_advanced);
+    const _props = import.meta.glob('./examples/props/*/*.svelte', { as: 'raw' });
+    const _slots = import.meta.glob('./examples/slots/*/*.svelte', { as: 'raw' });
+    const _events = import.meta.glob('./examples/events/*/*.svelte', { as: 'raw' });
+    const _advanced = import.meta.glob('./examples/advanced/*/*.svelte', { as: 'raw' });
+
+    $: setup = {
+        props: buildLinks(_props),
+        slots: buildLinks(_slots),
+        events: buildLinks(_events),
+        advanced: buildLinks(_advanced),
+    };
 
     function buildLinks(obj) {
         return Object.keys(obj).map((key) => {
@@ -18,37 +24,63 @@
             return {
                 href: `${sp[1]}/${sp[2]}/` + name,
                 name: name.replace(/-./g, (x) => x[1].toUpperCase()),
+                source: obj[key],
             };
         });
     }
+
+    $: handleExampleCode($page);
+
+    let source;
+    async function handleExampleCode(newPage) {
+        if (!newPage?.routeId) return;
+
+        if (newPage.routeId.includes('examples/')) {
+            const s = newPage.routeId.split('/');
+            const file = setup[s[1]].find((i) => i.href.includes(s[2]));
+            const raw = await file.source();
+            source = raw.replace('$lib/Select.svelte', 'svelte-select');
+        } else {
+            source = null;
+        }
+    }
+
 </script>
+
+<svelte:head>
+    {@html highlightStyles}
+</svelte:head>
 
 <div class="container">
     <nav>
+        <ul>
+            <li><a <a class:active={$page.routeId === 'examples'} href="/">Home</a></li>
+        </ul>
+        
         <h2>Props</h2>
         <ul>
-            {#each props as { href, name }}
+            {#each setup.props as { href, name }}
                 <li><a class:active={$page.routeId === href} href={`/${href}`}>{name}</a></li>
             {/each}
         </ul>
 
         <h2>Slots</h2>
         <ul>
-            {#each slots as { href, name }}
+            {#each setup.slots as { href, name }}
                 <li><a class:active={$page.routeId === href} href={`/${href}`}>{name}</a></li>
             {/each}
         </ul>
 
         <h2>Events</h2>
         <ul>
-            {#each events as { href, name }}
+            {#each setup.events as { href, name }}
                 <li><a class:active={$page.routeId === href} href={`/${href}`}>{name}</a></li>
             {/each}
         </ul>
 
         <h2>Advanced</h2>
         <ul>
-            {#each advanced as { href, name }}
+            {#each setup.advanced as { href, name }}
                 <li><a class:active={$page.routeId === href} href={`/${href}`}>{name}</a></li>
             {/each}
         </ul>
@@ -56,6 +88,10 @@
 
     <div class="content">
         <slot />
+
+        {#if source}
+            <Highlight language={typescript} code={source} />
+        {/if}
     </div>
 </div>
 
@@ -70,7 +106,6 @@
         font-size: 16px;
         padding: 10px;
         border-bottom: 1px solid #f3f1fd;
-
     }
 
     nav {

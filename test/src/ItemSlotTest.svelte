@@ -2,7 +2,6 @@
     import Select from '../../src/lib/Select.svelte';
 
     let items = ['one', 'two'];
-    
 </script>
 
 <Select bind:items listOpen>

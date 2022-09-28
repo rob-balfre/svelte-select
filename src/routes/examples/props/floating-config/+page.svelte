@@ -14,8 +14,6 @@
     let topConfig = {
         placement: 'top-start',
     };
-
-    
 </script>
 
 <div class="container">
