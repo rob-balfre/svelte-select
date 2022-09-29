@@ -98,9 +98,9 @@
     </nav>
 
     <div class="content" class:spinning={$navigating}>
-        {#if $navigating}
-            <img src="/svelte-select.png" alt="Svelte Select Logo" />
-        {:else}
+        <img src="/svelte-select.png" alt="Svelte Select Logo" class="spinner" />
+
+        {#if !$navigating}
             <slot />
 
             {#if source}
@@ -183,7 +183,7 @@
         padding: 20px;
     }
 
-    .content img {
+    .content .spinner {
         display: none;
     }
 
@@ -194,7 +194,7 @@
         justify-content: center;
     }
 
-    .content.spinning img {
+    .content.spinning .spinner {
         display: block;
         animation-name: spin;
         animation-duration: 550ms;
