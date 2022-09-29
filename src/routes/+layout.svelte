@@ -33,6 +33,8 @@
 
     let source;
     async function handleExampleCode(newPage) {
+        source = null;
+
         if (!newPage?.routeId) return;
 
         if (newPage.routeId.includes('examples/')) {
@@ -40,8 +42,6 @@
             const file = setup[s[1]].find((i) => i.href.includes(s[2]));
             const raw = await file.source();
             source = raw.replace('$lib/Select.svelte', 'svelte-select');
-        } else {
-            source = null;
         }
     }
 

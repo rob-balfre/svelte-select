@@ -1,6 +1,6 @@
 <div align="center">
     <img
-        src="https://raw.githubusercontent.com/rob-balfre/svelte-select/feature/v5/svelte-select.png"
+        src="/svelte-select.png"
         alt="Svelte Select"
         width="150" />
     <h1>Svelte Select Examples</h1>
