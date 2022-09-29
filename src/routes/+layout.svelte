@@ -38,7 +38,7 @@
 
         if (newPage.routeId.includes('examples/')) {
             const s = newPage.routeId.split('/');
-            const file = setup[s[1]].find((i) => i.href.includes(s[2]));
+            const file = setup[s[1]].find((i) => i.href.split('/').pop() === s[2]);
             const raw = await file.source();
             source = raw.replace('$lib/Select.svelte', 'svelte-select');
         }
