@@ -1,5 +1,3 @@
-debounceWait
-
 <script>
     import Select from '$lib/Select.svelte';
 

@@ -4,7 +4,7 @@
   "repository": "https://rob-balfre@github.com/rob-balfre/svelte-select.git",
   "description": "A <Select> component for Svelte apps",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --host",
     "build": "vite build",
     "preview": "vite preview",
     "dev-tests": "rollup -cw",
