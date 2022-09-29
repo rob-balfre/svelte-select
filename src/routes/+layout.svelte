@@ -42,14 +42,14 @@
             const raw = await file.source();
             source = raw.replace('$lib/Select.svelte', 'svelte-select');
         }
-
-        handleNav();
     }
 
-    let showNav = true;
+    let showNav = false;
     function handleNav() {
         showNav = !showNav;
     }
+
+    $: if ($navigating) showNav = false;
 </script>
 
 <svelte:head>
@@ -63,7 +63,8 @@
                 d="M 3 5 A 1.0001 1.0001 0 1 0 3 7 L 21 7 A 1.0001 1.0001 0 1 0 21 5 L 3 5 z M 3 11 A 1.0001 1.0001 0 1 0 3 13 L 21 13 A 1.0001 1.0001 0 1 0 21 11 L 3 11 z M 3 17 A 1.0001 1.0001 0 1 0 3 19 L 21 19 A 1.0001 1.0001 0 1 0 21 17 L 3 17 z"
                 fill="currentcolor" /></svg>
     </button>
-    <nav class:show={showNav}>
+
+    <nav class:show={showNav} class:navigating={$navigating}>
         <ul>
             <li><a <a class:active={$page.routeId === 'examples'} href="/">Home</a></li>
         </ul>
@@ -142,6 +143,10 @@
         display: flex;
     }
 
+    nav.show.navigating {
+        display: none;
+    }
+
     .container {
         display: flex;
         flex-direction: column;
@@ -217,7 +222,8 @@
             display: none;
         }
 
-        nav {
+        nav,
+        nav.navigating {
             display: flex;
             flex-direction: column;
             width: 250px;
