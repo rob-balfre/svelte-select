@@ -1,5 +1,5 @@
 <script>
-    import { page } from '$app/stores';
+    import { page, navigating } from '$app/stores';
 
     import { HighlightSvelte } from 'svelte-highlight';
     import highlightStyles from 'svelte-highlight/styles/atom-one-dark';
@@ -97,11 +97,15 @@
         </ul>
     </nav>
 
-    <div class="content">
-        <slot />
+    <div class="content" class:spinning={$navigating}>
+        {#if $navigating}
+            <img src="/svelte-select.png" alt="Svelte Select Logo" />
+        {:else}
+            <slot />
 
-        {#if source}
-            <HighlightSvelte code={source} />
+            {#if source}
+                <HighlightSvelte code={source} />
+            {/if}
         {/if}
     </div>
 </div>
@@ -119,22 +123,23 @@
         color: #fff;
         display: flex;
     }
+
     nav {
         display: none;
-    }
-
-    nav.show {
         position: fixed;
         top: 0;
         right: 0;
         left: 0;
-        bottom: 0;
-        display: flex;
+        height: 100vh;
         flex-direction: column;
         background: #fff;
         overflow-y: scroll;
         position: fixed;
         z-index: 1;
+    }
+
+    nav.show {
+        display: flex;
     }
 
     .container {
@@ -178,6 +183,35 @@
         padding: 20px;
     }
 
+    .content img {
+        display: none;
+    }
+
+    .content.spinning {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .content.spinning img {
+        display: block;
+        animation-name: spin;
+        animation-duration: 550ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        width: 30px;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
     @media (min-width: 800px) {
         .show-nav {
             display: none;
@@ -190,7 +224,7 @@
             border-right: 1px solid #f3f1fd;
             right: unset;
         }
-        
+
         .container {
             display: flex;
             gap: 30px;
