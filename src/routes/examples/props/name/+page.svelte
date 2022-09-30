@@ -10,4 +10,4 @@
     let name = 'numbers';
 </script>
 
-<Select {items} {name} class="foo bar" />
+<Select {items} {name} />
