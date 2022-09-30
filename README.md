@@ -15,6 +15,8 @@
 
 ## Demos
 
+[💥 Examples of every prop, event, slot and more 💥](https://svelte-select-examples.vercel.app)
+
 [✨ REPL: Simple ✨](https://svelte.dev/repl/c3bbe052fdfc4e87a46ccd9091ee002b)
 
 [💃 REPL: Show me everything 🕺](https://svelte.dev/repl/3df87e32340e4e9e85bf371becae2af0)
