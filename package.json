@@ -11,7 +11,7 @@
     "test:browser": "sirv test/public -p 3000 --dev --open",
     "gen:docs": "node docs/generate_theming_variables_md.cjs",
     "preprepare": "node src/remove-styles.cjs",
-    "prepare": "svelte-kit package",
+    "prepare": "svelte-package",
     "postprepare": "node src/post-prepare.cjs && npm run gen:docs",
     "release": "release-it --preRelease=beta"
   },
@@ -20,6 +20,7 @@
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/adapter-static": "^1.0.0-next.43",
     "@sveltejs/kit": "1.0.0-next.504",
+    "@sveltejs/package": "^1.0.0-next.5",
     "autoprefixer": "^10.4.12",
     "cross-env": "^7.0.3",
     "find-in-files": "^0.5.0",
