@@ -41,7 +41,6 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--height`
 - `--icons-color`
 - `--input-color`
-- `--input-font-size`
 - `--input-left`
 - `--input-letter-spacing`
 - `--input-margin`
