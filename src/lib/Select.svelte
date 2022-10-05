@@ -719,7 +719,9 @@
         {/if}
     </span>
 
-    <slot name="prepend" />
+    <div class="prepend">
+        <slot name="prepend" />
+    </div>
 
     <div class="value-container">
         {#if hasValue}
@@ -832,7 +834,6 @@
         --indicatorHeight: var(--chevron-height);
         --indicatorWidth: var(--chevron-width);
         --inputColor: var(--input-color);
-        --inputFontSize: var(--input-font-size);
         --inputLeft: var(--input-left);
         --inputLetterSpacing: var(--input-letter-spacing);
         --inputMargin: var(--input-margin);
@@ -908,9 +909,11 @@
         align-self: stretch;
     }
 
+    .prepend,
     .indicators {
         display: flex;
         flex-shrink: 0;
+        align-items: center;
     }
 
     input {
