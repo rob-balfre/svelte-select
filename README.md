@@ -39,36 +39,37 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 
 ## Props
 
-| Prop                  | Type      | Default         | Description                                                |
-| --------------------- | --------- | --------------- | ---------------------------------------------------------- |
-| items                 | `any[]`   | `[]`            | Array of items available to display / filter               |
-| value                 | `any`     | `null`          | Selected value(s)                                          |
-| justValue             | `any`     | `null`          | **READ-ONLY** Selected value(s) excluding container object |
-| itemId                | `string`  | `value`         | Override default identifier                                |
-| label                 | `string`  | `label`         | Override default label                                     |
-| id                    | `string`  | `null`          | id attr for input field                                    |
-| filterText            | `string`  | `''`            | Text to filter `items` by                                  |
-| placeholder           | `string`  | `Please select` | Placeholder text                                           |
-| hideEmptyState        | `boolean` | `false`         | When no items hide list                                    |
-| listOpen              | `boolean` | `false`         | Open/close list                                            |
-| class                 | `string`  | `''`            | container classes                                          |
-| containerStyles       | `string`  | `''`            | Add inline styles to container                             |
-| clearable             | `boolean` | `true`          | Enable clearing of value(s)                                |
-| disabled              | `boolean` | `false`         | Disable select                                             |
-| multiple              | `boolean` | `false`         | Enable multi-select                                        |
-| searchable            | `boolean` | `true`          | If `false` search/filtering is disabled                    |
-| groupHeaderSelectable | `boolean` | `false`         | Enable selectable group headers                            |
-| focused               | `boolean` | `false`         | Controls input focus                                       |
-| listAutoWidth         | `boolean` | `true`          | If `false` will ignore width of select                     |
-| showChevron           | `boolean` | `false`         | Show chevron                                               |
-| inputAttributes       | `object`  | `{}`            | Pass in HTML attributes to Select's input                  |
-| placeholderAlwaysShow | `boolean` | `false`         | When `multiple` placeholder text will always show          |
-| loading               | `boolean` | `false`         | Shows `loading-icon`. `loadOptions` will override this     |
-| listOffset            | `number`  | `5`             | `px` space between select and list                         |
-| debounceWait          | `number`  | `300`           | `milliseconds` debounce wait                               |
-| floatingConfig        | `object`  | `{}`            | [Floating UI Config](https://floating-ui.com/)             |
-| hasError              | `boolean` | `false`         | If `true` sets error class and styles                      |
-| name                  | `string`  | `null`          | Name attribute of hidden input, helpful for form actions   |
+| Prop                  | Type      | Default         | Description                                                    |
+| --------------------- | --------- | --------------- | -------------------------------------------------------------- |
+| items                 | `any[]`   | `[]`            | Array of items available to display / filter                   |
+| value                 | `any`     | `null`          | Selected value(s)                                              |
+| justValue             | `any`     | `null`          | **READ-ONLY** Selected value(s) excluding container object     |
+| itemId                | `string`  | `value`         | Override default identifier                                    |
+| label                 | `string`  | `label`         | Override default label                                         |
+| id                    | `string`  | `null`          | id attr for input field                                        |
+| filterText            | `string`  | `''`            | Text to filter `items` by                                      |
+| placeholder           | `string`  | `Please select` | Placeholder text                                               |
+| hideEmptyState        | `boolean` | `false`         | When no items hide list                                        |
+| listOpen              | `boolean` | `false`         | Open/close list                                                |
+| class                 | `string`  | `''`            | container classes                                              |
+| containerStyles       | `string`  | `''`            | Add inline styles to container                                 |
+| clearable             | `boolean` | `true`          | Enable clearing of value(s)                                    |
+| disabled              | `boolean` | `false`         | Disable select                                                 |
+| multiple              | `boolean` | `false`         | Enable multi-select                                            |
+| searchable            | `boolean` | `true`          | If `false` search/filtering is disabled                        |
+| groupHeaderSelectable | `boolean` | `false`         | Enable selectable group headers                                |
+| focused               | `boolean` | `false`         | Controls input focus                                           |
+| listAutoWidth         | `boolean` | `true`          | If `false` will ignore width of select                         |
+| showChevron           | `boolean` | `false`         | Show chevron                                                   |
+| inputAttributes       | `object`  | `{}`            | Pass in HTML attributes to Select's input                      |
+| placeholderAlwaysShow | `boolean` | `false`         | When `multiple` placeholder text will always show              |
+| loading               | `boolean` | `false`         | Shows `loading-icon`. `loadOptions` will override this         |
+| listOffset            | `number`  | `5`             | `px` space between select and list                             |
+| debounceWait          | `number`  | `300`           | `milliseconds` debounce wait                                   |
+| floatingConfig        | `object`  | `{}`            | [Floating UI Config](https://floating-ui.com/)                 |
+| hasError              | `boolean` | `false`         | If `true` sets error class and styles                          |
+| name                  | `string`  | `null`          | Name attribute of hidden input, helpful for form actions       |
+| required              | `boolean` | `false`         | If `Select` is within a `<form>` will restrict form submission |
 
 
 ## Named slots
@@ -83,6 +84,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
   <div slot="chevron-icon" /> 
   <div slot="list" let:filteredItems />  
   <div slot="item" let:item let:index />  
+  <div slot="required" let:value />
   <!-- Remember you can also use `svelte:fragment` to avoid a container DOM element. -->
   <svelte:fragment slot="empty" />  
 </Select>
@@ -307,35 +309,6 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 
 ### 🧪 Experimental: Replace styles (Tailwind, Bootstrap, Bulma etc)
 If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles/Select.svelte'`. Then somewhere in your code or build pipeline add your own. There is a tailwind stylesheet via `import 'svelte-select/tailwind.css'`. It uses `@extend` so PostCSS is required.
-
-
-## Development
-
-```bash
-npm i
-npm run dev-tests
-npm test:browser
-```
-
-Open http://localhost:3000 and see devtools console output. When developing it's useful to see the component on the page; comment out the `select.$destroy();` on test your debugging in /test/src/index.js and use `test.only()` to target just one test.
-
-For example:
-
-```js
-test.only('...', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      ...
-    }
-  });
-
-  t.ok(...);
-
-  //select.$destroy();
-});
-
-```
 
 
 ## License

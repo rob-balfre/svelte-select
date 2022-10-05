@@ -74,7 +74,7 @@ document.body.appendChild(testTarget);
 
 const extraTarget = document.createElement("div");
 extraTarget.id = 'extra';
-document.body.appendChild(extraTarget)
+document.body.appendChild(extraTarget);
 
 const items = [
   {value: 'chocolate', label: 'Chocolate'},
@@ -2851,7 +2851,7 @@ test('When value then hidden field should have value', async (t) => {
   });
 
   let hidden = document.querySelector('input[type="hidden"]').value;
-  t.equal(hidden, 'cake');
+  t.equal(JSON.parse(hidden).value, 'cake');
 
   select.$destroy();
 });
@@ -2881,7 +2881,7 @@ test('When multiple and value then hidden fields should list value items', async
     },
   });
 
-  let hidden = document.querySelectorAll('input[type="hidden"]');
+  let hidden = JSON.parse(document.querySelector('input[type="hidden"]').value);
   t.equal(hidden[0].value, 'cake');
   t.equal(hidden[1].value, 'pizza');
 

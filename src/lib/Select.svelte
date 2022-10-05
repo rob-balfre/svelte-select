@@ -40,6 +40,7 @@
     export let containerStyles = '';
     export let hasError = false;
     export let filterSelectedItems = true;
+    export let required = false;
 
     export let createGroupHeaderItem = (groupValue, item) => {
         return {
@@ -71,7 +72,7 @@
     export let showChevron = false;
     export let listOffset = 5;
     export let hoverItemIndex = 0;
-    
+
     export { containerClasses as class };
 
     let containerClasses = '';
@@ -202,7 +203,7 @@
     $: dispatchHover(hoverItemIndex);
 
     function dispatchHover(i) {
-        dispatch('hoverItem', i)
+        dispatch('hoverItem', i);
     }
 
     function checkHoverSelectable() {
@@ -575,12 +576,14 @@
 
     let scrollToHoverItem = 0;
     function setHoverIndex(increment) {
-        let selectableFilteredItems = filteredItems.filter(item => !Object.hasOwn(item, 'selectable') || item.selectable === true);
+        let selectableFilteredItems = filteredItems.filter(
+            (item) => !Object.hasOwn(item, 'selectable') || item.selectable === true
+        );
 
         if (selectableFilteredItems.length === 0) {
-            return hoverItemIndex = 0;
+            return (hoverItemIndex = 0);
         }
-        
+
         if (increment > 0 && hoverItemIndex === filteredItems.length - 1) {
             hoverItemIndex = 0;
         } else if (increment < 0 && hoverItemIndex === 0) {
@@ -797,14 +800,12 @@
         {/if}
     </div>
 
-    {#if !multiple || (multiple && !showMultiSelect)}
-        <input {name} type="hidden" value={value ? value[itemId] : null} />
-    {/if}
+    <input {name} type="hidden" value={value ? JSON.stringify(value) : null} />
 
-    {#if multiple && showMultiSelect}
-        {#each value as item}
-            <input {name} type="hidden" value={item ? item[itemId] : null} />
-        {/each}
+    {#if required && (!value || value.length === 0)}
+        <slot name="required" {value}>
+            <select class="required" required />
+        </slot>
     {/if}
 </div>
 
@@ -879,7 +880,7 @@
         min-height: var(--height, 42px);
         position: relative;
         display: flex;
-        align-items: center;
+        align-items: stretch;
         padding: var(--padding, var(--internal-padding));
         background: var(--background, #fff);
         margin: var(--margin, 0);
@@ -928,7 +929,7 @@
         background: transparent;
         font-size: var(--font-size, 16px);
     }
-    
+
     :not(.multi) > .value-container > input {
         width: 100%;
         height: 100%;
@@ -944,7 +945,7 @@
     }
 
     .svelte-select.focused {
-        border: var(--border-focused,  1px solid #006fe8);
+        border: var(--border-focused, 1px solid #006fe8);
     }
 
     .disabled {
@@ -994,7 +995,7 @@
         align-items: center;
         justify-content: center;
         width: var(--clear-select-width, 40px);
-        height: var(--clear-select-height, 40px);
+        height: var(--clear-select-height);
         color: var(--clear-select-color, var(--icons-color));
         margin: var(--clear-select-margin, 0);
         pointer-events: all;
@@ -1007,7 +1008,7 @@
 
     .loading {
         width: var(--loading-width, 40px);
-        height: var(--loading-height, 40px);
+        height: var(--loading-height);
         color: var(--loading-color, var(--icons-color));
         margin: var(--loading--margin, 0);
         flex-shrink: 0;
@@ -1163,5 +1164,15 @@
     .item.not-selectable:active {
         color: var(--item-is-not-selectable-color, #999);
         background: transparent;
+    }
+
+    .required {
+        opacity: 0;
+        z-index: -1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
     }
 </style>
