@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:dev": "rollup -cw",
-    "test": "sirv test/public -p 3000 --dev --open",
+    "test:browser": "sirv test/public -p 3000 --dev --open",
     "gen:docs": "node docs/generate_theming_variables_md.cjs",
     "preprepare": "node src/remove-styles.cjs",
     "prepare": "svelte-kit package",
