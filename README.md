@@ -39,37 +39,38 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 
 ## Props
 
-| Prop                  | Type      | Default         | Description                                                    |
-| --------------------- | --------- | --------------- | -------------------------------------------------------------- |
-| items                 | `any[]`   | `[]`            | Array of items available to display / filter                   |
-| value                 | `any`     | `null`          | Selected value(s)                                              |
-| justValue             | `any`     | `null`          | **READ-ONLY** Selected value(s) excluding container object     |
-| itemId                | `string`  | `value`         | Override default identifier                                    |
-| label                 | `string`  | `label`         | Override default label                                         |
-| id                    | `string`  | `null`          | id attr for input field                                        |
-| filterText            | `string`  | `''`            | Text to filter `items` by                                      |
-| placeholder           | `string`  | `Please select` | Placeholder text                                               |
-| hideEmptyState        | `boolean` | `false`         | When no items hide list                                        |
-| listOpen              | `boolean` | `false`         | Open/close list                                                |
-| class                 | `string`  | `''`            | container classes                                              |
-| containerStyles       | `string`  | `''`            | Add inline styles to container                                 |
-| clearable             | `boolean` | `true`          | Enable clearing of value(s)                                    |
-| disabled              | `boolean` | `false`         | Disable select                                                 |
-| multiple              | `boolean` | `false`         | Enable multi-select                                            |
-| searchable            | `boolean` | `true`          | If `false` search/filtering is disabled                        |
-| groupHeaderSelectable | `boolean` | `false`         | Enable selectable group headers                                |
-| focused               | `boolean` | `false`         | Controls input focus                                           |
-| listAutoWidth         | `boolean` | `true`          | If `false` will ignore width of select                         |
-| showChevron           | `boolean` | `false`         | Show chevron                                                   |
-| inputAttributes       | `object`  | `{}`            | Pass in HTML attributes to Select's input                      |
-| placeholderAlwaysShow | `boolean` | `false`         | When `multiple` placeholder text will always show              |
-| loading               | `boolean` | `false`         | Shows `loading-icon`. `loadOptions` will override this         |
-| listOffset            | `number`  | `5`             | `px` space between select and list                             |
-| debounceWait          | `number`  | `300`           | `milliseconds` debounce wait                                   |
-| floatingConfig        | `object`  | `{}`            | [Floating UI Config](https://floating-ui.com/)                 |
-| hasError              | `boolean` | `false`         | If `true` sets error class and styles                          |
-| name                  | `string`  | `null`          | Name attribute of hidden input, helpful for form actions       |
-| required              | `boolean` | `false`         | If `Select` is within a `<form>` will restrict form submission |
+| Prop                   | Type      | Default         | Description                                                    |
+| ---------------------- | --------- | --------------- | -------------------------------------------------------------- |
+| items                  | `any[]`   | `[]`            | Array of items available to display / filter                   |
+| value                  | `any`     | `null`          | Selected value(s)                                              |
+| justValue              | `any`     | `null`          | **READ-ONLY** Selected value(s) excluding container object     |
+| itemId                 | `string`  | `value`         | Override default identifier                                    |
+| label                  | `string`  | `label`         | Override default label                                         |
+| id                     | `string`  | `null`          | id attr for input field                                        |
+| filterText             | `string`  | `''`            | Text to filter `items` by                                      |
+| placeholder            | `string`  | `Please select` | Placeholder text                                               |
+| hideEmptyState         | `boolean` | `false`         | When no items hide list                                        |
+| listOpen               | `boolean` | `false`         | Open/close list                                                |
+| class                  | `string`  | `''`            | container classes                                              |
+| containerStyles        | `string`  | `''`            | Add inline styles to container                                 |
+| clearable              | `boolean` | `true`          | Enable clearing of value(s)                                    |
+| disabled               | `boolean` | `false`         | Disable select                                                 |
+| multiple               | `boolean` | `false`         | Enable multi-select                                            |
+| searchable             | `boolean` | `true`          | If `false` search/filtering is disabled                        |
+| groupHeaderSelectable  | `boolean` | `false`         | Enable selectable group headers                                |
+| focused                | `boolean` | `false`         | Controls input focus                                           |
+| listAutoWidth          | `boolean` | `true`          | If `false` will ignore width of select                         |
+| showChevron            | `boolean` | `false`         | Show chevron                                                   |
+| inputAttributes        | `object`  | `{}`            | Pass in HTML attributes to Select's input                      |
+| placeholderAlwaysShow  | `boolean` | `false`         | When `multiple` placeholder text will always show              |
+| loading                | `boolean` | `false`         | Shows `loading-icon`. `loadOptions` will override this         |
+| listOffset             | `number`  | `5`             | `px` space between select and list                             |
+| debounceWait           | `number`  | `300`           | `milliseconds` debounce wait                                   |
+| floatingConfig         | `object`  | `{}`            | [Floating UI Config](https://floating-ui.com/)                 |
+| hasError               | `boolean` | `false`         | If `true` sets error class and styles                          |
+| name                   | `string`  | `null`          | Name attribute of hidden input, helpful for form actions       |
+| required               | `boolean` | `false`         | If `Select` is within a `<form>` will restrict form submission |
+| multiFullItemClearable | `boolean` | `false`         | When `multiple` selected items will clear on click             |
 
 
 ## Named slots

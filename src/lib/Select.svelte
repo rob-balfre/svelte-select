@@ -254,7 +254,6 @@
     $: hideSelectedItem = hasValue && filterText.length > 0;
     $: showClear = hasValue && clearable && !disabled && !loading;
     $: placeholderText = placeholderAlwaysShow && multiple ? placeholder : value ? '' : placeholder;
-    $: showMultiSelect = multiple && value && value.length > 0;
     $: ariaSelection = value ? handleAriaSelection(multiple) : '';
     $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, focused, listOpen });
     $: updateValueDisplay(items);
@@ -667,6 +666,7 @@
     on:pointerup|preventDefault={handleClick}
     on:pointerdown|preventDefault|stopPropagation
     on:click|preventDefault|stopPropagation
+    on:keydown|preventDefault|stopPropagation
     bind:this={container}
     use:floatingRef>
     {#if listOpen}
@@ -684,6 +684,7 @@
                         on:mouseover={() => handleHover(i)}
                         on:focus={() => handleHover(i)}
                         on:click|stopPropagation={() => handleItemClick({ item, i })}
+                        on:keydown|preventDefault|stopPropagation
                         class="list-item"
                         tabindex="-1">
                         <div
@@ -731,7 +732,8 @@
                         class="multi-item"
                         class:active={activeValue === i}
                         class:disabled
-                        on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}>
+                        on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}
+                        on:keydown|preventDefault|stopPropagation>
                         <span class="multi-item-text">
                             <slot name="selection" selection={item} index={i}>
                                 {item[label]}
@@ -742,7 +744,8 @@
                             <div
                                 class="multi-item-clear"
                                 on:pointerdown|preventDefault|stopPropagation
-                                on:click={() => handleMultiItemClear(i)}>
+                                on:click={() => handleMultiItemClear(i)}
+                                on:keydown|preventDefault|stopPropagation>
                                 <slot name="multi-clear-icon">
                                     <ClearIcon />
                                 </slot>
