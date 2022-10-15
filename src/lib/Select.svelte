@@ -72,6 +72,7 @@
     export let showChevron = false;
     export let listOffset = 5;
     export let hoverItemIndex = 0;
+    export let floatingConfig = {};
 
     export { containerClasses as class };
 
@@ -275,6 +276,10 @@
     });
     $: if (listOpen) checkHoverSelectable(filteredItems);
     $: handleFilterEvent(filteredItems);
+    $: setupFloat(floatingConfig);
+    $: listDom = !!list;
+    $: listMounted(list, listOpen);
+    $: if (listOpen && container && list) setListWidth();
 
     function handleFilterEvent(items) {
         if (listOpen) dispatch('filter', items);
@@ -628,15 +633,10 @@
         };
     }
 
-    $: if (listOpen && container && list) setListWidth();
-
     function setListWidth() {
         const { width } = container.getBoundingClientRect();
         list.style.width = listAutoWidth ? width + 'px' : 'auto';
     }
-
-    export let floatingConfig = {};
-    $: setupFloat(floatingConfig);
 
     let _floatingConfig = {
         strategy: 'absolute',
@@ -646,9 +646,16 @@
 
     const [floatingRef, floatingContent] = createFloatingActions(_floatingConfig);
 
-    $: listMounted = !!list;
     function setupFloat() {
         _floatingConfig = Object.assign(_floatingConfig, floatingConfig);
+    }
+
+    let prefloat = true;
+    function listMounted(list, listOpen) {
+        if (!list || !listOpen) return (prefloat = true);
+        setTimeout(() => {
+            prefloat = false;
+        }, 0);
     }
 </script>
 
@@ -674,6 +681,7 @@
             use:floatingContent
             bind:this={list}
             class="svelte-select-list"
+            class:prefloat
             on:scroll={handleListScroll}
             on:pointerdown|preventDefault|stopPropagation
             on:pointerup|preventDefault|stopPropagation>
@@ -688,8 +696,8 @@
                         class="list-item"
                         tabindex="-1">
                         <div
-                            use:activeScroll={{ scroll: isItemActive(item, value, itemId), listMounted }}
-                            use:hoverScroll={{ scroll: scrollToHoverItem === i, listMounted }}
+                            use:activeScroll={{ scroll: isItemActive(item, value, itemId), listDom }}
+                            use:hoverScroll={{ scroll: scrollToHoverItem === i, listDom }}
                             class="item"
                             class:list-group-title={item.groupHeader}
                             class:active={isItemActive(item, value, itemId)}
@@ -1106,6 +1114,10 @@
         position: var(--list-position, absolute);
         z-index: var(--list-z-index, 2);
         border: var(--list-border);
+    }
+
+    .prefloat {
+        opacity: 0;
     }
 
     .list-group-title {
