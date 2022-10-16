@@ -975,7 +975,7 @@
 
     .selected-item {
         position: relative;
-        overflow-x: hidden;
+        overflow: var(--selected-item-overflow, hidden);
         padding: var(--selected-item-padding, 0 20px 0 0);
         text-overflow: ellipsis;
         white-space: nowrap;
