@@ -201,15 +201,20 @@
     $: if (!focused && input) closeList();
     $: if (!listOpen) filterText = '';
     $: if (filterText !== prev_filterText) setupFilterText();
+    $: if (!multiple && listOpen && value && filteredItems) setValueIndexAsHoverIndex();
     $: dispatchHover(hoverItemIndex);
+
+    function setValueIndexAsHoverIndex() {
+        const valueIndex = filteredItems.findIndex((i) => i[itemId] === value[itemId]);        
+        checkHoverSelectable(valueIndex);
+    }
 
     function dispatchHover(i) {
         dispatch('hoverItem', i);
     }
 
-    function checkHoverSelectable() {
-        hoverItemIndex = 0;
-
+    function checkHoverSelectable(startingIndex=0) {
+        hoverItemIndex = startingIndex;
         if (groupBy && filteredItems[hoverItemIndex] && !filteredItems[hoverItemIndex].selectable) {
             setHoverIndex(1);
         }
@@ -274,12 +279,14 @@
         convertStringItemsToObjects,
         filterGroupedItems,
     });
-    $: if (listOpen) checkHoverSelectable(filteredItems);
+    $: if (listOpen && filteredItems && !multiple && !value) checkHoverSelectable();
     $: handleFilterEvent(filteredItems);
     $: setupFloat(floatingConfig);
     $: listDom = !!list;
     $: listMounted(list, listOpen);
     $: if (listOpen && container && list) setListWidth();
+    $: scrollToHoverItem = hoverItemIndex;
+    $: if (listOpen && multiple) hoverItemIndex = 0;
 
     function handleFilterEvent(items) {
         if (listOpen) dispatch('filter', items);
@@ -377,7 +384,6 @@
                 if (listOpen) {
                     setHoverIndex(1);
                 } else {
-                    hoverItemIndex = 0;
                     listOpen = true;
                     activeValue = undefined;
                 }
@@ -456,7 +462,6 @@
 
     function handleClick() {
         if (disabled) return;
-        hoverItemIndex = 0;
         listOpen = !listOpen;
         if (listOpen && !focused) handleFocus();
     }
@@ -578,7 +583,6 @@
         }
     }
 
-    let scrollToHoverItem = 0;
     function setHoverIndex(increment) {
         let selectableFilteredItems = filteredItems.filter(
             (item) => !Object.hasOwn(item, 'selectable') || item.selectable === true
@@ -602,8 +606,6 @@
             if (increment === 1 || increment === -1) setHoverIndex(increment);
             return;
         }
-
-        scrollToHoverItem = hoverItemIndex;
     }
 
     function isItemActive(item, value, itemId) {

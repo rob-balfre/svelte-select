@@ -104,6 +104,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | loaded     | { options }       | fires when `loadOptions` resolves                                              |
 | error      | { type, details } | fires when error is caught                                                     |
 | filter     | { detail }        | fires when `listOpen: true` and items are filtered                             |
+| hoverItem  | { detail }        | fires when hoverItemIndex changes                                              |
 
 
 ### Items

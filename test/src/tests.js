@@ -3117,37 +3117,6 @@ test('when component blurs fire on:blur event', async (t) => {
   select.$destroy();
 });
 
-
-// test.only('when group header is not selectable then update hoverItemIndex to next/prev item', async (t) => { 
-//   const select = new Select({
-//     target,
-//     props: {
-//       listOpen: true,
-//       items: itemsWithGroup,
-//       groupHeaderSelectable: false,
-//       groupBy,
-//     }
-//   });
-
-//   function groupBy(item) {
-//     return item.group;
-//   }
-
-//   const firstItem = document.querySelector('.svelte-select-list .list-item .item.hover');
-//   t.ok(firstItem.innerHTML === 'Chocolate');
-//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
-//   await wait(0);
-//   const secondItem = document.querySelector('.svelte-select-list .list-item .item.hover');
-//   t.ok(secondItem.innerHTML === 'Pizza');
-//   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowUp'}));
-//   await wait(0);
-//   const thirdItem = document.querySelector('.svelte-select-list .list-item .item.hover');
-//   t.ok(thirdItem.innerHTML === 'Ice Cream');
-//   select.$destroy();
-// });
-
 test('when loadOptions and groupBy then group headers should appear', async (t) => { 
   const select = new Select({
     target,
@@ -3498,5 +3467,42 @@ test('when list has no items that are selectable then clicking up/down keys shou
   window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
   await wait(0);
   t.ok(select.value.label === 'SelectableDefault')
+  select.$destroy();
+});
+
+test('when listOpen and value then hoverItemIndex should be the active value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: items,
+      value: {value: 'cake', label: 'Cake'},
+    }
+  });
+
+  t.ok(select.hoverItemIndex === 2);
+
+  select.$destroy();
+});
+
+test('when listOpen and multiple then hoverItemIndex should be 0', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: items,
+      multiple: true
+    }
+  });
+
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  
+  await wait(0);
+  await querySelectorClick('.svelte-select');
+  t.ok(select.hoverItemIndex === 0);
+
   select.$destroy();
 });
