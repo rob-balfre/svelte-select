@@ -92,6 +92,14 @@ const itemsWithGroup = [
   {value: 'ice-cream', label: 'Ice Cream', group: 'Sweet'}
 ];
 
+const itemsWithGroupAndSelectable = [
+  {value: 'chocolate', label: 'Chocolate', group: 'Sweet'},
+  {value: 'pizza', label: 'Pizza', group: 'Savory'},
+  {value: 'cake', label: 'Cake', group: 'Sweet', selectable: false},
+  {value: 'chips', label: 'Chips', group: 'Savory', selectable: false},
+  {value: 'ice-cream', label: 'Ice Cream', group: 'Sweet'}
+]
+
 const itemsWithIndex = [
   {value: 'chocolate', label: 'Chocolate', index: 0},
   {value: 'pizza', label: 'Pizza', index: 1},
@@ -3503,6 +3511,28 @@ test('when listOpen and multiple then hoverItemIndex should be 0', async (t) => 
   await wait(0);
   await querySelectorClick('.svelte-select');
   t.ok(select.hoverItemIndex === 0);
+
+  select.$destroy();
+});
+
+test('when listOpen and value and groupBy then hoverItemIndex should be the active value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: itemsWithGroupAndSelectable,
+      value: {value: 'chocolate', label: 'Chocolate', group: 'Sweet'},
+      groupBy: (i) => i.group,
+      groupHeaderSelectable: true
+    }
+  });
+
+  t.ok(select.hoverItemIndex === 1);
+
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  
+  t.ok(select.hoverItemIndex === 4);
 
   select.$destroy();
 });

@@ -205,17 +205,22 @@
     $: dispatchHover(hoverItemIndex);
 
     function setValueIndexAsHoverIndex() {
-        const valueIndex = filteredItems.findIndex((i) => i[itemId] === value[itemId]);        
-        checkHoverSelectable(valueIndex);
+        let ignoreHeader = false;
+        const valueIndex = filteredItems.findIndex((i) => {
+            if (i.groupHeader) ignoreHeader = i.selectable === false;
+            return i[itemId] === value[itemId];
+        });
+
+        checkHoverSelectable(valueIndex - (valueIndex > 0 && ignoreHeader ? 1 : 0), true);
     }
 
     function dispatchHover(i) {
         dispatch('hoverItem', i);
     }
 
-    function checkHoverSelectable(startingIndex=0) {
+    function checkHoverSelectable(startingIndex = 0, ignoreGroup) {
         hoverItemIndex = startingIndex;
-        if (groupBy && filteredItems[hoverItemIndex] && !filteredItems[hoverItemIndex].selectable) {
+        if (!ignoreGroup && groupBy && filteredItems[hoverItemIndex] && !filteredItems[hoverItemIndex].selectable) {
             setHoverIndex(1);
         }
     }
