@@ -3536,3 +3536,31 @@ test('when listOpen and value and groupBy then hoverItemIndex should be the acti
 
   select.$destroy();
 });
+
+
+test('when groupBy, itemId and label then list should render correctly', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: [
+        {id: 1, name: 'name 1', group: 'group 1'},
+        {id: 2, name: 'name 2', group: 'group 1'},
+        {id: 3, name: 'name 3', group: 'group 2'},
+        {id: 4, name: 'name 4', group: 'group 1'},
+        {id: 5, name: 'name 5', group: 'group 3'},
+      ],
+      itemId: 'id',
+      label: 'name',
+      groupBy: (i) => i.group,
+    }
+  });
+
+  let titles = document.querySelectorAll('.list-group-title');
+  let items =  document.querySelectorAll('.item.group-item');
+
+  t.ok(titles[1].innerHTML === 'group 2');
+  t.ok(items[3].innerHTML === 'name 3');
+
+  select.$destroy();
+});
