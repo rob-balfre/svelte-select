@@ -11,6 +11,7 @@ import ItemSlotTest from './ItemSlotTest.svelte';
 import ItemHeightTest from './ItemHeightTest.svelte';
 import MultiItemColor from './MultiItemColor.svelte';
 import GroupHeaderNotSelectable from './GroupHeaderNotSelectable.svelte';
+import HoverItemIndexTest from './HoverItemIndexTest.svelte';
 
 function querySelectorClick(selector) {
   if (selector === '.svelte-select') {
@@ -3593,3 +3594,17 @@ test('when listOpen and value and groupBy then hoverItemIndex should be the acti
   select.$destroy();
 });
 
+test.only('when listOpen and value and groupBy then hoverItemIndex should be the active value', async (t) => {
+  const select = new HoverItemIndexTest({
+    target,
+  });
+
+  await querySelectorClick('.svelte-select');
+  t.ok(select.hoverItemIndex === 1);
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  t.ok(select.hoverItemIndex === 2);
+  select.$destroy();
+});
