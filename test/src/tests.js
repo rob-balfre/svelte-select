@@ -3594,7 +3594,7 @@ test('when listOpen and value and groupBy then hoverItemIndex should be the acti
   select.$destroy();
 });
 
-test.only('when listOpen and value and groupBy then hoverItemIndex should be the active value', async (t) => {
+test('when listOpen and value and groupBy then hoverItemIndex should be the active value', async (t) => {
   const select = new HoverItemIndexTest({
     target,
   });
