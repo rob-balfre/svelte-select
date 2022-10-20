@@ -45,7 +45,7 @@
     export let createGroupHeaderItem = (groupValue, item) => {
         return {
             value: groupValue,
-            label: groupValue,
+            [label]: groupValue,
         };
     };
 
