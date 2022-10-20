@@ -205,13 +205,11 @@
     $: dispatchHover(hoverItemIndex);
 
     function setValueIndexAsHoverIndex() {
-        let ignoreHeader = false;
-        const valueIndex = filteredItems.findIndex((i) => {
-            if (i.groupHeader) ignoreHeader = i.selectable === false;
+        const valueIndex = filteredItems.findIndex((i) => {            
             return i[itemId] === value[itemId];
         });
-
-        checkHoverSelectable(valueIndex - (valueIndex > 0 && ignoreHeader ? 1 : 0), true);
+        
+        checkHoverSelectable(valueIndex, true);
     }
 
     function dispatchHover(i) {

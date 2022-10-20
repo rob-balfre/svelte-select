@@ -3537,7 +3537,6 @@ test('when listOpen and value and groupBy then hoverItemIndex should be the acti
   select.$destroy();
 });
 
-
 test('when groupBy, itemId and label then list should render correctly', async (t) => {
   const select = new Select({
     target,
@@ -3564,3 +3563,33 @@ test('when groupBy, itemId and label then list should render correctly', async (
 
   select.$destroy();
 });
+
+test('when listOpen and value and groupBy then hoverItemIndex should be the active value', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      listOpen: true,
+      items: [
+        {id: 1, name: 'name 1', group: 'group 1'},
+        {id: 2, name: 'name 2', group: 'group 1'},
+        {id: 3, name: 'name 3', group: 'group 2'},
+        {id: 4, name: 'name 4', group: 'group 1'},
+        {id: 5, name: 'name 5', group: 'group 3'},
+      ],
+      itemId: 'id',
+      label: 'name',
+      groupBy: (i) => i.group,
+    }
+  });
+
+  t.ok(select.hoverItemIndex === 1);
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  t.ok(select.hoverItemIndex === 2);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  await wait(0);
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  t.ok(select.hoverItemIndex === 2);
+  
+  select.$destroy();
+});
+
