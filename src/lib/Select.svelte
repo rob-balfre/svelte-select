@@ -1123,6 +1123,7 @@
 
     .prefloat {
         opacity: 0;
+        pointer-events: none;
     }
 
     .list-group-title {
