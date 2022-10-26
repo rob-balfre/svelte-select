@@ -22,30 +22,13 @@ Removed `Selection`, `ChevronIcon`, `ClearIcon`, `LoadingIcon`, `Icon`, `List` a
 </Select>
 ```
 
-Removed `isVirtualList`. Use named slots.
+### `isVirtualList` Removed
+You can use named slots to achieve the same results, with more flexibility.
+Example at [svelte-select-examples](https://svelte-select-examples.vercel.app/examples/advanced/virtual-list)
 
-```svelte
-<script>
-  import VirtualList from 'svelte-tiny-virtual-list';
-  ...
-</script>
-
-<Select>
-  <div slot="list" let:filteredItems>  
-    <VirtualList {...} />
-  </div>
-</Select>
-```
-
-Removed `isCreatable` prop and `itemCreated` event, named slots can be used to bake in your own create method
-
-```html
-<Select>
-  <div slot="empty" on:click={..your-create-method-here...}>
-    CREATE: {filterText}
-  </div>
-</Select>
-```
+### `isCreatable` Removed
+Removed `isCreatable` prop and `itemCreated` event, named slots can be used to build your own create method.
+Example at [svelte-select-examples](https://svelte-select-examples.vercel.app/examples/advanced/create-item)
 
 ### CSS Camel to kebab:
 
