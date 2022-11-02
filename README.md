@@ -96,8 +96,8 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 
 | Event Name | Callback          | Description                                                                    |
 | ---------- | ----------------- | ------------------------------------------------------------------------------ |
-| select     | { detail }        | fires when item is selected                                                    |
-| change     | { detail }        | fires when value changes                                                       |
+| change     | { detail }        | fires when the user selects an option                                          |
+| input      | { detail }        | fires when the value has been changed                                          |
 | focus      | { detail }        | fires when select > input on:focus                                             |
 | blur       | { detail }        | fires when select > input on:blur                                              |
 | clear      | { detail }        | fires when clear all is invoked or item is removed (by user) from multi select |

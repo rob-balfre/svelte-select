@@ -166,14 +166,14 @@
         if (multiple) {
             if (JSON.stringify(value) !== JSON.stringify(prev_value)) {
                 if (checkValueForDuplicates()) {
-                    dispatch('change', value);
+                    dispatch('input', value);
                 }
             }
             return;
         }
 
         if (!prev_value || JSON.stringify(value[itemId]) !== JSON.stringify(prev_value[itemId])) {
-            dispatch('change', value);
+            dispatch('input', value);
         }
     }
 
@@ -197,7 +197,7 @@
     $: if (prev_multiple && !multiple) setupSingle();
     $: if (multiple && value && value.length > 1) checkValueForDuplicates();
     $: if (value) dispatchSelectedItem();
-    $: if (!value && multiple && prev_value) dispatch('change', value);
+    $: if (!value && multiple && prev_value) dispatch('input', value);
     $: if (!focused && input) closeList();
     $: if (!listOpen) filterText = '';
     $: if (filterText !== prev_filterText) setupFilterText();
@@ -267,7 +267,7 @@
     $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, focused, listOpen });
     $: updateValueDisplay(items);
     $: justValue = computeJustValue(multiple, value, itemId);
-    $: if (!multiple && prev_value && !value) dispatch('change', value);
+    $: if (!multiple && prev_value && !value) dispatch('input', value);
     $: filteredItems = filter({
         loadOptions,
         filterText,
@@ -498,7 +498,7 @@
                 setTimeout(() => {
                     closeList();
                     activeValue = undefined;
-                    dispatch('select', value);
+                    dispatch('change', value);
                 });
             }
         }

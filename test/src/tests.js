@@ -1746,7 +1746,7 @@ test('when hideEmptyState true then do not show "no items" div ', async (t) => {
   select.$destroy();
 });
 
-test('when value changes then select event should fire', async (t) => {
+test('when value is selected then change event should fire', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1831,7 +1831,7 @@ test('when items in list filter or update then first item in list should highlig
   select.$destroy();
 });
 
-test('when item is selected or state changes then check value[itemId] has changed before firing "select" event', async (t) => {
+test('when item is selected or state changes then check value[itemId] has changed before firing "input" event', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1842,7 +1842,7 @@ test('when item is selected or state changes then check value[itemId] has change
 
   let item = undefined;
 
-  select.$on('change', () => {
+  select.$on('input', () => {
     item = true;
   });
 
@@ -1852,7 +1852,7 @@ test('when item is selected or state changes then check value[itemId] has change
   select.$destroy();
 });
 
-test('when multiple and item is selected or state changes then check value[itemId] has changed before firing "select" event', async (t) => {
+test('when multiple and item is selected or state changes then check value[itemId] has changed before firing "input" event', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -1867,7 +1867,7 @@ test('when multiple and item is selected or state changes then check value[itemI
 
   let item = undefined;
 
-  select.$on('change', () => {
+  select.$on('input', () => {
     item = true;
   });
 
@@ -1897,7 +1897,7 @@ test('when focused turns to false then check Select is no longer in focus', asyn
     }
   });
 
-  select.$on('change', () => {
+  select.$on('input', () => {
     setTimeout(() => {
       select.$set({
         focused: false,
@@ -2794,7 +2794,7 @@ test('When value selected and filterText then ensure selecting the active value 
   select.$destroy();
 });
 
-test('When multiple on:select events should fire on each item removal (including the last item)', async (t) => {
+test('When multiple on:input events should fire on each item removal (including the last item)', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -2806,7 +2806,7 @@ test('When multiple on:select events should fire on each item removal (including
 
   let events = [];
 
-  select.$on('change', (e) => {
+  select.$on('input', (e) => {
     events.push('event fired');
   });
 
@@ -3150,7 +3150,7 @@ test('when loadOptions and groupBy then group headers should appear', async (t) 
   select.$destroy();
 });
 
-test('when user selects an item then select event fires', async (t) => {
+test('when user selects an item then change event fires', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -3161,7 +3161,7 @@ test('when user selects an item then select event fires', async (t) => {
 
   let value = undefined;
 
-  select.$on('select', event => {
+  select.$on('change', event => {
     value = JSON.stringify(event.detail);
   });
 
@@ -3174,7 +3174,7 @@ test('when user selects an item then select event fires', async (t) => {
   select.$destroy();
 });
 
-test('when item selected programmatically a select event should NOT fire', async (t) => {
+test('when item selected programmatically a change event should NOT fire', async (t) => {
   const select = new Select({
     target,
     props: {
@@ -3186,7 +3186,7 @@ test('when item selected programmatically a select event should NOT fire', async
   let value = undefined;
   select.$set({ value: {value: 'cake', label: 'Cake'}});
 
-  select.$on('select', event => {
+  select.$on('change', event => {
     value = event.detail;
   });
 

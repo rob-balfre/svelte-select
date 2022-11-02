@@ -15,4 +15,4 @@
     }
 </script>
 
-<Select {items} loadOptions={handleOptions} debounceWait="0" on:select={reset} on:clear={reset} />
+<Select {items} loadOptions={handleOptions} debounceWait="0" on:change={reset} on:clear={reset} />

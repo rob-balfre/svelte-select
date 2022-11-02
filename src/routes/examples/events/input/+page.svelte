@@ -12,5 +12,5 @@
     }
 </script>
 
-<Select {items} on:select={handle} />
+<Select {items} on:change={handle} />
 

@@ -2,11 +2,17 @@
 
 v5 is a major release that that includes some ⚠️ BREAKING CHANGES ⚠️ 
 
-Removed `getOptionLabel`. Not needed.<br/>
-Removed `getGroupHeaderLabel`. Not needed.<br/>
-Removed `noOptionsMessage`. Not needed.
+### Event changes:
+Updated in `5.0.0-beta.39`
 
-Removed `Selection`, `ChevronIcon`, `ClearIcon`, `LoadingIcon`, `Icon`, `List` and `Item` components, use named slots instead:
+`on:change` event fires when the user selects an option.
+
+`on:input` event fires when the value has been changed.
+
+### Removed
+Removed `getOptionLabel`, `getGroupHeaderLabel` and `noOptionsMessage`.
+
+Removed `Selection`, `ChevronIcon`, `ClearIcon`, `LoadingIcon`, `Icon`, `List` and `Item` components. Please use named slots instead:
 
 ```html
 <Select bind:items bind:value>
@@ -89,6 +95,3 @@ The following CSS custom properties were removed in v5.
 `labelIdentifier` -> `label`<br/>
 `optionIdentifier` -> `itemId`<br/>
 `selectedValue` removed (was already deprecated in v4 in favour of `value`)<br/>
-
-### Event change:
-The `select` event now only fires when the user selects an item. If you also want to track programmatic changes use the new `change` event.
