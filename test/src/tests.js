@@ -12,6 +12,7 @@ import ItemHeightTest from './ItemHeightTest.svelte';
 import MultiItemColor from './MultiItemColor.svelte';
 import GroupHeaderNotSelectable from './GroupHeaderNotSelectable.svelte';
 import HoverItemIndexTest from './HoverItemIndexTest.svelte';
+import LoadOptionsGroup from './LoadOptionsGroup.svelte';
 
 function querySelectorClick(selector) {
   if (selector === '.svelte-select') {
@@ -3608,3 +3609,18 @@ test('when listOpen and value and groupBy then hoverItemIndex should be the acti
   t.ok(select.hoverItemIndex === 2);
   select.$destroy();
 });
+
+
+test('when loadOptions and groupBy then titles should not duplicate after filterText clears', async (t) => {
+  const select = new LoadOptionsGroup({
+    target,
+  });
+
+  select.$set({filterText: 'c'});
+  await wait(500);
+  t.ok(document.querySelectorAll('.list-group-title').length === 1);
+  select.$set({filterText: ''});
+  await wait(500);
+  t.ok(document.querySelectorAll('.list-group-title').length === 1);
+});
+
