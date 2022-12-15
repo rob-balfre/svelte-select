@@ -1,5 +1,6 @@
 <script>
     import Select from '$lib/Select.svelte';
+    import { tick } from 'svelte';
 
     let items = [
         { value: 'one', label: 'One' },
@@ -8,12 +9,8 @@
     ];
 
     let focused = true;
-
-    function handleFocus() {
-        focused = !focused;
-    }
 </script>
 
-<p>{focused} <button on:click|stopPropagation={handleFocus}>toggle focus</button></p>
+<p>focused: {focused}</p>
 
 <Select {items} bind:focused />

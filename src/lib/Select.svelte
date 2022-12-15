@@ -284,7 +284,7 @@
     });
     $: if (listOpen && filteredItems && !multiple && !value) checkHoverSelectable();
     $: handleFilterEvent(filteredItems);
-    $: setupFloat(floatingConfig);
+    $: if (floatingConfig) floatingUpdate(Object.assign(_floatingConfig, floatingConfig));
     $: listDom = !!list;
     $: listMounted(list, listOpen);
     $: if (listOpen && container && list) setListWidth();
@@ -647,14 +647,11 @@
         strategy: 'absolute',
         placement: 'bottom-start',
         middleware: [offset(listOffset), flip(), shift()],
+        autoUpdate: false
     };
 
-    const [floatingRef, floatingContent] = createFloatingActions(_floatingConfig);
-
-    function setupFloat() {
-        _floatingConfig = Object.assign(_floatingConfig, floatingConfig);
-    }
-
+    const [floatingRef, floatingContent, floatingUpdate] = createFloatingActions(_floatingConfig);
+    
     let prefloat = true;
     function listMounted(list, listOpen) {
         if (!list || !listOpen) return (prefloat = true);
@@ -676,9 +673,6 @@
     class:error={hasError}
     style={containerStyles}
     on:pointerup|preventDefault={handleClick}
-    on:pointerdown|preventDefault|stopPropagation
-    on:click|preventDefault|stopPropagation
-    on:keydown|preventDefault|stopPropagation
     bind:this={container}
     use:floatingRef>
     {#if listOpen}
@@ -1014,7 +1008,7 @@
         align-items: center;
         justify-content: center;
         width: var(--clear-select-width, 40px);
-        height: var(--clear-select-height);
+        height: var(--clear-select-height, 100%);
         color: var(--clear-select-color, var(--icons-color));
         margin: var(--clear-select-margin, 0);
         pointer-events: all;
@@ -1022,7 +1016,7 @@
     }
 
     .clear-select:focus {
-        outline: var(--clear-select-focus-outline, --border-focused);
+        outline: var(--clear-select-focus-outline, 1px solid #006fe8);
     }
 
     .loading {

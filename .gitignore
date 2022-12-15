@@ -2,6 +2,7 @@ node_modules
 .DS_Store
 /test/public/tests.js
 /test/public/tests.css
+/test/public/assets
 /spec/page/public/build
 /.svelte-kit
 /package

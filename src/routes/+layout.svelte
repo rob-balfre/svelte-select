@@ -9,12 +9,8 @@
     const _events = import.meta.glob('./examples/events/*/*.svelte', { as: 'raw' });
     const _advanced = import.meta.glob('./examples/advanced/*/*.svelte', { as: 'raw' });
 
-    $: setup = {
-        props: buildLinks(_props),
-        slots: buildLinks(_slots),
-        events: buildLinks(_events),
-        advanced: buildLinks(_advanced),
-    };
+    let source;
+    let showNav = false;
 
     function buildLinks(obj) {
         return Object.keys(obj).map((key) => {
@@ -28,28 +24,32 @@
         });
     }
 
-    $: handleExampleCode($page);
-
-    let source;
     async function handleExampleCode(newPage) {
         source = null;
 
-        if (!newPage?.routeId) return;
+        if (!newPage?.route?.id) return;
 
-        if (newPage.routeId.includes('examples/')) {
-            const s = newPage.routeId.split('/');
-            const file = setup[s[1]].find((i) => i.href.split('/').pop() === s[2]);
+        if (newPage?.route?.id?.includes('examples/')) {
+            const s = newPage.route.id.split('/');
+            const file = setup[s[2]].find((i) => i.href.split('/').pop() === s[3]);
             const raw = await file.source();
             source = raw.replace('$lib/Select.svelte', 'svelte-select');
         }
     }
 
-    let showNav = false;
     function handleNav() {
         showNav = !showNav;
     }
 
+    $: setup = {
+        props: buildLinks(_props),
+        slots: buildLinks(_slots),
+        events: buildLinks(_events),
+        advanced: buildLinks(_advanced),
+    };
     $: if ($navigating) showNav = false;
+    $: route = $page.route.id.substring(1);
+    $: handleExampleCode($page);
 </script>
 
 <svelte:head>
@@ -66,34 +66,34 @@
 
     <nav class:show={showNav} class:navigating={$navigating}>
         <ul>
-            <li><a <a class:active={$page.routeId === 'examples'} href="/">Home</a></li>
+            <li><a <a class:active={$page.route.id === 'examples'} href="/">Home</a></li>
         </ul>
 
         <h2>Props</h2>
         <ul>
             {#each setup.props as { href, name }}
-                <li><a class:active={$page.routeId === href} href={`/${href}`}>{name}</a></li>
+                <li><a class:active={route === href} href={`/${href}`}>{name}</a></li>
             {/each}
         </ul>
 
         <h2>Slots</h2>
         <ul>
             {#each setup.slots as { href, name }}
-                <li><a class:active={$page.routeId === href} href={`/${href}`}>{name}</a></li>
+                <li><a class:active={route === href} href={`/${href}`}>{name}</a></li>
             {/each}
         </ul>
 
         <h2>Events</h2>
         <ul>
             {#each setup.events as { href, name }}
-                <li><a class:active={$page.routeId === href} href={`/${href}`}>{name}</a></li>
+                <li><a class:active={route === href} href={`/${href}`}>{name}</a></li>
             {/each}
         </ul>
 
         <h2>Advanced</h2>
         <ul>
             {#each setup.advanced as { href, name }}
-                <li><a class:active={$page.routeId === href} href={`/${href}`}>{name}</a></li>
+                <li><a class:active={route === href} href={`/${href}`}>{name}</a></li>
             {/each}
         </ul>
     </nav>
