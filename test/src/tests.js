@@ -37,6 +37,8 @@ function getPosts(filterText) {
   filterText = filterText ? filterText.replace(' ','_') : '';
 
   return new Promise((resolve, reject) => {
+    if (filterText.length < 2) return resolve([]);
+
     const xhr = new XMLHttpRequest();
     xhr.open('GET', `https://api.punkapi.com/v2/beers?beer_name=${filterText}`);
     xhr.send();
@@ -1922,28 +1924,6 @@ test('when focused turns to false then check Select is no longer in focus', asyn
   select.$destroy();
 });
 
-test('when items and loadOptions method are both supplied then fallback to items until filterText changes', async (t) => {
-  const _items = [{label: 'test1', value: 0}, {label: 'test2', value: 1}, {label: 'test3', value: 2}];
-
-  const select = new Select({
-    target,
-    props: {
-      loadOptions: getPosts,
-      items: _items,
-      focused: true,
-      listOpen: true
-    }
-  });
-
-  await wait(0);
-  t.ok(document.querySelector('.item').innerHTML === 'test1');
-  await handleSet(select, {filterText: 'Juniper'});
-  await wait(500);
-  t.ok(document.querySelector('.item').innerHTML === 'Juniper Wheat Beer');
-
-  select.$destroy();
-});
-
 test('when items is just an array of strings then render list', async (t) => {
   const items = ['one', 'two', 'three'];
 
@@ -2255,18 +2235,11 @@ test('When showChevron and clearable is true always show chevron on Select', asy
   select.$destroy();
 });
 
-test('When items and loadItems then listOpen should be false', async (t) => {
+test('When items and loadOptions then listOpen should be false', async (t) => {
   const select = new Select({
     target,
     props: {
-      label: 'name',
-      loadOptions: getPosts,
-      itemId: 'id',
-      items: [{
-        id: 1,
-        name: 'Initial Items #1'
-      }]
-
+      loadOptions: resolvePromise,
     }
   });
 
@@ -3616,11 +3589,13 @@ test('when loadOptions and groupBy then titles should not duplicate after filter
     target,
   });
 
-  select.$set({filterText: 'c'});
+  select.$set({filterText: 'cre'});
   await wait(500);
   t.ok(document.querySelectorAll('.list-group-title').length === 1);
-  select.$set({filterText: ''});
+  select.$set({filterText: 'cr'});
   await wait(500);
   t.ok(document.querySelectorAll('.list-group-title').length === 1);
+
+  select.$destroy();
 });
 

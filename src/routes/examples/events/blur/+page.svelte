@@ -17,5 +17,3 @@
 <br />
 
 <Select {items} on:blur={handle} multiple />
-
-<button>Test</button>

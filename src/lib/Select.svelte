@@ -199,7 +199,6 @@
     $: if (value) dispatchSelectedItem();
     $: if (!value && multiple && prev_value) dispatch('input', value);
     $: if (!focused && input) closeList();
-    $: if (!listOpen) filterText = '';
     $: if (filterText !== prev_filterText) setupFilterText();
     $: if (!multiple && listOpen && value && filteredItems) setValueIndexAsHoverIndex();
     $: dispatchHover(hoverItemIndex);
@@ -224,10 +223,7 @@
     }
 
     function setupFilterText() {
-        if (filterText.length === 0) return;
-
-        focused = true;
-        listOpen = true;
+        if (!loadOptions && filterText.length === 0) return;
 
         if (loadOptions) {
             debounce(async function () {
@@ -241,8 +237,8 @@
 
                 if (res) {
                     loading = res.loading;
-                    focused = res.focused;
-                    listOpen = res.listOpen;
+                    listOpen = listOpen ? res.listOpen : filterText.length > 0 ? true : false;
+                    focused = listOpen && res.focused;
                     items = groupBy ? filterGroupedItems(res.filteredItems) : res.filteredItems;
                 } else {
                     loading = false;

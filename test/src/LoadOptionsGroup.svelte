@@ -12,7 +12,7 @@
     export let filterText;
 
     async function loadOptions() {
-        return items.filter(i => i.label.includes(filterText))
+        return items.filter((i) => i.label.toLowerCase().includes(filterText.toLowerCase()));
     }
 
     const groupBy = (i) => i.group;

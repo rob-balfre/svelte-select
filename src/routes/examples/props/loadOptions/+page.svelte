@@ -5,14 +5,12 @@
     let items = ['one', 'two', 'three'];
 
     async function handleOptions(filterText) {
+        if (filterText.length === 0) return [...items];
+        
         const fuse = new Fuse([...items]);
 
         return fuse.search(filterText).map(({ item }) => item);
     }
-
-    function reset() {
-        items = [...items];
-    }
 </script>
 
-<Select {items} loadOptions={handleOptions} debounceWait="0" on:change={reset} on:clear={reset} />
+<Select loadOptions={handleOptions} debounceWait="0" />
