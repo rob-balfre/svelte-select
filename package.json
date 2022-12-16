@@ -13,7 +13,7 @@
     "preprepare": "node src/remove-styles.cjs",
     "prepare": "svelte-package",
     "postprepare": "node src/post-prepare.cjs && npm run gen:docs",
-    "release": "release-it --preRelease=beta"
+    "release": "release-it"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^4.0.2",
