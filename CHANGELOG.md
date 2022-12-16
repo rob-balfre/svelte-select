@@ -1,5 +1,80 @@
 # svelte-select changelog
 
+## 5.0.0
+
+* Added hoverItemIndex and hoverItem event
+* Default font-size set to `16px`, iOS will zoom the UI if set smaller (thanks to @rchrdnsh)
+* Added `--border-hover`, `--border-focused`, `--item-height`, `--item-line-height` and `--multi-item-color`
+* Removed `--borderFocusColor` and `--borderHoverColor`
+* Remove `getSelectionLabel` use slots instead
+* Added `floatingConfig` 
+* Removed `listPlacement`
+* Removed `computePlacement` 
+* Removed CSS prop `--input-font-size`
+* Removed CSS prop `--multi-item-border`
+* Removed CSS prop `--multi-label-margin`
+* Added CSS props `--loading--margin , --loading-color, --loading-height, --loading-width`
+* Added CSS prop `--chevron-border`
+* Added CSS prop `--font-size`
+* Added CSS prop `--multi-item-gap`
+* Added named slot `multi-clear-icon`
+* Added named slot `list`
+* Added named slot `item`
+* Removed Virtual list
+* noOptionsMessage removed
+* optionIdentifier -> itemId
+* getOptionLabel removed
+* getGroupHeaderLabel removed
+* itemCreated event removed
+* labelIdentifier -> label
+* creatable removed, use named slots and bake in your create own logic
+* isGroupHeaderSelectable -> groupHeaderSelectable
+* isSearchable -> searchable
+* isFocused -> focused
+* isCreatable -> creatable
+* isClearable -> clearable
+* isWaiting -> loading
+* Added named slot `prepend`
+* Added named slot `chevron`
+* Added named slot `clear-icon`
+* Added named slot `loading-icon`
+* Removed iconProps
+* Removed ClearIcon component
+* Removed ChevronIcon component
+* Removed Multi component
+* Added named slot `selection`
+* Removed Selection component
+* isMulti -> multiple
+* Other improvements (see docs)
+* select-container -> svelte-select
+* added justValue
+* Placeholder default change from 'Select...' to 'Please select'
+* added blur and focus events
+* removed isOutOfViewport and clickOutside
+* new debounce method
+* filterMethod changed to filter
+* added support for svelte-tiny-virtual-list
+* removed virtual-list class and css props
+* loadOptionsInterval -> debounceWait
+* selectedValue removed
+* MultiSelection -> Multi
+* added postcss to example, tests
+* tailwind css option
+* breaking: containerClasses -> class
+* listGroupTitle -> list-group-title
+* listContainer -> list 
+* selectContainer and other CSS class names updated, selectContainer -> svelte-select for example
+* LoadingIcon prop added
+* CSS props updates. Added .icons and removed some css vars
+* Removed logic to show chevron if isSearchable is false
+* indicator class renamed to chevron 
+* showIndicator renamed showChevron
+* indicatorSvg removed, use ChevronIcon going forward
+* removed playwright and puppeteer, tests now just run in the browser with sirv
+* debounce method is now exported as a prop
+* Convert repo to use SvelteKit
+* Change licence from LIL to ISC
+
 # 4.4.7
 
 Temp fix for SvelteKit and scrollbar issues - thanks to @sethvincent
@@ -51,7 +126,7 @@ Bug fix for isOutOfViewport - thanks to @alexkuzmin
 
 ## 4.2.5
 
-* isMulti on:select fix (#276)
+* multiple on:select fix (#276)
 
 ## 4.2.4
 
@@ -101,7 +176,7 @@ Bug fix for isOutOfViewport - thanks to @alexkuzmin
 
 ## 3.15.0
 
-* Added new prop multiFullItemClearable for easier clearable items when isMulti is true - thanks to @stephenlrandall
+* Added new prop multiFullItemClearable for easier clearable items when multiple is true - thanks to @stephenlrandall
 
 ## 3.14.3
 
@@ -318,7 +393,7 @@ Bug fix for isOutOfViewport - thanks to @alexkuzmin
 
 ## 1.5.5
 
-*  isMulti on:select bug fix
+*  multiple on:select bug fix
 
 ## 1.5.4
 

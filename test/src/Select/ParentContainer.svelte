@@ -1,5 +1,5 @@
 <script>
-  import Select from '../../../src/Select.svelte';
+  import Select from '../../../src/lib/Select.svelte';
 
   export let value;
   export let items;

@@ -1,84 +1,111 @@
-# svelte-select
+<div align="center">
+  <img src="https://raw.githubusercontent.com/rob-balfre/svelte-select/feature/v5/svelte-select.png" alt="Svelte Select" width="150" />
+  <h1>Svelte Select</h1>
+</div>
 
-A select/autocomplete component for Svelte apps.  With support for grouping, filtering, async and more.
+<div align="center">
+  <a href="https://npmjs.org/package/svelte-select">
+    <img src="https://badgen.now.sh/npm/v/svelte-select" alt="version" />
+  </a>
+  <a href="https://npmjs.org/package/svelte-select">
+    <img src="https://badgen.now.sh/npm/dm/svelte-select" alt="downloads" />
+  </a>
+</div>
+<div align="center">A select/autocomplete/typeahead Svelte component.</div>
 
 ## Demos
 
-🌱 [Simple demo](https://svelte.dev/repl/a859c2ba7d1744af9c95037c48989193?version=3.12.1)
+[💥 Examples of every prop, event, slot and more 💥](https://svelte-select-examples.vercel.app)
 
-🌻 [Advanced demo](https://svelte.dev/repl/3e032a58c3974d07b7818c0f817a06a3?version=3.20.1)
+[✨ REPL: Simple ✨](https://svelte.dev/repl/c3bbe052fdfc4e87a46ccd9091ee002b)
+
+[💃 REPL: Show me everything 🕺](https://svelte.dev/repl/3df87e32340e4e9e85bf371becae2af0)
 
 ## Installation
 
 ```bash
-yarn add svelte-select
+npm install svelte-select@beta
 ```
 
-**Note:** Install as a dev dependency (yarn add svelte-select --dev) if using [Sapper](https://sapper.svelte.dev/) to avoid a SSR error.
+## Upgrading to v5
+See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
 
 
-## Usage
+## Rollup and low/no-build setups
 
-```html
-<script>
-  import Select from 'svelte-select';
+List position and floating is powered by `floating-ui`, see their [package-entry-points](https://github.com/floating-ui/floating-ui#package-entry-points) docs if you encounter build errors.
 
-  let items = [
-    {value: 'chocolate', label: 'Chocolate'},
-    {value: 'pizza', label: 'Pizza'},
-    {value: 'cake', label: 'Cake'},
-    {value: 'chips', label: 'Chips'},
-    {value: 'ice-cream', label: 'Ice Cream'},
-  ];
 
-  let value = {value: 'cake', label: 'Cake'};
 
-  function handleSelect(event) {
-    console.log('selected item', event.detail);
-    // .. do something here 🙂
-  }
-</script>
+## Props
 
-<Select {items} {value} on:select={handleSelect}></Select>
+| Prop                   | Type      | Default         | Description                                                    |
+| ---------------------- | --------- | --------------- | -------------------------------------------------------------- |
+| items                  | `any[]`   | `[]`            | Array of items available to display / filter                   |
+| value                  | `any`     | `null`          | Selected value(s)                                              |
+| justValue              | `any`     | `null`          | **READ-ONLY** Selected value(s) excluding container object     |
+| itemId                 | `string`  | `value`         | Override default identifier                                    |
+| label                  | `string`  | `label`         | Override default label                                         |
+| id                     | `string`  | `null`          | id attr for input field                                        |
+| filterText             | `string`  | `''`            | Text to filter `items` by                                      |
+| placeholder            | `string`  | `Please select` | Placeholder text                                               |
+| hideEmptyState         | `boolean` | `false`         | When no items hide list                                        |
+| listOpen               | `boolean` | `false`         | Open/close list                                                |
+| class                  | `string`  | `''`            | container classes                                              |
+| containerStyles        | `string`  | `''`            | Add inline styles to container                                 |
+| clearable              | `boolean` | `true`          | Enable clearing of value(s)                                    |
+| disabled               | `boolean` | `false`         | Disable select                                                 |
+| multiple               | `boolean` | `false`         | Enable multi-select                                            |
+| searchable             | `boolean` | `true`          | If `false` search/filtering is disabled                        |
+| groupHeaderSelectable  | `boolean` | `false`         | Enable selectable group headers                                |
+| focused                | `boolean` | `false`         | Controls input focus                                           |
+| listAutoWidth          | `boolean` | `true`          | If `false` will ignore width of select                         |
+| showChevron            | `boolean` | `false`         | Show chevron                                                   |
+| inputAttributes        | `object`  | `{}`            | Pass in HTML attributes to Select's input                      |
+| placeholderAlwaysShow  | `boolean` | `false`         | When `multiple` placeholder text will always show              |
+| loading                | `boolean` | `false`         | Shows `loading-icon`. `loadOptions` will override this         |
+| listOffset             | `number`  | `5`             | `px` space between select and list                             |
+| debounceWait           | `number`  | `300`           | `milliseconds` debounce wait                                   |
+| floatingConfig         | `object`  | `{}`            | [Floating UI Config](https://floating-ui.com/)                 |
+| hasError               | `boolean` | `false`         | If `true` sets error class and styles                          |
+| name                   | `string`  | `null`          | Name attribute of hidden input, helpful for form actions       |
+| required               | `boolean` | `false`         | If `Select` is within a `<form>` will restrict form submission |
+| multiFullItemClearable | `boolean` | `false`         | When `multiple` selected items will clear on click             |
+
+
+## Named slots
+
+```svelte
+<Select>
+  <div slot="prepend" />
+  <div slot="selection" let:selection let:index /> <!-- index only available when multiple -->
+  <div slot="clear-icon" />  
+  <div slot="multi-clear-icon" />  
+  <div slot="loading-icon" />  
+  <div slot="chevron-icon" /> 
+  <div slot="list" let:filteredItems />  
+  <div slot="item" let:item let:index />  
+  <div slot="required" let:value />
+  <!-- Remember you can also use `svelte:fragment` to avoid a container DOM element. -->
+  <svelte:fragment slot="empty" />  
+</Select>
 ```
 
-## API
 
-- `id: String` Default: `null`. Add an id to the input field.
-- `items: Array` Default: `[]`. List of selectable items that appear in the dropdown.
-- `value: Any` Default: `null`. Selected item or items.
-- `filterText: String` Default: `''`. Text to filter `items` by.
-- `placeholder: String` Default: `'Select...'`. Placeholder text.
-- `noOptionsMessage: String` Default: `'No options'`. Message to display in list when there are no `items`.
-- `optionIdentifier: String` Default: `'value'`. Override default identifier.
-- `labelIdentifier: String` Default: `'label'`. Override default identifier.
-- `listOpen: Boolean` Default: `false`. Open/close list.
-- `hideEmptyState: Boolean` Default: `false`. Hide list and don't show `noOptionsMessage` when there are no `items`.
-- `containerClasses: String` Default: `''`. Add extra container classes, for example 'global-x local-y'.
-- `containerStyles: String` Default: `''`. Add inline styles to container.
-- `isClearable: Boolean` Default: `true`. Enable clearing of selected items.
-- `isCreatable: Boolean` Default: `false`. Can create new item(s) to be added to `value`.
-- `isDisabled: Boolean` Default: `false`. Disable select.
-- `isMulti: Boolean` Default: `false`. Enable multi-select, `value` becomes an array of selected items.
-- `isSearchable: Boolean` Default: `true`. Enable search/filtering of `items` via `filterText`.
-- `isGroupHeaderSelectable: Boolean` Default: `false`. Enable selectable group headers in `items` (see adv demo).
-- `listPlacement: String` Default: `'auto'`. When `'auto'` displays either `'top'` or `'bottom'` depending on viewport.
-- `hasError: Boolean` Default: `false`. Show/hide error styles around select input (red border by default).
-- `listAutoWidth: Boolean` Default: `true`. List width will grow wider than the Select container (depending on list item content length).
-- `showIndicator: Boolean` Default: `false`. If true, the chevron indicator is always shown.
-- `inputAttributes: Object` Default: `{}`. Pass in HTML attributes to the Select input.
-- `Item: Component` Default: `Item`. Item component.
-- `Selection: Component` Default: `Selection`. Selection component.
-- `MultiSelection: Component` Default: `MultiSelection`. Multi selection component.
-- `Icon: Component` Default: `Icon`. Icon component.
-- `iconProps: Object` Default: `{}`. Icon props.
-- `indicatorSvg: @html` Default: `undefined`. Override default SVG chevron indicator.
-- `ClearIcon` Default: `ClearIcon`. ClearIcon component.
-- `isVirtualList: Boolean` Default: `false`. Uses [svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list) to render list (experimental).
-- `filteredItems: Array` Default: `[]`. List of items that are filtered by `filterText`
-- `placeholderAlwaysShow: Boolean` Default: `false`. When `isMulti` then placeholder text will always still show.
-- `isWaiting: Boolean` Default: `false`. If true then loader shows. `loadOptions` will automatically set this as true until promise resolves.
-- `listOffset: Number` Default: `5`. Controls the spacing offset between the list and the input.
+## Events
+
+| Event Name | Callback          | Description                                                                    |
+| ---------- | ----------------- | ------------------------------------------------------------------------------ |
+| change     | { detail }        | fires when the user selects an option                                          |
+| input      | { detail }        | fires when the value has been changed                                          |
+| focus      | { detail }        | fires when select > input on:focus                                             |
+| blur       | { detail }        | fires when select > input on:blur                                              |
+| clear      | { detail }        | fires when clear all is invoked or item is removed (by user) from multi select |
+| loaded     | { options }       | fires when `loadOptions` resolves                                              |
+| error      | { type, details } | fires when error is caught                                                     |
+| filter     | { detail }        | fires when `listOpen: true` and items are filtered                             |
+| hoverItem  | { detail }        | fires when hoverItemIndex changes                                              |
+
 
 ### Items
 
@@ -120,7 +147,6 @@ They can also be grouped and include non-selectable items.
 </script>
 
 <Select {items} {groupBy} />
-
 ```
 
 You can also use custom collections.
@@ -129,8 +155,8 @@ You can also use custom collections.
 <script>
   import Select from 'svelte-select';
 
-  const optionIdentifier = 'id';
-  const labelIdentifier = 'title';
+  const itemId = 'id';
+  const label = 'title';
 
   const items = [
     {id: 0, title: 'Foo'},
@@ -138,7 +164,7 @@ You can also use custom collections.
   ];
 </script>
 
-<Select {optionIdentifier} {labelIdentifier} {items} />
+<Select {itemId} {label} {items} />
 ```
 
 ### Async Items
@@ -163,8 +189,25 @@ To load items asynchronously then `loadOptions` is the simplest solution. Supply
 <Select loadOptions={examplePromise} />
 ```
 
+
+### Advanced List Positioning / Floating 
+
+`svelte-select` uses [floating-ui](https://floating-ui.com/) to control the list floating. See their docs and pass in your config via the `floatingConfig` prop.
+
+```html
+<script>
+  import Select from 'svelte-select';
+
+  let floatingConfig = {
+    strategy: 'fixed'
+  }
+</script>
+
+<Select {floatingConfig} />
+```
+
 ### Exposed methods
-These internal functions are exposed to override if needed. See the adv demo or look through the test file (test/src/index.js) for examples.
+These internal functions are exposed to override if needed. Look through the test file (test/src/index.js) for examples.
 
 ```js
 export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
@@ -188,33 +231,6 @@ export let createGroupHeaderItem = groupValue => {
 ```
 
 ```js
-export let createItem = filterText => {
-  return {
-    value: filterText,
-    label: filterText
-  };
-};
-```
-
-```js
-export let getOptionLabel = (option, filterText) => {
-  return option.isCreator ? `Create \"${filterText}\"` : option.label;
-};
-```
-
-```js
-export let getSelectionLabel = option => {
-  if (option) return option.label;
-};
-```
-
-```js
-export let getGroupHeaderLabel = option => {
-  return option.label;
-};
-```
-
-```js
 export function handleClear() {
   value = undefined;
   listOpen = false;
@@ -232,6 +248,23 @@ export let loadOptions = undefined; // if used must return a Promise that update
 export const getFilteredItems = () => {
   return filteredItems;
 };
+```
+
+```js
+export let debounce = (fn, wait = 1) => {
+  clearTimeout(timeout);
+  timeout = setTimeout(fn, wait);
+};
+```
+
+Override core functionality at your own risk! See ([get-items.js](/src/lib/get-items.js) & [filter.js](/src/lib/filter.js))
+
+```js
+    // core replaceable methods...
+    <Select 
+      filter={...}
+      getItems={...}
+    />
 ```
 
 ## A11y (Accessibility)
@@ -252,29 +285,16 @@ export let ariaFocused = () => {
 }
 ```
 
-## Styling
+## CSS custom properties (variables)
 
-You can style a component by overriding [the available CSS variables](/docs/theming_variables.md).
+You can style a component by overriding [the available CSS custom properties](/docs/theming_variables.md).
 
 ```html
 <script>
   import Select from 'svelte-select';
-
-  const items = ['One', 'Two', 'Three'];
 </script>
 
-<style>
-  .themed {
-    --border: 3px solid blue;
-    --borderRadius: 10px;
-    --placeholderColor: blue;
-  }
-</style>
-
-<div class="themed">
-  <h2>Theming</h2>
-  <Select {items}></Select>
-</div>
+<Select --border-radius= "10px" --placeholder-color="blue" />
 ```
 
 You can also use the `inputStyles` prop to write in any override styles needed for the input.
@@ -289,69 +309,8 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 <Select {items} inputStyles="box-sizing: border-box;"></Select>
 ```
 
-## Events
-
-| Event Name | Callback | Description |
-|------|------|----------|
-| select | { detail } | fires when value changes
-| clear | { detail } | fires when clear all is invoked or item is removed (by user) from multi select
-| loaded | { items } | fires when `loadOptions` resolves
-| error | { type, details } | fires when error is caught
-
-```html
-<script>
-  import Select from 'svelte-select';
-
-  let items = [...];
-  function handleSelect(event) {
-    // event.detail will contain the selected value
-    ...
-  }
-  function handleClear(event) {
-    // event.detail will be null unless isMulti is true and user has removed a single item
-    ...
-  }
-</script>
-
-<Select {items} on:select={handleSelect} on:clear={handleClear}></Select>
-```
-
-## Development
-
-```bash
-yarn global add serve@8
-yarn
-yarn dev
-yarn test:browser
-```
-
-In your favourite browser go to http://localhost:3000 and open devtools and see the console for the test output. When developing its handy to see the component on the page; comment out the `select.$destroy();` on the last test in /test/src/index.js or use the `test.only()` to target just one test.
-
-For example:
-
-```js
-test.only('when getSelectionLabel contains HTML then render the HTML', async (t) => {
-  const select = new Select({
-    target,
-    props: {
-      value: items[0],
-      getSelectionLabel: (option) => `<p>${option.label}</p>`,
-    }
-  });
-
-  t.ok(document.querySelector('.selection').innerHTML === '<p>Chocolate</p>');
-
-  //select.$destroy();
-});
-
-```
-
-
-## Configuring webpack
-
-If you're using webpack with [svelte-loader](https://github.com/sveltejs/svelte-loader), make sure that you add `"svelte"` to [`resolve.mainFields`](https://webpack.js.org/configuration/resolve/#resolve-mainfields) in your webpack config. This ensures that webpack imports the uncompiled component — this is more efficient.
-
-If you're using Rollup with [rollup-plugin-svelte](https://github.com/rollup/rollup-plugin-svelte), this will happen automatically.
+### 🧪 Experimental: Replace styles (Tailwind, Bootstrap, Bulma etc)
+If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles/Select.svelte'`. Then somewhere in your code or build pipeline add your own. There is a tailwind stylesheet via `import 'svelte-select/tailwind.css'`. It uses `@extend` so PostCSS is required.
 
 
 ## License

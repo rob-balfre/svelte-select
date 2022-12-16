@@ -2,6 +2,8 @@
     "useTabs": false,
     "singleQuote": true,
     "tabWidth": 4,
+    "printWidth": 120,
+    "bracketSameLine": true,
     "overrides": [
         {
             "files": ["*.svelte"],
@@ -10,6 +12,6 @@
             }
         }
     ],
-    "svelteSortOrder": "scripts-styles-markup",
+    "svelteSortOrder": "scripts-markup-styles",
     "svelteBracketNewLine": false
 }
