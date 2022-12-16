@@ -1,33 +1,41 @@
 <script>
-    export let isActive = false;
-    export let isFirst = false;
-    export let isHover = false;
+    export let active = false;
+    export let first = false;
+    export let hover = false;
     export let item = undefined;
 
     let itemClasses = '';
 
     $: {
         const classes = [];
-        if (isActive) {
+        if (active) {
             classes.push('active');
         }
-        if (isFirst) {
+        if (first) {
             classes.push('first');
         }
-        if (isHover) {
+        if (hover) {
             classes.push('hover');
         }
         itemClasses = classes.join(' ');
     }
 </script>
 
+<div class="customItem {itemClasses}">
+    <img src={item.image_url} alt={item.name} />
+    <div class="customItem_title">
+        <div class="customItem_name">{item.name}</div>
+        <div class="customItem_tagline">{item.tagline}</div>
+    </div>
+</div>
+
 <style>
     .customItem {
         display: flex;
         align-items: center;
         cursor: default;
-        height: 40px;
-        line-height: 40px;
+        height: 42px;
+        line-height: 42px;
         padding: 0 16px;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -73,11 +81,3 @@
         display: inline-block;
     }
 </style>
-
-<div class="customItem {itemClasses}">
-    <img src={item.image_url} alt={item.name} />
-    <div class="customItem_title">
-        <div class="customItem_name">{item.name}</div>
-        <div class="customItem_tagline">{item.tagline}</div>
-    </div>
-</div>
