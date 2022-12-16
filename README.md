@@ -24,7 +24,7 @@
 ## Installation
 
 ```bash
-npm install svelte-select@beta
+npm install svelte-select
 ```
 
 ## Upgrading to v5
