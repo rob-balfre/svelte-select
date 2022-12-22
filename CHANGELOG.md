@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 5.0.1
+
+* #459 Firefox pointerdown fix (thanks to @mikekok)
+
 ## 5.0.0
 
 * Added hoverItemIndex and hoverItem event
@@ -41,7 +45,7 @@
 * Removed iconProps
 * Removed ClearIcon component
 * Removed ChevronIcon component
-* Removed Multi component
+* Removed MultiSelection component
 * Added named slot `selection`
 * Removed Selection component
 * isMulti -> multiple
@@ -57,7 +61,7 @@
 * removed virtual-list class and css props
 * loadOptionsInterval -> debounceWait
 * selectedValue removed
-* MultiSelection -> Multi
+* MultiSelection removed
 * added postcss to example, tests
 * tailwind css option
 * breaking: containerClasses -> class
