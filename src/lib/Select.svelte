@@ -449,7 +449,7 @@
     }
 
     async function handleBlur(e) {
-        if (isScrolling) return;
+        if (isScrolling || itemEventInProgress) return;
         if (listOpen || focused) {
             dispatch('blur', e);
             closeList();
@@ -580,6 +580,7 @@
             hoverItemIndex = i;
             handleSelect(item);
         }
+        itemEventInProgress = false;
     }
 
     function setHoverIndex(increment) {
@@ -655,6 +656,11 @@
             prefloat = false;
         }, 0);
     }
+
+    let itemEventInProgress = false;
+    function handlePointerDown() {
+        itemEventInProgress = true;
+    }
 </script>
 
 <svelte:window on:click={handleClickOutside} on:keydown={handleKeyDown} />
@@ -678,7 +684,7 @@
             class="svelte-select-list"
             class:prefloat
             on:scroll={handleListScroll}
-            on:pointerdown|preventDefault|stopPropagation
+            on:pointerdown|preventDefault={handlePointerDown}
             on:pointerup|preventDefault|stopPropagation>
             {#if $$slots.list}<slot name="list" {filteredItems} />
             {:else if filteredItems.length > 0}
