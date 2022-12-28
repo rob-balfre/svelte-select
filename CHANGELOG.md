@@ -1,5 +1,11 @@
 # svelte-select changelog
 
+
+## 5.0.2
+
+* #509 Fix null error when using loadOptions and value (thanks to @dlebech)
+
+
 ## 5.0.1
 
 * #459 Firefox pointerdown fix (thanks to @mikekok)
