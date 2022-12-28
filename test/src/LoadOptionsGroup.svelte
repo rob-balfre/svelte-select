@@ -10,6 +10,7 @@
     ];
 
     export let filterText;
+    export let value = undefined;
 
     async function loadOptions() {
         return items.filter((i) => i.label.toLowerCase().includes(filterText.toLowerCase()));
@@ -18,4 +19,4 @@
     const groupBy = (i) => i.group;
 </script>
 
-<Select {loadOptions} bind:filterText {groupBy} />
+<Select {loadOptions} bind:filterText {groupBy} {value} />

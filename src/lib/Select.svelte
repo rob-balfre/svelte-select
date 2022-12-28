@@ -84,7 +84,7 @@
 
     function setValue() {
         if (typeof value === 'string') {
-            let item = items.find((item) => item[itemId] === value);
+            let item = (items || []).find((item) => item[itemId] === value);
             value = item || {
                 [itemId]: value,
                 label: value,
