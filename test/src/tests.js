@@ -3599,3 +3599,17 @@ test('when loadOptions and groupBy then titles should not duplicate after filter
   select.$destroy();
 });
 
+test('when loadOptions and value then it should set initial value', async (t) => {
+  const select = new LoadOptionsGroup({
+    target,
+    props: {
+      value: 'cake'
+    }
+  });
+
+  t.ok(document.querySelector('.value-container .selected-item').innerHTML === 'cake');
+  await wait(500);
+  t.ok(document.querySelector('.value-container .selected-item').innerHTML === 'Cake');
+
+  select.$destroy();
+});
