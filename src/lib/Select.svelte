@@ -466,9 +466,10 @@
     }
 
     export function handleClear() {
+        const item = value
         value = undefined;
         closeList();
-        dispatch('clear', value);
+        dispatch('clear', item);
         handleFocus();
     }
 
