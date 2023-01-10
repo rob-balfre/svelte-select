@@ -3,6 +3,8 @@
 ## 5.1.0
 
 * #513 `on:clear` event now includes item data for single selects too (thanks to @libklein)
+* `floatingConfig` default now includes `autoUpdate: true`
+* Added `--item-transition`
 
 ## 5.0.2
 
