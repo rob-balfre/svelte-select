@@ -644,7 +644,7 @@
         strategy: 'absolute',
         placement: 'bottom-start',
         middleware: [offset(listOffset), flip(), shift()],
-        autoUpdate: false
+        autoUpdate: !!container
     };
 
     const [floatingRef, floatingContent, floatingUpdate] = createFloatingActions(_floatingConfig);
@@ -1151,7 +1151,7 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
-        transition: all 0.2s;
+        transition: var(--item-transition, all 0.2s);
         align-items: center;
         width: 100%;
     }
