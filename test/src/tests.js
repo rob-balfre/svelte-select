@@ -1816,6 +1816,29 @@ test('when multi item is cleared the clear event is fired with removed item', as
   select.$destroy();
 });
 
+test('when single item is cleared the clear event is fired with removed item', async (t) => {
+  const itemToRemove = items[0];
+
+  const select = new Select({
+    target,
+    props: {
+      items,
+      value: itemToRemove
+    }
+  });
+
+  let removedItem;
+
+  select.$on('clear', (event) => {
+    removedItem = event.detail;
+  });
+
+  document.querySelector('.clear-select').click();
+  t.equal(JSON.stringify(removedItem), JSON.stringify(itemToRemove));
+
+  select.$destroy();
+});
+
 test('when items in list filter or update then first item in list should highlight', async (t) => {
   const select = new Select({
     target,

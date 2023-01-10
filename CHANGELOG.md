@@ -1,5 +1,8 @@
 # svelte-select changelog
 
+## 5.1.0
+
+* #513 `on:clear` event now includes item data for single selects too (thanks to @libklein)
 
 ## 5.0.2
 
