@@ -57,6 +57,7 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--item-is-not-selectable-color`
 - `--item-line-height`
 - `--item-padding`
+- `--item-transition`
 - `--list-background`
 - `--list-border`
 - `--list-border-radius`
