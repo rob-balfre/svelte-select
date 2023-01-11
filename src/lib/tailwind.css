@@ -124,3 +124,7 @@
 .multi-item-clear {
     @apply flex items-center justify-center w-5;
 }
+
+.list-item {
+    @apply list-none;
+}
