@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 5.1.1 
+
+* `.list-item` and safari fix for tailwind (thanks to @sawyerclick)
+
 ## 5.1.0
 
 * #513 `on:clear` event now includes item data for single selects too (thanks to @libklein)
