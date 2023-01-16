@@ -18,7 +18,7 @@
         }
     }
     
-    function handleSelect(e) {
+    function handleChange(e) {
         items = items.map((i) => {
             delete i.created;
             return i;
@@ -26,7 +26,7 @@
     }
 </script>
 
-<Select itemId="id" on:select={handleSelect} on:filter={handleFilter} bind:filterText {items}>
+<Select itemId="id" on:change={handleChange} on:filter={handleFilter} bind:filterText {items}>
     <div slot="item" let:item>
         {item.created ? 'Add new: ' : ''}
         {item.label}
