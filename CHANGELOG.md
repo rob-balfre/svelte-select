@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 5.1.2 
+
+* #520 fix for autoUpdate and floating UI when list is above select (thanks to @aureleoules)
+
 ## 5.1.1 
 
 * `.list-item` and safari fix for tailwind (thanks to @sawyerclick)
