@@ -216,7 +216,7 @@
     }
 
     function checkHoverSelectable(startingIndex = 0, ignoreGroup) {
-        hoverItemIndex = startingIndex;
+        hoverItemIndex = startingIndex < 0 ? 0 : startingIndex;
         if (!ignoreGroup && groupBy && filteredItems[hoverItemIndex] && !filteredItems[hoverItemIndex].selectable) {
             setHoverIndex(1);
         }
@@ -563,7 +563,7 @@
     let isScrolling = false;
 
     function handleSelect(item) {
-        if (item.isCreator || item.selectable === false) return;
+        if (item.selectable === false) return;
         itemSelected(item);
     }
 
