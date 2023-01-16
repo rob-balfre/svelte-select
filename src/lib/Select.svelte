@@ -204,10 +204,10 @@
     $: dispatchHover(hoverItemIndex);
 
     function setValueIndexAsHoverIndex() {
-        const valueIndex = filteredItems.findIndex((i) => {            
+        const valueIndex = filteredItems.findIndex((i) => {
             return i[itemId] === value[itemId];
         });
-        
+
         checkHoverSelectable(valueIndex, true);
     }
 
@@ -280,7 +280,7 @@
     });
     $: if (listOpen && filteredItems && !multiple && !value) checkHoverSelectable();
     $: handleFilterEvent(filteredItems);
-    $: if (floatingConfig) floatingUpdate(Object.assign(_floatingConfig, floatingConfig));
+    $: if (container && floatingConfig) floatingUpdate(Object.assign(_floatingConfig, floatingConfig));
     $: listDom = !!list;
     $: listMounted(list, listOpen);
     $: if (listOpen && container && list) setListWidth();
@@ -644,11 +644,15 @@
         strategy: 'absolute',
         placement: 'bottom-start',
         middleware: [offset(listOffset), flip(), shift()],
-        autoUpdate: !!container
+        autoUpdate: false,
     };
 
     const [floatingRef, floatingContent, floatingUpdate] = createFloatingActions(_floatingConfig);
-    
+
+    $: if (container && floatingConfig?.autoUpdate === undefined) {
+        _floatingConfig.autoUpdate = true;
+    }
+
     let prefloat = true;
     function listMounted(list, listOpen) {
         if (!list || !listOpen) return (prefloat = true);
