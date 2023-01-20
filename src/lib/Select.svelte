@@ -802,7 +802,8 @@
                 class="icon clear-select"
                 on:click|preventDefault|stopPropagation={handleClear}
                 on:pointerdown|preventDefault|stopPropagation
-                tabindex="0">
+                tabindex="0"
+                type="button">
                 <slot name="clear-icon">
                     <ClearIcon />
                 </slot>
