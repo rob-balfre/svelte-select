@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 5.1.4
+
+* #534 fix for Select's TypeScript declaration file (thanks to hughlaw)
+* #535 fix for icons touch events (thanks to @miXwui)
+
 ## 5.1.3
 
 * #523 fix for hoverItemIndex becoming -1 (thanks to @geminway92)
