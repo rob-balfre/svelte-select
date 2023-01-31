@@ -31,7 +31,7 @@
     export let placeholderAlwaysShow = false;
     export let items = null;
     export let label = 'label';
-    export let itemFilter = (label, filterText) => `${label}`.toLowerCase().includes(filterText.toLowerCase());
+    export let itemFilter = (label, filterText, option) => `${label}`.toLowerCase().includes(filterText.toLowerCase());
     export let groupBy = undefined;
     export let groupFilter = (groups) => groups;
     export let groupHeaderSelectable = false;
