@@ -892,9 +892,10 @@
         --spinnerWidth: var(--spinner-width);
 
         --internal-padding: 0 0 0 16px;
+        --border-radius: 6px;
 
         border: var(--border, 1px solid #d8dbdf);
-        border-radius: var(--border-radius, 6px);
+        border-radius: var(--border-radius);
         min-height: var(--height, 42px);
         position: relative;
         display: flex;
