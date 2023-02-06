@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 5.2.0
+
+* #541 Added CSS custom property `--border-radius-focused` (thanks to @schibrikov)
+* Added example for create item when `multiple` is `true`
+
 ## 5.1.4
 
 * #534 fix for Select's TypeScript declaration file (thanks to @hughlaw)
