@@ -24,6 +24,10 @@
         });
     }
 
+    const pascalToSpaced = (s) => {
+        return s.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+    };
+
     async function handleExampleCode(newPage) {
         source = null;
 
@@ -93,7 +97,7 @@
         <h2>Advanced</h2>
         <ul>
             {#each setup.advanced as { href, name }}
-                <li><a class:active={route === href} href={`/${href}`}>{name}</a></li>
+                <li><a class:active={route === href} href={`/${href}`}>{pascalToSpaced(name)}</a></li>
             {/each}
         </ul>
     </nav>

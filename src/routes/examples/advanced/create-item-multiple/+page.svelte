@@ -3,7 +3,7 @@
 
     let filterText = '';
 
-    let value = [];
+    let value = null;
 
     let items = [
         { value: 1, label: 'name 1' },
@@ -14,7 +14,7 @@
     ];
 
     function handleFilter(e) {        
-        if (value.find(i => i.label === filterText)) return;
+        if (value?.find(i => i.label === filterText)) return;
         if (e.detail.length === 0 && filterText.length > 0) {
             const prev = items.filter((i) => !i.created);
             items = [...prev, { value: filterText, label: filterText, created: true }];
