@@ -8,6 +8,7 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--border-focused`
 - `--border-hover`
 - `--border-radius`
+- `--border-radius-focused`git
 - `--box-sizing`
 - `--chevron-background`
 - `--chevron-border`
