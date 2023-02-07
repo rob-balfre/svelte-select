@@ -966,7 +966,7 @@
 
     .svelte-select.focused {
         border: var(--border-focused, 1px solid #006fe8);
-        border-radius: var(--border-radius-focused, var(--border-radius));
+        border-radius: var(--border-radius-focused, var(--border-radius, 6px));
     }
 
     .disabled {
