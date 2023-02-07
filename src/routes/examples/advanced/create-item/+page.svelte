@@ -3,8 +3,6 @@
 
     let filterText = '';
 
-    let value = [];
-
     let items = [
         { value: 1, label: 'name 1' },
         { value: 2, label: 'name 2' },
@@ -14,7 +12,6 @@
     ];
 
     function handleFilter(e) {        
-        if (value.find(i => i.label === filterText)) return;
         if (e.detail.length === 0 && filterText.length > 0) {
             const prev = items.filter((i) => !i.created);
             items = [...prev, { value: filterText, label: filterText, created: true }];
@@ -29,7 +26,7 @@
     }
 </script>
 
-<Select on:change={handleChange} multiple on:filter={handleFilter} bind:filterText bind:value {items}>
+<Select on:change={handleChange} on:filter={handleFilter} bind:filterText {items}>
     <div slot="item" let:item>
         {item.created ? 'Add new: ' : ''}
         {item.label}
