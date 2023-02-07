@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 5.2.1
+
+* #544 Fix for `--border-radius` and `--border-radius-focused` fallbacks (thanks to @schibrikov)
+* Added example for style props
+  
 ## 5.2.0
 
 * #541 Added CSS custom property `--border-radius-focused` (thanks to @schibrikov)
