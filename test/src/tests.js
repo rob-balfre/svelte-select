@@ -1455,7 +1455,8 @@ test('when multiple is true and items are selected then clear all should wipe al
     }
   });
 
-  document.querySelector('.clear-select').click();
+  const event = new PointerEvent('pointerup')
+  document.querySelector('.clear-select').dispatchEvent(event);
   t.equal(select.value, undefined);
 
   select.$destroy();
@@ -1786,7 +1787,9 @@ test('when value is cleared the clear event is fired', async (t) => {
     clearEvent = true;
   });
 
-  document.querySelector('.clear-select').click();
+  const event = new PointerEvent('pointerup')
+  document.querySelector('.clear-select').dispatchEvent(event);
+  
   t.ok(clearEvent);
 
   select.$destroy();
@@ -1833,7 +1836,8 @@ test('when single item is cleared the clear event is fired with removed item', a
     removedItem = event.detail;
   });
 
-  document.querySelector('.clear-select').click();
+  const event = new PointerEvent('pointerup')
+  document.querySelector('.clear-select').dispatchEvent(event);
   t.equal(JSON.stringify(removedItem), JSON.stringify(itemToRemove));
 
   select.$destroy();
@@ -1867,14 +1871,12 @@ test('when item is selected or state changes then check value[itemId] has change
   });
 
   let item = undefined;
-
   select.$on('input', () => {
     item = true;
   });
-
   await handleSet(select, {value: {value: 'cake', label: 'Cake'}});
-
   t.ok(!item)
+
   select.$destroy();
 });
 
@@ -3590,6 +3592,36 @@ test('when listOpen and value and groupBy then hoverItemIndex should be the acti
   
   select.$destroy();
 });
+
+
+test('when closeListOnChange is false and item selected then list should remain open', async (t) => {
+  const select = new Select({
+    target,
+    props: {
+      items,
+      closeListOnChange: false
+    }
+  });
+
+  await querySelectorClick('.svelte-select');
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(select.value.value === 'chocolate');
+  t.ok(select.listOpen);
+
+  await querySelectorClick('.svelte-select');
+  t.ok(!select.listOpen);
+
+  await querySelectorClick('.svelte-select');
+  await querySelectorClick('.list-item:nth-child(3)');  
+  t.ok(select.value.value === 'cake');
+  t.ok(select.listOpen);
+  window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+  t.ok(!select.listOpen);  
+  
+  select.$destroy();
+});
+
+
 
 test('when listOpen and value and groupBy then hoverItemIndex should be the active value', async (t) => {
   const select = new HoverItemIndexTest({

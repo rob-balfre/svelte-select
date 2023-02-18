@@ -41,6 +41,7 @@
     export let hasError = false;
     export let filterSelectedItems = true;
     export let required = false;
+    export let closeListOnChange = true;
 
     export let createGroupHeaderItem = (groupValue, item) => {
         return {
@@ -258,7 +259,14 @@
     $: hasValue = multiple ? value && value.length > 0 : value;
     $: hideSelectedItem = hasValue && filterText.length > 0;
     $: showClear = hasValue && clearable && !disabled && !loading;
-    $: placeholderText = placeholderAlwaysShow && multiple ? placeholder : value ? '' : placeholder;
+    $: placeholderText =
+        placeholderAlwaysShow && multiple
+            ? placeholder
+            : multiple && value?.length === 0
+            ? placeholder
+            : value
+            ? ''
+            : placeholder;
     $: ariaSelection = value ? handleAriaSelection(multiple) : '';
     $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, focused, listOpen });
     $: updateValueDisplay(items);
@@ -286,6 +294,8 @@
     $: if (listOpen && container && list) setListWidth();
     $: scrollToHoverItem = hoverItemIndex;
     $: if (listOpen && multiple) hoverItemIndex = 0;
+    $: if (input && listOpen && !focused) handleFocus();
+    $: if (filterText) hoverItemIndex = 0;
 
     function handleFilterEvent(items) {
         if (listOpen) dispatch('filter', items);
@@ -355,7 +365,6 @@
     function handleKeyDown(e) {
         if (!focused) return;
         e.stopPropagation();
-
         switch (e.key) {
             case 'Escape':
                 e.preventDefault();
@@ -443,6 +452,7 @@
     }
 
     function handleFocus(e) {
+        if (focused && input === document?.activeElement) return;
         if (e) dispatch('focus', e);
         input.focus();
         focused = true;
@@ -462,7 +472,6 @@
     function handleClick() {
         if (disabled) return;
         listOpen = !listOpen;
-        if (listOpen && !focused) handleFocus();
     }
 
     export function handleClear() {
@@ -482,21 +491,15 @@
             filterText = '';
             const item = Object.assign({}, selection);
 
-            if (!item.groupHeader || item.selectable) {
-                if (multiple) {
-                    value = value ? value.concat([item]) : [item];
-                } else {
-                    value = item;
-                }
+            if (item.groupHeader && !item.selectable) return;
+            value = multiple ? (value ? value.concat([item]) : [item]) : (value = item);
 
-                value = value;
-
-                setTimeout(() => {
-                    closeList();
-                    activeValue = undefined;
-                    dispatch('change', value);
-                });
-            }
+            setTimeout(() => {
+                if (closeListOnChange) closeList();
+                activeValue = undefined;
+                dispatch('change', value);
+                dispatch('select', selection);
+            });
         }
     }
 
@@ -551,7 +554,7 @@
     }
 
     function handleClickOutside(event) {
-        if (container && !container.contains(event.target) && !list?.contains(event.target)) {
+        if (!listOpen && !focused && container && !container.contains(event.target) && !list?.contains(event.target)) {
             handleBlur();
         }
     }
@@ -563,7 +566,7 @@
     let isScrolling = false;
 
     function handleSelect(item) {
-        if (item.selectable === false) return;
+        if (!item || item.selectable === false) return;
         itemSelected(item);
     }
 
@@ -629,7 +632,7 @@
             update(args) {
                 if (args.scroll) {
                     handleListScroll();
-                    node.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'start' });
+                    node.scrollIntoView({ behavior: 'auto', block: 'nearest' });
                 }
             },
         };
@@ -799,11 +802,7 @@
         {/if}
 
         {#if showClear}
-            <button
-                class="icon clear-select"
-                on:click|preventDefault|stopPropagation={handleClear}
-                on:pointerdown|preventDefault|stopPropagation
-                tabindex="0">
+            <button class="icon clear-select" on:pointerup|preventDefault|stopPropagation={handleClear}>
                 <slot name="clear-icon">
                     <ClearIcon />
                 </slot>

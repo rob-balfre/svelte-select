@@ -2,46 +2,54 @@
     import Select from '$lib/Select.svelte';
 
     let items = [
-        { value: 'one', label: 'One', checked: true },
-        { value: 'two', label: 'Two', checked: false },
-        { value: 'three', label: 'Three', checked: false },
+        { value: 'one', label: 'One' },
+        { value: 'two', label: 'Two' },
+        { value: 'three', label: 'Three' },
     ];
 
     let value = [];
-    function handleChecked(e) {
-        let itemIndex = items.findIndex((item) => item.value === e.value);
-        items[itemIndex].checked = !items[itemIndex].checked;
+    let checked = [];
+    let isChecked = {};
+
+    $: computeValue(checked);
+    $: computeIsChecked(checked);
+
+    function computeIsChecked() {
+        isChecked = {};
+        checked.forEach((c) => (isChecked[c] = true));
     }
 
-    $: computeValue(items);
+    function computeValue() {
+        value = checked.map((c) => items.find((i) => i.value === c));
+    }
 
-    function computeValue(items) {
-        value = items.filter((item) => item.checked);
+    function handleChange(e) {
+        if (e.type === 'clear' && Array.isArray(e.detail)) checked = [];
+        else
+            checked.includes(e.detail.value)
+                ? (checked = checked.filter((i) => i != e.detail.value))
+                : (checked = [...checked, e.detail.value]);
     }
 </script>
 
-<Select {items} multiple bind:value filterSelectedItems={false} on:clear={(e) => handleChecked(e.detail)}>
-    <div class="list" slot="list" let:filteredItems>
-        {#each filteredItems as item}
-            <label for={item.value} on:click|preventDefault|stopPropagation={() => handleChecked(item)}>
-                <input type="checkbox" id={item.value} checked={item.checked} />
-                {item.label}
-            </label>
-        {/each}
+<Select
+    {items}
+    {value}
+    multiple={true}
+    filterSelectedItems={false}
+    closeListOnChange={false}
+    on:select={handleChange}
+    on:clear={handleChange}>
+    <div class="item" slot="item" let:item>
+        <label for={item.value}>
+            <input type="checkbox" id={item.value} bind:checked={isChecked[item.value]} />
+            {item.label}
+        </label>
     </div>
 </Select>
 
 <style>
-    .list {
-        display: flex;
-        flex-direction: column;
-    }
-
-    label {
-        padding: 5px;
-    }
-
-    input {
+    .item {
         pointer-events: none;
     }
 </style>

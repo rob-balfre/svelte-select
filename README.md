@@ -71,6 +71,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | name                   | `string`  | `null`          | Name attribute of hidden input, helpful for form actions       |
 | required               | `boolean` | `false`         | If `Select` is within a `<form>` will restrict form submission |
 | multiFullItemClearable | `boolean` | `false`         | When `multiple` selected items will clear on click             |
+| closeListOnChange      | `boolean` | `true`          | After `on:change` list will close                              |
 
 
 ## Named slots
@@ -94,17 +95,17 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 
 ## Events
 
-| Event Name | Callback          | Description                                                                    |
-| ---------- | ----------------- | ------------------------------------------------------------------------------ |
-| change     | { detail }        | fires when the user selects an option                                          |
-| input      | { detail }        | fires when the value has been changed                                          |
-| focus      | { detail }        | fires when select > input on:focus                                             |
-| blur       | { detail }        | fires when select > input on:blur                                              |
-| clear      | { detail }        | fires when clear is invoked or item is removed (by user) from multi select     |
-| loaded     | { options }       | fires when `loadOptions` resolves                                              |
-| error      | { type, details } | fires when error is caught                                                     |
-| filter     | { detail }        | fires when `listOpen: true` and items are filtered                             |
-| hoverItem  | { detail }        | fires when hoverItemIndex changes                                              |
+| Event Name | Callback          | Description                                                                |
+| ---------- | ----------------- | -------------------------------------------------------------------------- |
+| change     | { detail }        | fires when the user selects an option                                      |
+| input      | { detail }        | fires when the value has been changed                                      |
+| focus      | { detail }        | fires when select > input on:focus                                         |
+| blur       | { detail }        | fires when select > input on:blur                                          |
+| clear      | { detail }        | fires when clear is invoked or item is removed (by user) from multi select |
+| loaded     | { options }       | fires when `loadOptions` resolves                                          |
+| error      | { type, details } | fires when error is caught                                                 |
+| filter     | { detail }        | fires when `listOpen: true` and items are filtered                         |
+| hoverItem  | { detail }        | fires when hoverItemIndex changes                                          |
 
 
 ### Items
