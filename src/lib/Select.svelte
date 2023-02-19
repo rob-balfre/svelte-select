@@ -760,9 +760,7 @@
                         {#if !disabled && !multiFullItemClearable && ClearIcon}
                             <div
                                 class="multi-item-clear"
-                                on:pointerdown|preventDefault|stopPropagation
-                                on:click={() => handleMultiItemClear(i)}
-                                on:keydown|preventDefault|stopPropagation>
+                                on:pointerup|preventDefault|stopPropagation={() => handleMultiItemClear(i)}>
                                 <slot name="multi-clear-icon">
                                     <ClearIcon />
                                 </slot>

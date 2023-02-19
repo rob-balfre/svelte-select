@@ -1424,7 +1424,8 @@ test('when multiple is true clicking X on a selected item will remove it from va
     }
   });
 
-  document.querySelector('.multi-item-clear').click();
+  const event = new PointerEvent('pointerup')
+  document.querySelector('.multi-item-clear').dispatchEvent(event);
   t.equal(JSON.stringify(select.value), JSON.stringify([{value: 'pizza', label: 'Pizza'}]));
 
   select.$destroy();
@@ -1813,7 +1814,8 @@ test('when multi item is cleared the clear event is fired with removed item', as
     removedItem = event.detail;
   });
 
-  document.querySelector('.multi-item-clear').click();
+  const event = new PointerEvent('pointerup')
+  document.querySelector('.multi-item-clear').dispatchEvent(event);
   t.equal(JSON.stringify(removedItem), JSON.stringify(itemToRemove));
 
   select.$destroy();
@@ -2809,9 +2811,10 @@ test('When multiple on:input events should fire on each item removal (including 
     events.push('event fired');
   });
 
-  document.querySelector('.multi-item-clear').click();
+  const event = new PointerEvent('pointerup')
+  document.querySelector('.multi-item-clear').dispatchEvent(event);
   await wait(0);
-  document.querySelector('.multi-item-clear').click();
+  document.querySelector('.multi-item-clear').dispatchEvent(event);
   await wait(0);
   t.ok(events.length === 2);
   
