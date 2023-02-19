@@ -98,9 +98,30 @@
       "svelte": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./tailwind.css": "./dist/tailwind.css"
+    "./tailwind.css": "./dist/tailwind.css",
+    "./no-styles/ChevronIcon.svelte": {
+      "types": "./dist/ChevronIcon.svelte.d.ts",
+      "svelte": "./dist/ChevronIcon.svelte",
+      "default": "./dist/ChevronIcon.svelte"
+    },
+    "./no-styles/ClearIcon.svelte": {
+      "types": "./dist/ClearIcon.svelte.d.ts",
+      "svelte": "./dist/ClearIcon.svelte",
+      "default": "./dist/ClearIcon.svelte"
+    },
+    "./no-styles/LoadingIcon.svelte": {
+      "types": "./dist/LoadingIcon.svelte.d.ts",
+      "svelte": "./dist/LoadingIcon.svelte",
+      "default": "./dist/LoadingIcon.svelte"
+    },
+    "./no-styles/Select.svelte": {
+      "types": "./dist/Select.svelte.d.ts",
+      "svelte": "./dist/Select.svelte",
+      "default": "./dist/Select.svelte"
+    }
   },
   "files": [
+    "MIGRATION_GUIDE.md",
     "dist",
     "docs"
   ],
