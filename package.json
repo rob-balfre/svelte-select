@@ -100,24 +100,24 @@
     },
     "./tailwind.css": "./dist/tailwind.css",
     "./no-styles/ChevronIcon.svelte": {
-      "types": "./dist/ChevronIcon.svelte.d.ts",
-      "svelte": "./dist/ChevronIcon.svelte",
-      "default": "./dist/ChevronIcon.svelte"
+      "types": "./dist/no-styles/ChevronIcon.svelte.d.ts",
+      "svelte": "./dist/no-styles/ChevronIcon.svelte",
+      "default": "./dist/no-styles/ChevronIcon.svelte"
     },
     "./no-styles/ClearIcon.svelte": {
-      "types": "./dist/ClearIcon.svelte.d.ts",
-      "svelte": "./dist/ClearIcon.svelte",
-      "default": "./dist/ClearIcon.svelte"
+      "types": "./dist/no-styles/ClearIcon.svelte.d.ts",
+      "svelte": "./dist/no-styles/ClearIcon.svelte",
+      "default": "./dist/no-styles/ClearIcon.svelte"
     },
     "./no-styles/LoadingIcon.svelte": {
-      "types": "./dist/LoadingIcon.svelte.d.ts",
-      "svelte": "./dist/LoadingIcon.svelte",
-      "default": "./dist/LoadingIcon.svelte"
+      "types": "./dist/no-styles/LoadingIcon.svelte.d.ts",
+      "svelte": "./dist/no-styles/LoadingIcon.svelte",
+      "default": "./dist/no-styles/LoadingIcon.svelte"
     },
     "./no-styles/Select.svelte": {
-      "types": "./dist/Select.svelte.d.ts",
-      "svelte": "./dist/Select.svelte",
-      "default": "./dist/Select.svelte"
+      "types": "./dist/no-styles/Select.svelte.d.ts",
+      "svelte": "./dist/no-styles/Select.svelte",
+      "default": "./dist/no-styles/Select.svelte"
     }
   },
   "files": [
