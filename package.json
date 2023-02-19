@@ -56,9 +56,6 @@
     },
     "github": {
       "release": false
-    },
-    "npm": {
-      "publishPath": "./dist"
     }
   },
   "type": "module",
