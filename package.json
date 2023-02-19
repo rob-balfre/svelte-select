@@ -11,9 +11,9 @@
     "test:dev": "rollup -cw",
     "test:browser": "sirv test/public -p 3000 --dev --open",
     "gen:docs": "node docs/generate_theming_variables_md.cjs",
-    "preprepare": "node src/remove-styles.cjs",
+    "preprepare": "node src/remove-styles.cjs && npm run gen:docs",
     "prepare": "svelte-package",
-    "postprepare": "node src/post-prepare.cjs && npm run gen:docs",
+    "clean": "node src/post-prepare.cjs",
     "release": "release-it --preRelease=beta"
   },
   "devDependencies": {
@@ -21,7 +21,7 @@
     "@sveltejs/adapter-auto": "2.0.0",
     "@sveltejs/adapter-static": "2.0.1",
     "@sveltejs/kit": "1.7.2",
-    "@sveltejs/package": "^2.0.0",
+    "@sveltejs/package": "^2.0.1",
     "autoprefixer": "^10.4.13",
     "cross-env": "^7.0.3",
     "find-in-files": "^0.5.0",
@@ -52,7 +52,8 @@
   ],
   "release-it": {
     "hooks": {
-      "after:bump": "npm run prepare"
+      "after:bump": "npm run prepare",
+      "after:git:release": "npm run clean"
     },
     "github": {
       "release": false
@@ -121,10 +122,9 @@
     }
   },
   "files": [
-    "MIGRATION_GUIDE.md",
     "dist",
-    "dist/**/*",
-    "docs"
+    "MIGRATION_GUIDE.md",
+    "docs/theming_variables.md"
   ],
   "svelte": "./dist/index.js"
 }
