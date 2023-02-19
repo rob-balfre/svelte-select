@@ -12,7 +12,7 @@
     "test:browser": "sirv test/public -p 3000 --dev --open",
     "gen:docs": "node docs/generate_theming_variables_md.cjs",
     "preprepare": "node src/remove-styles.cjs",
-    "prepare": "svelte-package -o package",
+    "prepare": "svelte-package",
     "postprepare": "node src/post-prepare.cjs && npm run gen:docs",
     "release": "release-it --dry-run"
   },
@@ -58,7 +58,7 @@
       "release": false
     },
     "npm": {
-      "publishPath": "./package"
+      "publishPath": "./dist"
     }
   },
   "type": "module",
@@ -68,44 +68,43 @@
     "svelte-floating-ui": "1.2.8"
   },
   "exports": {
-    "./package.json": "./package.json",
     "./ChevronIcon.svelte": {
-      "types": "./package/ChevronIcon.svelte.d.ts",
-      "svelte": "./package/ChevronIcon.svelte",
-      "default": "./package/ChevronIcon.svelte"
+      "types": "./dist/ChevronIcon.svelte.d.ts",
+      "svelte": "./dist/ChevronIcon.svelte",
+      "default": "./dist/ChevronIcon.svelte"
     },
     "./ClearIcon.svelte": {
-      "types": "./package/ClearIcon.svelte.d.ts",
-      "svelte": "./package/ClearIcon.svelte",
-      "default": "./package/ClearIcon.svelte"
+      "types": "./dist/ClearIcon.svelte.d.ts",
+      "svelte": "./dist/ClearIcon.svelte",
+      "default": "./dist/ClearIcon.svelte"
     },
     "./LoadingIcon.svelte": {
-      "types": "./package/LoadingIcon.svelte.d.ts",
-      "svelte": "./package/LoadingIcon.svelte",
-      "default": "./package/LoadingIcon.svelte"
+      "types": "./dist/LoadingIcon.svelte.d.ts",
+      "svelte": "./dist/LoadingIcon.svelte",
+      "default": "./dist/LoadingIcon.svelte"
     },
     "./Select.svelte": {
-      "types": "./package/Select.svelte.d.ts",
-      "svelte": "./package/Select.svelte",
-      "default": "./package/Select.svelte"
+      "types": "./dist/Select.svelte.d.ts",
+      "svelte": "./dist/Select.svelte",
+      "default": "./dist/Select.svelte"
     },
     "./filter": {
-      "types": "./package/filter.d.ts",
-      "default": "./package/filter.js"
+      "types": "./dist/filter.d.ts",
+      "default": "./dist/filter.js"
     },
     "./get-items": {
-      "types": "./package/get-items.d.ts",
-      "default": "./package/get-items.js"
+      "types": "./dist/get-items.d.ts",
+      "default": "./dist/get-items.js"
     },
     ".": {
-      "types": "./package/index.d.ts",
-      "svelte": "./package/index.js",
-      "default": "./package/index.js"
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "default": "./dist/index.js"
     },
-    "./tailwind.css": "./package/tailwind.css"
+    "./tailwind.css": "./dist/tailwind.css"
   },
   "files": [
-    "package"
+    "dist", "docs"
   ],
-  "svelte": "./package/index.js"
+  "svelte": "./dist/index.js"
 }

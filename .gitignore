@@ -5,6 +5,6 @@ node_modules
 /test/public/assets
 /spec/page/public/build
 /.svelte-kit
-/package
+/dist
 /src/lib/no-styles
 .env
