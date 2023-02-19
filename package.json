@@ -123,6 +123,7 @@
   "files": [
     "MIGRATION_GUIDE.md",
     "dist",
+    "dist/no-styles",
     "docs"
   ],
   "svelte": "./dist/index.js"
