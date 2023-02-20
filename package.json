@@ -14,7 +14,7 @@
     "preprepare": "node src/remove-styles.cjs && npm run gen:docs",
     "prepare": "svelte-package",
     "clean": "node src/post-prepare.cjs",
-    "release": "release-it --preRelease=beta"
+    "release": "release-it"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^4.0.3",
