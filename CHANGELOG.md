@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 5.3.0
+
+* Added prop `closeListOnChange`
+* Fixes for #548, #549, #551 and #554
+
 ## 5.2.1
 
 * #544 Fix for `--border-radius` and `--border-radius-focused` fallbacks (thanks to @schibrikov)
