@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 5.3.1
+
+* Reverted a dep bump for `@sveltejs/package` - has a breaking change for non-kit setups. Will bake into v6 instead.
+
 ## 5.3.0
 
 * Added prop `closeListOnChange`
