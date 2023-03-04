@@ -901,6 +901,7 @@
         margin: var(--margin, 0);
         width: var(--width, 100%);
         font-size: var(--font-size, 16px);
+        max-height: var(--max-height);
     }
 
     * {
@@ -917,9 +918,9 @@
         flex-wrap: wrap;
         align-items: center;
         gap: 5px 10px;
-        padding: 5px 0;
+        padding: var(--value-container-padding, 5px 0);
         position: relative;
-        overflow: hidden;
+        overflow: var(--value-container-overflow, hidden);
         align-self: stretch;
     }
 
@@ -928,6 +929,13 @@
         display: flex;
         flex-shrink: 0;
         align-items: center;
+    }
+
+    .indicators {
+        position: var(--indicators-position);
+        top: var(--indicators-top);
+        right: var(--indicators-right);
+        bottom: var(--indicators-bottom);
     }
 
     input {
