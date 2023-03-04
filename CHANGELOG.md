@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 5.4.0
+
+* #561 added some needed CSS custom properties, `--max-height`,`--value-container-overflow`,`--value-container-padding`, `--indicators-position`, `--indicators-top`, `--indicators-right`, `--indicators-bottom` (thanks to @Edward-Heales)
+
 ## 5.3.1
 
 * Reverted a dep bump for `@sveltejs/package` - has a breaking change for non-kit setups. Will bake into v6 instead.
@@ -13,7 +17,7 @@
 
 * #544 Fix for `--border-radius` and `--border-radius-focused` fallbacks (thanks to @schibrikov)
 * Added example for style props
-  
+
 ## 5.2.0
 
 * #541 Added CSS custom property `--border-radius-focused` (thanks to @schibrikov)
