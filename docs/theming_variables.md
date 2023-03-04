@@ -41,6 +41,10 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--group-title-text-transform`
 - `--height`
 - `--icons-color`
+- `--indicators-bottom`
+- `--indicators-position`
+- `--indicators-right`
+- `--indicators-top`
 - `--input-color`
 - `--input-left`
 - `--input-letter-spacing`
@@ -74,6 +78,7 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--loading-height`
 - `--loading-width`
 - `--margin`
+- `--max-height`
 - `--multi-item-active-outline`
 - `--multi-item-bg`
 - `--multi-item-border-radius`
@@ -99,5 +104,7 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--spinner-color`
 - `--spinner-height`
 - `--spinner-width`
+- `--value-container-overflow`
+- `--value-container-padding`
 - `--width`
 <!-- List end -->
