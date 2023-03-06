@@ -8,5 +8,4 @@
     ];
 </script>
 
-<Select {items} multiple />
-
+<Select {items} multiple filterSelectedItems={false} />

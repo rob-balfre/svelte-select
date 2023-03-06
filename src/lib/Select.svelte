@@ -614,8 +614,7 @@
     $: activeValuesSet = new Set(value ? (multiple ? value.map((v) => v[itemId]) : [value[itemId]]) : []);
 
     function isItemActive(item, value, itemId) {
-        if (multiple) return activeValuesSet?.has(item[itemId]);
-        return value && value[itemId] === item[itemId];
+        return value && (multiple ? activeValuesSet.has(item[itemId]) : item[itemId] === value[itemId]);
     }
 
     function isItemFirst(itemIndex) {
