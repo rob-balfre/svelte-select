@@ -611,8 +611,10 @@
         }
     }
 
+    $: activeValuesSet = new Set(value ? (multiple ? value.map((v) => v[itemId]) : [value[itemId]]) : []);
+
     function isItemActive(item, value, itemId) {
-        if (multiple) return new Set(value.map((v) => v[itemId])).has(item[itemId]);
+        if (multiple) return activeValuesSet?.has(item[itemId]);
         return value && value[itemId] === item[itemId];
     }
 
