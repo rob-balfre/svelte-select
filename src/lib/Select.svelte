@@ -612,7 +612,7 @@
     }
 
     function isItemActive(item, value, itemId) {
-        if (multiple) return;
+        if (multiple) return new Set(value.map((v) => v[itemId])).has(item[itemId]);
         return value && value[itemId] === item[itemId];
     }
 
