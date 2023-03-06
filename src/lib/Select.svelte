@@ -699,6 +699,7 @@
             {#if $$slots.list}<slot name="list" {filteredItems} />
             {:else if filteredItems.length > 0}
                 {#each filteredItems as item, i}
+                    {@const isActive = isItemActive(item, value, itemId)}
                     <div
                         on:mouseover={() => handleHover(i)}
                         on:focus={() => handleHover(i)}
@@ -707,16 +708,16 @@
                         class="list-item"
                         tabindex="-1">
                         <div
-                            use:activeScroll={{ scroll: isItemActive(item, value, itemId), listDom }}
+                            use:activeScroll={{ scroll: isActive, listDom }}
                             use:hoverScroll={{ scroll: scrollToHoverItem === i, listDom }}
                             class="item"
                             class:list-group-title={item.groupHeader}
-                            class:active={isItemActive(item, value, itemId)}
+                            class:active={isActive}
                             class:first={isItemFirst(i)}
                             class:hover={hoverItemIndex === i}
                             class:group-item={item.groupItem}
                             class:not-selectable={item?.selectable === false}>
-                            <slot name="item" {item} index={i}>
+                            <slot name="item" {item} index={i} active={isActive}>
                                 {item?.[label]}
                             </slot>
                         </div>
