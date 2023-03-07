@@ -8,6 +8,7 @@ import PrependSlotTest from './PrependSlotTest.svelte';
 import ClearIconSlotTest from './ClearIconSlotTest.svelte';
 import ListSlotTest from './ListSlotTest.svelte';
 import ItemSlotTest from './ItemSlotTest.svelte';
+import OuterListTest from './OuterListTest.svelte';
 import ItemHeightTest from './ItemHeightTest.svelte';
 import MultiItemColor from './MultiItemColor.svelte';
 import GroupHeaderNotSelectable from './GroupHeaderNotSelectable.svelte';
@@ -3255,7 +3256,7 @@ test('when named slot list show content', async (t) => {
     target,
   });
 
-  t.ok(document.querySelector('.svelte-select-list').innerHTML === 'onetwo');
+  t.ok(document.querySelector('.svelte-select-list').innerHTML.trim() === 'onetwo');
 
   select.$destroy();
 });
@@ -3266,6 +3267,18 @@ test('when named slot item show content', async (t) => {
   });
 
   t.ok(document.querySelector('.svelte-select-list .item').innerHTML === '* one *');
+
+  select.$destroy();
+});
+
+
+test('when named slots list-prepend and list-append show content', async (t) => {
+  const select = new OuterListTest({
+    target,
+  });
+
+  t.ok(document.querySelector('.svelte-select-list').innerHTML.startsWith('prepend'));
+  t.ok(document.querySelector('.svelte-select-list').innerHTML.endsWith('append'));
 
   select.$destroy();
 });
