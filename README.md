@@ -84,7 +84,9 @@ List position and floating is powered by `floating-ui`, see their [package-entry
   <div slot="multi-clear-icon" />  
   <div slot="loading-icon" />  
   <div slot="chevron-icon" /> 
+  <div slot="list-prepend" />  
   <div slot="list" let:filteredItems />  
+  <div slot="list-append" />  
   <div slot="item" let:item let:index />  
   <div slot="required" let:value />
   <!-- Remember you can also use `svelte:fragment` to avoid a container DOM element. -->

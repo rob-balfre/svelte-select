@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+
+## 5.5.0
+
+* #564 added named slots `list-prepend` and `list-append` (thanks to @sawyerclick)
+
 ## 5.4.0
 
 * #561 added some needed CSS custom properties, `--max-height`,`--value-container-overflow`,`--value-container-padding`, `--indicators-position`, `--indicators-top`, `--indicators-right`, `--indicators-bottom` (thanks to @Edward-Heales)
