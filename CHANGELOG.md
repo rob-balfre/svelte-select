@@ -1,5 +1,8 @@
 # svelte-select changelog
 
+## 5.5.1
+
+* npm will be the death of me...
 
 ## 5.5.0
 
