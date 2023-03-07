@@ -694,6 +694,7 @@
             on:scroll={handleListScroll}
             on:pointerdown|preventDefault={handlePointerDown}
             on:pointerup|preventDefault|stopPropagation>
+            {#if $$slots['list-prepend']}<slot name='list-prepend'/>{/if}
             {#if $$slots.list}<slot name="list" {filteredItems} />
             {:else if filteredItems.length > 0}
                 {#each filteredItems as item, i}
@@ -725,6 +726,7 @@
                     <div class="empty">No options</div>
                 </slot>
             {/if}
+            {#if $$slots['list-append']}<slot name='list-append'/>{/if}
         </div>
     {/if}
 
