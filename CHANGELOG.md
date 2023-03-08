@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 5.5.2
+
+* #570 `on:blur` bug fix (thanks to @cyaris)
+
 ## 5.5.1
 
 * npm will be the death of me...
