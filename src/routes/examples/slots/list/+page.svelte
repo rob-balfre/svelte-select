@@ -10,7 +10,8 @@
     let value = [];
 
     function handleClick(item) {
-        value = [...value, item]
+        if (!value) value = [item];
+        else value = [...value, item]
     }
 </script>
 
