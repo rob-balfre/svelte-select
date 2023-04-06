@@ -7,6 +7,7 @@ import ChevronSlotTest from './ChevronSlotTest.svelte';
 import PrependSlotTest from './PrependSlotTest.svelte';
 import ClearIconSlotTest from './ClearIconSlotTest.svelte';
 import ListSlotTest from './ListSlotTest.svelte';
+import InputHiddenSlotTest from './InputHiddenSlotTest.svelte';
 import ItemSlotTest from './ItemSlotTest.svelte';
 import OuterListTest from './OuterListTest.svelte';
 import ItemHeightTest from './ItemHeightTest.svelte';
@@ -3257,6 +3258,16 @@ test('when named slot list show content', async (t) => {
   });
 
   t.ok(document.querySelector('.svelte-select-list').innerHTML.trim() === 'onetwo');
+
+  select.$destroy();
+});
+
+test('when named slot input-hidden', async (t) => {
+  const select = new InputHiddenSlotTest({
+    target,
+  });
+
+  t.ok(document.querySelector('input[type="hidden"][name="test"]').value.trim() === 'one');
 
   select.$destroy();
 });

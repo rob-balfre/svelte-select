@@ -687,7 +687,7 @@
             class:prefloat
             on:scroll={handleListScroll}
             on:pointerup|preventDefault|stopPropagation>
-            {#if $$slots['list-prepend']}<slot name='list-prepend'/>{/if}
+            {#if $$slots['list-prepend']}<slot name="list-prepend" />{/if}
             {#if $$slots.list}<slot name="list" {filteredItems} />
             {:else if filteredItems.length > 0}
                 {#each filteredItems as item, i}
@@ -719,7 +719,7 @@
                     <div class="empty">No options</div>
                 </slot>
             {/if}
-            {#if $$slots['list-append']}<slot name='list-append'/>{/if}
+            {#if $$slots['list-append']}<slot name="list-append" />{/if}
         </div>
     {/if}
 
@@ -811,7 +811,9 @@
         {/if}
     </div>
 
-    <input {name} type="hidden" value={value ? JSON.stringify(value) : null} />
+    <slot type="hidden" inputName={name} {value}>
+        <input {name} type="hidden" value={value ? JSON.stringify(value) : null} />
+    </slot>
 
     {#if required && (!value || value.length === 0)}
         <slot name="required" {value}>

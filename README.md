@@ -88,6 +88,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
   <div slot="list" let:filteredItems />  
   <div slot="list-append" />  
   <div slot="item" let:item let:index />  
+  <div slot="input-hidden" let:inputName let:value />  <!-- name is a slot reserved keyword -->
   <div slot="required" let:value />
   <!-- Remember you can also use `svelte:fragment` to avoid a container DOM element. -->
   <svelte:fragment slot="empty" />  
