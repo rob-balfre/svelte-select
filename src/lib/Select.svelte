@@ -811,7 +811,7 @@
         {/if}
     </div>
 
-    <slot type="hidden" inputName={name} {value}>
+    <slot name="input-hidden" {value}>
         <input {name} type="hidden" value={value ? JSON.stringify(value) : null} />
     </slot>
 

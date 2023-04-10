@@ -6,7 +6,7 @@
 </script>
 
 <Select bind:items name="test" bind:value>
-    <svelte:fragment slot="input-hidden" let:inputName let:value>
-        <input type="hidden" name={inputName} value={value.value} />
+    <svelte:fragment slot="input-hidden" let:value>
+        <input type="hidden" name="test" value={value.value} />
     </svelte:fragment>
 </Select>
