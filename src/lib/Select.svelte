@@ -732,9 +732,11 @@
         {/if}
     </span>
 
-    <div class="prepend">
-        <slot name="prepend" />
-    </div>
+    {#if $$slots.prepend}
+        <div class="prepend">
+            <slot name="prepend" />
+        </div>
+    {/if}
 
     <div class="value-container">
         {#if hasValue}
