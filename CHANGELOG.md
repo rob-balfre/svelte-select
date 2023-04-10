@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 5.6.0
+
+* #579 added named slot `input-hidden` (thanks to @Ennoriel)
+
 ## 5.5.3
 
 * #578 `required` `tabindex` fix (thanks to @Ennoriel)
