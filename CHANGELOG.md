@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 5.6.1
+
+* #525 set clear button to `type="button"` (thanks to @CanRau)
+
+
 ## 5.6.0
 
 * #579 added named slot `input-hidden` (thanks to @Ennoriel)
