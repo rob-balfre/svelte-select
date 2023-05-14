@@ -1458,8 +1458,7 @@ test('when multiple is true and items are selected then clear all should wipe al
     }
   });
 
-  const event = new PointerEvent('pointerup')
-  document.querySelector('.clear-select').dispatchEvent(event);
+  document.querySelector('.clear-select').click();
   t.equal(select.value, undefined);
 
   select.$destroy();
@@ -1790,8 +1789,7 @@ test('when value is cleared the clear event is fired', async (t) => {
     clearEvent = true;
   });
 
-  const event = new PointerEvent('pointerup')
-  document.querySelector('.clear-select').dispatchEvent(event);
+  document.querySelector('.clear-select').click();
   
   t.ok(clearEvent);
 
@@ -1840,8 +1838,7 @@ test('when single item is cleared the clear event is fired with removed item', a
     removedItem = event.detail;
   });
 
-  const event = new PointerEvent('pointerup')
-  document.querySelector('.clear-select').dispatchEvent(event);
+  document.querySelector('.clear-select').click();
   t.equal(JSON.stringify(removedItem), JSON.stringify(itemToRemove));
 
   select.$destroy();
