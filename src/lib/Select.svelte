@@ -84,10 +84,10 @@
     let prev_multiple;
 
     function setValue() {
-        if (typeof value === 'string') {
+        if (value != null && typeof value !== 'object') {
             value = findOrCreateObject(value);
         } else if (multiple && Array.isArray(value) && value.length > 0) {
-            value = value.map((item) => (typeof item === 'string' ? findOrCreateObject(item) : item));
+            value = value.map((item) => (value != null && typeof value !== 'object' ? findOrCreateObject(item) : item));
         }
     }
 
