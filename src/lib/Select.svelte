@@ -85,14 +85,18 @@
 
     function setValue() {
         if (typeof value === 'string') {
-            let item = (items || []).find((item) => item[itemId] === value);
-            value = item || {
-                [itemId]: value,
-                label: value,
-            };
+            value = findOrCreateObject(value);
         } else if (multiple && Array.isArray(value) && value.length > 0) {
-            value = value.map((item) => (typeof item === 'string' ? { [itemId]: item, label: item } : item));
+            value = value.map((item) => (typeof item === 'string' ? findOrCreateObject(item) : item));
         }
+    }
+
+    function findOrCreateObject(value) {
+        let item = (items || []).find((item) => item[itemId] === value);
+        return item || {
+            [itemId]: value,
+            label: value,
+        };
     }
 
     let _inputAttributes;
