@@ -841,6 +841,7 @@
         --groupTitleFontWeight: var(--group-title-font-weight);
         --groupTitlePadding: var(--group-title-padding);
         --groupTitleTextTransform: var(--group-title-text-transform);
+        --groupTitleBorder: var(--group-title-border);
         --indicatorColor: var(--chevron-color);
         --indicatorHeight: var(--chevron-height);
         --indicatorWidth: var(--chevron-width);
@@ -1142,6 +1143,7 @@
         overflow-x: hidden;
         white-space: nowrap;
         text-transform: var(--group-title-text-transform, uppercase);
+        border: var(--group-title-border, medium none color);
     }
 
     .empty {
