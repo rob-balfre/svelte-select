@@ -841,7 +841,9 @@
         --groupTitleFontWeight: var(--group-title-font-weight);
         --groupTitlePadding: var(--group-title-padding);
         --groupTitleTextTransform: var(--group-title-text-transform);
-        --groupTitleBorder: var(--group-title-border);
+        --groupTitleBorderColor: var(--group-title-border-color);
+        --groupTitleBorderWidth: var(--group-title-border-width);
+        --groupTitleBorderStyle: var(--group-title-border-style);
         --indicatorColor: var(--chevron-color);
         --indicatorHeight: var(--chevron-height);
         --indicatorWidth: var(--chevron-width);
@@ -1143,7 +1145,9 @@
         overflow-x: hidden;
         white-space: nowrap;
         text-transform: var(--group-title-text-transform, uppercase);
-        border: var(--group-title-border, medium none color);
+        border-width: var(--group-title-border-width, medium);
+        border-style: var(--group-title-border-style, none);
+        border-color: var(--group-title-border-color, color);
     }
 
     .empty {
