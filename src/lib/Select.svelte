@@ -678,7 +678,8 @@
     on:pointerup|preventDefault={handleClick}
     on:mousedown|preventDefault
     bind:this={container}
-    use:floatingRef>
+    use:floatingRef
+    role="none">
     {#if listOpen}
         <div
             use:floatingContent
@@ -697,7 +698,8 @@
                         on:click|stopPropagation={() => handleItemClick({ item, i })}
                         on:keydown|preventDefault|stopPropagation
                         class="list-item"
-                        tabindex="-1">
+                        tabindex="-1"
+                        role="none">
                         <div
                             use:activeScroll={{ scroll: isItemActive(item, value, itemId), listDom }}
                             use:hoverScroll={{ scroll: scrollToHoverItem === i, listDom }}
@@ -745,7 +747,8 @@
                         class:active={activeValue === i}
                         class:disabled
                         on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}
-                        on:keydown|preventDefault|stopPropagation>
+                        on:keydown|preventDefault|stopPropagation
+                        role="none">
                         <span class="multi-item-text">
                             <slot name="selection" selection={item} index={i}>
                                 {item[label]}
