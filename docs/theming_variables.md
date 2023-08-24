@@ -34,6 +34,9 @@ Override the following CSS custom properties (variables) to style svelte-select 
 - `--error-border`
 - `--font-size`
 - `--group-item-padding-left`
+- `--group-title-border-color`
+- `--group-title-border-style`
+- `--group-title-border-width`
 - `--group-title-color`
 - `--group-title-font-size`
 - `--group-title-font-weight`
