@@ -1,5 +1,14 @@
 # svelte-select changelog
 
+## 5.7.0
+
+* #617 added custom group title border variable support (thanks to @lipe-dev)
+* #610 resolved ARIA warnings by defining a role on interactive divs (thanks to @josdejong)
+
+## 5.6.2
+
+* #525 set clear button to `type="button"` (thanks to @CanRau)
+  
 ## 5.6.1
 
 * #525 set clear button to `type="button"` (thanks to @CanRau)
