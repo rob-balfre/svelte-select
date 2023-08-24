@@ -92,6 +92,7 @@ The following CSS custom properties were removed in v5.
 `isFocused` → `focused`<br/>
 `isGroupHeaderSelectable` → `groupHeaderSelectable`<br/>
 `isDisabled` → `disabled`<br/>
+`isSearchable` → `searchable`<br/>
 `labelIdentifier` -> `label`<br/>
 `optionIdentifier` -> `itemId`<br/>
 `selectedValue` removed (was already deprecated in v4 in favour of `value`)<br/>
