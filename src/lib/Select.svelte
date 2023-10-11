@@ -75,6 +75,8 @@
     export let hoverItemIndex = 0;
     export let floatingConfig = {};
 
+    export let dragToReorder = false;
+
     export { containerClasses as class };
 
     let containerClasses = '';
@@ -576,6 +578,7 @@
     }
 
     function handleItemClick(args) {
+        console.log('ITEM CLICK!');
         const { item, i } = args;
         if (item?.selectable === false) return;
         if (value && !multiple && value[itemId] === item[itemId]) return closeList();
@@ -662,6 +665,60 @@
             prefloat = false;
         }, 0);
     }
+
+
+    let draggedItem = false;
+
+    const getIdOfNodeOrParent = (node) => node?.dataset?.id ?? getIdOfNodeOrParent(node.parentNode);
+
+    const dragStart = (ev) => {
+        console.log(ev.target);
+        ev.dataTransfer.setData('sourceId', ev.target?.dataset?.id);
+    };
+    const dragOver = (ev) => {
+        ev.preventDefault();
+        draggedItem = getIdOfNodeOrParent(ev.target);
+    };
+
+    const dragLeave = (ev) => {
+        if (draggedItem === getIdOfNodeOrParent(ev.target)) {
+            draggedItem = false;
+        }
+    };
+    const dragDrop = (ev) => {
+        ev.preventDefault();
+        draggedItem = false;
+        reorder({
+            from: ev.dataTransfer.getData('sourceId'),
+            to: getIdOfNodeOrParent(ev.target),
+        });
+    };
+
+    const reorder = ({ from, to }) => {
+        const vals = value.map((item) => item.value);
+        const indFrom = vals.indexOf(from);
+        const indTo = vals.indexOf(to);
+
+        if (indFrom < indTo) {
+            //    [a, b, FROM, c, d, TO, e, f]
+            // => [a, b, c, d, TO, FROM, e, f]
+            value = [
+                ...value.slice(0, indFrom),
+                ...value.slice(indFrom + 1, indTo + 1),
+                value[indFrom],
+                ...value.slice(indTo + 1),
+            ];
+        } else if (indTo < indFrom) {
+            // [a, b, TO, c, d, FROM, e, f]
+            // => [a, b, FROM, TO, c, d, e, f]
+            value = [
+                ...value.slice(0, indTo),
+                value[indFrom],
+                ...value.slice(indTo, indFrom),
+                ...value.slice(indFrom + 1),
+            ];
+        }
+    };
 </script>
 
 <svelte:window on:click={handleClickOutside} on:keydown={handleKeyDown} />
@@ -676,7 +733,6 @@
     class:error={hasError}
     style={containerStyles}
     on:pointerup|preventDefault={handleClick}
-    on:mousedown|preventDefault
     bind:this={container}
     use:floatingRef
     role="none">
@@ -695,12 +751,13 @@
                     <div
                         on:mouseover={() => handleHover(i)}
                         on:focus={() => handleHover(i)}
-                        on:click|stopPropagation={() => handleItemClick({ item, i })}
+                        on:click={() => handleItemClick({ item, i })}
                         on:keydown|preventDefault|stopPropagation
                         class="list-item"
                         tabindex="-1"
                         role="none">
                         <div
+                            on:mousedown|preventDefault
                             use:activeScroll={{ scroll: isItemActive(item, value, itemId), listDom }}
                             use:hoverScroll={{ scroll: scrollToHoverItem === i, listDom }}
                             class="item"
@@ -748,7 +805,14 @@
                         class:disabled
                         on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}
                         on:keydown|preventDefault|stopPropagation
-                        role="none">
+                        role="none"
+                        data-id={item.value}
+                        draggable={dragToReorder ? 'true' : 'false'}
+                        on:dragstart={dragStart}
+                        on:dragover={dragOver}
+                        on:dragleave={dragLeave}
+                        on:drop={dragDrop}
+                        class:over={item.value === draggedItem}>
                         <span class="multi-item-text">
                             <slot name="selection" selection={item} index={i}>
                                 {item[label]}
@@ -776,6 +840,7 @@
         {/if}
 
         <input
+            on:mousedown|preventDefault
             on:keydown={handleKeyDown}
             on:blur={handleBlur}
             on:focus={handleFocus}

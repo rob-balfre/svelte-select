@@ -55,6 +55,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | containerStyles        | `string`  | `''`            | Add inline styles to container                                 |
 | clearable              | `boolean` | `true`          | Enable clearing of value(s)                                    |
 | disabled               | `boolean` | `false`         | Disable select                                                 |
+| dragToReorder          | `boolean` | `false`         | Allow selected items to be re-ordered with drag-and-drop       |
 | multiple               | `boolean` | `false`         | Enable multi-select                                            |
 | searchable             | `boolean` | `true`          | If `false` search/filtering is disabled                        |
 | groupHeaderSelectable  | `boolean` | `false`         | Enable selectable group headers                                |
