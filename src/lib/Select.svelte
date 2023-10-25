@@ -13,6 +13,7 @@
     import LoadingIcon from './LoadingIcon.svelte';
 
     export let justValue = null; // read-only
+    export let useJustValue = false;
 
     export let filter = _filter;
     export let getItems = _getItems;
@@ -815,7 +816,7 @@
     </div>
 
     <slot name="input-hidden" {value}>
-        <input {name} type="hidden" value={value ? JSON.stringify(value) : null} />
+        <input {name} type="hidden" value={useJustValue ? justValue : (value ? JSON.stringify(value) : null)} />
     </slot>
 
     {#if required && (!value || value.length === 0)}
