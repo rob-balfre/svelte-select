@@ -504,7 +504,6 @@
     }
 
     function closeList() {
-        filterText = '';
         listOpen = false;
     }
 
@@ -664,8 +663,6 @@
     }
 </script>
 
-<svelte:window on:click={handleClickOutside} on:keydown={handleKeyDown} />
-
 <div
     class="svelte-select {containerClasses}"
     class:multi={multiple}
@@ -675,8 +672,6 @@
     class:show-chevron={showChevron}
     class:error={hasError}
     style={containerStyles}
-    on:pointerup|preventDefault={handleClick}
-    on:mousedown|preventDefault
     bind:this={container}
     use:floatingRef
     role="none">
