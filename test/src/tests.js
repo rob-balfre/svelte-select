@@ -518,6 +518,29 @@ test('blur should close list and remove focus from select', async (t) => {
   select.$destroy();
 });
 
+test('blur should close list and remove focus from select but preserve filterText value', async (t) => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+
+  const select = new Select({
+    target,
+    props: {
+      items,
+      clearFilterTextOnBlur: false
+    }
+  });
+
+  select.$set({focused: true});
+  select.$set({filterText: 'potato'});
+  div.click();
+  div.remove();
+  t.ok(!document.querySelector('.svelte-select-list'));
+  t.ok(document.querySelector('.svelte-select input') !== document.activeElement);
+  const selectInput = document.querySelector('.svelte-select input');
+  t.ok(selectInput.attributes.filterText === 'potato');
+  select.$destroy();
+});
+
 test('selecting item should close list but keep focus on select', async (t) => {
   const select = new Select({
     target,

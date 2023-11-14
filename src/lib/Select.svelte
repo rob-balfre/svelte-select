@@ -42,6 +42,7 @@
     export let filterSelectedItems = true;
     export let required = false;
     export let closeListOnChange = true;
+    export let clearFilterTextOnBlur = true;
 
     export let createGroupHeaderItem = (groupValue, item) => {
         return {
@@ -471,6 +472,7 @@
 
     function handleClick() {
         if (disabled) return;
+        if (filterText.length > 0) return listOpen = true;
         listOpen = !listOpen;
     }
 
@@ -504,7 +506,9 @@
     }
 
     function closeList() {
-        filterText = '';
+        if (clearFilterTextOnBlur) {
+            filterText = '';
+        }
         listOpen = false;
     }
 
@@ -676,7 +680,6 @@
     class:error={hasError}
     style={containerStyles}
     on:pointerup|preventDefault={handleClick}
-    on:mousedown|preventDefault
     bind:this={container}
     use:floatingRef
     role="none">
@@ -687,7 +690,8 @@
             class="svelte-select-list"
             class:prefloat
             on:scroll={handleListScroll}
-            on:pointerup|preventDefault|stopPropagation>
+            on:pointerup|preventDefault|stopPropagation
+            on:mousedown|preventDefault|stopPropagation>
             {#if $$slots['list-prepend']}<slot name="list-prepend" />{/if}
             {#if $$slots.list}<slot name="list" {filteredItems} />
             {:else if filteredItems.length > 0}
