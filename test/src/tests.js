@@ -536,8 +536,9 @@ test('blur should close list and remove focus from select but preserve filterTex
   div.remove();
   t.ok(!document.querySelector('.svelte-select-list'));
   t.ok(document.querySelector('.svelte-select input') !== document.activeElement);
-  const selectInput = document.querySelector('.svelte-select input');
-  t.ok(selectInput.attributes.filterText === 'potato');
+  const selectInput = document.querySelector('.svelte-select .value-container input');
+  await wait(0);
+  t.ok(selectInput.value === 'potato');
   select.$destroy();
 });
 
