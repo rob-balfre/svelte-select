@@ -72,6 +72,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | required               | `boolean` | `false`         | If `Select` is within a `<form>` will restrict form submission |
 | multiFullItemClearable | `boolean` | `false`         | When `multiple` selected items will clear on click             |
 | closeListOnChange      | `boolean` | `true`          | After `on:change` list will close                              |
+| clearFilterTextOnBlur  | `boolean` | `true`          | If `false`, `filterText` value is preserved on:blur            |
 
 
 ## Named slots
