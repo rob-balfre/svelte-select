@@ -455,7 +455,7 @@
     function handleFocus(e) {
         if (focused && input === document?.activeElement) return;
         if (e) dispatch('focus', e);
-        input.focus();
+        input?.focus();
         focused = true;
     }
 
@@ -466,7 +466,7 @@
             closeList();
             focused = false;
             activeValue = undefined;
-            input.blur();
+            input?.blur();
         }
     }
 
