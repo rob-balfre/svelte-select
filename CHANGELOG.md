@@ -1,5 +1,10 @@
 # svelte-select changelog
 
+## 5.8.0
+
+* #626 added clearFilterTextOnBlur prop (thanks to @mBoegvald)
+* #644 Fixed input focus issue (thanks to @524c)
+
 ## 5.7.0
 
 * #617 added custom group title border variable support (thanks to @lipe-dev)
