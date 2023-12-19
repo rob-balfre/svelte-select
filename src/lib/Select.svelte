@@ -1,6 +1,6 @@
 <script>
     import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
-    import { offset, flip, shift } from '@floating-ui/dom';
+    import { offset, flip, shift } from 'svelte-floating-ui/dom';
     import { createFloatingActions } from 'svelte-floating-ui';
 
     const dispatch = createEventDispatcher();
@@ -691,7 +691,8 @@
             class:prefloat
             on:scroll={handleListScroll}
             on:pointerup|preventDefault|stopPropagation
-            on:mousedown|preventDefault|stopPropagation>
+            on:mousedown|preventDefault|stopPropagation
+			role="none">
             {#if $$slots['list-prepend']}<slot name="list-prepend" />{/if}
             {#if $$slots.list}<slot name="list" {filteredItems} />
             {:else if filteredItems.length > 0}
