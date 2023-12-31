@@ -716,6 +716,7 @@
 
     .selectContainer input:focus {
         outline: none;
+        box-shadow: none;
     }
 
     .selectContainer:hover {
