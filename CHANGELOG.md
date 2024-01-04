@@ -1,6 +1,6 @@
 # svelte-select changelog
 
-## 5.8.1
+## 5.8.2
 
 * #658 Fixed ARIA + vite-plugin-svelte warnings (thanks to @stephenlrandall)
 
