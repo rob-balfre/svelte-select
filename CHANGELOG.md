@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 5.8.1
+
+* #658 Fixed ARIA + vite-plugin-svelte warnings (thanks to @stephenlrandall)
+
 ## 5.8.0
 
 * #626 added clearFilterTextOnBlur prop (thanks to @mBoegvald)
