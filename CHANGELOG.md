@@ -1,5 +1,9 @@
 # svelte-select changelog
 
+## 5.8.3
+
+* #651 Fixed: unknown extension .svelte (thanks to @happysalada)
+
 ## 5.8.2
 
 * #658 Fixed ARIA + vite-plugin-svelte warnings (thanks to @stephenlrandall)
