@@ -1,4 +1,4 @@
-const { writeFile, mkdir } = require('fs/promises');
+const { writeFile, copyFile, mkdir } = require('fs/promises');
 const path = require("path");
 const { find } = require("find-in-files");
 
@@ -17,6 +17,8 @@ const SOURCE_FOLDER = path.join(__dirname, 'lib');
         }
         promises.push(writeFile(path.join(__dirname, '/lib/no-styles', fileName), searchResults[key].matches[0]));
     });
+    promises.push(copyFile(path.join(__dirname, '/lib/index.js'), path.join(__dirname, '/lib/no-styles/index.js')));
+    promises.push(copyFile(path.join(__dirname, '/lib/index.d.ts'), path.join(__dirname, '/lib/no-styles/index.d.ts')));
 
     const all = await Promise.all(promises);
 })();
