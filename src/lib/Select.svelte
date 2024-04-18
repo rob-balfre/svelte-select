@@ -709,6 +709,7 @@
                             use:activeScroll={{ scroll: isItemActive(item, value, itemId), listDom }}
                             use:hoverScroll={{ scroll: scrollToHoverItem === i, listDom }}
                             class="item"
+			    title={item?.[label]}
                             class:list-group-title={item.groupHeader}
                             class:active={isItemActive(item, value, itemId)}
                             class:first={isItemFirst(i)}
