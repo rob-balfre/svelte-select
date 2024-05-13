@@ -85,15 +85,19 @@
     let prev_multiple;
 
     function setValue() {
-        if (typeof value === 'string') {
-            let item = (items || []).find((item) => item[itemId] === value);
-            value = item || {
-                [itemId]: value,
-                label: value,
-            };
+        if (value != null && typeof value !== 'object') {
+            value = findOrCreateObject(value);
         } else if (multiple && Array.isArray(value) && value.length > 0) {
-            value = value.map((item) => (typeof item === 'string' ? { value: item, label: item } : item));
+            value = value.map((item) => (item != null && typeof item !== 'object' ? findOrCreateObject(item) : item));
         }
+    }
+
+    function findOrCreateObject(value) {
+        let item = (items || []).find((item) => item[itemId] === value);
+        return item || {
+            [itemId]: value,
+            label: value,
+        };
     }
 
     let _inputAttributes;
