@@ -264,10 +264,10 @@
         placeholderAlwaysShow && multiple
             ? placeholder
             : multiple && value?.length === 0
-            ? placeholder
-            : value
-            ? ''
-            : placeholder;
+                ? placeholder
+                : value
+                    ? ''
+                    : placeholder;
     $: ariaSelection = value ? handleAriaSelection(multiple) : '';
     $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, focused, listOpen });
     $: updateValueDisplay(items);
@@ -692,7 +692,7 @@
             on:scroll={handleListScroll}
             on:pointerup|preventDefault|stopPropagation
             on:mousedown|preventDefault|stopPropagation
-			role="none">
+            role="none">
             {#if $$slots['list-prepend']}<slot name="list-prepend" />{/if}
             {#if $$slots.list}<slot name="list" {filteredItems} />
             {:else if filteredItems.length > 0}
@@ -746,31 +746,35 @@
     <div class="value-container">
         {#if hasValue}
             {#if multiple}
-                {#each value as item, i}
-                    <div
-                        class="multi-item"
-                        class:active={activeValue === i}
-                        class:disabled
-                        on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}
-                        on:keydown|preventDefault|stopPropagation
-                        role="none">
+                {#if $$slots['multi-selection']}
+                    <slot name="multi-selection" selection={value} />
+                {:else}
+                    {#each value as item, i}
+                        <div
+                            class="multi-item"
+                            class:active={activeValue === i}
+                            class:disabled
+                            on:click|preventDefault={() => (multiFullItemClearable ? handleMultiItemClear(i) : {})}
+                            on:keydown|preventDefault|stopPropagation
+                            role="none">
                         <span class="multi-item-text">
                             <slot name="selection" selection={item} index={i}>
                                 {item[label]}
                             </slot>
                         </span>
 
-                        {#if !disabled && !multiFullItemClearable && ClearIcon}
-                            <div
-                                class="multi-item-clear"
-                                on:pointerup|preventDefault|stopPropagation={() => handleMultiItemClear(i)}>
-                                <slot name="multi-clear-icon">
-                                    <ClearIcon />
-                                </slot>
-                            </div>
-                        {/if}
-                    </div>
-                {/each}
+                            {#if !disabled && !multiFullItemClearable && ClearIcon}
+                                <div
+                                    class="multi-item-clear"
+                                    on:pointerup|preventDefault|stopPropagation={() => handleMultiItemClear(i)}>
+                                    <slot name="multi-clear-icon">
+                                        <ClearIcon />
+                                    </slot>
+                                </div>
+                            {/if}
+                        </div>
+                    {/each}
+                {/if}
             {:else}
                 <div class="selected-item" class:hide-selected-item={hideSelectedItem}>
                     <slot name="selection" selection={value}>
