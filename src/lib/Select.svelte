@@ -366,6 +366,12 @@
     function handleKeyDown(e) {
         if (!focused) return;
         e.stopPropagation();
+
+        // allow users to override our handler
+        if (!dispatch("keydown", e, { cancelable: true })) {
+          return;
+        }
+
         switch (e.key) {
             case 'Escape':
                 e.preventDefault();
