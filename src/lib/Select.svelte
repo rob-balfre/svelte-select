@@ -2,6 +2,7 @@
     import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
     import { offset, flip, shift } from 'svelte-floating-ui/dom';
     import { createFloatingActions } from 'svelte-floating-ui';
+    import { portal } from "svelte-portal";
 
     const dispatch = createEventDispatcher();
 
@@ -43,6 +44,7 @@
     export let required = false;
     export let closeListOnChange = true;
     export let clearFilterTextOnBlur = true;
+    export let renderListTo = undefined;
 
     export let createGroupHeaderItem = (groupValue, item) => {
         return {
@@ -683,8 +685,9 @@
     bind:this={container}
     use:floatingRef
     role="none">
-    {#if listOpen}
+    {#if listOpen && container}
         <div
+            use:portal={renderListTo ?? container}
             use:floatingContent
             bind:this={list}
             class="svelte-select-list"
