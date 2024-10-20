@@ -27,8 +27,12 @@
 npm install svelte-select
 ```
 
-## Upgrading from Svelte Select v4 to v5 (not to be confused with Svelte v5!)
-See [migration guide](/MIGRATION_GUIDE.md) if upgrading from v4 to v5.
+## Svelte 5
+I'm not currently using Svelte 5 in my day job or personal projects so might be a while before I tackle porting / upgrading to Svelte 5. Looking forward to it though, just need to find the time!
+
+
+## Upgrading Svelte Select
+See [migration guide](/MIGRATION_GUIDE.md) if upgrading
 
 
 ## Rollup and low/no-build setups
