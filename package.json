@@ -70,6 +70,6 @@
     }
   },
   "dependencies": {
-    "svelte-floating-ui": "1.5.8"
+    "svelte-floating-ui": "1.5.9"
   }
 }
