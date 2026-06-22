@@ -8,3 +8,4 @@ node_modules
 /package
 /src/lib/no-styles
 .env
+__screenshots__
