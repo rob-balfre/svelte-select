@@ -12,7 +12,7 @@
         "gen:docs": "node docs/generate_theming_variables_md.js",
         "preprepare": "node src/remove-styles.js",
         "prepare": "svelte-package -o package",
-        "postprepare": "node src/post-prepare.cjs && npm run gen:docs",
+        "postprepare": "node src/post-prepare.js && npm run gen:docs",
         "release": "release-it"
     },
     "devDependencies": {
