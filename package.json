@@ -9,7 +9,7 @@
         "preview": "vite preview",
         "test": "vitest run --browser",
         "test:watch": "vitest --browser",
-        "gen:docs": "node docs/generate_theming_variables_md.cjs",
+        "gen:docs": "node docs/generate_theming_variables_md.js",
         "preprepare": "node src/remove-styles.js",
         "prepare": "svelte-package -o package",
         "postprepare": "node src/post-prepare.cjs && npm run gen:docs",
