@@ -44,17 +44,7 @@
     "keywords": [
         "svelte"
     ],
-    "release-it": {
-        "hooks": {
-            "after:bump": "npm run prepare"
-        },
-        "github": {
-            "release": false
-        },
-        "npm": {
-            "publishPath": "./package"
-        }
-    },
+    "packageManager": "pnpm@10.4.0",
     "type": "module",
     "exports": {
         "./package.json": "./package.json",
