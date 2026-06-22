@@ -60,7 +60,16 @@
         ".": {
             "types": "./package/index.d.ts",
             "svelte": "./package/index.js"
-        }
+        },
+        "./no-styles": {
+            "types": "./package/no-styles/Select.svelte.d.ts",
+            "svelte": "./package/no-styles/Select.svelte"
+        },
+        "./no-styles/Select.svelte": {
+            "types": "./package/no-styles/Select.svelte.d.ts",
+            "svelte": "./package/no-styles/Select.svelte"
+        },
+        "./tailwind.css": "./package/tailwind.css"
     },
     "dependencies": {
         "svelte-floating-ui": "1.5.8"
