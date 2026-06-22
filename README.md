@@ -319,7 +319,7 @@ You can also use the `inputStyles` prop to write in any override styles needed f
 ```
 
 ### 🧪 Experimental: Replace styles (Tailwind, Bootstrap, Bulma etc)
-If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles/Select.svelte'`. Then somewhere in your code or build pipeline add your own. There is a tailwind stylesheet via `import 'svelte-select/tailwind.css'`. It uses `@extend` so PostCSS is required.
+If you'd like to supply your own styles use: `import Select from 'svelte-select/no-styles'`. Then somewhere in your code or build pipeline add your own. There is a tailwind stylesheet via `import 'svelte-select/tailwind.css'`. It uses `@extend` so PostCSS is required.
 
 
 ## License

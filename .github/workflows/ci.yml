@@ -1,0 +1,43 @@
+name: CI
+on:
+    push:
+        branches: [master]
+    pull_request:
+permissions:
+    contents: read # to fetch code (actions/checkout)
+
+env:
+    # We only install Chromium manually
+    PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+jobs:
+    Tests:
+        permissions: {}
+        runs-on: ${{ matrix.os }}
+        timeout-minutes: 15
+        strategy:
+            matrix:
+                include:
+                    - node-version: 24
+                      os: windows-latest
+                    - node-version: 24
+                      os: macOS-latest
+                    - node-version: 20
+                      os: ubuntu-latest
+                    - node-version: 22
+                      os: ubuntu-latest
+                    - node-version: 24
+                      os: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v6
+            - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm playwright install chromium
+            - run: pnpm test
+              env:
+                  CI: true
