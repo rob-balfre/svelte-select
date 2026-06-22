@@ -18,9 +18,9 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - node-version: 20
+                    - node-version: 24
                       os: windows-latest
-                    - node-version: 20
+                    - node-version: 24
                       os: macOS-latest
                     - node-version: 20
                       os: ubuntu-latest
