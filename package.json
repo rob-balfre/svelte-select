@@ -16,9 +16,6 @@
         "release": "release-it"
     },
     "devDependencies": {
-        "@rollup/plugin-alias": "^6.0.0",
-        "@rollup/plugin-node-resolve": "^16.0.3",
-        "@rollup/plugin-replace": "^6.0.3",
         "@sveltejs/adapter-auto": "^3.0.0",
         "@sveltejs/adapter-static": "^3.0.0",
         "@sveltejs/kit": "^2.0.0",
@@ -31,11 +28,6 @@
         "prettier": "~2.8.7",
         "prettier-plugin-svelte": "^2.10.1",
         "release-it": "^15.10.0",
-        "rollup": "^4.62.2",
-        "rollup-plugin-cleaner": "^1.0.0",
-        "rollup-plugin-css-only": "^4.3.0",
-        "rollup-plugin-postcss": "^4.0.2",
-        "rollup-plugin-svelte": "^7.1.5",
         "sirv-cli": "^2.0.2",
         "svelte": "^4.0.0",
         "svelte-highlight": "^7.2.1",
