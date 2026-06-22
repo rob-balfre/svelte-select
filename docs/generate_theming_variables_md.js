@@ -44,7 +44,7 @@ const newDependencySectionAsRegexReplaceExpression = [
 const oldContent = fs.readFileSync(DOC_FILE_PATH, 'utf8');
 const oldFileDoesNotContainSection = oldContent.search(VARIABLE_SECTION_PATTERN) === -1;
 if (oldFileDoesNotContainSection) {
-    console.error(`Could not find variable section in ${DOC_FILE_PATH}`);
+    console.error(`Could not find variable section in ${DOC_FILE_PATH}: ${oldContent}`);
     process.exit(1);
 }
 fs.writeFileSync(
