@@ -82,6 +82,7 @@
     let activeValue;
     let prev_value;
     let prev_filterText;
+    let prev_loadOptions;
     let prev_multiple;
 
     function setValue() {
@@ -201,7 +202,7 @@
     $: if (value) dispatchSelectedItem();
     $: if (!value && multiple && prev_value) dispatch('input', value);
     $: if (!focused && input) closeList();
-    $: if (filterText !== prev_filterText) setupFilterText();
+    $: if (filterText !== prev_filterText || prev_loadOptions !== loadOptions) setupFilterText();
     $: if (!multiple && listOpen && value && filteredItems) setValueIndexAsHoverIndex();
     $: dispatchHover(hoverItemIndex);
 
@@ -305,6 +306,7 @@
     beforeUpdate(async () => {
         prev_value = value;
         prev_filterText = filterText;
+        prev_loadOptions = loadOptions;
         prev_multiple = multiple;
     });
 
