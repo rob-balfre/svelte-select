@@ -11,10 +11,7 @@
 
     function handleFilter(e) {
         if (e.detail.length === 0 && filterText.length > 0) {
-            items = [
-                ...items.filter((i) => !i.created),
-                { value: filterText, label: filterText, created: true },
-            ];
+            items = [...items.filter((i) => !i.created), { value: filterText, label: filterText, created: true }];
         }
     }
 </script>
