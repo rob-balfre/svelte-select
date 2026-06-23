@@ -6,6 +6,7 @@ const config = defineConfig({
         sveltekit({
             vitePlugin: {
                 compilerOptions: {
+                    hydratable: true,
                     accessors: true,
                     dev: true,
                 },

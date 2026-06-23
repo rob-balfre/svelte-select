@@ -15,6 +15,12 @@ import MultiItemColor from './MultiItemColor.svelte';
 import GroupHeaderNotSelectable from './GroupHeaderNotSelectable.svelte';
 import HoverItemIndexTest from './HoverItemIndexTest.svelte';
 import LoadOptionsGroup from './LoadOptionsGroup.svelte';
+import EmptySlotTest from './EmptySlotTest.svelte';
+import LoadingIconSlotTest from './LoadingIconSlotTest.svelte';
+import MultiClearIconSlotTest from './MultiClearIconSlotTest.svelte';
+import RequiredSlotTest from './RequiredSlotTest.svelte';
+import ListPositionFixedTest from './ListPositionFixedTest.svelte';
+import CreateItemTest from './CreateItemTest.svelte';
 
 function querySelectorClick(selector) {
     if (selector === '.svelte-select') {
@@ -3773,4 +3779,201 @@ test('when loadOptions and value then it should set initial value', async () => 
     ok(document.querySelector('.value-container .selected-item').innerHTML === 'Cake');
 
     select.$destroy();
+});
+
+test('when item is selected then select event fires with selected item', async () => {
+    const select = new Select({
+        target,
+        props: {
+            listOpen: true,
+            items,
+        },
+    });
+
+    let selectedItem;
+
+    select.$on('select', (event) => {
+        selectedItem = event.detail;
+    });
+
+    await handleKeyboard('Enter');
+    await wait(0);
+
+    equal(selectedItem.value, 'chocolate');
+    equal(selectedItem.label, 'Chocolate');
+
+    select.$destroy();
+});
+
+test('when filterSelectedItems is false selected items remain in filtered list', async () => {
+    const select = new Select({
+        target,
+        props: {
+            multiple: true,
+            items,
+            value: [{ value: 'chips', label: 'Chips' }],
+            filterSelectedItems: false,
+            listOpen: true,
+        },
+    });
+
+    ok(select.getFilteredItems().length === 5);
+    ok(select.getFilteredItems().some((item) => item.value === 'chips'));
+
+    select.$destroy();
+});
+
+test('when hoverItemIndex changes then hoverItem event fires', async () => {
+    const select = new Select({
+        target,
+        props: {
+            listOpen: true,
+            items,
+        },
+    });
+
+    const hoverIndexes = [];
+
+    select.$on('hoverItem', (event) => {
+        hoverIndexes.push(event.detail);
+    });
+
+    await wait(0);
+    await handleKeyboard('ArrowDown');
+    await wait(0);
+
+    ok(hoverIndexes.length > 0);
+    ok(hoverIndexes.includes(1));
+
+    select.$destroy();
+});
+
+test('when required is true and no value then hidden required select is rendered', async () => {
+    const select = new Select({
+        target,
+        props: {
+            items,
+            required: true,
+        },
+    });
+
+    const requiredSelect = document.querySelector('select.required');
+    ok(requiredSelect);
+    ok(requiredSelect.required);
+
+    select.$destroy();
+});
+
+test('when required slot is supplied then render custom content', async () => {
+    const select = new RequiredSlotTest({
+        target,
+    });
+
+    ok(document.querySelector('.custom-required').innerHTML === 'REQUIRED');
+
+    select.$destroy();
+});
+
+test('when empty slot is supplied then render custom content', async () => {
+    const select = new EmptySlotTest({
+        target,
+    });
+
+    ok(document.querySelector('.custom-empty').innerHTML === 'Nothing to see here...');
+
+    select.$destroy();
+});
+
+test('when loading-icon slot is supplied then render custom content', async () => {
+    const select = new LoadingIconSlotTest({
+        target,
+    });
+
+    ok(document.querySelector('.loading div').innerHTML === '★');
+
+    select.$destroy();
+});
+
+test('when multi-clear-icon slot is supplied then render custom content', async () => {
+    const select = new MultiClearIconSlotTest({
+        target,
+    });
+
+    ok(document.querySelector('.multi-item-clear div').innerHTML === '❌');
+
+    select.$destroy();
+});
+
+test('when debounceWait is set loadOptions is delayed', async () => {
+    let loadOptionsCalls = 0;
+
+    const select = new Select({
+        target,
+        props: {
+            debounceWait: 100,
+            loadOptions: async () => {
+                loadOptionsCalls++;
+                return ['a', 'b'];
+            },
+        },
+    });
+
+    select.$set({ filterText: 'test' });
+    await wait(50);
+    equal(loadOptionsCalls, 0);
+
+    await wait(100);
+    equal(loadOptionsCalls, 1);
+
+    select.$destroy();
+});
+
+test('when floatingConfig strategy is fixed list uses fixed positioning', async () => {
+    const select = new Select({
+        target,
+        props: {
+            items,
+            listOpen: true,
+            floatingConfig: { strategy: 'fixed' },
+        },
+    });
+
+    await wait(0);
+
+    const position = getComputedStyle(document.querySelector('.svelte-select-list')).position;
+    equal(position, 'fixed');
+
+    select.$destroy();
+});
+
+test('when list-position css variable is fixed list uses fixed positioning', async () => {
+    const select = new ListPositionFixedTest({
+        target,
+    });
+
+    await wait(0);
+
+    const position = getComputedStyle(document.querySelector('.svelte-select-list')).position;
+    equal(position, 'fixed');
+
+    select.$destroy();
+});
+
+test('when filter has no matches create-item pattern adds and selects new item', async () => {
+    const createItem = new CreateItemTest({
+        target,
+    });
+
+    createItem.$set({ filterText: 'newitem' });
+    await wait(0);
+
+    ok(document.querySelector('.item').innerHTML.includes('newitem'));
+
+    await handleKeyboard('Enter');
+    await wait(0);
+
+    equal(createItem.value.label, 'newitem');
+    equal(createItem.value.created, true);
+
+    createItem.$destroy();
 });
