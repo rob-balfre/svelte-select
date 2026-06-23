@@ -761,6 +761,7 @@
     let _floatingConfig = {
         strategy: 'absolute',
         placement: 'bottom-start',
+        // svelte-ignore state_referenced_locally
         middleware: [offset(listOffset), flip(), shift()],
         autoUpdate: false,
     };
@@ -896,6 +897,7 @@
                         </span>
 
                         {#if !disabled && !multiFullItemClearable && ClearIcon}
+                            <!-- svelte-ignore a11y_no_static_element_interactions -->
                             <div
                                 class="multi-item-clear"
                                 onpointerup={(e) => {

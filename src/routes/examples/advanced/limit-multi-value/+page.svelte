@@ -10,9 +10,9 @@
         { value: 'six', label: 'Six' },
     ];
 
-    let value = $derived(value?.length === 4);
-
-    let items = $derived(maxItems ? [] : [..._items]);
+    let value = $state();
+    const maxItems = $derived(value?.length === 4);
+    const items = $derived(maxItems ? [] : [..._items]);
 </script>
 
 <Select {items} multiple bind:value>
