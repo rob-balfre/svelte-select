@@ -353,51 +353,19 @@
         }
     });
 
-    // Single batched side-effect block (Svelte 4 `$:` batch semantics) — prev_* updated last
-    // $effect(() => {
-    //     if (items !== undefined && value !== undefined) setValue();
-    //     if (inputAttributes || !searchable) assignInputAttributes();
-    //     if (multiple) setupMulti();
-    //     if (prev_multiple && !multiple) setupSingle();
-    //     if (multiple && value && value.length > 1) checkValueForDuplicates();
-    //     updateValueDisplay(items);
-
-    //     if (value) dispatchSelectedItem();
-    //     if (!value && multiple && prev_value) oninput?.(value);
-    //     if (!multiple && prev_value && !value) oninput?.(value);
-
-    //     if (prev_focused && !focused && input) closeList();
-    //     if (filterText !== prev_filterText) setupFilterText();
-    //     if (!multiple && listOpen && value && filteredItems) setValueIndexAsHoverIndex();
-    //     onhoverItem?.(hoverItemIndex);
-    //     if (listOpen && filteredItems && !multiple && !value) checkHoverSelectable();
-    //     if (listOpen) onfilter?.(filteredItems);
-    //     if (listOpen && multiple && hoverItemIndex !== 0) hoverItemIndex = 0;
-    //     if (input && listOpen && !focused) handleFocus();
-    //     if (filterText && hoverItemIndex !== 0) hoverItemIndex = 0;
-    // });
-
     // ssr?
     $effect(() => {
         if (items !== undefined && value !== undefined) untrack(setValue);
     });
 
-    // --> $derived now
-    // $effect(() => {
-    //     if (inputAttributes || !searchable) assignInputAttributes();
-    // });
-
-    // ssr?
     $effect(() => {
         if (multiple) untrack(setupMulti);
     });
 
-    // ssr?
     $effect(() => {
         if (!multiple && prev_multiple) untrack(setupSingle);
     });
 
-    // ssr?
     $effect(() => {
         if (multiple && value && value.length > 1) untrack(checkValueForDuplicates);
     });
