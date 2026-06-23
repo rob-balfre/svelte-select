@@ -10,14 +10,15 @@
         { value: 'six', label: 'Six' },
     ];
 
-    let value;
+    let value = $derived(value?.length === 4);
 
-    $: maxItems = value?.length === 4;
-    $: items = maxItems ? [] : [..._items];
+    let items = $derived(maxItems ? [] : [..._items]);
 </script>
 
 <Select {items} multiple bind:value>
-    <div class="empty" slot="empty">{maxItems ? 'Max 4 items' : 'No options'}</div>
+    {#snippet empty()}
+        <div class="empty">{maxItems ? 'Max 4 items' : 'No options'}</div>
+    {/snippet}
 </Select>
 
 <style>

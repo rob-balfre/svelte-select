@@ -1,10 +1,12 @@
 <script>
     import Select from '../../src/lib/Select.svelte';
 
-    let items = ['one', 'two'];
-    let value;
+    let items = $state(['one', 'two']);
+    let value = $state();
 </script>
 
 <Select bind:items bind:value>
-    <div class="before" slot="prepend">Before it all</div>
+    {#snippet prepend()}
+        <div class="before">Before it all</div>
+    {/snippet}
 </Select>

@@ -7,9 +7,9 @@
         { value: 'three', label: 'Three' },
     ];
 
-    function handle(e) {
-        console.log(e.detail);
+    function handle(index) {
+        console.log(index);
     }
 </script>
 
-<Select {items} on:hoverItem={handle} />
+<Select {items} onhoverItem={handle} />

@@ -1,12 +1,11 @@
 <script>
     import Select from '../../src/lib/Select.svelte';
 
-    let items = [
-        { value: 'one', label: 'One' },
-        { value: 'two', label: 'Two' },
-    ];
+    let items = $state(['one', 'two']);
 </script>
 
 <Select {items} required>
-    <div class="custom-required" slot="required">REQUIRED</div>
+    {#snippet requiredIndicator()}
+        <div class="custom-required">REQUIRED</div>
+    {/snippet}
 </Select>

@@ -9,7 +9,7 @@
         { value: 'three', label: 'Three' },
     ];
 
-    let value;
+    let value = $state();
 </script>
 
 <Select {items} value="One" />

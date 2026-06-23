@@ -1,12 +1,12 @@
 <script>
     import Select from '../../src/lib/Select.svelte';
 
-    let items = [
-        { value: 'one', label: 'One' },
-        { value: 'two', label: 'Two' },
-    ];
+    let items = $state(['one', 'two']);
+    let value = $state(['one']);
 </script>
 
-<Select {items} multiple value={[items[0]]}>
-    <div slot="multi-clear-icon">❌</div>
+<Select bind:items bind:value multiple>
+    {#snippet multiClearIcon()}
+        <div>❌</div>
+    {/snippet}
 </Select>

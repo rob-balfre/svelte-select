@@ -8,12 +8,12 @@
     ];
 
     function handle(e) {
-        console.log(e.detail);
+        console.log(e);
     }
 </script>
 
-<Select {items} on:blur={handle} searchable={false} />
+<Select {items} onblur={handle} searchable={false} />
 
 <br />
 
-<Select {items} on:blur={handle} multiple />
+<Select {items} onblur={handle} multiple />

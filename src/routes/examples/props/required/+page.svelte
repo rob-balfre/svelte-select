@@ -1,4 +1,7 @@
 <script>
+    import { createBubbler, preventDefault } from 'svelte/legacy';
+
+    const bubble = createBubbler();
     import Select from '$lib/Select.svelte';
 
     let items = [
@@ -8,7 +11,7 @@
     ];
 </script>
 
-<form on:submit|preventDefault>
+<form onsubmit={preventDefault(bubble('submit'))}>
     <Select {items} required />
     <button type="submit">Submit</button>
 </form>

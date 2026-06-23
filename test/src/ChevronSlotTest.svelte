@@ -1,17 +1,19 @@
 <script>
     import Select from '../../src/lib/Select.svelte';
 
-    let items = ['one', 'two'];
-    let value;
-    let listOpen = true;
+    let items = $state(['one', 'two']);
+    let value = $state();
+    let listOpen = $state(true);
 </script>
 
 <Select bind:items bind:value bind:listOpen showChevron>
-    <div slot="chevron-icon">
-        {#if listOpen}
-            ⬆️
-        {:else}
-            ⬇️
-        {/if}
-    </div>
+    {#snippet chevronIcon()}
+        <div>
+            {#if listOpen}
+                ⬆️
+            {:else}
+                ⬇️
+            {/if}
+        </div>
+    {/snippet}
 </Select>

@@ -7,9 +7,9 @@
         { value: 'three', label: 'Three' },
     ];
 
-    let loading = true;
+    let loading = $state(true);
 </script>
 
-<button on:click={() => (loading = !loading)}>Toggle Loading</button>
+<button onclick={() => (loading = !loading)}>Toggle Loading</button>
 
 <Select {items} bind:loading />

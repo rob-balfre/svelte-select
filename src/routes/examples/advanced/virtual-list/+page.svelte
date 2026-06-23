@@ -9,11 +9,11 @@
         items.push(i.toString());
     }
 
-    let value = undefined;
-    let listOpen = false;
-    let activeIndex = null;
-    let justValue;
-    let hoverItemIndex = 0;
+    let value = $state(undefined);
+    let listOpen = $state(false);
+    let activeIndex = $state(null);
+    let justValue = $state();
+    let hoverItemIndex = $state(0);
 
     function handleClick(i) {
         activeIndex = i;
@@ -21,8 +21,8 @@
         listOpen = false;
     }
 
-    function handleHover(e) {
-        hoverItemIndex = e;
+    function handleHover(index) {
+        hoverItemIndex = index;
     }
 
     async function handleListOpen() {
@@ -31,7 +31,9 @@
         hoverItemIndex = activeIndex;
     }
 
-    $: handleListOpen(listOpen);
+    $effect(() => {
+        if (listOpen) handleListOpen();
+    });
 </script>
 
 <Select
@@ -41,8 +43,8 @@
     bind:value
     bind:justValue
     bind:hoverItemIndex
-    on:hoverItem={(e) => handleHover(e.detail)}>
-    <svelte:fragment slot="list" let:filteredItems>
+    onhoverItem={handleHover}>
+    {#snippet list({ filteredItems })}
         {#if filteredItems.length > 0}
             <VirtualList
                 width="100%"
@@ -50,24 +52,23 @@
                 itemCount={filteredItems?.length}
                 itemSize={50}
                 scrollToIndex={hoverItemIndex}>
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <!-- svelte-ignore a11y-no-static-element-interactions -->
-                <div
-                    class="item"
-                    class:active={activeIndex === index}
-                    class:hover={hoverItemIndex === index}
-                    slot="item"
-                    let:index
-                    let:style
-                    {style}
-                    on:click={() => handleClick(index)}
-                    on:focus={() => handleHover(index)}
-                    on:mouseover={() => handleHover(index)}>
-                    Item: {filteredItems[index].label}, Index: #{index}
-                </div>
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                {#snippet item({ index, style })}
+                    <div
+                        class="item"
+                        class:active={activeIndex === index}
+                        class:hover={hoverItemIndex === index}
+                        {style}
+                        onclick={() => handleClick(index)}
+                        onfocus={() => handleHover(index)}
+                        onmouseover={() => handleHover(index)}>
+                        Item: {filteredItems[index].label}, Index: #{index}
+                    </div>
+                {/snippet}
             </VirtualList>
         {/if}
-    </svelte:fragment>
+    {/snippet}
 </Select>
 
 <style>

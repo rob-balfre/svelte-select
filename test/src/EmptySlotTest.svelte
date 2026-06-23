@@ -5,5 +5,7 @@
 </script>
 
 <Select {items} listOpen>
-    <div class="custom-empty" slot="empty">Nothing to see here...</div>
+    {#snippet empty()}
+        <div class="custom-empty">Nothing to see here...</div>
+    {/snippet}
 </Select>

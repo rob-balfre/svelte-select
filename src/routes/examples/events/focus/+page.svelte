@@ -8,8 +8,8 @@
     ];
 
     function handle(e) {
-        console.log(e.detail);
+        console.log(e);
     }
 </script>
 
-<Select {items} on:focus={handle} />
+<Select {items} onfocus={handle} />

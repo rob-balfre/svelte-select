@@ -1,3 +1,4 @@
+<!-- @migration-task Error while migrating Svelte code: Can't migrate code with beforeUpdate. Please migrate by hand. -->
 <script>
     import { beforeUpdate, createEventDispatcher, onDestroy, onMount } from 'svelte';
     import { offset, flip, shift } from 'svelte-floating-ui/dom';

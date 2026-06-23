@@ -7,9 +7,9 @@
         { value: 'three', label: 'Three' },
     ];
 
-    let disabled = false;
+    let disabled = $state(false);
 </script>
 
-<button on:click={() => (disabled = !disabled)}>Toggle disabled</button>
+<button onclick={() => (disabled = !disabled)}>Toggle disabled</button>
 
 <Select {items} {disabled} />

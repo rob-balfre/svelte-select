@@ -7,9 +7,10 @@
         items.push({ label: i, value: i, group: 'a' });
     }
 
-    let value = null;
+    let value = $state(null);
 
-    export let hoverItemIndex;
+    /** @type {{hoverItemIndex: any}} */
+    let { hoverItemIndex = $bindable() } = $props();
 </script>
 
 <Select {items} bind:value groupBy={(i) => i.group} bind:hoverItemIndex />

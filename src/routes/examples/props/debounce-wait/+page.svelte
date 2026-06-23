@@ -7,7 +7,7 @@
         { value: 'three', label: 'Three' },
     ];
 
-    let loadOptionsCalled = false;
+    let loadOptionsCalled = $state(false);
 
     function loadOptions() {
         loadOptionsCalled = true;
