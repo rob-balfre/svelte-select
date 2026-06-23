@@ -13,4 +13,3 @@
 </script>
 
 <Select {items} on:focus={handle} />
-

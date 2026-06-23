@@ -1441,7 +1441,7 @@ test('when multiple is true items in value will not appear in list', async () =>
             { value: 'cake', label: 'Cake' },
             { value: 'chips', label: 'Chips' },
             { value: 'ice-cream', label: 'Ice Cream' },
-        ])
+        ]),
     );
 
     select.$destroy();
@@ -1458,8 +1458,8 @@ test('when multiple is true both value and filterText filters list', async () =>
         },
     });
 
-    (select.filterText = 'Pizza'),
-        equal(JSON.stringify(select.getFilteredItems()), JSON.stringify([{ value: 'pizza', label: 'Pizza' }]));
+    ((select.filterText = 'Pizza'),
+        equal(JSON.stringify(select.getFilteredItems()), JSON.stringify([{ value: 'pizza', label: 'Pizza' }])));
 
     select.$destroy();
 });
@@ -1533,7 +1533,7 @@ test('when multiple and groupBy is active then items should be selectable', asyn
     await querySelectorClick('.list-item .group-item');
     equal(
         JSON.stringify(select.value),
-        JSON.stringify([{ groupItem: true, value: 'chocolate', label: 'Chocolate', group: 'Sweet' }])
+        JSON.stringify([{ groupItem: true, value: 'chocolate', label: 'Chocolate', group: 'Sweet' }]),
     );
 
     select.$destroy();

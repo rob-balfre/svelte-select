@@ -13,14 +13,14 @@
         { value: 5, label: 'name 5' },
     ];
 
-    function handleFilter(e) {        
-        if (value?.find(i => i.label === filterText)) return;
+    function handleFilter(e) {
+        if (value?.find((i) => i.label === filterText)) return;
         if (e.detail.length === 0 && filterText.length > 0) {
             const prev = items.filter((i) => !i.created);
             items = [...prev, { value: filterText, label: filterText, created: true }];
         }
     }
-    
+
     function handleChange(e) {
         items = items.map((i) => {
             delete i.created;

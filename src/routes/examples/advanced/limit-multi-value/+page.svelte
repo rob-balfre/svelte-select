@@ -11,7 +11,7 @@
     ];
 
     let value;
-    
+
     $: maxItems = value?.length === 4;
     $: items = maxItems ? [] : [..._items];
 </script>
@@ -19,7 +19,6 @@
 <Select {items} multiple bind:value>
     <div class="empty" slot="empty">{maxItems ? 'Max 4 items' : 'No options'}</div>
 </Select>
-
 
 <style>
     .empty {

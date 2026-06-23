@@ -8,11 +8,8 @@
     ];
 </script>
 
-
 <Select {items} required>
-    <div class="required" slot="required">
-        REQUIRED
-    </div>
+    <div class="required" slot="required">REQUIRED</div>
 </Select>
 
 <style>

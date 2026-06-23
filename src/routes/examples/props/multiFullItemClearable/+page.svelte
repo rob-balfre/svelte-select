@@ -9,4 +9,3 @@
 </script>
 
 <Select {items} multiple multiFullItemClearable />
-

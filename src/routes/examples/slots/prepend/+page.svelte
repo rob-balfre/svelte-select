@@ -8,7 +8,6 @@
     ];
 </script>
 
-
 <Select {items}>
     <div slot="prepend">💪</div>
 </Select>

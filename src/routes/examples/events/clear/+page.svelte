@@ -15,4 +15,3 @@
 <Select {items} on:clear={handle} />
 <br />
 <Select {items} on:clear={handle} multiple />
-

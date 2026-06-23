@@ -10,8 +10,6 @@
 
 <div>
     <Select {items} listOffset={10}></Select>
-
-    
 </div>
 
 <style>

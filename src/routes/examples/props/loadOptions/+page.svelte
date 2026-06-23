@@ -6,7 +6,7 @@
 
     async function handleOptions(filterText) {
         if (filterText.length === 0) return [...items];
-        
+
         const fuse = new Fuse([...items]);
 
         return fuse.search(filterText).map(({ item }) => item);

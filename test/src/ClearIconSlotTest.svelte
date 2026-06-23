@@ -6,7 +6,5 @@
 </script>
 
 <Select bind:items bind:value>
-    <div slot="clear-icon">
-        x
-    </div>
+    <div slot="clear-icon">x</div>
 </Select>

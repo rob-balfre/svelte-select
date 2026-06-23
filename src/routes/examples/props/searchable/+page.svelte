@@ -10,7 +10,6 @@
     let searchable = true;
 </script>
 
-<button on:click={() => searchable = !searchable}>Searchable: {searchable}</button>
+<button on:click={() => (searchable = !searchable)}>Searchable: {searchable}</button>
 
 <Select {items} {searchable} />
-

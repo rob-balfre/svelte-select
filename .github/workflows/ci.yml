@@ -41,3 +41,22 @@ jobs:
             - run: pnpm test
               env:
                   CI: true
+    Lint:
+        permissions: {}
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v6
+            - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+                  cache: pnpm
+            - name: install
+              run: pnpm install --frozen-lockfile
+            - name: type check
+              run: pnpm check
+            - name: lint
+              run: pnpm lint
+            - name: package
+              run: pnpm package

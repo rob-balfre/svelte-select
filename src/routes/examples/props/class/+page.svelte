@@ -12,6 +12,6 @@
 
 <style>
     :global(.foo) {
-        background: pink !important; 
+        background: pink !important;
     }
 </style>
