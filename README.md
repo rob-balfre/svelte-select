@@ -15,7 +15,7 @@
 
 ## Demos
 
-[💥 Examples of every prop, event, slot and more 💥](https://svelte-select-examples.vercel.app)
+[💥 Examples of every prop, callback, snippet and more 💥](https://svelte-select-examples.vercel.app)
 
 [✨ REPL: Simple ✨](https://svelte.dev/repl/c3bbe052fdfc4e87a46ccd9091ee002b)
 
@@ -28,11 +28,10 @@ npm install svelte-select
 ```
 
 ## Svelte 5
-I'm not currently using Svelte 5 in my day job or personal projects so might be a while before I tackle porting / upgrading to Svelte 5. Looking forward to it though, just need to find the time!
 
+`svelte-select` v5+ requires **Svelte 5**. The component uses runes, callback props instead of `createEventDispatcher`, and snippet props instead of named slots.
 
-## Upgrading Svelte Select
-See [migration guide](/MIGRATION_GUIDE.md) if upgrading
+If you are upgrading from an older version, see the [migration guide](/MIGRATION_GUIDE.md).
 
 
 ## Rollup and low/no-build setups
@@ -46,7 +45,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | Prop                   | Type      | Default         | Description                                                    |
 | ---------------------- | --------- | --------------- | -------------------------------------------------------------- |
 | items                  | `any[]`   | `[]`            | Array of items available to display / filter                   |
-| value                  | `any`     | `null`          | Selected value(s)                                              |
+| value                  | `any`     | `undefined`     | Selected value(s)                                              |
 | justValue              | `any`     | `null`          | **READ-ONLY** Selected value(s) excluding container object     |
 | itemId                 | `string`  | `value`         | Override default identifier                                    |
 | label                  | `string`  | `label`         | Override default label                                         |
@@ -75,45 +74,68 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | name                   | `string`  | `null`          | Name attribute of hidden input, helpful for form actions       |
 | required               | `boolean` | `false`         | If `Select` is within a `<form>` will restrict form submission |
 | multiFullItemClearable | `boolean` | `false`         | When `multiple` selected items will clear on click             |
-| closeListOnChange      | `boolean` | `true`          | After `on:change` list will close                              |
-| clearFilterTextOnBlur  | `boolean` | `true`          | If `false`, `filterText` value is preserved on:blur            |
+| closeListOnChange      | `boolean` | `true`          | After `onchange` list will close                               |
+| clearFilterTextOnBlur  | `boolean` | `true`          | If `false`, `filterText` value is preserved on blur            |
+
+These props support two-way binding: `value`, `filterText`, `items`, `loading`, `listOpen`, `focused`, `hoverItemIndex`, `justValue`, `container`, and `input`.
 
 
-## Named slots
+## Snippets
+
+Customize parts of the select by passing snippet props. Kebab-case slot names from v4 map to camelCase snippet names (for example `clear-icon` → `clearIcon`, `list-prepend` → `listPrepend`). The `required` slot is now `requiredIndicator` to avoid clashing with the `required` prop.
 
 ```svelte
-<Select>
-  <div slot="prepend" />
-  <div slot="selection" let:selection let:index /> <!-- index only available when multiple -->
-  <div slot="clear-icon" />  
-  <div slot="multi-clear-icon" />  
-  <div slot="loading-icon" />  
-  <div slot="chevron-icon" /> 
-  <div slot="list-prepend" />  
-  <div slot="list" let:filteredItems />  
-  <div slot="list-append" />  
-  <div slot="item" let:item let:index />  
-  <div slot="input-hidden" let:value />
-  <div slot="required" let:value />
-  <!-- Remember you can also use `svelte:fragment` to avoid a container DOM element. -->
-  <svelte:fragment slot="empty" />  
+<Select {items}>
+  {#snippet prepend()}{/snippet}
+  {#snippet selection({ selection, index })}{/snippet} <!-- index only available when multiple -->
+  {#snippet clearIcon()}{/snippet}
+  {#snippet multiClearIcon()}{/snippet}
+  {#snippet loadingIcon()}{/snippet}
+  {#snippet chevronIcon({ listOpen })}{/snippet}
+  {#snippet listPrepend()}{/snippet}
+  {#snippet list({ filteredItems })}{/snippet}
+  {#snippet listAppend()}{/snippet}
+  {#snippet item({ item, index })}{/snippet}
+  {#snippet empty()}{/snippet}
+  {#snippet inputHidden({ value })}{/snippet}
+  {#snippet requiredIndicator({ value })}{/snippet}
 </Select>
 ```
 
 
-## Events
+## Callback props
 
-| Event Name | Callback          | Description                                                                |
-| ---------- | ----------------- | -------------------------------------------------------------------------- |
-| change     | { detail }        | fires when the user selects an option                                      |
-| input      | { detail }        | fires when the value has been changed                                      |
-| focus      | { detail }        | fires when select > input on:focus                                         |
-| blur       | { detail }        | fires when select > input on:blur                                          |
-| clear      | { detail }        | fires when clear is invoked or item is removed (by user) from multi select |
-| loaded     | { options }       | fires when `loadOptions` resolves                                          |
-| error      | { type, details } | fires when error is caught                                                 |
-| filter     | { detail }        | fires when `listOpen: true` and items are filtered                         |
-| hoverItem  | { detail }        | fires when hoverItemIndex changes                                          |
+Pass functions as props to respond to select behaviour. Callbacks receive their payload directly.
+
+| Callback     | Payload                              | Description                                                                |
+| ------------ | ------------------------------------ | -------------------------------------------------------------------------- |
+| onchange     | `value`                              | Fires when the user selects an option                                      |
+| oninput      | `value`                              | Fires when the bound value changes                                         |
+| onselect     | `selection`                          | Fires with the selected item when an option is chosen                       |
+| onfocus      | `FocusEvent`                         | Fires when the select input receives focus                                 |
+| onblur       | `FocusEvent`                         | Fires when the select input loses focus                                    |
+| onclear      | `value` or removed item              | Fires when clear is invoked or an item is removed from a multi select      |
+| onloaded     | `{ items }`                          | Fires when `loadOptions` resolves                                          |
+| onerror      | `{ type, details }`                  | Fires when an error is caught (for example a rejected `loadOptions`)       |
+| onfilter     | `filteredItems`                    | Fires when `listOpen: true` and items are filtered                         |
+| onhoverItem  | `hoverItemIndex`                     | Fires when the hovered list item index changes                             |
+
+```svelte
+<script>
+  import Select from 'svelte-select';
+
+  let items = [
+    { value: 'one', label: 'One' },
+    { value: 'two', label: 'Two' },
+  ];
+
+  function handleChange(value) {
+    console.log(value);
+  }
+</script>
+
+<Select {items} onchange={handleChange} />
+```
 
 
 ### Items
@@ -215,83 +237,50 @@ To load items asynchronously then `loadOptions` is the simplest solution. Supply
 <Select {floatingConfig} />
 ```
 
-### Exposed methods
-These internal functions are exposed to override if needed. Look through the test file (test/src/index.js) for examples.
+### Exposed methods and overridable props
 
-```js
-export let itemFilter = (label, filterText, option) => label.toLowerCase().includes(filterText.toLowerCase());
+These props and methods are exposed for advanced customization. See `test/src/tests.js` for examples.
+
+Override filtering, grouping, or async loading:
+
+```svelte
+<Select
+  itemFilter={(label, filterText) => label.toLowerCase().includes(filterText.toLowerCase())}
+  groupBy={(item) => item.group}
+  groupFilter={(groups) => groups}
+  createGroupHeaderItem={(groupValue) => ({ value: groupValue, label: groupValue })}
+  loadOptions={async (filterText) => []}
+  debounce={(fn, wait = 1) => setTimeout(fn, wait)}
+  filter={customFilter}
+  getItems={customGetItems}
+/>
 ```
 
-```js
-export let groupBy = undefined;
-```
+Imperative methods (via `bind:this`):
 
 ```js
-export let groupFilter = groups => groups;
+// Returns the current filtered list items
+getFilteredItems();
+
+// Clears the current value and focuses the input
+handleClear();
 ```
 
-```js
-export let createGroupHeaderItem = groupValue => {
-  return {
-    value: groupValue,
-    label: groupValue
-  };
-};
-```
+`loadOptions` must return a `Promise` that resolves with a list of items. Return `{ cancelled: true }` to keep the loading state active.
 
-```js
-export function handleClear() {
-  value = undefined;
-  listOpen = false;
-  dispatch("clear", value);
-  handleFocus();
-}
-```
-
-```js
-export let loadOptions = undefined; // if used must return a Promise that updates 'items'
-/* Return an object with { cancelled: true } to keep the loading state as active. */
-```
-
-```js
-export const getFilteredItems = () => {
-  return filteredItems;
-};
-```
-
-```js
-export let debounce = (fn, wait = 1) => {
-  clearTimeout(timeout);
-  timeout = setTimeout(fn, wait);
-};
-```
-
-Override core functionality at your own risk! See ([get-items.js](/src/lib/get-items.js) & [filter.js](/src/lib/filter.js))
-
-```js
-    // core replaceable methods...
-    <Select 
-      filter={...}
-      getItems={...}
-    />
-```
+Core replaceable helpers live in [`get-items.js`](/src/lib/get-items.js) and [`filter.js`](/src/lib/filter.js).
 
 ## A11y (Accessibility)
 
-Override these methods to change the `aria-context` and `aria-selection` text.
+Override these props to change the `aria-context` and `aria-selection` text.
 
-```js
-export let ariaValues = (values) => {
-  return `Option ${values}, selected.`;
-}
-
-export let ariaListOpen = (label, count) => {
-  return `You are currently focused on option ${label}. There are ${count} results available.`;
-}
-
-export let ariaFocused = () => {
-  return `Select is focused, type to refine list, press down to open the menu.`;
-}
+```svelte
+<Select
+  ariaValues={(values) => `Option ${values}, selected.`}
+  ariaListOpen={(label, count) =>
+    `You are currently focused on option ${label}. There are ${count} results available.`}
+  ariaFocused={() => `Select is focused, type to refine list, press down to open the menu.`}
+/>
 ```
 
 ## CSS custom properties (variables)
