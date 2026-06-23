@@ -10,7 +10,7 @@
     ];
 
     /** @type {{filterText: any, value?: any}} */
-    let { filterText = $bindable(), value = undefined } = $props();
+    let { filterText = $bindable(''), value = undefined } = $props();
 
     async function loadOptions() {
         return items.filter((i) => i.label.toLowerCase().includes(filterText.toLowerCase()));

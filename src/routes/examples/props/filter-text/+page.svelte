@@ -7,7 +7,7 @@
         { value: 'three', label: 'Three' },
     ];
 
-    let filterText = $state();
+    let filterText = $state('');
 </script>
 
 <p>{filterText}</p>

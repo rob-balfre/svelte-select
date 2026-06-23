@@ -21,25 +21,87 @@ import MultiClearIconSlotTest from './MultiClearIconSlotTest.svelte';
 import RequiredSlotTest from './RequiredSlotTest.svelte';
 import ListPositionFixedTest from './ListPositionFixedTest.svelte';
 import CreateItemTest from './CreateItemTest.svelte';
-import { mount, unmount } from 'svelte';
+import { unmount as svelteUnmount, tick, flushSync } from 'svelte';
+import { mountComponent } from './mount-utils.svelte.js';
 
-function querySelectorClick(selector) {
+const BINDABLE_PROPS = [
+    'value',
+    'filterText',
+    'items',
+    'loading',
+    'listOpen',
+    'focused',
+    'hoverItemIndex',
+    'justValue',
+];
+
+function mount(Component, options = {}) {
+    const { target, props = {} } = options;
+    target.replaceChildren();
+    const mounted = mountComponent(Component, target, props);
+    const instance = mounted.instance ?? {};
+
+    const api = Object.assign(instance, {
+        $set: mounted.set,
+        $on: mounted.on,
+        _destroy: mounted.destroy,
+    });
+
+    for (const key of BINDABLE_PROPS) {
+        Object.defineProperty(api, key, {
+            get() {
+                return mounted.props[key];
+            },
+            set(v) {
+                mounted.props[key] = v;
+            },
+            enumerable: true,
+        });
+    }
+
+    return api;
+}
+
+function unmount(component) {
+    if (component?._destroy) {
+        component._destroy();
+        return;
+    }
+    svelteUnmount(component);
+}
+
+async function pointerUp(selector, root = document) {
+    root.querySelector(selector).dispatchEvent(
+        new PointerEvent('pointerup', { bubbles: true, cancelable: true, pointerId: 1, pointerType: 'mouse' }),
+    );
+    flushSync();
+    await tick();
+}
+
+async function querySelectorClick(selector, root = document) {
     if (selector === '.svelte-select') {
-        const event = new PointerEvent('pointerup');
-        document.querySelector(selector).dispatchEvent(event);
+        await pointerUp(selector, root);
     } else {
-        document.querySelector(selector).click();
+        root.querySelector(selector).click();
+        flushSync();
+        await tick();
     }
 }
 
-function handleKeyboard(key) {
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
-    return new Promise((f) => setTimeout(f, 0));
+function activeMultiItemLabel() {
+    const active = document.querySelector('.multi-item.active .multi-item-text');
+    return active ? text(active) : null;
+}
+
+function handleKeyboard(key, target = window) {
+    target.dispatchEvent(new KeyboardEvent('keydown', { key: key, bubbles: true }));
+    flushSync();
+    return tick();
 }
 
 function handleSet(component, data) {
     component.$set(data);
-    return new Promise((f) => setTimeout(f, 0));
+    return wait(0);
 }
 
 function getPosts(filterText) {
@@ -151,6 +213,10 @@ function wait(ms) {
     return new Promise((f) => setTimeout(f, ms));
 }
 
+function text(node) {
+    return node?.textContent?.trim() ?? '';
+}
+
 function ok(value) {
     expect(value).toBeTruthy();
 }
@@ -221,7 +287,7 @@ test('should highlight active list item', async () => {
         },
     });
 
-    ok(document.querySelector('.list-item .active').innerHTML === 'Pizza');
+    ok(text(document.querySelector('.list-item .active')) === 'Pizza');
 
     unmount(select);
 });
@@ -236,12 +302,14 @@ test('list scrolls to active item', async () => {
     const select = mount(Select, {
         target,
         props: {
+            listOpen: false,
             items: itemsWithIndex.concat(extras),
             value: { value: 'sunday-roast', label: 'Sunday Roast' },
         },
     });
 
     select.listOpen = true;
+    await wait(0);
     let offsetBounding;
     const container = document.querySelector('.svelte-select-list');
     const focusedElemBounding = container.querySelector('.list-item .active');
@@ -300,7 +368,7 @@ test('hover item updates on keyUp or keyDown', async () => {
 
     await handleKeyboard('ArrowDown', document.querySelector('.svelte-select-list'));
     const focusedElemBounding = document.querySelector('.list-item .hover');
-    equal(focusedElemBounding.innerHTML.trim(), `Pizza`);
+    equal(text(focusedElemBounding), `Pizza`);
     unmount(select);
 });
 
@@ -315,8 +383,8 @@ test('on enter active item fires a select event', async () => {
 
     let value = undefined;
 
-    select.$on('change', (event) => {
-        value = JSON.stringify(event.detail);
+    select.$on('change', (detail) => {
+        value = JSON.stringify(detail);
     });
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
@@ -337,8 +405,8 @@ test('on tab active item fires a select event', async () => {
     });
 
     let value = undefined;
-    select.$on('change', (event) => {
-        value = JSON.stringify(event.detail);
+    select.$on('change', (detail) => {
+        value = JSON.stringify(detail);
     });
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
@@ -379,7 +447,7 @@ test("selected item's default view", async () => {
         },
     });
 
-    ok(target.querySelector('.selected-item').innerHTML === 'Chips');
+    ok(text(target.querySelector('.selected-item')) === 'Chips');
     unmount(select);
 });
 
@@ -389,7 +457,7 @@ test('select view updates with value updates', async () => {
     });
 
     await handleSet(select, { value: { value: 'chips', label: 'Chips' } });
-    ok(target.querySelector('.selected-item').innerHTML === 'Chips');
+    ok(text(target.querySelector('.selected-item')) === 'Chips');
 
     unmount(select);
 });
@@ -445,7 +513,7 @@ test('list starts with first item in hover state', async () => {
     });
 
     await querySelectorClick('.svelte-select');
-    ok(document.querySelector('.list-item .hover').innerHTML === 'Chocolate');
+    ok(text(document.querySelector('.list-item .hover')) === 'Chocolate');
 
     unmount(select);
 });
@@ -462,7 +530,7 @@ test('select item from list', async () => {
     await handleKeyboard('ArrowDown');
     await handleKeyboard('ArrowDown');
     await handleKeyboard('Enter');
-    ok(document.querySelector('.selected-item').innerHTML === 'Cake');
+    ok(text(document.querySelector('.selected-item')) === 'Cake');
 
     unmount(select);
 });
@@ -605,7 +673,7 @@ test('clicking Select with selected item should open list with item listed as ac
     await wait(0);
     querySelectorClick('.svelte-select');
     await wait(0);
-    ok(document.querySelector('.list-item .active').innerHTML === 'Cake');
+    ok(text(document.querySelector('.list-item .active')) === 'Cake');
     unmount(select);
 });
 
@@ -633,10 +701,9 @@ test('key up and down when Select focused opens list', async () => {
 
     const input = document.querySelector('.svelte-select input');
     input.focus();
-    await wait(0);
+    await tick();
     ok(select.focused);
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
-    await wait(0);
+    await handleKeyboard('ArrowDown');
     ok(document.querySelector('.svelte-select-list'));
 
     unmount(select);
@@ -651,10 +718,7 @@ test('list should keep width of parent Select', async () => {
         },
     });
 
-    const input = document.querySelector('.svelte-select input');
-    input.focus();
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
-    await wait(0);
+    await handleKeyboard('ArrowDown');
     const selectContainer = document.querySelector('.svelte-select');
     const listContainer = document.querySelector('.svelte-select-list');
     equal(selectContainer.offsetWidth, listContainer.offsetWidth);
@@ -1006,18 +1070,18 @@ test(`two way binding between Select and it's parent component`, async () => {
         },
     });
 
-    equal(document.querySelector('.selected-item').innerHTML, document.querySelector('.result').innerHTML);
+    equal(text(document.querySelector('.selected-item')), text(document.querySelector('.result')));
 
     parent.$set({
         value: { value: 'ice-cream', label: 'Ice Cream' },
     });
 
-    equal(document.querySelector('.selected-item').innerHTML, document.querySelector('.result').innerHTML);
+    equal(text(document.querySelector('.selected-item')), text(document.querySelector('.result')));
     querySelectorClick('.svelte-select');
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
-    equal(document.querySelector('.selected-item').innerHTML, document.querySelector('.result').innerHTML);
+    equal(text(document.querySelector('.selected-item')), text(document.querySelector('.result')));
 
     unmount(parent);
 });
@@ -1226,9 +1290,9 @@ test('items should be grouped by groupBy expression', async () => {
         return item.group;
     }
 
-    let title = document.querySelector('.list-group-title').innerHTML;
+    let title = text(document.querySelector('.list-group-title'));
     ok(title === 'Sweet');
-    let item = document.querySelector('.list-item .item.group-item').innerHTML;
+    let item = text(document.querySelector('.list-item .item.group-item'));
     ok(item === 'Chocolate');
     unmount(select);
 });
@@ -1390,8 +1454,8 @@ test('when multiple is true show each item in value', async () => {
 
     const all = target.querySelectorAll('.multi-item span');
 
-    ok(all[0].innerHTML.startsWith('Pizza'));
-    ok(all[1].innerHTML.startsWith('Chips'));
+    ok(text(all[0]).startsWith('Pizza'));
+    ok(text(all[1]).startsWith('Chips'));
 
     unmount(select);
 });
@@ -1448,7 +1512,7 @@ test('when multiple is true items in value will not appear in list', async () =>
             { value: 'cake', label: 'Cake' },
             { value: 'chips', label: 'Chips' },
             { value: 'ice-cream', label: 'Ice Cream' },
-        ]),
+        ])
     );
 
     unmount(select);
@@ -1465,8 +1529,8 @@ test('when multiple is true both value and filterText filters list', async () =>
         },
     });
 
-    ((select.filterText = 'Pizza'),
-        equal(JSON.stringify(select.getFilteredItems()), JSON.stringify([{ value: 'pizza', label: 'Pizza' }])));
+    (select.filterText = 'Pizza'),
+        equal(JSON.stringify(select.getFilteredItems()), JSON.stringify([{ value: 'pizza', label: 'Pizza' }]));
 
     unmount(select);
 });
@@ -1484,8 +1548,7 @@ test('when multiple is true clicking X on a selected item will remove it from va
         },
     });
 
-    const event = new PointerEvent('pointerup');
-    document.querySelector('.multi-item-clear').dispatchEvent(event);
+    await pointerUp('.multi-item-clear');
     equal(JSON.stringify(select.value), JSON.stringify([{ value: 'pizza', label: 'Pizza' }]));
 
     unmount(select);
@@ -1540,7 +1603,7 @@ test('when multiple and groupBy is active then items should be selectable', asyn
     await querySelectorClick('.list-item .group-item');
     equal(
         JSON.stringify(select.value),
-        JSON.stringify([{ groupItem: true, value: 'chocolate', label: 'Chocolate', group: 'Sweet' }]),
+        JSON.stringify([{ groupItem: true, value: 'chocolate', label: 'Chocolate', group: 'Sweet' }])
     );
 
     unmount(select);
@@ -1584,11 +1647,10 @@ test('when multiple and value is populated then navigating with LeftArrow update
 
     target.style.maxWidth = '100%';
 
-    const input = document.querySelector('.svelte-select input');
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
+    await handleKeyboard('ArrowLeft');
+    await handleKeyboard('ArrowLeft');
 
-    ok(select.$capture_state().activeValue === 1);
+    ok(activeMultiItemLabel() === 'Pizza');
 
     unmount(select);
 });
@@ -1608,12 +1670,11 @@ test('when multiple and value is populated then navigating with ArrowRight updat
         },
     });
 
-    const input = document.querySelector('.svelte-select input');
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
-    ok(select.$capture_state().activeValue === 1);
+    await handleKeyboard('ArrowLeft');
+    await handleKeyboard('ArrowLeft');
+    await handleKeyboard('ArrowLeft');
+    await handleKeyboard('ArrowRight');
+    ok(activeMultiItemLabel() === 'Pizza');
 
     unmount(select);
 });
@@ -1662,8 +1723,8 @@ test('when multiple is true show each item in value if simple arrays are used', 
     });
 
     const all = target.querySelectorAll('.multi-item span');
-    ok(all[0].innerHTML.startsWith('pizza'));
-    ok(all[1].innerHTML.startsWith('chocolate'));
+    ok(text(all[0]).startsWith('pizza'));
+    ok(text(all[1]).startsWith('chocolate'));
 
     unmount(select);
 });
@@ -1681,7 +1742,7 @@ test('when label is set you can pass a string and see the right label', async ()
         },
     });
 
-    ok(document.querySelector('.selected-item').innerHTML === 'ONE');
+    ok(text(document.querySelector('.selected-item')) === 'ONE');
 
     unmount(select);
 });
@@ -1736,7 +1797,7 @@ test('when label method is supplied and value are no items then display result o
         },
     });
 
-    ok(document.querySelector('.selected-item').innerHTML === 'This is not a label');
+    ok(text(document.querySelector('.selected-item')) === 'This is not a label');
 
     unmount(select);
 });
@@ -1754,7 +1815,7 @@ test('when label and items is supplied then display result of label for each opt
         },
     });
 
-    ok(document.querySelector('.item')?.innerHTML === 'This is not a label');
+    ok(text(document.querySelector('.item')) === 'This is not a label');
 
     unmount(select);
 });
@@ -1772,7 +1833,7 @@ test('when label method and items is supplied then display result of label for e
         },
     });
 
-    ok(document.querySelector('.item').innerHTML === 'This is not a label');
+    ok(text(document.querySelector('.item')) === 'This is not a label');
 
     unmount(select);
 });
@@ -1792,7 +1853,7 @@ test('when loadOptions method is supplied, multiple is true and filterText has l
     await wait(600);
     await handleKeyboard('ArrowDown');
     await handleKeyboard('Enter');
-    ok(document.querySelector('.multi-item span').innerHTML.startsWith('Juniper Wheat Beer'));
+    ok(text(document.querySelector('.multi-item span')).startsWith('Juniper Wheat Beer'));
     unmount(select);
 });
 
@@ -1801,7 +1862,7 @@ test('when selection slot render slot content', async () => {
         target,
     });
 
-    ok(document.querySelector('.selected-item').innerHTML === 'Slot: one');
+    ok(text(document.querySelector('.selected-item')) === 'Slot: one');
 
     unmount(select);
 });
@@ -1813,8 +1874,8 @@ test('when multiple and selection slot render slot content', async () => {
 
     const items = document.querySelectorAll('.multi-item span');
 
-    ok(items[0].innerHTML.startsWith('Index: 0 Slot: one'));
-    ok(items[1].innerHTML.startsWith('Index: 1 Slot: two'));
+    ok(text(items[0]).startsWith('Index: 0 Slot: one'));
+    ok(text(items[1]).startsWith('Index: 1 Slot: two'));
 
     unmount(select);
 });
@@ -1842,6 +1903,7 @@ test('when value is selected then change event should fire', async () => {
         target,
         props: {
             listOpen: true,
+            focused: true,
             items,
         },
     });
@@ -1854,6 +1916,7 @@ test('when value is selected then change event should fire', async () => {
 
     await handleKeyboard('ArrowDown');
     await handleKeyboard('Enter');
+    await wait(0);
 
     ok(selectEvent);
 
@@ -1895,12 +1958,11 @@ test('when multi item is cleared the clear event is fired with removed item', as
 
     let removedItem;
 
-    select.$on('clear', (event) => {
-        removedItem = event.detail;
+    select.$on('clear', (detail) => {
+        removedItem = detail;
     });
 
-    const event = new PointerEvent('pointerup');
-    document.querySelector('.multi-item-clear').dispatchEvent(event);
+    await pointerUp('.multi-item-clear');
     equal(JSON.stringify(removedItem), JSON.stringify(itemToRemove));
 
     unmount(select);
@@ -1919,8 +1981,8 @@ test('when single item is cleared the clear event is fired with removed item', a
 
     let removedItem;
 
-    select.$on('clear', (event) => {
-        removedItem = event.detail;
+    select.$on('clear', (detail) => {
+        removedItem = detail;
     });
 
     document.querySelector('.clear-select').click();
@@ -1939,9 +2001,9 @@ test('when items in list filter or update then first item in list should highlig
     });
 
     await handleKeyboard('ArrowDown');
-    ok(document.querySelector('.svelte-select-list .hover').innerHTML === 'Chocolate');
+    ok(text(document.querySelector('.svelte-select-list .hover')) === 'Chocolate');
     await handleSet(select, { filterText: 'chi' });
-    ok(document.querySelector('.hover').innerHTML === 'Chips');
+    ok(text(document.querySelector('.hover')) === 'Chips');
 
     unmount(select);
 });
@@ -2050,7 +2112,7 @@ test('when items is just an array of strings then render list', async () => {
     });
 
     await wait(0);
-    ok(document.querySelector('.item').innerHTML === 'one');
+    ok(text(document.querySelector('.item')) === 'one');
 
     unmount(select);
 });
@@ -2066,7 +2128,7 @@ test('when items are just strings then value should render', async () => {
         },
     });
 
-    ok(document.querySelector('.selected-item').innerHTML === 'one');
+    ok(text(document.querySelector('.selected-item')) === 'one');
     unmount(select);
 });
 
@@ -2160,7 +2222,7 @@ test('When list is open, filterText applied and Enter/Tab key pressed should sel
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
     equal(select.value.value, 'A5');
     await wait(0);
-    ok(target.querySelector('.selected-item').innerHTML === 'A5');
+    ok(text(target.querySelector('.selected-item')) === 'A5');
 
     unmount(select);
 });
@@ -2194,7 +2256,7 @@ test('when items and value supplied as just strings then value should render cor
         },
     });
 
-    equal(document.querySelector('.selected-item').innerHTML, 'Pizza');
+    equal(text(document.querySelector('.selected-item')), 'Pizza');
 
     unmount(select);
 });
@@ -2209,7 +2271,7 @@ test('when multiple with items and value supplied as just strings then value sho
         },
     });
 
-    ok(document.querySelector('.multi-item span').innerHTML.startsWith('Pizza'));
+    ok(text(document.querySelector('.multi-item span')).startsWith('Pizza'));
 
     unmount(select);
 });
@@ -2296,7 +2358,7 @@ test('When prepend named slot is supplied then render content', async () => {
         target,
     });
 
-    ok(document.querySelector('.before').innerHTML === 'Before it all');
+    ok(text(document.querySelector('.before')) === 'Before it all');
 
     unmount(select);
 });
@@ -2396,7 +2458,7 @@ test('When loadOptions promise is resolved then dispatch loaded', async () => {
     select.$set({ filterText: 'test' });
     await wait(500);
 
-    equal(loadedEventData.detail.items[0].value, 'a');
+    equal(loadedEventData.items[0].value, 'a');
     equal(errorEventData, undefined);
 
     loadedOff();
@@ -2427,8 +2489,8 @@ test('When loadOptions promise is rejected then dispatch error', async () => {
     select.$set({ filterText: 'test' });
     await wait(500);
     equal(loadedEventData, undefined);
-    equal(errorEventData.detail.type, 'loadOptions');
-    equal(errorEventData.detail.details, 'error 123');
+    equal(errorEventData.type, 'loadOptions');
+    equal(errorEventData.details, 'error 123');
 
     loadedOff();
     errorOff();
@@ -2446,7 +2508,7 @@ test('When items change then value should also update', async () => {
 
     await wait(0);
 
-    select.$set({
+    await select.$set({
         items: [
             { value: 'chocolate', label: 'Chocolate' },
             { value: 'pizza', label: 'Pizza' },
@@ -2456,10 +2518,8 @@ test('When items change then value should also update', async () => {
         ],
     });
 
-    await wait(0);
-
     ok(select.value.label === 'Loaded Fries');
-    ok(target.querySelector('.selected-item').innerHTML === 'Loaded Fries');
+    ok(text(target.querySelector('.selected-item')) === 'Loaded Fries');
 
     unmount(select);
 
@@ -2479,7 +2539,7 @@ test('When items change then value should also update', async () => {
 
     await wait(0);
 
-    multiSelect.$set({
+    await multiSelect.$set({
         items: [
             { value: 'chocolate', label: 'Chocolate' },
             { value: 'pizza', label: 'Cheese Pizza' },
@@ -2488,8 +2548,6 @@ test('When items change then value should also update', async () => {
             { value: 'ice-cream', label: 'Ice Cream' },
         ],
     });
-
-    await wait(0);
 
     ok(multiSelect.value[0].label === 'Loaded Fries');
     ok(multiSelect.value[1].label === 'Cheese Pizza');
@@ -2521,7 +2579,7 @@ test('When items change then value should also update but only if found in items
     await wait(0);
 
     ok(select.value.label === 'Chips');
-    ok(target.querySelector('.selected-item').innerHTML === 'Chips');
+    ok(text(target.querySelector('.selected-item')) === 'Chips');
 
     unmount(select);
 });
@@ -2617,7 +2675,7 @@ test('when ClearIcon replace clear icon', async () => {
         target,
     });
 
-    ok(target.querySelector('.clear-select div').innerHTML === 'x');
+    ok(text(target.querySelector('.clear-select div')) === 'x');
 
     unmount(select);
 });
@@ -2667,15 +2725,12 @@ test('when switching between multiple true/false ensure Select continues working
         },
     });
 
-    select.multiple = true;
-    select.loadOptions = itemsPromise;
+    await select.$set({ multiple: true, loadOptions: itemsPromise });
 
     ok(JSON.stringify(select.value) === JSON.stringify([{ value: 'chips', label: 'Chips' }]));
     ok(Array.isArray(select.value));
 
-    select.multiple = false;
-    select.loadOptions = null;
-    select.items = [...items];
+    await select.$set({ multiple: false, loadOptions: null, items: [...items] });
 
     ok(!select.value);
 
@@ -2882,11 +2937,12 @@ test('When value selected and filterText then ensure selecting the active value 
     });
 
     select.filterText = 'Cake';
-    document.querySelector('.list-item .item').click();
-    await wait(0);
+    await tick();
+    await querySelectorClick('.list-item .item');
     select.listOpen = true;
     select.filterText = 'Cake';
-    document.querySelector('.list-item .item').click();
+    await tick();
+    await querySelectorClick('.list-item .item');
 
     ok(select.filterText.length === 0);
 
@@ -2909,11 +2965,8 @@ test('When multiple on:input events should fire on each item removal (including 
         events.push('event fired');
     });
 
-    const event = new PointerEvent('pointerup');
-    document.querySelector('.multi-item-clear').dispatchEvent(event);
-    await wait(0);
-    document.querySelector('.multi-item-clear').dispatchEvent(event);
-    await wait(0);
+    await pointerUp('.multi-item-clear');
+    await pointerUp('.multi-item-clear');
     ok(events.length === 2);
 
     unmount(select);
@@ -3010,9 +3063,9 @@ test('When listOpen then aria-context describes highlighted item', async () => {
     });
 
     let aria = document.querySelector('#aria-context');
-    ok(aria.innerHTML.includes('Chocolate'));
+    ok(text(aria).includes('Chocolate'));
     await handleKeyboard('ArrowDown');
-    ok(aria.innerHTML.includes('Pizza'));
+    ok(text(aria).includes('Pizza'));
 
     unmount(select);
 });
@@ -3028,7 +3081,7 @@ test('When listOpen and value then aria-selection describes value', async () => 
     });
 
     let aria = document.querySelector('#aria-selection');
-    ok(aria.innerHTML.includes('Cake'));
+    ok(text(aria).includes('Cake'));
 
     unmount(select);
 });
@@ -3048,8 +3101,8 @@ test('When listOpen, value and multiple then aria-selection describes value', as
     });
 
     let aria = document.querySelector('#aria-selection');
-    ok(aria.innerHTML.includes('Cake'));
-    ok(aria.innerHTML.includes('Pizza'));
+    ok(text(aria).includes('Cake'));
+    ok(text(aria).includes('Pizza'));
 
     unmount(select);
 });
@@ -3066,7 +3119,7 @@ test('When ariaValues and value supplied, then aria-selection uses default updat
     });
 
     let aria = document.querySelector('#aria-selection');
-    equal(aria.innerHTML, 'Yummy Pizza in my tummy!');
+    equal(text(aria), 'Yummy Pizza in my tummy!');
 
     unmount(select);
 });
@@ -3083,7 +3136,7 @@ test('When ariaListOpen, listOpen, then aria-context uses default updated', asyn
 
     await wait(0);
     let aria = document.querySelector('#aria-context');
-    equal(aria.innerHTML, 'label: Chocolate, count: 5');
+    equal(text(aria), 'label: Chocolate, count: 5');
 
     unmount(select);
 });
@@ -3100,7 +3153,7 @@ test('When ariaFocused, focused value supplied, then aria-context uses default u
     });
 
     let aria = document.querySelector('#aria-context');
-    equal(aria.innerHTML, 'nothing to see here.');
+    equal(text(aria), 'nothing to see here.');
     unmount(select);
 });
 
@@ -3180,6 +3233,7 @@ test('when value is set check from item and show correct label', async () => {
     });
 
     select.value = 'cake';
+    await tick();
     equal(select.value.label, 'Cake');
     unmount(select);
 });
@@ -3246,7 +3300,7 @@ test('when loadOptions and groupBy then group headers should appear', async () =
     select.$set({ filterText: 'potato' });
     await wait(50);
     const header = document.querySelector('.svelte-select-list .list-group-title');
-    ok(header.innerHTML === 'Sweet');
+    ok(text(header) === 'Sweet');
 
     unmount(select);
 });
@@ -3262,8 +3316,8 @@ test('when user selects an item then change event fires', async () => {
 
     let value = undefined;
 
-    select.$on('change', (event) => {
-        value = JSON.stringify(event.detail);
+    select.$on('change', (detail) => {
+        value = JSON.stringify(detail);
     });
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
@@ -3288,7 +3342,7 @@ test('when item selected programmatically a change event should NOT fire', async
     select.$set({ value: { value: 'cake', label: 'Cake' } });
 
     select.$on('change', (event) => {
-        value = event.detail;
+        value = detail;
     });
 
     await wait(0);
@@ -3328,11 +3382,12 @@ test('when items are grouped and filter text results in no items then list rende
         return item.group;
     }
 
-    let title = document.querySelector('.list-group-title').innerHTML;
+    let title = text(document.querySelector('.list-group-title'));
     ok(title === 'Sweet');
-    let item = document.querySelector('.list-item .item.group-item').innerHTML;
+    let item = text(document.querySelector('.list-item .item.group-item'));
     ok(item === 'Chocolate');
     select.filterText = 'foo';
+    await tick();
     let empty = document.querySelector('.svelte-select-list .empty');
     ok(empty);
     unmount(select);
@@ -3343,7 +3398,7 @@ test('when named slot chevron show content', async () => {
         target,
     });
 
-    ok(document.querySelector('.chevron div').innerHTML === '⬆️');
+    ok(text(document.querySelector('.chevron div')) === '⬆️');
 
     unmount(select);
 });
@@ -3353,7 +3408,7 @@ test('when named slot list show content', async () => {
         target,
     });
 
-    ok(document.querySelector('.svelte-select-list').innerHTML.trim() === 'onetwo');
+    ok(text(document.querySelector('.svelte-select-list')).trim() === 'onetwo');
 
     unmount(select);
 });
@@ -3373,7 +3428,7 @@ test('when named slot item show content', async () => {
         target,
     });
 
-    ok(document.querySelector('.svelte-select-list .item').innerHTML === '* one *');
+    expect(text(document.querySelector('.svelte-select-list .item'))).toBe('* one *');
 
     unmount(select);
 });
@@ -3383,8 +3438,8 @@ test('when named slots list-prepend and list-append show content', async () => {
         target,
     });
 
-    ok(document.querySelector('.svelte-select-list').innerHTML.startsWith('prepend'));
-    ok(document.querySelector('.svelte-select-list').innerHTML.endsWith('append'));
+    ok(text(document.querySelector('.svelte-select-list')).startsWith('prepend'));
+    ok(text(document.querySelector('.svelte-select-list')).endsWith('append'));
 
     unmount(select);
 });
@@ -3432,45 +3487,39 @@ test('when groupHeaderSelectable false and groupBy true then group headers shoul
 
     let item = document.querySelector('.item.hover.group-item');
 
-    ok(item.innerHTML === 'Chocolate');
+    ok(text(item) === 'Chocolate');
 
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    await handleKeyboard('ArrowDown');
+    await handleKeyboard('ArrowDown');
+    await handleKeyboard('ArrowDown');
 
-    await wait(0);
     item = document.querySelector('.item.hover.group-item');
-    ok(item.innerHTML === 'Chips');
+    ok(text(item) === 'Chips');
 
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
+    await handleKeyboard('ArrowUp');
 
-    await wait(0);
     item = document.querySelector('.item.hover.group-item');
-    ok(item.innerHTML === 'Pizza');
+    ok(text(item) === 'Pizza');
 
-    select.$set({ filterText: 'Ice' });
+    await select.$set({ filterText: 'Ice' });
 
-    await wait(0);
     item = document.querySelector('.item.hover.group-item');
-    ok(item.innerHTML === 'Ice Cream');
+    ok(text(item) === 'Ice Cream');
 
-    select.$set({ filterText: '' });
+    await select.$set({ filterText: '' });
 
-    await wait(0);
     item = document.querySelector('.item.hover.group-item');
-    ok(item.innerHTML === 'Chocolate');
+    ok(text(item) === 'Chocolate');
 
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
+    await handleKeyboard('ArrowUp');
 
-    await wait(0);
     item = document.querySelector('.item.hover.group-item');
-    ok(item.innerHTML === 'Chips');
+    ok(text(item) === 'Chips');
 
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    await handleKeyboard('ArrowDown');
 
-    await wait(0);
     item = document.querySelector('.item.hover.group-item');
-    ok(item.innerHTML === 'Chocolate');
+    ok(text(item) === 'Chocolate');
 
     unmount(select);
 });
@@ -3503,7 +3552,7 @@ test('when items filter then event on:filter fires', async () => {
     let event = undefined;
 
     select.$on('filter', (e) => {
-        event = e.detail;
+        event = e;
     });
 
     select.$set({ filterText: 'ch' });
@@ -3675,8 +3724,8 @@ test('when groupBy, itemId and label then list should render correctly', async (
     let titles = document.querySelectorAll('.list-group-title');
     let items = document.querySelectorAll('.item.group-item');
 
-    ok(titles[1].innerHTML === 'group 2');
-    ok(items[3].innerHTML === 'name 3');
+    ok(text(titles[1]) === 'group 2');
+    ok(text(items[3]) === 'name 3');
 
     unmount(select);
 });
@@ -3775,9 +3824,9 @@ test('when loadOptions and value then it should set initial value', async () => 
         },
     });
 
-    ok(document.querySelector('.value-container .selected-item').innerHTML === 'cake');
+    ok(text(document.querySelector('.value-container .selected-item')) === 'cake');
     await wait(500);
-    ok(document.querySelector('.value-container .selected-item').innerHTML === 'Cake');
+    ok(text(document.querySelector('.value-container .selected-item')) === 'Cake');
 
     unmount(select);
 });
@@ -3787,14 +3836,15 @@ test('when item is selected then select event fires with selected item', async (
         target,
         props: {
             listOpen: true,
+            focused: true,
             items,
         },
     });
 
     let selectedItem;
 
-    select.$on('select', (event) => {
-        selectedItem = event.detail;
+    select.$on('select', (item) => {
+        selectedItem = item;
     });
 
     await handleKeyboard('Enter');
@@ -3835,8 +3885,8 @@ test('when hoverItemIndex changes then hoverItem event fires', async () => {
 
     const hoverIndexes = [];
 
-    select.$on('hoverItem', (event) => {
-        hoverIndexes.push(event.detail);
+    select.$on('hoverItem', (index) => {
+        hoverIndexes.push(index);
     });
 
     await wait(0);
@@ -3870,7 +3920,7 @@ test('when required slot is supplied then render custom content', async () => {
         target,
     });
 
-    ok(document.querySelector('.custom-required').innerHTML === 'REQUIRED');
+    ok(text(document.querySelector('.custom-required')) === 'REQUIRED');
 
     unmount(select);
 });
@@ -3880,7 +3930,7 @@ test('when empty slot is supplied then render custom content', async () => {
         target,
     });
 
-    ok(document.querySelector('.custom-empty').innerHTML === 'Nothing to see here...');
+    ok(text(document.querySelector('.custom-empty')) === 'Nothing to see here...');
 
     unmount(select);
 });
@@ -3890,7 +3940,7 @@ test('when loading-icon slot is supplied then render custom content', async () =
         target,
     });
 
-    ok(document.querySelector('.loading div').innerHTML === '★');
+    ok(text(document.querySelector('.loading div')) === '★');
 
     unmount(select);
 });
@@ -3900,7 +3950,7 @@ test('when multi-clear-icon slot is supplied then render custom content', async 
         target,
     });
 
-    ok(document.querySelector('.multi-item-clear div').innerHTML === '❌');
+    ok(text(document.querySelector('.multi-item-clear div')) === '❌');
 
     unmount(select);
 });
@@ -3968,7 +4018,7 @@ test('when filter has no matches create-item pattern adds and selects new item',
     createItem.$set({ filterText: 'newitem' });
     await wait(0);
 
-    ok(document.querySelector('.item').innerHTML.includes('newitem'));
+    ok(text(document.querySelector('.item')).includes('newitem'));
 
     await handleKeyboard('Enter');
     await wait(0);
