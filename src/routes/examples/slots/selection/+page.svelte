@@ -8,10 +8,9 @@
     ];
 </script>
 
-
 <Select {items}>
     <div slot="selection" let:selection>
-        🎉 {selection.label} 🎉 
+        🎉 {selection.label} 🎉
     </div>
 </Select>
 
@@ -20,6 +19,6 @@
 
 <Select {items} multiple>
     <div slot="selection" let:selection let:index>
-        🎉 {index} : {selection.label} 🎉 
+        🎉 {index} : {selection.label} 🎉
     </div>
 </Select>

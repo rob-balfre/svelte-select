@@ -8,7 +8,6 @@
     ];
 </script>
 
-
 <Select {items} listOpen>
     <div slot="list-prepend">* BEFORE *</div>
 </Select>

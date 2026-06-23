@@ -8,7 +8,6 @@
     ];
 </script>
 
-
 <Select {items} showChevron>
     <div slot="chevron-icon">⬇️</div>
 </Select>

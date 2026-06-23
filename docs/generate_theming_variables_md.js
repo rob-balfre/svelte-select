@@ -43,7 +43,7 @@ if (oldFileDoesNotContainSection) {
 }
 
 const replacement_section = ['<!-- List start -->', ...matchesAsMarkdownListItems, '<!-- List end -->'].join(
-    line_ending
+    line_ending,
 );
 
 fs.writeFileSync(DOC_FILE_PATH, oldContent.replace(VARIABLE_SECTION_PATTERN, replacement_section));

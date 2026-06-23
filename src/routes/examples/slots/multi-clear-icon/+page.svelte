@@ -8,7 +8,6 @@
     ];
 </script>
 
-
 <Select {items} multiple>
     <div slot="multi-clear-icon">❌</div>
 </Select>

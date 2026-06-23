@@ -6,7 +6,6 @@
         { value: 'two', label: 'Two' },
         { value: 'three', label: 'Three' },
     ];
-
 </script>
 
 <form>

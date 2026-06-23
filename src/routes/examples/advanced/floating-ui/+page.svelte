@@ -14,7 +14,6 @@
         }} />
 </div>
 
-
 <style>
     .box {
         height: 300px;

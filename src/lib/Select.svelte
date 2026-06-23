@@ -108,7 +108,7 @@
                 type: 'text',
                 'aria-autocomplete': 'list',
             },
-            inputAttributes
+            inputAttributes,
         );
 
         if (id) {
@@ -147,7 +147,7 @@
                             id: groupValue,
                             groupHeader: true,
                             selectable: groupHeaderSelectable,
-                        })
+                        }),
                     );
                 }
             }
@@ -264,10 +264,10 @@
         placeholderAlwaysShow && multiple
             ? placeholder
             : multiple && value?.length === 0
-            ? placeholder
-            : value
-            ? ''
-            : placeholder;
+              ? placeholder
+              : value
+                ? ''
+                : placeholder;
     $: ariaSelection = value ? handleAriaSelection(multiple) : '';
     $: ariaContext = handleAriaContent({ filteredItems, hoverItemIndex, focused, listOpen });
     $: updateValueDisplay(items);
@@ -472,7 +472,7 @@
 
     function handleClick() {
         if (disabled) return;
-        if (filterText.length > 0) return listOpen = true;
+        if (filterText.length > 0) return (listOpen = true);
         listOpen = !listOpen;
     }
 
@@ -591,7 +591,7 @@
 
     function setHoverIndex(increment) {
         let selectableFilteredItems = filteredItems.filter(
-            (item) => !Object.hasOwn(item, 'selectable') || item.selectable === true
+            (item) => !Object.hasOwn(item, 'selectable') || item.selectable === true,
         );
 
         if (selectableFilteredItems.length === 0) {
@@ -692,7 +692,7 @@
             on:scroll={handleListScroll}
             on:pointerup|preventDefault|stopPropagation
             on:mousedown|preventDefault|stopPropagation
-			role="none">
+            role="none">
             {#if $$slots['list-prepend']}<slot name="list-prepend" />{/if}
             {#if $$slots.list}<slot name="list" {filteredItems} />
             {:else if filteredItems.length > 0}

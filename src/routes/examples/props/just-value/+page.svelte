@@ -10,7 +10,6 @@
     let justValue;
 </script>
 
-
 <Select items={collection} bind:justValue />
 
 <p>justValue: {justValue}</p>

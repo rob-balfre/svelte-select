@@ -5,4 +5,3 @@
 </script>
 
 <Select {items} hideEmptyState />
-

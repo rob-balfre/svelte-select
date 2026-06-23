@@ -6,7 +6,5 @@
 </script>
 
 <Select bind:items bind:value>
-    <div class="before" slot="prepend">
-        Before it all
-    </div>
+    <div class="before" slot="prepend">Before it all</div>
 </Select>

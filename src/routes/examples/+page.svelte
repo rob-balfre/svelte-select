@@ -60,9 +60,8 @@
     }
 
     @media (min-width: 800px) {
-        
         header img {
-            width:93px;
+            width: 93px;
             margin: 0;
         }
 

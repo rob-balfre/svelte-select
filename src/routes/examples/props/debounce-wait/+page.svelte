@@ -12,7 +12,7 @@
     function loadOptions() {
         loadOptionsCalled = true;
         return Promise.resolve(items);
-    }    
+    }
 </script>
 
 <p>loadOptions called: {loadOptionsCalled}</p>
