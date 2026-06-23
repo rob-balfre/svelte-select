@@ -18,6 +18,8 @@
 <Select {items} bind:value multiple>
     <div slot="list" let:filteredItems>
         {#each filteredItems as item }
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
             <span on:click={() => handleClick(item)}>{item.label}</span>
         {/each}
     </div>
