@@ -29,3 +29,6 @@ readdirSync(SOURCE_FOLDER, { withFileTypes: true })
 
         writeFileSync(path.join(TARGET_FOLDER, fileName), output);
     });
+
+writeFileSync(path.join(TARGET_FOLDER, 'index.js'), `export { default as Select } from './Select.svelte';\n`);
+writeFileSync(path.join(TARGET_FOLDER, 'index.d.ts'), `export { default as Select } from './Select.svelte';\n`);
