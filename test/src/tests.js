@@ -32,7 +32,6 @@ const BINDABLE_PROPS = [
     'listOpen',
     'focused',
     'hoverItemIndex',
-    'justValue',
 ];
 
 function mount(Component, options = {}) {
@@ -2252,11 +2251,29 @@ test('when items and value supplied as just strings then value should render cor
         target,
         props: {
             items: ['Pizza', 'Chocolate', 'Crisps'],
+            valueMode: 'id',
             value: 'Pizza',
         },
     });
 
     equal(text(document.querySelector('.selected-item')), 'Pizza');
+
+    unmount(select);
+});
+
+test('when valueMode is id then selecting an item keeps id notation', async () => {
+    const select = mount(Select, {
+        target,
+        props: {
+            items,
+            valueMode: 'id',
+            value: 'cake',
+            listOpen: true,
+        },
+    });
+
+    await querySelectorClick('.list-item:nth-child(2)');
+    equal(select.value, 'pizza');
 
     unmount(select);
 });
@@ -2267,11 +2284,30 @@ test('when multiple with items and value supplied as just strings then value sho
         props: {
             multiple: true,
             items: ['Pizza', 'Chocolate', 'Crisps'],
+            valueMode: 'id',
             value: ['Pizza'],
         },
     });
 
     ok(text(document.querySelector('.multi-item span')).startsWith('Pizza'));
+
+    unmount(select);
+});
+
+test('when multiple valueMode is id then selecting an item keeps id notation', async () => {
+    const select = mount(Select, {
+        target,
+        props: {
+            multiple: true,
+            items,
+            valueMode: 'id',
+            value: ['chocolate'],
+            listOpen: true,
+        },
+    });
+
+    await querySelectorClick('.list-item:nth-child(1)');
+    equal(JSON.stringify(select.value), JSON.stringify(['chocolate', 'pizza']));
 
     unmount(select);
 });
@@ -2303,20 +2339,21 @@ test('when multiple, groupBy and value are supplied then list should be filtered
     unmount(select);
 });
 
-test('When items are collection and value a string then lookup item using itemId and update value to match', async () => {
+test('When items are collection and valueMode is id then value is kept as id', async () => {
     const select = mount(Select, {
         target,
         props: {
             items,
+            valueMode: 'id',
             value: 'cake',
         },
     });
 
     await wait(0);
-    ok(select.value.value === 'cake');
+    ok(select.value === 'cake');
     select.$set({ value: 'pizza' });
     await wait(0);
-    ok(select.value.value === 'pizza');
+    ok(select.value === 'pizza');
     unmount(select);
 });
 
@@ -2342,6 +2379,7 @@ test('When item is already active and is selected from list then close list', as
         props: {
             items,
             listOpen: true,
+            valueMode: 'id',
             value: 'pizza',
         },
     });
@@ -2349,7 +2387,7 @@ test('When item is already active and is selected from list then close list', as
     await wait(0);
     await querySelectorClick('.svelte-select-list > .list-item > .item.active');
     await wait(0);
-    ok(select.value.value === 'pizza');
+    ok(select.value === 'pizza');
     unmount(select);
 });
 
@@ -3223,18 +3261,20 @@ test('when listOpen true on page load then list should show onMount', async () =
     unmount(select);
 });
 
-test('when value is set check from item and show correct label', async () => {
+test('when valueMode is id and value is set then show correct label', async () => {
     const select = mount(Select, {
         target,
         props: {
             items,
             listOpen: true,
+            valueMode: 'id',
         },
     });
 
     select.value = 'cake';
     await tick();
-    equal(select.value.label, 'Cake');
+    equal(select.value, 'cake');
+    equal(text(document.querySelector('.selected-item')), 'Cake');
     unmount(select);
 });
 
@@ -3351,7 +3391,7 @@ test('when item selected programmatically a change event should NOT fire', async
     unmount(select);
 });
 
-test('when value is cleared then justValue should be null', async () => {
+test('when value is cleared then value should be cleared', async () => {
     const select = mount(Select, {
         target,
         props: {
@@ -3363,7 +3403,7 @@ test('when value is cleared then justValue should be null', async () => {
 
     select.handleClear();
     await wait(0);
-    ok(!select.justValue);
+    ok(!select.value);
 
     unmount(select);
 });
@@ -3444,17 +3484,18 @@ test('when named slots list-prepend and list-append show content', async () => {
     unmount(select);
 });
 
-test('when itemId and justValue then return correct value', async () => {
+test('when itemId and valueMode is id then bind value as id', async () => {
     const select = mount(Select, {
         target,
         props: {
             items: collection,
-            value: { _id: 2, label: 'Cake' },
+            valueMode: 'id',
+            value: 2,
             itemId: '_id',
         },
     });
 
-    ok(select.justValue === 2);
+    ok(select.value === 2);
     unmount(select);
 });
 

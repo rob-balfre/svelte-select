@@ -5,8 +5,8 @@
     let value = $state('one');
 </script>
 
-<Select bind:items bind:value>
+<Select bind:items bind:value valueMode="id">
     {#snippet selection({ selection })}
-        Slot: {selection.label}
+        Slot: {selection}
     {/snippet}
 </Select>

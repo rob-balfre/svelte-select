@@ -12,7 +12,6 @@
     let value = $state(undefined);
     let listOpen = $state(false);
     let activeIndex = $state(null);
-    let justValue = $state();
     let hoverItemIndex = $state(0);
 
     function handleClick(i) {
@@ -41,7 +40,7 @@
     {items}
     bind:listOpen
     bind:value
-    bind:justValue
+    valueMode="id"
     bind:hoverItemIndex
     onhoverItem={handleHover}>
     {#snippet list({ filteredItems })}

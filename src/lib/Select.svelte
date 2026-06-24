@@ -27,8 +27,10 @@
     type CreateGroupHeaderItemFn = (groupValue: string, item: SelectItem) => SelectItem;
     type DebounceFn = (fn: () => void, wait?: number) => void;
 
+    type ValueMode = 'item' | 'id';
+
     interface Props {
-        justValue?: any;
+        valueMode?: ValueMode;
         filter?: typeof _filter;
         getItems?: typeof _getItems;
         id?: string | null;
@@ -92,7 +94,7 @@
         empty?: Snippet;
         listAppend?: Snippet;
         prepend?: Snippet;
-        selection?: Snippet<[{ selection: SelectItem; index?: number }]>;
+        selection?: Snippet<[{ selection: SelectValue; index?: number }]>;
         multiClearIcon?: Snippet;
         loadingIcon?: Snippet;
         clearIcon?: Snippet;
@@ -104,7 +106,7 @@
     let timeout: ReturnType<typeof setTimeout> | undefined;
 
     let {
-        justValue = $bindable<any>(),
+        valueMode = 'item',
         filter = _filter,
         getItems = _getItems,
         id = null,
@@ -191,8 +193,6 @@
         requiredIndicator,
     }: Props = $props();
 
-    setValue();
-
     export function getFilteredItems() {
         return filteredItems;
     }
@@ -203,27 +203,6 @@
     let prev_multiple: boolean | undefined;
     let prev_focused: boolean | undefined;
     let listElement = $state<HTMLDivElement | null>(null);
-
-    function computeValue() {
-        if (typeof value === 'string') {
-            let item = (items || []).find((item) => item[itemId] === value);
-            return (
-                item || {
-                    [itemId]: value,
-                    label: value,
-                }
-            );
-        } else if (multiple && Array.isArray(value) && value.length > 0) {
-            return value.map((item) => (typeof item === 'string' ? { value: item, label: item } : item));
-        } else {
-            return value;
-        }
-    }
-
-    function setValue() {
-        const newValue = computeValue();
-        if (JSON.stringify(newValue) !== JSON.stringify(value)) value = newValue;
-    }
 
     let __inputAttributes: InputAttributes = {};
     const _inputAttributes = $derived.by(() => {
@@ -255,6 +234,32 @@
         }
         return __inputAttributes;
     });
+
+    function getValue(v: any) {
+        if (v == null) return v;
+        if (typeof v === 'object') return v[itemId];
+        return v;
+    }
+
+    function toSelectionValue(selection: SelectItem) {
+        return valueMode === 'id' ? getValue(selection) : selection;
+    }
+
+    function getLabel(v: any) {
+        if (v == null) return v;
+        if (typeof v === 'object') return v[label];
+        const item = items?.find((i) => i[itemId] === v);
+        return item ? item[label] : v;
+    }
+
+    function hiddenFieldValue() {
+        if (value == null) return null;
+        if (valueMode === 'id') {
+            if (multiple && Array.isArray(value)) return JSON.stringify(value);
+            return `${value}`;
+        }
+        return JSON.stringify(value);
+    }
 
     function convertStringItemsToObjects(_items: unknown[]): SelectItem[] {
         return _items.map((item, index) => {
@@ -312,7 +317,7 @@
             return;
         }
 
-        if (!prev_value || JSON.stringify(value[itemId]) !== JSON.stringify(prev_value[itemId])) {
+        if (!prev_value || JSON.stringify(getValue(value)) !== JSON.stringify(getValue(prev_value))) {
             oninput?.(value);
         }
     }
@@ -327,12 +332,12 @@
 
     function setupSingle() {
         prev_multiple = false;
-        if (value) value = null;
+        if (value) value = undefined;
     }
 
     function setValueIndexAsHoverIndex() {
         const valueIndex = filteredItems.findIndex((i: SelectItem) => {
-            return i[itemId] === value[itemId];
+            return i[itemId] === getValue(value);
         });
 
         checkHoverSelectable(valueIndex, true);
@@ -398,7 +403,7 @@
             filterText,
             items,
             multiple,
-            value: computeValue(), // was previously already assigned by previous $: statements....
+            value,
             itemId,
             groupBy,
             label,
@@ -416,9 +421,9 @@
         let selected: unknown = undefined;
 
         if (_multiple && Array.isArray(value) && value.length > 0) {
-            selected = value.map((v) => v[label]).join(', ');
+            selected = value.map((v) => getLabel(v)).join(', ');
         } else if (!Array.isArray(value) && value) {
-            selected = value[label];
+            selected = getLabel(value);
         }
 
         return ariaValues(selected);
@@ -437,20 +442,6 @@
 
     const ariaSelection = $derived(value ? handleAriaSelection(multiple) : '');
     const ariaContext = $derived(handleAriaContent());
-    const computedJustValue = $derived.by(() => {
-        if (multiple) return value && Array.isArray(value) ? value.map((item) => item[itemId]) : null;
-        return value ? value[itemId] : value;
-    });
-
-    $effect(() => {
-        if (JSON.stringify(justValue) !== JSON.stringify(computedJustValue)) {
-            justValue = computedJustValue;
-        }
-    });
-
-    $effect(() => {
-        if (items !== undefined && value !== undefined) untrack(setValue);
-    });
 
     $effect(() => {
         if (multiple) untrack(setupMulti);
@@ -553,8 +544,8 @@
             const uniqueValues: SelectItem[] = [];
 
             value.forEach((val: SelectItem) => {
-                if (!ids.includes(val[itemId])) {
-                    ids.push(val[itemId]);
+                if (!ids.includes(getValue(val))) {
+                    ids.push(getValue(val));
                     uniqueValues.push(val);
                 } else {
                     noDuplicates = false;
@@ -567,17 +558,18 @@
     }
 
     function findItem(selection?: SelectItem) {
-        let matchTo = selection ? selection[itemId] : value?.[itemId];
+        let matchTo = selection ? getValue(selection) : getValue(value);
         return items?.find((item) => item[itemId] === matchTo);
     }
 
     function updateValueDisplay(currentItems: SelectItem[] | null) {
+        if (valueMode !== 'item') return;
         if (!currentItems || currentItems.length === 0 || currentItems.some((item) => typeof item !== 'object')) return;
         if (
             !value ||
             (multiple
-                ? Array.isArray(value) && value.some((selection) => !selection || !selection[itemId])
-                : !value[itemId])
+                ? !Array.isArray(value) || value.some((selection) => !selection || typeof selection !== 'object')
+                : typeof value !== 'object')
         )
             return;
 
@@ -621,7 +613,7 @@
                     if (filteredItems.length === 0) break;
                     const hoverItem = filteredItems[hoverItemIndex];
 
-                    if (value && !multiple && value[itemId] === hoverItem[itemId]) {
+                    if (value && !multiple && getValue(value) === hoverItem[itemId]) {
                         closeList();
                         break;
                     } else {
@@ -656,7 +648,7 @@
                 if (listOpen && focused) {
                     if (
                         filteredItems.length === 0 ||
-                        (value && value[itemId] === filteredItems[hoverItemIndex][itemId])
+                        (value && getValue(value) === filteredItems[hoverItemIndex][itemId])
                     )
                         return closeList();
 
@@ -737,7 +729,8 @@
             const item = Object.assign({}, selection);
 
             if (item.groupHeader && !item.selectable) return;
-            value = multiple ? (value ? value.concat([item]) : [item]) : (value = item);
+            const selectedValue = toSelectionValue(selection);
+            value = multiple ? (value ? value.concat([selectedValue]) : [selectedValue]) : selectedValue;
 
             setTimeout(() => {
                 if (closeListOnChange) closeList();
@@ -796,7 +789,7 @@
     function handleItemClick(args: { item: SelectItem; i: number }) {
         const { item, i } = args;
         if (item?.selectable === false) return;
-        if (value && !multiple && value[itemId] === item[itemId]) return closeList();
+        if (value && !multiple && getValue(value) === item[itemId]) return closeList();
         if (isItemSelectable(item)) {
             hoverItemIndex = i;
             handleSelect(item);
@@ -830,7 +823,7 @@
 
     function isItemActive(item: SelectItem, currentValue: SelectValue, currentItemId: string) {
         if (multiple) return;
-        return currentValue && currentValue[currentItemId] === item[currentItemId];
+        return currentValue && getValue(currentValue) === item[currentItemId];
     }
 
     function isItemFirst(itemIndex: number) {
@@ -996,7 +989,7 @@
                         <span class="multi-item-text">
                             {#if selection}{@render selection({ selection: item, index: i })}
                             {:else}
-                                {item[label]}
+                                {getLabel(item)}
                             {/if}
                         </span>
 
@@ -1020,7 +1013,7 @@
                 <div class="selected-item" class:hide-selected-item={hideSelectedItem}>
                     {#if selection}{@render selection({ selection: value })}
                     {:else}
-                        {value[label]}
+                        {getLabel(value)}
                     {/if}
                 </div>
             {/if}
@@ -1070,7 +1063,7 @@
 
     {#if inputHidden}{@render inputHidden({ value })}
     {:else}
-        <input {name} type="hidden" value={value ? JSON.stringify(value) : null} />
+        <input {name} type="hidden" value={hiddenFieldValue()} />
     {/if}
 
     {#if required && (!value || (Array.isArray(value) ? value.length === 0 : false))}

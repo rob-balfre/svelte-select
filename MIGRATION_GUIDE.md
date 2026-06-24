@@ -93,13 +93,81 @@ Snippet parameters match the old `let:` bindings:
 
 These props still support `bind:` as before:
 
-`value`, `filterText`, `items`, `loading`, `listOpen`, `focused`, `hoverItemIndex`, `justValue`, `container`, `input`
+`value`, `filterText`, `items`, `loading`, `listOpen`, `focused`, `hoverItemIndex`, `container`, `input`
 
 No changes are needed if you already use `bind:value`, `bind:filterText`, and so on.
 
 Some of these props provide default values, so if you `bind:` them, you need to provide a value (other than `undefined`) yourself to avoid a Svelte validation error.
 
-### 4. Update imperative / programmatic usage
+### 4. Replace `justValue` with `valueMode`
+
+`justValue` has been removed. It used to expose the selected id(s) as a read-only derived prop while `value` held the full item object(s). That split was confusing because the component could also silently change the shape of `value` (for example upgrading a string to `{ value, label }`).
+
+**Use `valueMode` instead.** It makes the contract explicit:
+
+| `valueMode` | Default | `value` shape (single) | `value` shape (multiple) | On select |
+| ----------- | ------- | ---------------------- | ------------------------ | --------- |
+| `'item'`    | yes     | item object            | array of item objects    | stores a shallow copy of the selected item |
+| `'id'`      | no      | primitive (`string`, `number`, …) | array of primitives | stores `item[itemId]` |
+
+`itemId` (default `'value'`) defines which field is used in `'id'` mode.
+
+**Before (`justValue`):**
+
+```svelte
+<script>
+  let value = $state({ value: 'one', label: 'One' });
+  let justValue = $state();
+</script>
+
+<Select {items} bind:value bind:justValue />
+<p>{justValue}</p>
+```
+
+**After (`valueMode="id"`):**
+
+```svelte
+<script>
+  let value = $state('one');
+</script>
+
+<Select {items} valueMode="id" bind:value />
+<p>{value}</p>
+```
+
+With a custom id field:
+
+```svelte
+<Select {items} itemId="foo" valueMode="id" bind:value />
+```
+
+#### Align `value`, `items`, and `valueMode`
+
+The component no longer auto-repairs mismatched shapes. **`value`, `items`, and `valueMode` must agree**, or display, filtering, and selection can behave unexpectedly.
+
+**`valueMode="item"` (default)** — use when you want the full selected row:
+
+- `items` should be objects (or string arrays, which are converted internally to `{ value, label }` for the list only).
+- `value` should be an item object, or an array of item objects when `multiple`.
+
+**`valueMode="id"`** — use when you only care about the identifier (forms, APIs, string item lists):
+
+- `value` should be the primitive id: a string/number for single select, or an array of those for `multiple`.
+- Each `value` entry must match `item[itemId]` for some item in `items`.
+- On select, `value` stays a primitive — it is **not** upgraded to `{ value, label }`.
+- String item arrays are the common case: `items={['Pizza', 'Chocolate']}` with `valueMode="id"` and `value="Pizza"`.
+
+**Do not mix shapes within a mode.** For example, with `valueMode="item"`, do not bind `value="'cake'"` and expect it to become an object. With `valueMode="id"`, do not bind `value={{ value: 'cake', label: 'Cake' }}` and expect `justValue`-style extraction — bind the id directly.
+
+#### Snippets, hidden inputs, and events
+
+- **`selection` snippet** — receives `value` in the active shape: an item object in `'item'` mode, a primitive in `'id'` mode.
+- **`inputHidden` snippet** — same; default hidden input serializes objects as JSON in `'item'` mode and writes the raw id (or JSON array of ids) in `'id'` mode.
+- **`onchange` / `oninput`** — payload matches `value` (`item` object vs primitive), not a separate `justValue`.
+
+If you previously relied on `justValue` for form fields, switch to `valueMode="id"` and bind `value`, or use the `inputHidden` snippet with the primitive directly.
+
+### 5. Update imperative / programmatic usage
 
 If you mount `<Select>` imperatively or access it via `bind:this`, note these changes:
 
@@ -130,7 +198,7 @@ const select = mount(Select, {
 unmount(select);
 ```
 
-### 5. Update custom `getItems` overrides
+### 6. Update custom `getItems` overrides
 
 If you override async loading with a custom `getItems` function, replace the `dispatch` argument with callback props:
 

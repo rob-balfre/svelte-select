@@ -14,7 +14,6 @@ const BINDABLE_DEFAULTS = {
     listOpen: false,
     focused: false,
     hoverItemIndex: 0,
-    justValue: undefined,
 };
 
 export function mountComponent(Component, target, initialProps = {}) {

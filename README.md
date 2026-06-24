@@ -45,8 +45,8 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | Prop                   | Type      | Default         | Description                                                    |
 | ---------------------- | --------- | --------------- | -------------------------------------------------------------- |
 | items                  | `any[]`   | `[]`            | Array of items available to display / filter                   |
-| value                  | `any`     | `undefined`     | Selected value(s)                                              |
-| justValue              | `any`     | `null`          | **READ-ONLY** Selected value(s) excluding container object     |
+| value                  | `any`     | `undefined`     | Selected value(s). Shape depends on `valueMode` — see below.   |
+| valueMode              | `string`  | `item`          | `item`: full item object(s). `id`: primitive id(s) via `itemId` |
 | itemId                 | `string`  | `value`         | Override default identifier                                    |
 | label                  | `string`  | `label`         | Override default label                                         |
 | id                     | `string`  | `null`          | id attr for input field                                        |
@@ -77,7 +77,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | closeListOnChange      | `boolean` | `true`          | After `onchange` list will close                               |
 | clearFilterTextOnBlur  | `boolean` | `true`          | If `false`, `filterText` value is preserved on blur            |
 
-These props support two-way binding: `value`, `filterText`, `items`, `loading`, `listOpen`, `focused`, `hoverItemIndex`, `justValue`, `container`, and `input`.
+These props support two-way binding: `value`, `filterText`, `items`, `loading`, `listOpen`, `focused`, `hoverItemIndex`, `container`, and `input`.
 
 
 ## Snippets
@@ -178,6 +178,31 @@ They can also be grouped and include non-selectable items.
 </script>
 
 <Select {items} {groupBy} />
+```
+
+### valueMode
+
+`valueMode` controls what shape `bind:value` uses. It must match how you pass `value` and how your `items` identify options (`itemId`, default `'value'`).
+
+| Mode | `value` (single) | `value` (`multiple`) | On select |
+| ---- | ---------------- | -------------------- | --------- |
+| `item` (default) | item object | item object[] | list item |
+| `id` | primitive id | primitive id[] | `item[itemId]` only |
+
+- **`item`** — `value` is the full row. Use with object `items`. Labels come from `value.label` (or `label` prop).
+- **`id`** — `value` is just the identifier. Use for forms/APIs, or when `items` is a string array. Labels are resolved from `items` by matching `itemId`.
+
+`value`, `items`, and `valueMode` must align — the component does not convert between shapes. A string `value` requires `valueMode="id"`; object `items` with `valueMode="id"` means `value` should be `'cake'`, not `{ value: 'cake', label: 'Cake' }`.
+
+```html
+<!-- string items → id mode -->
+<Select items={['one', 'two']} valueMode="id" bind:value />
+
+<!-- object items, bind the id only -->
+<Select items={collection} valueMode="id" bind:value />
+
+<!-- object items, bind the full item (default) -->
+<Select items={collection} bind:value />
 ```
 
 You can also use custom collections.

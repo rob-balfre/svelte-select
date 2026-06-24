@@ -19,4 +19,4 @@
     const groupBy = (i) => i.group;
 </script>
 
-<Select {loadOptions} bind:filterText {groupBy} {value} />
+<Select {loadOptions} bind:filterText {groupBy} {value} valueMode="id" />

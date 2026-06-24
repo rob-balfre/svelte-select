@@ -5,8 +5,8 @@
     let value = $state(['one', 'two']);
 </script>
 
-<Select bind:items bind:value multiple>
+<Select bind:items bind:value valueMode="id" multiple>
     {#snippet selection({ selection, index })}
-        Index: {index} Slot: {selection.label}
+        Index: {index} Slot: {selection}
     {/snippet}
 </Select>

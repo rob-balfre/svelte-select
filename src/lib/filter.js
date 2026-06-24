@@ -21,9 +21,10 @@ export default function filter({
 
     let filterResults = items.filter((item) => {
         let matchesFilter = itemFilter(item[label], filterText, item);
-        if (matchesFilter && multiple && value?.length) {
+        if (matchesFilter && multiple && Array.isArray(value) && value.length) {
             matchesFilter = !value.some((x) => {
-                return filterSelectedItems ? x[itemId] === item[itemId] : false;
+                const xValue = typeof x === 'object' && x != null ? x[itemId] : x;
+                return filterSelectedItems ? xValue === item[itemId] : false;
             });
         }
 
