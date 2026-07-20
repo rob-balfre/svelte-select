@@ -9,7 +9,7 @@ const EVENTS = ['input', 'change', 'select', 'clear', 'filter', 'hoverItem', 'fo
 const BINDABLE_DEFAULTS = {
     value: undefined,
     filterText: '',
-    items: null,
+    items: [],
     loading: false,
     listOpen: false,
     focused: false,

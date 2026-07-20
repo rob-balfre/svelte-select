@@ -121,7 +121,7 @@
         filterText = $bindable(''),
         placeholder = 'Please select',
         placeholderAlwaysShow = false,
-        items = $bindable(null),
+        items = $bindable<SelectItem[]>([]),
         label = 'label',
         itemFilter = (label, filterText, option) => `${label}`.toLowerCase().includes(filterText.toLowerCase()),
         groupBy = undefined,
@@ -317,14 +317,19 @@
     function dispatchSelectedItem() {
         if (multiple) {
             if (JSON.stringify(value) !== JSON.stringify(prev_value)) {
-                if (checkValueForDuplicates()) {
+                // Fire on change and on clear; skip when duplicates were stripped
+                if (!value || checkValueForDuplicates()) {
                     oninput?.(value);
                 }
             }
             return;
         }
 
-        if (!prev_value || JSON.stringify(getValue(value)) !== JSON.stringify(getValue(prev_value))) {
+        if (value) {
+            if (!prev_value || JSON.stringify(getValue(value)) !== JSON.stringify(getValue(prev_value))) {
+                oninput?.(value);
+            }
+        } else if (prev_value) {
             oninput?.(value);
         }
     }
@@ -450,6 +455,8 @@
     const ariaSelection = $derived(value ? handleAriaSelection(multiple) : '');
     const ariaContext = $derived(handleAriaContent());
 
+    let wasListOpen = false;
+
     $effect(() => {
         if (multiple) untrack(setupMulti);
     });
@@ -462,24 +469,15 @@
         if (multiple && value && value.length > 1) untrack(checkValueForDuplicates);
     });
 
-    // ssr?
     $effect(() => {
         const currentItems = items;
         untrack(() => updateValueDisplay(currentItems));
     });
 
+    // oninput for selection changes and clears (single + multiple)
     $effect(() => {
-        if (value) untrack(dispatchSelectedItem);
-    });
-
-    // ???
-    $effect(() => {
-        if (!value && multiple && prev_value) oninput?.(value);
-    });
-
-    // ???
-    $effect(() => {
-        if (!multiple && prev_value && !value) oninput?.(value);
+        value;
+        untrack(dispatchSelectedItem);
     });
 
     $effect(() => {
@@ -506,9 +504,12 @@
         if (listOpen) onfilter?.(filteredItems);
     });
 
+    // Reset hover when the list opens for multiple (not while it stays open)
     $effect(() => {
-        // wrong?
-        if (listOpen && multiple && hoverItemIndex !== 0) hoverItemIndex = 0;
+        if (listOpen && multiple && !wasListOpen) {
+            hoverItemIndex = 0;
+        }
+        wasListOpen = listOpen;
     });
 
     $effect(() => {
@@ -536,7 +537,7 @@
         listMounted(listElement, listOpen);
     });
 
-    // must be last so it's executed last and then the prev value for the next run
+    // Sync previous values after other effects so they can compare against last run
     $effect(() => {
         prev_value = value;
         prev_filterText = filterText;
@@ -765,18 +766,6 @@
         }, 100);
     }
 
-    function handleClickOutside(event: MouseEvent) {
-        if (
-            !listOpen &&
-            !focused &&
-            container &&
-            !container.contains(event.target as any) &&
-            !listElement?.contains(event.target as any)
-        ) {
-            handleBlur();
-        }
-    }
-
     onDestroy(() => {
         listElement?.remove();
     });
@@ -899,7 +888,7 @@
     }
 </script>
 
-<svelte:window onclick={handleClickOutside} onkeydown={handleKeyDown} />
+<svelte:window onkeydown={handleKeyDown} />
 
 <div
     class="svelte-select {containerClasses}"
