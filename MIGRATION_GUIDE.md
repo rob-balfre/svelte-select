@@ -1,4 +1,4 @@
-## Migrating for v5 to v6
+## Migrating from v5 to v6
 
 `svelte-select` v6 requires **Svelte 5**.
 

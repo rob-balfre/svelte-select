@@ -29,7 +29,7 @@ npm install svelte-select
 
 ## Svelte 5
 
-`svelte-select` v5+ requires **Svelte 5**. The component uses runes, callback props instead of `createEventDispatcher`, and snippet props instead of named slots.
+`svelte-select` v6+ requires **Svelte 5**. The component uses runes, callback props instead of `createEventDispatcher`, and snippet props instead of named slots.
 
 If you are upgrading from an older version, see the [migration guide](/MIGRATION_GUIDE.md).
 
