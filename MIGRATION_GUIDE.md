@@ -202,7 +202,29 @@ const select = mount(Select, {
 unmount(select);
 ```
 
-### 6. Update custom `getItems` overrides
+### 6. CamelCase CSS custom property aliases removed
+
+In v5, camelCase CSS custom properties (for example `--borderRadius`) were kept as deprecated aliases that forwarded to kebab-case (`--border-radius`). Those aliases are **removed** in v6 — use kebab-case only.
+
+**Before (still worked in v5 via aliases):**
+
+```css
+.svelte-select {
+  --borderRadius: 8px;
+  --itemHoverBG: #eee;
+}
+```
+
+**After (v6):**
+
+```css
+.svelte-select {
+  --border-radius: 8px;
+  --item-hover-bg: #eee;
+}
+```
+
+### 7. Update custom `getItems` overrides
 
 If you override async loading with a custom `getItems` function, replace the `dispatch` argument with callback props:
 
@@ -264,7 +286,9 @@ Example at [svelte-select-examples](https://svelte-select-examples.vercel.app/ex
 
 ### CSS Camel to kebab:
 
-CSS classes and custom properties changed (only depreciated, no need to update if upgrading from v4) from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`
+CSS classes and custom properties changed (only depreciated, no need to update if upgrading from v4) from camel to kebab case. For example `selectedItem` → `selected-item` and `--borderRadius` → `--border-radius`.
+
+> **Note for later upgrades:** the camelCase CSS custom property *aliases* that made the old names still work were removed in v6. See [Migrating from v5 to v6](#migrating-from-v5-to-v6) §6.
 
 ### Redundant CSS custom properties:
 
