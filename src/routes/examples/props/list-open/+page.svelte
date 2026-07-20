@@ -1,6 +1,4 @@
 <script>
-    import { preventDefault } from 'svelte/legacy';
-
     import Select from '$lib/Select.svelte';
 
     let items = [
@@ -14,9 +12,10 @@
 </script>
 
 <button
-    onpointerdown={preventDefault(() => {
+    onpointerdown={(e) => {
+        e.preventDefault();
         listOpen = !listOpen;
-    })}>Open</button>
+    }}>Open</button>
 
 <Select {items} bind:listOpen />
 
