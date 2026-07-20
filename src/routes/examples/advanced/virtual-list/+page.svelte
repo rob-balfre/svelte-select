@@ -40,7 +40,6 @@
     {items}
     bind:listOpen
     bind:value
-    valueMode="id"
     bind:hoverItemIndex
     onhoverItem={handleHover}>
     {#snippet list({ filteredItems })}

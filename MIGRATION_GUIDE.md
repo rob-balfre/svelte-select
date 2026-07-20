@@ -147,25 +147,29 @@ The component no longer auto-repairs mismatched shapes. **`value`, `items`, and 
 
 **`valueMode="item"` (default)** — use when you want the full selected row:
 
-- `items` should be objects (or string arrays, which are converted internally to `{ value, label }` for the list only).
+- `items` should be objects.
 - `value` should be an item object, or an array of item objects when `multiple`.
 
-**`valueMode="id"`** — use when you only care about the identifier (forms, APIs, string item lists):
+**String / primitive item arrays** — no `valueMode` needed:
+
+- `items={['Pizza', 'Chocolate']}` with `value="Pizza"` (or `bind:value` as a string) works with the default `valueMode`.
+- String arrays are converted internally to `{ value, label }` for the list only; `value` stays the primitive and is **not** upgraded on select.
+
+**`valueMode="id"`** — use when you only care about the identifier for **object** items (forms, APIs):
 
 - `value` should be the primitive id: a string/number for single select, or an array of those for `multiple`.
 - Each `value` entry must match `item[itemId]` for some item in `items`.
 - On select, `value` stays a primitive — it is **not** upgraded to `{ value, label }`.
-- String item arrays are the common case: `items={['Pizza', 'Chocolate']}` with `valueMode="id"` and `value="Pizza"`.
 
-**Do not mix shapes within a mode.** For example, with `valueMode="item"`, do not bind `value="'cake'"` and expect it to become an object. With `valueMode="id"`, do not bind `value={{ value: 'cake', label: 'Cake' }}` and expect `justValue`-style extraction — bind the id directly.
+**Do not mix shapes within a mode.** For example, with object `items` and `valueMode="item"`, do not bind `value="'cake'"` and expect it to become an object. With `valueMode="id"`, do not bind `value={{ value: 'cake', label: 'Cake' }}` and expect `justValue`-style extraction — bind the id directly.
 
 #### Snippets, hidden inputs, and events
 
-- **`selection` snippet** — receives `value` in the active shape: an item object in `'item'` mode, a primitive in `'id'` mode.
-- **`inputHidden` snippet** — same; default hidden input serializes objects as JSON in `'item'` mode and writes the raw id (or JSON array of ids) in `'id'` mode.
+- **`selection` snippet** — receives `value` in the active shape: an item object for object `items` in `'item'` mode; a primitive for `'id'` mode or string/primitive `items`.
+- **`inputHidden` snippet** — same; default hidden input serializes objects as JSON for object `items` in `'item'` mode and writes the raw id (or JSON array of ids) for `'id'` mode or primitive `items`.
 - **`onchange` / `oninput`** — payload matches `value` (`item` object vs primitive), not a separate `justValue`.
 
-If you previously relied on `justValue` for form fields, switch to `valueMode="id"` and bind `value`, or use the `inputHidden` snippet with the primitive directly.
+If you previously relied on `justValue` for form fields with object `items`, switch to `valueMode="id"` and bind `value`, or use the `inputHidden` snippet with the primitive directly.
 
 ### 5. Update imperative / programmatic usage
 

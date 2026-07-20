@@ -46,7 +46,7 @@ List position and floating is powered by `floating-ui`, see their [package-entry
 | ---------------------- | --------- | --------------- | -------------------------------------------------------------- |
 | items                  | `any[]`   | `[]`            | Array of items available to display / filter                   |
 | value                  | `any`     | `undefined`     | Selected value(s). Shape depends on `valueMode` — see below.   |
-| valueMode              | `string`  | `item`          | `item`: full item object(s). `id`: primitive id(s) via `itemId` |
+| valueMode              | `string`  | `item`          | `item`: full item object(s). `id`: primitive id(s) via `itemId`. String/primitive `items` keep primitive `value` without setting `id`. |
 | itemId                 | `string`  | `value`         | Override default identifier                                    |
 | label                  | `string`  | `label`         | Override default label                                         |
 | id                     | `string`  | `null`          | id attr for input field                                        |
@@ -190,13 +190,15 @@ They can also be grouped and include non-selectable items.
 | `id` | primitive id | primitive id[] | `item[itemId]` only |
 
 - **`item`** — `value` is the full row. Use with object `items`. Labels come from `value.label` (or `label` prop).
-- **`id`** — `value` is just the identifier. Use for forms/APIs, or when `items` is a string array. Labels are resolved from `items` by matching `itemId`.
+- **`id`** — `value` is just the identifier. Use for forms/APIs when `items` are objects. Labels are resolved from `items` by matching `itemId`.
 
-`value`, `items`, and `valueMode` must align — the component does not convert between shapes. A string `value` requires `valueMode="id"`; object `items` with `valueMode="id"` means `value` should be `'cake'`, not `{ value: 'cake', label: 'Cake' }`.
+**String / primitive `items`:** when `items` is a string (or other primitive) array, `value` stays a matching primitive automatically — you do **not** need `valueMode="id"`. On select, `value` is not upgraded to `{ value, label }`.
+
+For object `items`, `value` and `valueMode` must align — the component does not convert between shapes. Object `items` with `valueMode="id"` means `value` should be `'cake'`, not `{ value: 'cake', label: 'Cake' }`.
 
 ```html
-<!-- string items → id mode -->
-<Select items={['one', 'two']} valueMode="id" bind:value />
+<!-- string items → bind a string (no valueMode needed) -->
+<Select items={['one', 'two']} bind:value />
 
 <!-- object items, bind the id only -->
 <Select items={collection} valueMode="id" bind:value />

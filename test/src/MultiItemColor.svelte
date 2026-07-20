@@ -4,4 +4,4 @@
     let items = $state(['one', 'two']);
 </script>
 
-<Select multiple bind:items value="one" valueMode="id" listOpen --multi-item-color="red" />
+<Select multiple bind:items value="one" listOpen --multi-item-color="red" />

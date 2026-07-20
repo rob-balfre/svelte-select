@@ -2219,7 +2219,7 @@ test('When list is open, filterText applied and Enter/Tab key pressed should sel
     await wait(0);
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
-    equal(select.value.value, 'A5');
+    equal(select.value, 'A5');
     await wait(0);
     ok(text(target.querySelector('.selected-item')) === 'A5');
 
@@ -2251,12 +2251,26 @@ test('when items and value supplied as just strings then value should render cor
         target,
         props: {
             items: ['Pizza', 'Chocolate', 'Crisps'],
-            valueMode: 'id',
             value: 'Pizza',
         },
     });
 
     equal(text(document.querySelector('.selected-item')), 'Pizza');
+
+    unmount(select);
+});
+
+test('when items are strings then selecting keeps string value without valueMode id', async () => {
+    const select = mount(Select, {
+        target,
+        props: {
+            items: ['Pizza', 'Chocolate', 'Crisps'],
+            listOpen: true,
+        },
+    });
+
+    await querySelectorClick('.list-item:nth-child(2)');
+    equal(select.value, 'Chocolate');
 
     unmount(select);
 });
@@ -2284,7 +2298,6 @@ test('when multiple with items and value supplied as just strings then value sho
         props: {
             multiple: true,
             items: ['Pizza', 'Chocolate', 'Crisps'],
-            valueMode: 'id',
             value: ['Pizza'],
         },
     });

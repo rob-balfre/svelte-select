@@ -241,8 +241,15 @@
         return v;
     }
 
+    function isPrimitiveItems(currentItems: unknown[] | null | undefined) {
+        return Array.isArray(currentItems) && currentItems.length > 0 && typeof currentItems[0] !== 'object';
+    }
+
+    // Primitive item arrays (e.g. string[]) use id-shaped values even when valueMode is the default 'item'.
+    const useIdValue = $derived(valueMode === 'id' || isPrimitiveItems(items));
+
     function toSelectionValue(selection: SelectItem) {
-        return valueMode === 'id' ? getValue(selection) : selection;
+        return useIdValue ? getValue(selection) : selection;
     }
 
     function getLabel(v: any) {
@@ -254,7 +261,7 @@
 
     function hiddenFieldValue() {
         if (value == null) return null;
-        if (valueMode === 'id') {
+        if (useIdValue) {
             if (multiple && Array.isArray(value)) return JSON.stringify(value);
             return `${value}`;
         }

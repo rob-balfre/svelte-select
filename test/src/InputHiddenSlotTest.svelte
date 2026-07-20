@@ -5,7 +5,7 @@
     let value = $state('one');
 </script>
 
-<Select bind:items name="test" bind:value valueMode="id">
+<Select bind:items name="test" bind:value>
     {#snippet inputHidden({ value })}
         <input type="hidden" name="test" value={value} />
     {/snippet}
