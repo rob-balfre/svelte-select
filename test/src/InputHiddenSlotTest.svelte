@@ -7,6 +7,6 @@
 
 <Select bind:items name="test" bind:value>
     {#snippet inputHidden({ value })}
-        <input type="hidden" name="test" value={value} />
+        <input type="hidden" name="test" {value} />
     {/snippet}
 </Select>

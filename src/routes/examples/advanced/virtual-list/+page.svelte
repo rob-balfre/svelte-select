@@ -35,13 +35,7 @@
     });
 </script>
 
-<Select
-    --list-max-height="300px"
-    {items}
-    bind:listOpen
-    bind:value
-    bind:hoverItemIndex
-    onhoverItem={handleHover}>
+<Select --list-max-height="300px" {items} bind:listOpen bind:value bind:hoverItemIndex onhoverItem={handleHover}>
     {#snippet list({ filteredItems })}
         {#if filteredItems.length > 0}
             <VirtualList

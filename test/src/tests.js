@@ -24,15 +24,7 @@ import CreateItemTest from './CreateItemTest.svelte';
 import { unmount as svelteUnmount, tick, flushSync } from 'svelte';
 import { mountComponent } from './mount-utils.svelte.js';
 
-const BINDABLE_PROPS = [
-    'value',
-    'filterText',
-    'items',
-    'loading',
-    'listOpen',
-    'focused',
-    'hoverItemIndex',
-];
+const BINDABLE_PROPS = ['value', 'filterText', 'items', 'loading', 'listOpen', 'focused', 'hoverItemIndex'];
 
 function mount(Component, options = {}) {
     const { target, props = {} } = options;
@@ -1511,7 +1503,7 @@ test('when multiple is true items in value will not appear in list', async () =>
             { value: 'cake', label: 'Cake' },
             { value: 'chips', label: 'Chips' },
             { value: 'ice-cream', label: 'Ice Cream' },
-        ])
+        ]),
     );
 
     unmount(select);
@@ -1528,8 +1520,8 @@ test('when multiple is true both value and filterText filters list', async () =>
         },
     });
 
-    (select.filterText = 'Pizza'),
-        equal(JSON.stringify(select.getFilteredItems()), JSON.stringify([{ value: 'pizza', label: 'Pizza' }]));
+    ((select.filterText = 'Pizza'),
+        equal(JSON.stringify(select.getFilteredItems()), JSON.stringify([{ value: 'pizza', label: 'Pizza' }])));
 
     unmount(select);
 });
@@ -1602,7 +1594,7 @@ test('when multiple and groupBy is active then items should be selectable', asyn
     await querySelectorClick('.list-item .group-item');
     equal(
         JSON.stringify(select.value),
-        JSON.stringify([{ groupItem: true, value: 'chocolate', label: 'Chocolate', group: 'Sweet' }])
+        JSON.stringify([{ groupItem: true, value: 'chocolate', label: 'Chocolate', group: 'Sweet' }]),
     );
 
     unmount(select);
