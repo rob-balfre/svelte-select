@@ -5,7 +5,9 @@
 </script>
 
 <Select {items}>
-    <div slot="empty">Nothing to see here...</div>
+    {#snippet empty()}
+        <div>Nothing to see here...</div>
+    {/snippet}
 </Select>
 
 <style>

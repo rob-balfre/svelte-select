@@ -8,7 +8,10 @@
     ];
 </script>
 
-<form on:submit|preventDefault>
+<form
+    onsubmit={(e) => {
+        e.preventDefault();
+    }}>
     <Select {items} required />
     <button type="submit">Submit</button>
 </form>

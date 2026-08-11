@@ -9,7 +9,9 @@
 </script>
 
 <Select {items}>
-    <div slot="item" let:item let:index>
-        {index}: {item.label}
-    </div>
+    {#snippet item({ item, index })}
+        <div>
+            {index}: {item.label}
+        </div>
+    {/snippet}
 </Select>

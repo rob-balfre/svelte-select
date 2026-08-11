@@ -1,7 +1,7 @@
-export default async function getItems({ dispatch, loadOptions, convertStringItemsToObjects, filterText }) {
+export default async function getItems({ onerror, onloaded, loadOptions, convertStringItemsToObjects, filterText }) {
     let res = await loadOptions(filterText).catch((err) => {
         console.warn('svelte-select loadOptions error :>> ', err);
-        dispatch('error', { type: 'loadOptions', details: err });
+        onerror?.({ type: 'loadOptions', details: err });
     });
 
     if (res && !res.cancelled) {
@@ -10,7 +10,7 @@ export default async function getItems({ dispatch, loadOptions, convertStringIte
                 res = convertStringItemsToObjects(res);
             }
 
-            dispatch('loaded', { items: res });
+            onloaded?.({ items: res });
         } else {
             res = [];
         }

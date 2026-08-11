@@ -1,3 +1,18 @@
+<script>
+    import Select from '$lib/Select.svelte';
+
+    let items = $state(['one', 'two']);
+    let value = $state('two');
+    $inspect(value);
+    $inspect(items);
+</script>
+
+<Select bind:items name="test" bind:value>
+    {#snippet inputHidden({ value })}
+        <input type="hidden" name="test" {value} />
+    {/snippet}
+</Select>
+
 <div class="container">
     <header>
         <img src="/svelte-select.png" alt="Svelte Select" />

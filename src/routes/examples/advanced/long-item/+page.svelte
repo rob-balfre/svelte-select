@@ -13,9 +13,11 @@
 
 <div class="container">
     <Select items={collection} --item-height="auto" --item-line-height="auto">
-        <div slot="item" class="item" let:item>
-            {item.label}
-        </div>
+        {#snippet item({ item })}
+            <div class="item">
+                {item.label}
+            </div>
+        {/snippet}
     </Select>
 </div>
 

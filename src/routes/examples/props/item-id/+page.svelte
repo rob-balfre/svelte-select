@@ -7,9 +7,9 @@
         { foo: '3', label: 'Three' },
     ];
 
-    let justValue;
+    let value = $state('2');
 </script>
 
-<Select {items} itemId="foo" bind:justValue />
+<Select {items} itemId="foo" valueMode="id" bind:value />
 
-<p>{justValue}</p>
+<p>{value}</p>

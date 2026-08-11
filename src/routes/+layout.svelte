@@ -1,16 +1,18 @@
 <script>
-    import { page, navigating } from '$app/stores';
+    import { page, navigating } from '$app/state';
 
     import { HighlightSvelte } from 'svelte-highlight';
     import highlightStyles from 'svelte-highlight/styles/atom-one-dark';
+    /** @type {{children?: import('svelte').Snippet}} */
+    let { children } = $props();
 
     const _props = import.meta.glob('./examples/props/*/*.svelte', { as: 'raw' });
     const _slots = import.meta.glob('./examples/slots/*/*.svelte', { as: 'raw' });
     const _events = import.meta.glob('./examples/events/*/*.svelte', { as: 'raw' });
     const _advanced = import.meta.glob('./examples/advanced/*/*.svelte', { as: 'raw' });
 
-    let source;
-    let showNav = false;
+    let source = $state();
+    let showNav = $state(false);
 
     function buildLinks(obj) {
         return Object.keys(obj).map((key) => {
@@ -45,15 +47,22 @@
         showNav = !showNav;
     }
 
-    $: setup = {
+    let setup = $derived({
         props: buildLinks(_props),
         slots: buildLinks(_slots),
         events: buildLinks(_events),
         advanced: buildLinks(_advanced),
-    };
-    $: if ($navigating) showNav = false;
-    $: route = $page.route.id.substring(1);
-    $: handleExampleCode($page);
+    });
+
+    $effect(() => {
+        if (navigating.type) showNav = false;
+    });
+
+    let route = $derived(page.route.id.substring(1));
+
+    $effect(() => {
+        handleExampleCode(page);
+    });
 </script>
 
 <svelte:head>
@@ -61,16 +70,16 @@
 </svelte:head>
 
 <div class="container">
-    <button on:click={handleNav} class="show-nav">
+    <button onclick={handleNav} aria-label="Show nav" class="show-nav">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000"
             ><path
                 d="M 3 5 A 1.0001 1.0001 0 1 0 3 7 L 21 7 A 1.0001 1.0001 0 1 0 21 5 L 3 5 z M 3 11 A 1.0001 1.0001 0 1 0 3 13 L 21 13 A 1.0001 1.0001 0 1 0 21 11 L 3 11 z M 3 17 A 1.0001 1.0001 0 1 0 3 19 L 21 19 A 1.0001 1.0001 0 1 0 21 17 L 3 17 z"
                 fill="currentcolor" /></svg>
     </button>
 
-    <nav class:show={showNav} class:navigating={$navigating}>
+    <nav class:show={showNav} class:navigating={!!navigating.type}>
         <ul>
-            <li><a <a class:active={$page.route.id === 'examples'} href="/">Home</a></li>
+            <li><a class:active={page.route.id === '/examples'} href="/">Home</a></li>
         </ul>
 
         <h2>Props</h2>
@@ -102,11 +111,11 @@
         </ul>
     </nav>
 
-    <div class="content" class:spinning={$navigating}>
+    <div class="content" class:spinning={!!navigating.type}>
         <img src="/svelte-select.png" alt="Svelte Select Logo" class="spinner" />
 
-        {#if !$navigating}
-            <slot />
+        {#if !navigating.type}
+            {@render children?.()}
 
             {#if source}
                 <HighlightSvelte code={source} />

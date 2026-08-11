@@ -2,7 +2,7 @@
     import Select from '$lib/Select.svelte';
 
     let items = ['One', 'Two', 'Three'];
-    let listOpen = false;
+    let listOpen = $state(false);
 </script>
 
 <Select

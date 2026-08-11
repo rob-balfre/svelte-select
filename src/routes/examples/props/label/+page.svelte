@@ -7,7 +7,7 @@
         { value: 'three', foo: 'Three' },
     ];
 
-    let value;
+    let value = $state();
 </script>
 
 <Select items={collection} label="foo" bind:value />

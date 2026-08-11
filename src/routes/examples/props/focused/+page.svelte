@@ -8,7 +8,7 @@
         { value: 'three', label: 'Three' },
     ];
 
-    let focused = true;
+    let focused = $state(true);
 </script>
 
 <p>focused: {focused}</p>

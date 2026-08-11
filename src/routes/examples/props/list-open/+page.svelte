@@ -7,12 +7,13 @@
         { value: 'three', label: 'Three' },
     ];
 
-    let listOpen = false;
-    let show = false;
+    let listOpen = $state(false);
+    let show = $state(false);
 </script>
 
 <button
-    on:pointerdown|preventDefault={() => {
+    onpointerdown={(e) => {
+        e.preventDefault();
         listOpen = !listOpen;
     }}>Open</button>
 
@@ -21,7 +22,7 @@
 <br />
 
 <button
-    on:click={() => {
+    onclick={() => {
         show = !show;
     }}>Show Select</button>
 

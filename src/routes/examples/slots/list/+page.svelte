@@ -7,7 +7,7 @@
         { value: 'three', label: 'Three' },
     ];
 
-    let value = [];
+    let value = $state([]);
 
     function handleClick(item) {
         if (!value) value = [item];
@@ -16,13 +16,15 @@
 </script>
 
 <Select {items} bind:value multiple>
-    <div slot="list" let:filteredItems>
-        {#each filteredItems as item}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <span on:click={() => handleClick(item)}>{item.label}</span>
-        {/each}
-    </div>
+    {#snippet list({ filteredItems })}
+        <div>
+            {#each filteredItems as item}
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                <span onclick={() => handleClick(item)}>{item.label}</span>
+            {/each}
+        </div>
+    {/snippet}
 </Select>
 
 <style>

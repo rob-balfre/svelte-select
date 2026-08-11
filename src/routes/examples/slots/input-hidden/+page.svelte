@@ -1,17 +1,18 @@
 <script>
     import Select from '$lib/Select.svelte';
 
-    export let form;
+    /** @type {{form: any}} */
+    let { form } = $props();
 
-    let value;
-    let items = ['pizza', 'crisps', 'ice-cream'];
+    let value = $state();
+    const items = ['pizza', 'crisps', 'ice-cream'];
 </script>
 
 <form method="POST" action="?/someaction">
     <Select {items} bind:value>
-        <svelte:fragment slot="input-hidden" let:value>
+        {#snippet inputHidden({ value })}
             <input type="hidden" name="demo" {...value} />
-        </svelte:fragment>
+        {/snippet}
     </Select>
 
     <button>Send</button>

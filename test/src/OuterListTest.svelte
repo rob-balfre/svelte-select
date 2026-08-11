@@ -1,12 +1,16 @@
 <script>
     import Select from '../../src/lib/Select.svelte';
 
-    let items = ['one', 'two'];
-    let value = 'one';
+    let items = $state(['one', 'two']);
+    let value = $state('one');
 </script>
 
 <Select bind:items bind:value listOpen>
-    <svelte:fragment slot="list-prepend">prepend</svelte:fragment>
+    {#snippet listPrepend()}
+        prepend
+    {/snippet}
 
-    <svelte:fragment slot="list-append">append</svelte:fragment>
+    {#snippet listAppend()}
+        append
+    {/snippet}
 </Select>

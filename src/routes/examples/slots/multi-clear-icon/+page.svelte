@@ -1,13 +1,15 @@
 <script>
     import Select from '$lib/Select.svelte';
 
-    let items = [
+    const items = [
         { value: 'one', label: 'One' },
         { value: 'two', label: 'Two' },
         { value: 'three', label: 'Three' },
     ];
 </script>
 
-<Select {items} multiple>
-    <div slot="multi-clear-icon">❌</div>
+<Select {items} multiple value={[{ value: 'one', label: 'One' }]}>
+    {#snippet multiClearIcon()}
+        <div>❌</div>
+    {/snippet}
 </Select>
