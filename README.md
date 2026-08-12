@@ -299,7 +299,7 @@ Core replaceable helpers live in [`get-items.js`](/src/lib/get-items.js) and [`f
 
 ## A11y (Accessibility)
 
-Override these props to change the `aria-context` and `aria-selection` text.
+Override these props to change the `aria-context` and `aria-selection` text, and the aria-label of the clear button.
 
 ```svelte
 <Select
@@ -307,6 +307,7 @@ Override these props to change the `aria-context` and `aria-selection` text.
   ariaListOpen={(label, count) =>
     `You are currently focused on option ${label}. There are ${count} results available.`}
   ariaFocused={() => `Select is focused, type to refine list, press down to open the menu.`}
+  ariaClearButton={() => `Clear selection`}
 />
 ```
 
