@@ -78,6 +78,7 @@
         ariaValues?: (values: unknown) => string;
         ariaListOpen?: (label: unknown, count: number) => string;
         ariaFocused?: () => string;
+        ariaClearButton?: () => string;
         oninput?: (value: SelectValue) => void;
         onchange?: (value: SelectValue) => void;
         onselect?: (selection: SelectItem) => void;
@@ -167,6 +168,9 @@
         },
         ariaFocused = () => {
             return `Select is focused, type to refine list, press down to open the menu.`;
+        },
+        ariaClearButton = () => {
+            return `Clear selection`;
         },
         oninput,
         onchange,
@@ -1039,7 +1043,7 @@
         {/if}
 
         {#if showClear}
-            <button type="button" class="icon clear-select" onclick={handleClear}>
+            <button type="button" class="icon clear-select" onclick={handleClear} aria-label={ariaClearButton()}>
                 {#if clearIcon}{@render clearIcon()}
                 {:else}
                     <ClearIcon />

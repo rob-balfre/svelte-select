@@ -3200,6 +3200,39 @@ test('When ariaFocused, focused value supplied, then aria-context uses default u
     unmount(select);
 });
 
+test('Clear button should have default aria-label', async () => {
+    const select = mount(Select, {
+        target,
+        props: {
+            items: items,
+            value: { value: 'cake', label: 'Cake' },
+        },
+    });
+
+    let clearButton = document.querySelector('.clear-select');
+    equal(clearButton.ariaLabel, 'Clear selection');
+
+    unmount(select);
+});
+
+test('When ariaClearButton, clear button should use custom aria-label', async () => {
+    const select = mount(Select, {
+        target,
+        props: {
+            items: items,
+            ariaClearButton: () => {
+                return `Clear my selection`;
+            },
+            value: { value: 'cake', label: 'Cake' },
+        },
+    });
+
+    let clearButton = document.querySelector('.clear-select');
+    equal(clearButton.ariaLabel, 'Clear my selection');
+
+    unmount(select);
+});
+
 test('When id supplied then add to input', async () => {
     const select = mount(Select, {
         target,
