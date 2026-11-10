@@ -997,6 +997,30 @@ test('Select can be disabled', async () => {
     unmount(select);
 });
 
+test('disabled Select does not commit an option when listOpen keeps the popup open', async () => {
+    const select = mount(Select, {
+        target,
+        props: { items },
+    });
+    let changes = 0;
+    select.$on('change', () => changes++);
+
+    try {
+        await querySelectorClick('.svelte-select');
+        await handleSet(select, { disabled: true });
+        await expect.poll(() => document.querySelector('.list-item')).toBeNull();
+        await handleSet(select, { listOpen: true });
+        ok(document.querySelector('.svelte-select input').disabled);
+        await querySelectorClick('.list-item');
+        await wait(0);
+
+        equal(select.value, undefined);
+        equal(changes, 0);
+    } finally {
+        unmount(select);
+    }
+});
+
 test('Select list closes when you click enter', async () => {
     const select = mount(Select, {
         target,

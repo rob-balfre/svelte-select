@@ -773,7 +773,7 @@
     let isScrolling = false;
 
     function handleSelect(item: SelectItem) {
-        if (!item || item.selectable === false) return;
+        if (disabled || !item || item.selectable === false) return;
         itemSelected(item);
     }
 
